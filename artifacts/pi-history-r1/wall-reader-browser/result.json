@@ -1,0 +1,102 @@
+{
+  "scope": "Explicit offline headed Chromium reader-lease protocol check; no financial source, chart paint or latency acceptance",
+  "clientBuild": "3fc2cd418b70ec5b7afab5af0453300cadbe36d3",
+  "browser": "155.0.8059.79",
+  "workspaceVerified": true,
+  "bundleSha256": "29b4909e064eba8b0eca4be7e0602b488cc34734b5748175f0e92db4a1fd2eaa",
+  "result": {
+    "during": {
+      "firstAborted": true,
+      "peerAborted": false,
+      "error": "Error: Wall history reader lease lost; Retry available: Wall reader lease HTTP 503",
+      "history": {
+        "submitted": 2,
+        "coalesced": 0,
+        "cancelled": 0,
+        "completed": 0,
+        "failed": 0,
+        "peakActive": 2,
+        "queueMs": 4.700000002980232,
+        "runMs": 0,
+        "active": 2,
+        "queued": 0
+      },
+      "control": {
+        "submitted": 5,
+        "coalesced": 0,
+        "cancelled": 0,
+        "completed": 4,
+        "failed": 1,
+        "peakActive": 1,
+        "queueMs": 1.7000000029802322,
+        "runMs": 176.5000000037253,
+        "active": 0,
+        "queued": 0
+      }
+    },
+    "after": {
+      "history": {
+        "submitted": 2,
+        "coalesced": 0,
+        "cancelled": 2,
+        "completed": 0,
+        "failed": 2,
+        "peakActive": 2,
+        "queueMs": 4.700000002980232,
+        "runMs": 13549.70000000298,
+        "active": 0,
+        "queued": 0
+      },
+      "control": {
+        "submitted": 6,
+        "coalesced": 0,
+        "cancelled": 0,
+        "completed": 5,
+        "failed": 1,
+        "peakActive": 1,
+        "queueMs": 1.800000000745058,
+        "runMs": 184.0000000037253,
+        "active": 0,
+        "queued": 0
+      }
+    }
+  },
+  "requests": [
+    {
+      "kind": "retain",
+      "consumer": "4a554858-f6dc-45bc-8bf7-37b6136d444c",
+      "canonicalKey": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "projectionKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "status": 200
+    },
+    {
+      "kind": "retain",
+      "consumer": "01fc2b57-4e45-48f8-bc74-4d4869d83027",
+      "canonicalKey": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "projectionKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "status": 200
+    },
+    {
+      "kind": "retain",
+      "consumer": "4a554858-f6dc-45bc-8bf7-37b6136d444c",
+      "canonicalKey": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "projectionKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "status": 503
+    },
+    {
+      "kind": "release",
+      "consumer": "4a554858-f6dc-45bc-8bf7-37b6136d444c"
+    },
+    {
+      "kind": "retain",
+      "consumer": "01fc2b57-4e45-48f8-bc74-4d4869d83027",
+      "canonicalKey": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "projectionKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "status": 200
+    },
+    {
+      "kind": "release",
+      "consumer": "01fc2b57-4e45-48f8-bc74-4d4869d83027"
+    }
+  ]
+}

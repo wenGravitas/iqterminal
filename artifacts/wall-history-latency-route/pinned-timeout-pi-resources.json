@@ -1,0 +1,63 @@
+{
+  "utc": 1794838262.8088963,
+  "memory": [
+    "MemAvailable:     733052 kB",
+    "SwapTotal:      33078572 kB",
+    "SwapFree:       30628144 kB"
+  ],
+  "pressure": {
+    "cpu": "not available",
+    "memory": "not available",
+    "io": "not available"
+  },
+  "ssh": [
+    {
+      "pid": 146639,
+      "ppid": 146637,
+      "majorFaults": 234,
+      "minorFaults": 1493,
+      "cpuTicks": 59,
+      "schedstat": "594800191 4967938492 5952\n",
+      "status": [
+        "State:\tS (sleeping)",
+        "VmRSS:\t    3104 kB",
+        "VmSwap:\t    1048 kB"
+      ]
+    },
+    {
+      "pid": 146640,
+      "ppid": 146638,
+      "majorFaults": 178,
+      "minorFaults": 1466,
+      "cpuTicks": 114,
+      "schedstat": "1141292624 13162492635 8622\n",
+      "status": [
+        "State:\tS (sleeping)",
+        "VmRSS:\t    3228 kB",
+        "VmSwap:\t    1232 kB"
+      ]
+    }
+  ],
+  "transportSockets": [
+    "ESTAB      0      0               100.110.77.55:50356          100.124.223.41:22    users:((\"ssh\",pid=146640,fd=3))",
+    "\t cubic wscale:8,7 rto:1720 rtt:519.724/268.87 ato:40 mss:1228 pmtu:1280 rcvmss:1200 advmss:1228 cwnd:5 ssthresh:5 bytes_sent:312465 bytes_retrans:3048 bytes_acked:309418 bytes_received:5471759 segs_out:4283 segs_in:6199 data_segs_out:1484 data_segs_in:4809 send 94512bps lastsnd:4576 lastrcv:4292 lastack:4292 pacing_rate 113408bps delivery_rate 163696bps delivered:1466 app_limited busy:344064ms retrans:0/18 rcv_rtt:409.853 rcv_space:115876 rcv_ssthresh:706161 minrtt:284.207 rcv_ooopack:22 snd_wnd:524288                                                    ",
+    "ESTAB      0      0               100.110.77.55:50358          100.124.223.41:22    users:((\"ssh\",pid=146639,fd=3))",
+    "\t cubic wscale:8,7 rto:2056 rtt:638.066/268.062 ato:40 mss:1228 pmtu:1280 rcvmss:1200 advmss:1228 cwnd:3 ssthresh:3 bytes_sent:115261 bytes_retrans:2368 bytes_acked:112894 bytes_received:16449559 segs_out:3658 segs_in:9417 data_segs_out:423 data_segs_in:9021 send 46190bps lastsnd:3576 lastrcv:3140 lastack:3140 pacing_rate 55424bps delivery_rate 118392bps delivered:416 app_limited busy:146664ms retrans:0/8 rcv_rtt:1183 rcv_space:445228 rcv_ssthresh:1543483 minrtt:239.318 rcv_ooopack:423 snd_wnd:524288                                                       "
+  ],
+  "tailscale": [
+    {
+      "HostName": "sd-fn-01",
+      "TailscaleIPs": [
+        "100.124.223.41",
+        "fd7a:115c:a1e0::a701:dfa8"
+      ],
+      "CurAddr": "65.21.65.212:41641",
+      "Relay": "hel",
+      "RxBytes": 28410100,
+      "TxBytes": 2732220,
+      "LastHandshake": "2026-11-16T17:09:28.856630428+03:00",
+      "Online": true,
+      "Active": true
+    }
+  ]
+}

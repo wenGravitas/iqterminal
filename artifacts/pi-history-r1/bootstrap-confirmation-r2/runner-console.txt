@@ -1,0 +1,2 @@
+{"type":"footprint","intercepts":2}
+{"type":"candle","intercepts":2}

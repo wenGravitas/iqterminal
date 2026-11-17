@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: bounded closed-record preparation resumes and exactly restores original walls and subsequent patches
+ok 1 - bounded closed-record preparation resumes and exactly restores original walls and subsequent patches
+  ---
+  duration_ms: 987.62758
+  type: 'test'
+  ...
+# Subtest: source and content failures preserve the validated prefix and explicit gaps through retry
+ok 2 - source and content failures preserve the validated prefix and explicit gaps through retry
+  ---
+  duration_ms: 512.565336
+  type: 'test'
+  ...
+# Subtest: aggregate retained capacity includes closed records outside the active checkpoint
+ok 3 - aggregate retained capacity includes closed records outside the active checkpoint
+  ---
+  duration_ms: 194.745861
+  type: 'test'
+  ...
+# Subtest: a closed wall larger than one transport part preserves every exact point across fragments
+ok 4 - a closed wall larger than one transport part preserves every exact point across fragments
+  ---
+  duration_ms: 3402.373605
+  type: 'test'
+  ...
+# Subtest: identical nonterminal prefix copies one bounded output per turn, resumes and replays old final page plus future rows below its watermark exactly
+ok 5 - identical nonterminal prefix copies one bounded output per turn, resumes and replays old final page plus future rows below its watermark exactly
+  ---
+  duration_ms: 1017.291833
+  type: 'test'
+  ...
+# Subtest: changed event input rejects prefix reuse and folds from the first canonical page
+ok 6 - changed event input rejects prefix reuse and folds from the first canonical page
+  ---
+  duration_ms: 668.832197
+  type: 'test'
+  ...
+# Subtest: changed epoch input rejects prefix reuse and folds from the first canonical page
+ok 7 - changed epoch input rejects prefix reuse and folds from the first canonical page
+  ---
+  duration_ms: 881.229685
+  type: 'test'
+  ...
+# Subtest: changed gap input rejects prefix reuse and folds from the first canonical page
+ok 8 - changed gap input rejects prefix reuse and folds from the first canonical page
+  ---
+  duration_ms: 852.481544
+  type: 'test'
+  ...
+# Subtest: corrupt extension prefix is rejected and changed target proof cannot publish a copied prefix
+ok 9 - corrupt extension prefix is rejected and changed target proof cannot publish a copied prefix
+  ---
+  duration_ms: 612.877062
+  type: 'test'
+  ...
+# Subtest: portable source checksum is pinned separately from verified checkpoint compatibility
+ok 10 - portable source checksum is pinned separately from verified checkpoint compatibility
+  ---
+  duration_ms: 48.723433
+  type: 'test'
+  ...
+# Subtest: cooperative restoration yields and preserves the synchronous financial checkpoint
+ok 11 - cooperative restoration yields and preserves the synchronous financial checkpoint
+  ---
+  duration_ms: 33.998916
+  type: 'test'
+  ...
+# Subtest: checkpoint restore retains decimals and exact replacement counts
+ok 12 - checkpoint restore retains decimals and exact replacement counts
+  ---
+  duration_ms: 35.268996
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 12023.923858

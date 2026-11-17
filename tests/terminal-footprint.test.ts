@@ -374,7 +374,7 @@ for (const dpr of [1, 2]) test(`narrow POC bars keep a solid row border at DPR $
 test('small footprint panes retain visible price space above compact statistics', () => {
   const p = new TerminalFootprint({ ...DEFAULT_FOOTPRINT_OPTIONS, statsPosition: 'bottom', statsRows: ['volume', 'bidVolume', 'askVolume', 'delta'] });
   p.setBars([]);
-  const rc: any = { dpr: 1, plotHeight: 70, timeScale: { barSpacing: 80 }, priceScale: { priceRange: () => ({ min: 0, max: 100 }), priceToY: (p: number) => 70-p }, dataLayer: { timeToIndex: () => undefined } };
+  const rc: any = { dpr: 1, plotHeight: 70, timeScale: { barSpacing: 80, visibleRange:()=>({from:0,to:1}) }, priceScale: { priceRange: () => ({ min: 0, max: 100 }), priceToY: (p: number) => 70-p }, dataLayer: { timeToIndex: () => undefined } };
   p.draw({} as any, rc);
   expect(p.options().statsRowHeight).toBe(8);
   expect(70 - 4*p.options().statsRowHeight).toBeGreaterThan(35);

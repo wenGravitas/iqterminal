@@ -1,0 +1,17 @@
+{
+  "frontendSourceCommit": "ec670d9f82ea1f25a06deb18318984871f60bf46",
+  "frontendTestCleanupCommit": "6b8f1433a2095dd697835122a7adc035319dacfa",
+  "backendHorizonSourceCommit": "8c7b66f9c3901fbac5e0ac2c8146e71c8b083ca9",
+  "backendSnapshotToolsCommit": "3c5e880fab77bc5cc78d19541a007f5807c382ef",
+  "VITE_DATA_MODE": "direct",
+  "VITE_HISTORY_TILES": "0",
+  "VITE_DIAGNOSTICS": "1",
+  "browser": "Chromium 155.0.8059.79 built on Debian GNU/Linux 12 (bookworm)",
+  "rendering": "headless SwiftShader; explicit native-chart fixture",
+  "stagingCandidateInstalled": false,
+  "loadingAcceptanceClaimed": false,
+  "verifierBundles": {
+    "verify-candidate.mjs": "fc2fdf17a2c86e04d44fd548e97f7dd76db7014d7d68e6e5d6989c326a440e13",
+    "verify-legacy.mjs": "f57832b563de55e955c6d8d1b8089956827ab5651fd4aadc6b2193529f4e558f"
+  }
+}

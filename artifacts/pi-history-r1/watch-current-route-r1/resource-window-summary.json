@@ -1,0 +1,24 @@
+[
+  {
+    "file": "server-perp-resources.jsonl",
+    "samples": 48,
+    "errors": [],
+    "end": {
+      "kind": "end",
+      "label": "watch-current-perp-r1",
+      "elapsedMs": 238095.78560099998,
+      "stopping": true
+    }
+  },
+  {
+    "file": "server-spot-resources.jsonl",
+    "samples": 60,
+    "errors": [],
+    "end": {
+      "kind": "end",
+      "label": "watch-current-spot-r1",
+      "elapsedMs": 300035.850884,
+      "stopping": false
+    }
+  }
+]

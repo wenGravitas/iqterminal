@@ -1,0 +1,446 @@
+{
+  "files": [
+    {
+      "path": "client-mid-cohort-resources.json",
+      "bytes": 1150,
+      "sha256": "8d1b13ba1d5c9b8d50d2fceee16f36972adcbcc5ece6e3761318423241233da0"
+    },
+    {
+      "path": "executed.py",
+      "bytes": 2071,
+      "sha256": "9c5c6751e22b98fcbbf916e3e59aa7ede91dbabf4113c966703523ac19492bc0"
+    },
+    {
+      "path": "native-pair-1-control-r1-console.txt",
+      "bytes": 639,
+      "sha256": "8080b1344ea1d7a15fa31545001795f31d3f722122cd487a852dd162380eb07c"
+    },
+    {
+      "path": "native-pair-1-early-r1-console.txt",
+      "bytes": 627,
+      "sha256": "c3e05239af4b8d98963d71823a2a4f0cc605b820d6c9347080c92d544af649b3"
+    },
+    {
+      "path": "native-pair-2-control-r1-console.txt",
+      "bytes": 639,
+      "sha256": "82fdc09d22faad2606c6407d66c5a3510c2d6abffd651755d8d5eca64470584e"
+    },
+    {
+      "path": "native-pair-2-early-r1-console.txt",
+      "bytes": 639,
+      "sha256": "c30b57a1a49066aab0618542538c59d3ad1f644a1f319f569eae693282c0e7a6"
+    },
+    {
+      "path": "native-pair-3-control-r1-console.txt",
+      "bytes": 629,
+      "sha256": "27243d35d6cf5d8b426530df576ef11b99116f86eda284a43cb11beed45808f1"
+    },
+    {
+      "path": "native-pair-3-early-r1-console.txt",
+      "bytes": 639,
+      "sha256": "b0e4ae71c27a7dc8fa40b6ea27fc25e2f48f5255f2020bebda7185a1adec9a61"
+    },
+    {
+      "path": "native-pair-4-control-r1-console.txt",
+      "bytes": 639,
+      "sha256": "6269e9ef0460d2e92585ee8d984fac48c78ba1472522f975c873ae801e1f6835"
+    },
+    {
+      "path": "native-pair-4-early-r1-console.txt",
+      "bytes": 639,
+      "sha256": "90282c6285bf57cc36474b9840976da55f6a836fd862712b8deabb9baaea8580"
+    },
+    {
+      "path": "native-pair-5-control-r1-console.txt",
+      "bytes": 640,
+      "sha256": "168b37d284d68cff96b67feccfa47f4bafd3b67043f6432fdd288ab2b2bfae1b"
+    },
+    {
+      "path": "native-pair-5-early-r1-console.txt",
+      "bytes": 639,
+      "sha256": "1167818c8f61b5718098eebc0fd97e49a518ad356151149602be689811ce1046"
+    },
+    {
+      "path": "observer-stop.txt",
+      "bytes": 160,
+      "sha256": "4d70a499d5a0d3b2837ece9c063679377b85ef92c381a1c80f15309fa97fb3f2"
+    },
+    {
+      "path": "pi-history-report.py",
+      "bytes": 3234,
+      "sha256": "0d17c2b3ebb048b70677488a629eb7331c494ecb6dd2f430d1e4edc33f8bee3a"
+    },
+    {
+      "path": "pi-wall-reference.json",
+      "bytes": 815,
+      "sha256": "e188b65701f3e6443bc7fb47f01078ba7a8b8bc0646f30fec665327858a82420"
+    },
+    {
+      "path": "preview-stops.json",
+      "bytes": 888,
+      "sha256": "b8d4f4ac30f7118aee035a09814ed3791ba79b299d7031f334c12ce8d8db076c"
+    },
+    {
+      "path": "protected-check.json",
+      "bytes": 1620,
+      "sha256": "c0e591b1b16ed2fefe89299713457110b8a9030103bc38514f4d3f1f30347953"
+    },
+    {
+      "path": "resource-observer-executed.mjs",
+      "bytes": 2746,
+      "sha256": "23dab06705cdea3b0ad1ddcab077d82a522b1ebc8824b3a919c8652de154a53c"
+    },
+    {
+      "path": "resource-summary.json",
+      "bytes": 663,
+      "sha256": "6ed47ea7a448f4ae15b494747d13ba6766400b974d9d3fd97faf760fb65fdb45"
+    },
+    {
+      "path": "results.json",
+      "bytes": 11383,
+      "sha256": "8c2bcfe37eb07a779f48800bef86e11e734ad39397ead79124476fccd48af557"
+    },
+    {
+      "path": "sequence.json",
+      "bytes": 1683,
+      "sha256": "ae8eaabd77f7de1661920235a9fb4ab416411bdca150bc7ea1a3201712fc0fda"
+    },
+    {
+      "path": "server-resources.jsonl",
+      "bytes": 330824,
+      "sha256": "9ae0f5f148b936f56e4f17e349d8647f6ae26826547d214f55e37d29d7ef609d"
+    },
+    {
+      "path": "serving-postcheck.txt",
+      "bytes": 4259,
+      "sha256": "8dfbac8bfb448e70500ab05a3b29dde1081d304408e16fe771d4b17c0efd14ae"
+    },
+    {
+      "path": "serving-precheck.txt",
+      "bytes": 4417,
+      "sha256": "2219ee2d53c29f79a88d058e964298ca1aac83abd5129c7d7a01524cbcbf852c"
+    },
+    {
+      "path": "test-browser-i3-setup.mjs",
+      "bytes": 759,
+      "sha256": "501b7f5c0c908be76a95ea45cac4e97f6cc43afc30b396ed8928978f59cfb3f9"
+    },
+    {
+      "path": "test-browser-launch.mjs",
+      "bytes": 503,
+      "sha256": "f324ff7ce845f7e5900ef52b8c283c3644a54ab6008ea4d22f234ece3045affb"
+    },
+    {
+      "path": "variants.json",
+      "bytes": 514,
+      "sha256": "fe1e67e9e7786f6415f0edae884e6c9b334f982105b5e807f88df7ad4200db33"
+    },
+    {
+      "path": "wall-loading-gate.mjs",
+      "bytes": 7251,
+      "sha256": "9309489987e878f61c1622040c84b645d2f031d3b3f364e34af85e359b02ef54"
+    }
+  ],
+  "externalFiles": [
+    {
+      "path": "../native-pair-1-control-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "aa21187fc150fcdbae1b91e204b6cedfac5eb27ca6917d17c7bd12ea8d693b21"
+    },
+    {
+      "path": "../native-pair-1-control-r1-executed.mjs",
+      "bytes": 22487,
+      "sha256": "61edb8d039cb0a47d75fabcadb5088d35208e4014d3a500d9b307c02b424532b"
+    },
+    {
+      "path": "../native-pair-1-control-r1-observations.jsonl",
+      "bytes": 40930,
+      "sha256": "d0a1f550d787405a6d7d3a7cd1bcedbcc70e211c78b95c04a7170a5711516ca3"
+    },
+    {
+      "path": "../native-pair-1-control-r1-samples.jsonl",
+      "bytes": 56890,
+      "sha256": "374662f83ccbec9344d7262ae6e7aa90a4dd39817eb385d8076dad1485eb5e70"
+    },
+    {
+      "path": "../native-pair-1-control-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "../native-pair-1-control-r1-walls-30h-perp-15m-1.png",
+      "bytes": 102589,
+      "sha256": "992f07d19c64d15cd6a36e2426244f55773a2f422c5f172e7b7cd6b2c48e28e5"
+    },
+    {
+      "path": "../native-pair-1-early-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "5bb7e271ffd36c14947c5edf31fbb8eb5992184d6dab38daff78e54f87f9e3e4"
+    },
+    {
+      "path": "../native-pair-1-early-r1-executed.mjs",
+      "bytes": 22487,
+      "sha256": "61edb8d039cb0a47d75fabcadb5088d35208e4014d3a500d9b307c02b424532b"
+    },
+    {
+      "path": "../native-pair-1-early-r1-observations.jsonl",
+      "bytes": 26455,
+      "sha256": "c1231dbed3481b55c39f84ffccf1a897d6a2241e2c8c4a86b4e2db1ad0460443"
+    },
+    {
+      "path": "../native-pair-1-early-r1-samples.jsonl",
+      "bytes": 42755,
+      "sha256": "573ba9a1c2b89c7a3b96cad735a4d5ebf71db4515be036bb7e96598115a3bf20"
+    },
+    {
+      "path": "../native-pair-1-early-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "../native-pair-1-early-r1-walls-30h-perp-15m-1.png",
+      "bytes": 66966,
+      "sha256": "0646de5160d52e55c0bb87a6ac1e760d4d3fc7f49903d7a4534ff8dcaae4ec17"
+    },
+    {
+      "path": "../native-pair-2-control-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "99d646b474915dad79b6b5041533bb5464bef446e60596dd1d285a43cb5399e2"
+    },
+    {
+      "path": "../native-pair-2-control-r1-executed.mjs",
+      "bytes": 22487,
+      "sha256": "61edb8d039cb0a47d75fabcadb5088d35208e4014d3a500d9b307c02b424532b"
+    },
+    {
+      "path": "../native-pair-2-control-r1-observations.jsonl",
+      "bytes": 35402,
+      "sha256": "e67362e9743d81132a28a7049e682aecbafd9ebbcf01c4636bc08b542c3aa682"
+    },
+    {
+      "path": "../native-pair-2-control-r1-samples.jsonl",
+      "bytes": 51466,
+      "sha256": "635a6b83b9f4fc35b5210179086ea892277d43bb4adae0950f76b66c4228bc5b"
+    },
+    {
+      "path": "../native-pair-2-control-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "../native-pair-2-control-r1-walls-30h-perp-15m-1.png",
+      "bytes": 83835,
+      "sha256": "d8d889dbc482f2c681163ec4bfc34ef2a2135168df5af0e42f2bf83b57ac926d"
+    },
+    {
+      "path": "../native-pair-2-early-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "c3aa7da67cc89eb734d4a00d1a5ecfc962ef117be1e696da1686e4380d65c050"
+    },
+    {
+      "path": "../native-pair-2-early-r1-executed.mjs",
+      "bytes": 22487,
+      "sha256": "61edb8d039cb0a47d75fabcadb5088d35208e4014d3a500d9b307c02b424532b"
+    },
+    {
+      "path": "../native-pair-2-early-r1-observations.jsonl",
+      "bytes": 34667,
+      "sha256": "a45efb23d56fd3269f9f7bd2394df6eafff73ff6e82cf8b149163bf0fa8ea14a"
+    },
+    {
+      "path": "../native-pair-2-early-r1-samples.jsonl",
+      "bytes": 50493,
+      "sha256": "d625c34c2e55b19664f80fe925c4c24b39209f7a31c895d79a9f2e8e516e4709"
+    },
+    {
+      "path": "../native-pair-2-early-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "../native-pair-2-early-r1-walls-30h-perp-15m-1.png",
+      "bytes": 83701,
+      "sha256": "13c2e28d97f314e6ca094d76e2955a428c09dfde76b5d066487b64e17029f9f6"
+    },
+    {
+      "path": "../native-pair-3-control-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "02f58f31fa43b689fb803c9533c0afd6739581143702de7dbbdca6859d16314f"
+    },
+    {
+      "path": "../native-pair-3-control-r1-executed.mjs",
+      "bytes": 22487,
+      "sha256": "61edb8d039cb0a47d75fabcadb5088d35208e4014d3a500d9b307c02b424532b"
+    },
+    {
+      "path": "../native-pair-3-control-r1-observations.jsonl",
+      "bytes": 35945,
+      "sha256": "6374554ee834d59581d78bb7ae04e23026b7914cb686d8b38494d86dbed832a2"
+    },
+    {
+      "path": "../native-pair-3-control-r1-samples.jsonl",
+      "bytes": 52011,
+      "sha256": "8e806eededbcfb36017eb35390cc3a92d70fb3fd69929268d9ec3dc7d08ebcc0"
+    },
+    {
+      "path": "../native-pair-3-control-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "../native-pair-3-control-r1-walls-30h-perp-15m-1.png",
+      "bytes": 91327,
+      "sha256": "3389f32527cb865648e874bd1abb7f89204a31ed28ae40e823429bb478d170c8"
+    },
+    {
+      "path": "../native-pair-3-early-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "158233af58017397795b182bd15e3df418366d3473a075c44d714f2351e0703b"
+    },
+    {
+      "path": "../native-pair-3-early-r1-executed.mjs",
+      "bytes": 22487,
+      "sha256": "61edb8d039cb0a47d75fabcadb5088d35208e4014d3a500d9b307c02b424532b"
+    },
+    {
+      "path": "../native-pair-3-early-r1-observations.jsonl",
+      "bytes": 42768,
+      "sha256": "d8cf669d43ebf44e209ea9f81a210758dd677569c08e5f94e982f091c995718f"
+    },
+    {
+      "path": "../native-pair-3-early-r1-samples.jsonl",
+      "bytes": 58830,
+      "sha256": "c50f1c589d714e7ad0436282e3f0ead714bd0bd7028daf0b139156104e37d124"
+    },
+    {
+      "path": "../native-pair-3-early-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "../native-pair-3-early-r1-walls-30h-perp-15m-1.png",
+      "bytes": 109222,
+      "sha256": "5806785f9e40cbe52355906c6cfa13c508c0aa8402a53ba4366e15ca0bef5317"
+    },
+    {
+      "path": "../native-pair-4-control-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "c978ff676c46bad7bf7627961969e2159bb466d886844b39264076861eda972b"
+    },
+    {
+      "path": "../native-pair-4-control-r1-executed.mjs",
+      "bytes": 22487,
+      "sha256": "61edb8d039cb0a47d75fabcadb5088d35208e4014d3a500d9b307c02b424532b"
+    },
+    {
+      "path": "../native-pair-4-control-r1-observations.jsonl",
+      "bytes": 37742,
+      "sha256": "9ee5ceb69244b50e6363a54abc0834e402120173223c89daf703c61e5c846f24"
+    },
+    {
+      "path": "../native-pair-4-control-r1-samples.jsonl",
+      "bytes": 55121,
+      "sha256": "eded63103c9aa894ff5c8d4ab831cd78f6e1398bf32176c6737b2befe7b0d0e0"
+    },
+    {
+      "path": "../native-pair-4-control-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "../native-pair-4-control-r1-walls-30h-perp-15m-1.png",
+      "bytes": 76104,
+      "sha256": "96a2d74f80e4f3ebdf87bffab4eb035c3d1328a2059fe873acbd253efae4360c"
+    },
+    {
+      "path": "../native-pair-4-early-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "defe16a0168ec1ac42605a4c78ad6a2a9f14541c35ec1a3c0573010af8f05628"
+    },
+    {
+      "path": "../native-pair-4-early-r1-executed.mjs",
+      "bytes": 22487,
+      "sha256": "61edb8d039cb0a47d75fabcadb5088d35208e4014d3a500d9b307c02b424532b"
+    },
+    {
+      "path": "../native-pair-4-early-r1-observations.jsonl",
+      "bytes": 42808,
+      "sha256": "5ce87fb1142b7b28fff5afe696e7e36b07c1a6b7555b8404229706faacb4b75a"
+    },
+    {
+      "path": "../native-pair-4-early-r1-samples.jsonl",
+      "bytes": 58737,
+      "sha256": "618bd03deaaa55f3e0e502fa1ea8424d3f04aa0176638ff6f22b18a403ecec35"
+    },
+    {
+      "path": "../native-pair-4-early-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "../native-pair-4-early-r1-walls-30h-perp-15m-1.png",
+      "bytes": 100689,
+      "sha256": "5d34a049c3464c3739d93b4aa1caae80d6823fdc8481eb3665ab246347ad48c4"
+    },
+    {
+      "path": "../native-pair-5-control-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "f62a7bd9c3de211a5d33b36d786780d5eb0573211439fea6f2b823e452100ead"
+    },
+    {
+      "path": "../native-pair-5-control-r1-executed.mjs",
+      "bytes": 22487,
+      "sha256": "61edb8d039cb0a47d75fabcadb5088d35208e4014d3a500d9b307c02b424532b"
+    },
+    {
+      "path": "../native-pair-5-control-r1-observations.jsonl",
+      "bytes": 31754,
+      "sha256": "f5b409b2497d3b494a88583bb35d1d5a117425a0e797fba33667cfe72d4f57fa"
+    },
+    {
+      "path": "../native-pair-5-control-r1-samples.jsonl",
+      "bytes": 47680,
+      "sha256": "83423d83876898ff7136874075f5274835fec1153cfd1863185fcc2750b29b68"
+    },
+    {
+      "path": "../native-pair-5-control-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "../native-pair-5-control-r1-walls-30h-perp-15m-1.png",
+      "bytes": 73706,
+      "sha256": "1e2123d2e3514a8c52b4a7d85352e534b59f4ff100c2c2ed00598e8ffc43cbb8"
+    },
+    {
+      "path": "../native-pair-5-early-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "8bf41e2914a7b52279015a4f6cdb850959d8b2ee5198fdce2eb5e2278be29043"
+    },
+    {
+      "path": "../native-pair-5-early-r1-executed.mjs",
+      "bytes": 22487,
+      "sha256": "61edb8d039cb0a47d75fabcadb5088d35208e4014d3a500d9b307c02b424532b"
+    },
+    {
+      "path": "../native-pair-5-early-r1-observations.jsonl",
+      "bytes": 42279,
+      "sha256": "eafcbc4773aa8ceb035704d0dd711c77973cd15eea44d57aae2ab304929ce26c"
+    },
+    {
+      "path": "../native-pair-5-early-r1-samples.jsonl",
+      "bytes": 58110,
+      "sha256": "c274f3672188a109ebd2653ad760a91b29bdfb962090e7a160c2774d7d79f63b"
+    },
+    {
+      "path": "../native-pair-5-early-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "../native-pair-5-early-r1-walls-30h-perp-15m-1.png",
+      "bytes": 101518,
+      "sha256": "a719e5e2fb187503c7bc65406bd805855458ebc2005afb5fe4c5a759baca9e73"
+    }
+  ]
+}

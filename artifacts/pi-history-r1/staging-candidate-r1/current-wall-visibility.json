@@ -1,0 +1,87 @@
+[
+  {
+    "run": 1,
+    "currentState": "live",
+    "currentSubscribed": true,
+    "selected": 16,
+    "eligibleVisible": 0,
+    "minSelectedPrice": 68000,
+    "maxSelectedPrice": 78384,
+    "viewport": {
+      "fromMs": 1794382661250,
+      "toMs": 1794387600000,
+      "minPrice": 73605.0125,
+      "maxPrice": 74217.88750000001,
+      "plotWidth": 1756,
+      "plotHeight": 920
+    }
+  },
+  {
+    "run": 2,
+    "currentState": "live",
+    "currentSubscribed": true,
+    "selected": 16,
+    "eligibleVisible": 0,
+    "minSelectedPrice": 68000,
+    "maxSelectedPrice": 78384,
+    "viewport": {
+      "fromMs": 1794382661250,
+      "toMs": 1794387600000,
+      "minPrice": 73605.0125,
+      "maxPrice": 74217.88750000001,
+      "plotWidth": 1756,
+      "plotHeight": 920
+    }
+  },
+  {
+    "run": 3,
+    "currentState": "live",
+    "currentSubscribed": true,
+    "selected": 16,
+    "eligibleVisible": 0,
+    "minSelectedPrice": 68000,
+    "maxSelectedPrice": 78384,
+    "viewport": {
+      "fromMs": 1794382661250,
+      "toMs": 1794387600000,
+      "minPrice": 73605.0125,
+      "maxPrice": 74217.88750000001,
+      "plotWidth": 1756,
+      "plotHeight": 920
+    }
+  },
+  {
+    "run": 4,
+    "currentState": "live",
+    "currentSubscribed": true,
+    "selected": 16,
+    "eligibleVisible": 0,
+    "minSelectedPrice": 68000,
+    "maxSelectedPrice": 78384,
+    "viewport": {
+      "fromMs": 1794382661250,
+      "toMs": 1794387600000,
+      "minPrice": 73605.0125,
+      "maxPrice": 74217.88750000001,
+      "plotWidth": 1756,
+      "plotHeight": 920
+    }
+  },
+  {
+    "run": 5,
+    "currentState": "live",
+    "currentSubscribed": true,
+    "selected": 16,
+    "eligibleVisible": 0,
+    "minSelectedPrice": 68000,
+    "maxSelectedPrice": 78384,
+    "viewport": {
+      "fromMs": 1794382661250,
+      "toMs": 1794387600000,
+      "minPrice": 73605.0125,
+      "maxPrice": 74217.88750000001,
+      "plotWidth": 1756,
+      "plotHeight": 920
+    }
+  }
+]

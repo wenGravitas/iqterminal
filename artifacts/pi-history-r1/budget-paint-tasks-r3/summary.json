@@ -1,0 +1,3624 @@
+{
+  "scope": "Offline captured canonical walls plus explicitly synthetic tail/revision exercise inputs on actual Pi; five alternating completed Canvas preparations per variant/market/stage. Both primitives are attached; Candidate yields through bounded preparation tasks, with actual RAFs used for drawing until no pending geometry/reference/paint work and the latest revision is painted. drawCallMs sums elapsed draw calls; backgroundMs records separate preparation tasks outside draw calls. componentCallMs sums these nonoverlapping component call durations, not whole-path latency. maxComponentCallMs is the largest of draw and background call maxima. wallTimeMs also includes task/RAF waits and must not be added to those call durations. No route/loading or concurrent live gate is implied. Compiler runs in a child that exits before Chromium. Gzipped financial input is read by Chromium directly rather than serialized through CDP; driver-only GC (when exposed) runs outside the measurements, never browser GC. Added renderer-only tail and correction inputs are not venue observations. Geometry is compared directly without copying it into diagnostic arrays. Internal paintOrder ordinal is excluded from geometry comparison; all incumbent drawable fields remain exact. Actual OpenAlgo DataLayer over an explicit UTC axis fixture (OHLC1 is not financial source). Original financial input hashes/geometry fields and every completed readback pixel must match; coordinate-only roundoff <=1e-8 CSS pixels is recorded, not applied to runtime data. Readback/hashing excluded from draw timing. Includes current append, close/reopen, correction/removal, reference/style/view invalidation and mixed Threshold fallback. Closed path counts and style visits are recorded; no whole-app heap plateau is inferred. Canvas2D willReadFrequently=true hint; no raster backend inference. Not app/live-route/current-concurrency, GPU completion, FPS, cold build or foreground acceptance.",
+  "baseline": "ae22752658278643c1cdec0bc8f91c72606acd72",
+  "candidate": "1fcacc9e00ade0c3ff9d33e06c75fe0762a1f97a",
+  "allExact": true,
+  "markets": {
+    "spot": {
+      "segments": 8293,
+      "runs": 49154,
+      "stages": {
+        "initial": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 632,
+                "backgroundMs": 0,
+                "componentCallMs": 632,
+                "maxComponentCallMs": 632,
+                "wallTimeMs": 639.0999999996275,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 301.80000000074506,
+                "backgroundMs": 0,
+                "componentCallMs": 301.80000000074506,
+                "maxComponentCallMs": 301.80000000074506,
+                "wallTimeMs": 301.80000000074506,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 304.90000000037253,
+                "backgroundMs": 0,
+                "componentCallMs": 304.90000000037253,
+                "maxComponentCallMs": 304.90000000037253,
+                "wallTimeMs": 308.5,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 283.7000000011176,
+                "backgroundMs": 0,
+                "componentCallMs": 283.7000000011176,
+                "maxComponentCallMs": 283.7000000011176,
+                "wallTimeMs": 283.7000000011176,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 229.80000000074506,
+                "backgroundMs": 0,
+                "componentCallMs": 229.80000000074506,
+                "maxComponentCallMs": 229.80000000074506,
+                "wallTimeMs": 237.7000000011176,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 301.80000000074506,
+            "medianWallTimeMs": 301.80000000074506,
+            "maximumComponentCallMs": 632
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 232.70000000298023,
+                "backgroundMs": 412.9999999906868,
+                "componentCallMs": 645.699999993667,
+                "maxComponentCallMs": 18.90000000037253,
+                "wallTimeMs": 1053,
+                "frameCalls": 32
+              },
+              {
+                "run": 2,
+                "drawCallMs": 188.49999999441206,
+                "backgroundMs": 541.2000000011176,
+                "componentCallMs": 729.6999999955297,
+                "maxComponentCallMs": 21.299999998882413,
+                "wallTimeMs": 1271.7000000011176,
+                "frameCalls": 26
+              },
+              {
+                "run": 3,
+                "drawCallMs": 156.3000000026077,
+                "backgroundMs": 312.29999999143183,
+                "componentCallMs": 468.59999999403954,
+                "maxComponentCallMs": 22.699999999254942,
+                "wallTimeMs": 761.4000000003725,
+                "frameCalls": 25
+              },
+              {
+                "run": 4,
+                "drawCallMs": 199.300000006333,
+                "backgroundMs": 461.7000000048429,
+                "componentCallMs": 661.0000000111759,
+                "maxComponentCallMs": 15.900000000372529,
+                "wallTimeMs": 1140,
+                "frameCalls": 29
+              },
+              {
+                "run": 5,
+                "drawCallMs": 184.99999999068677,
+                "backgroundMs": 284.19999999925494,
+                "componentCallMs": 469.1999999899417,
+                "maxComponentCallMs": 10.599999999627471,
+                "wallTimeMs": 821.5,
+                "frameCalls": 29
+              }
+            ],
+            "medianComponentCallMs": 645.699999993667,
+            "medianWallTimeMs": 1053,
+            "maximumComponentCallMs": 22.699999999254942
+          }
+        },
+        "idle": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 0.7999999988824129,
+                "backgroundMs": 0,
+                "componentCallMs": 0.7999999988824129,
+                "maxComponentCallMs": 0.7999999988824129,
+                "wallTimeMs": 0.7999999988824129,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 0.2999999988824129,
+                "backgroundMs": 0,
+                "componentCallMs": 0.2999999988824129,
+                "maxComponentCallMs": 0.2999999988824129,
+                "wallTimeMs": 0.2999999988824129,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 0.3999999985098839,
+                "backgroundMs": 0,
+                "componentCallMs": 0.3999999985098839,
+                "maxComponentCallMs": 0.3999999985098839,
+                "wallTimeMs": 0.3999999985098839,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 0.19999999925494194,
+                "backgroundMs": 0,
+                "componentCallMs": 0.19999999925494194,
+                "maxComponentCallMs": 0.19999999925494194,
+                "wallTimeMs": 0.19999999925494194,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 0.5,
+                "backgroundMs": 0,
+                "componentCallMs": 0.5,
+                "maxComponentCallMs": 0.5,
+                "wallTimeMs": 0.599999999627471,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 0.3999999985098839,
+            "medianWallTimeMs": 0.3999999985098839,
+            "maximumComponentCallMs": 0.7999999988824129
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 1,
+                "backgroundMs": 0,
+                "componentCallMs": 1,
+                "maxComponentCallMs": 1,
+                "wallTimeMs": 1.099999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 0.5,
+                "backgroundMs": 0,
+                "componentCallMs": 0.5,
+                "maxComponentCallMs": 0.5,
+                "wallTimeMs": 0.5,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 0.40000000037252903,
+                "backgroundMs": 0,
+                "componentCallMs": 0.40000000037252903,
+                "maxComponentCallMs": 0.40000000037252903,
+                "wallTimeMs": 0.40000000037252903,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 0.2999999988824129,
+                "backgroundMs": 0,
+                "componentCallMs": 0.2999999988824129,
+                "maxComponentCallMs": 0.2999999988824129,
+                "wallTimeMs": 0.2999999988824129,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 0.30000000074505806,
+                "backgroundMs": 0,
+                "componentCallMs": 0.30000000074505806,
+                "maxComponentCallMs": 0.30000000074505806,
+                "wallTimeMs": 0.30000000074505806,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 0.40000000037252903,
+            "medianWallTimeMs": 0.40000000037252903,
+            "maximumComponentCallMs": 1
+          }
+        },
+        "append1": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 2.099999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 2.099999999627471,
+                "maxComponentCallMs": 2.099999999627471,
+                "wallTimeMs": 2.199999999254942,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 1,
+                "backgroundMs": 0,
+                "componentCallMs": 1,
+                "maxComponentCallMs": 1,
+                "wallTimeMs": 1,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 1.5,
+                "backgroundMs": 0,
+                "componentCallMs": 1.5,
+                "maxComponentCallMs": 1.5,
+                "wallTimeMs": 1.599999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 0.900000000372529,
+                "backgroundMs": 0,
+                "componentCallMs": 0.900000000372529,
+                "maxComponentCallMs": 0.900000000372529,
+                "wallTimeMs": 1,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 7.300000000745058,
+                "backgroundMs": 0,
+                "componentCallMs": 7.300000000745058,
+                "maxComponentCallMs": 7.300000000745058,
+                "wallTimeMs": 7.400000000372529,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.5,
+            "medianWallTimeMs": 1.599999999627471,
+            "maximumComponentCallMs": 7.300000000745058
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 2.699999999254942,
+                "backgroundMs": 0,
+                "componentCallMs": 2.699999999254942,
+                "maxComponentCallMs": 2.699999999254942,
+                "wallTimeMs": 2.699999999254942,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 1.5,
+                "backgroundMs": 0,
+                "componentCallMs": 1.5,
+                "maxComponentCallMs": 1.5,
+                "wallTimeMs": 1.599999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 1.099999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 1.099999999627471,
+                "maxComponentCallMs": 1.099999999627471,
+                "wallTimeMs": 1.099999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 4.5,
+                "backgroundMs": 0,
+                "componentCallMs": 4.5,
+                "maxComponentCallMs": 4.5,
+                "wallTimeMs": 4.5,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 4.400000000372529,
+                "backgroundMs": 0,
+                "componentCallMs": 4.400000000372529,
+                "maxComponentCallMs": 4.400000000372529,
+                "wallTimeMs": 4.5,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 2.699999999254942,
+            "medianWallTimeMs": 2.699999999254942,
+            "maximumComponentCallMs": 4.5
+          }
+        },
+        "append2": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 4.800000000745058,
+                "backgroundMs": 0,
+                "componentCallMs": 4.800000000745058,
+                "maxComponentCallMs": 4.800000000745058,
+                "wallTimeMs": 4.900000000372529,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 1.1000000014901161,
+                "backgroundMs": 0,
+                "componentCallMs": 1.1000000014901161,
+                "maxComponentCallMs": 1.1000000014901161,
+                "wallTimeMs": 1.1000000014901161,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 2.099999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 2.099999999627471,
+                "maxComponentCallMs": 2.099999999627471,
+                "wallTimeMs": 2.099999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 8.699999999254942,
+                "backgroundMs": 0,
+                "componentCallMs": 8.699999999254942,
+                "maxComponentCallMs": 8.699999999254942,
+                "wallTimeMs": 8.699999999254942,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 1,
+                "backgroundMs": 0,
+                "componentCallMs": 1,
+                "maxComponentCallMs": 1,
+                "wallTimeMs": 1,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 2.099999999627471,
+            "medianWallTimeMs": 2.099999999627471,
+            "maximumComponentCallMs": 8.699999999254942
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 1.599999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 1.599999999627471,
+                "maxComponentCallMs": 1.599999999627471,
+                "wallTimeMs": 1.700000001117587,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 1,
+                "backgroundMs": 0,
+                "componentCallMs": 1,
+                "maxComponentCallMs": 1,
+                "wallTimeMs": 1.099999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 2.199999999254942,
+                "backgroundMs": 0,
+                "componentCallMs": 2.199999999254942,
+                "maxComponentCallMs": 2.199999999254942,
+                "wallTimeMs": 2.299999998882413,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 8,
+                "backgroundMs": 0,
+                "componentCallMs": 8,
+                "maxComponentCallMs": 7.5,
+                "wallTimeMs": 25.800000000745058,
+                "frameCalls": 2
+              },
+              {
+                "run": 5,
+                "drawCallMs": 1.599999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 1.599999999627471,
+                "maxComponentCallMs": 1.599999999627471,
+                "wallTimeMs": 1.699999999254942,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.599999999627471,
+            "medianWallTimeMs": 1.700000001117587,
+            "maximumComponentCallMs": 7.5
+          }
+        },
+        "append3": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 1.400000000372529,
+                "backgroundMs": 0,
+                "componentCallMs": 1.400000000372529,
+                "maxComponentCallMs": 1.400000000372529,
+                "wallTimeMs": 1.400000000372529,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 0.8000000007450581,
+                "backgroundMs": 0,
+                "componentCallMs": 0.8000000007450581,
+                "maxComponentCallMs": 0.8000000007450581,
+                "wallTimeMs": 0.900000000372529,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 1.400000000372529,
+                "backgroundMs": 0,
+                "componentCallMs": 1.400000000372529,
+                "maxComponentCallMs": 1.400000000372529,
+                "wallTimeMs": 1.400000000372529,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 1.200000001117587,
+                "backgroundMs": 0,
+                "componentCallMs": 1.200000001117587,
+                "maxComponentCallMs": 1.200000001117587,
+                "wallTimeMs": 1.200000001117587,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 1.300000000745058,
+                "backgroundMs": 0,
+                "componentCallMs": 1.300000000745058,
+                "maxComponentCallMs": 1.300000000745058,
+                "wallTimeMs": 1.300000000745058,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.300000000745058,
+            "medianWallTimeMs": 1.300000000745058,
+            "maximumComponentCallMs": 1.400000000372529
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 1.599999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 1.599999999627471,
+                "maxComponentCallMs": 1.599999999627471,
+                "wallTimeMs": 1.799999998882413,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 1.099999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 1.099999999627471,
+                "maxComponentCallMs": 1.099999999627471,
+                "wallTimeMs": 1.199999999254942,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 0.900000000372529,
+                "backgroundMs": 0,
+                "componentCallMs": 0.900000000372529,
+                "maxComponentCallMs": 0.900000000372529,
+                "wallTimeMs": 0.900000000372529,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 4.199999999254942,
+                "backgroundMs": 0,
+                "componentCallMs": 4.199999999254942,
+                "maxComponentCallMs": 4.199999999254942,
+                "wallTimeMs": 4.199999999254942,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 2.199999999254942,
+                "backgroundMs": 0,
+                "componentCallMs": 2.199999999254942,
+                "maxComponentCallMs": 2.199999999254942,
+                "wallTimeMs": 2.199999999254942,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.599999999627471,
+            "medianWallTimeMs": 1.799999998882413,
+            "maximumComponentCallMs": 4.199999999254942
+          }
+        },
+        "append4": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 1.699999999254942,
+                "backgroundMs": 0,
+                "componentCallMs": 1.699999999254942,
+                "maxComponentCallMs": 1.699999999254942,
+                "wallTimeMs": 1.800000000745058,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 1,
+                "backgroundMs": 0,
+                "componentCallMs": 1,
+                "maxComponentCallMs": 1,
+                "wallTimeMs": 1,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 1.199999999254942,
+                "backgroundMs": 0,
+                "componentCallMs": 1.199999999254942,
+                "maxComponentCallMs": 1.199999999254942,
+                "wallTimeMs": 1.299999998882413,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 1.299999998882413,
+                "backgroundMs": 0,
+                "componentCallMs": 1.299999998882413,
+                "maxComponentCallMs": 1.299999998882413,
+                "wallTimeMs": 1.400000000372529,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 1.599999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 1.599999999627471,
+                "maxComponentCallMs": 1.599999999627471,
+                "wallTimeMs": 1.599999999627471,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.299999998882413,
+            "medianWallTimeMs": 1.400000000372529,
+            "maximumComponentCallMs": 1.699999999254942
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 4.400000000372529,
+                "backgroundMs": 0,
+                "componentCallMs": 4.400000000372529,
+                "maxComponentCallMs": 4.400000000372529,
+                "wallTimeMs": 4.400000000372529,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 1.200000001117587,
+                "backgroundMs": 0,
+                "componentCallMs": 1.200000001117587,
+                "maxComponentCallMs": 1.200000001117587,
+                "wallTimeMs": 1.200000001117587,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 0.900000000372529,
+                "backgroundMs": 0,
+                "componentCallMs": 0.900000000372529,
+                "maxComponentCallMs": 0.900000000372529,
+                "wallTimeMs": 1,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 1.5,
+                "backgroundMs": 0,
+                "componentCallMs": 1.5,
+                "maxComponentCallMs": 1.5,
+                "wallTimeMs": 1.5,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 1.299999998882413,
+                "backgroundMs": 0,
+                "componentCallMs": 1.299999998882413,
+                "maxComponentCallMs": 1.299999998882413,
+                "wallTimeMs": 1.299999998882413,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.299999998882413,
+            "medianWallTimeMs": 1.299999998882413,
+            "maximumComponentCallMs": 4.400000000372529
+          }
+        },
+        "append5": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 1.5,
+                "backgroundMs": 0,
+                "componentCallMs": 1.5,
+                "maxComponentCallMs": 1.5,
+                "wallTimeMs": 1.5,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 0.900000000372529,
+                "backgroundMs": 0,
+                "componentCallMs": 0.900000000372529,
+                "maxComponentCallMs": 0.900000000372529,
+                "wallTimeMs": 0.900000000372529,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 1,
+                "backgroundMs": 0,
+                "componentCallMs": 1,
+                "maxComponentCallMs": 1,
+                "wallTimeMs": 1,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 0.7999999988824129,
+                "backgroundMs": 0,
+                "componentCallMs": 0.7999999988824129,
+                "maxComponentCallMs": 0.7999999988824129,
+                "wallTimeMs": 0.7999999988824129,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 1,
+                "backgroundMs": 0,
+                "componentCallMs": 1,
+                "maxComponentCallMs": 1,
+                "wallTimeMs": 1,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1,
+            "medianWallTimeMs": 1,
+            "maximumComponentCallMs": 1.5
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 2.599999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 2.599999999627471,
+                "maxComponentCallMs": 2.599999999627471,
+                "wallTimeMs": 2.599999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 1.099999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 1.099999999627471,
+                "maxComponentCallMs": 1.099999999627471,
+                "wallTimeMs": 1.099999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 1.199999999254942,
+                "backgroundMs": 0,
+                "componentCallMs": 1.199999999254942,
+                "maxComponentCallMs": 1.199999999254942,
+                "wallTimeMs": 1.299999998882413,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 1.5,
+                "backgroundMs": 0,
+                "componentCallMs": 1.5,
+                "maxComponentCallMs": 1.5,
+                "wallTimeMs": 1.6000000014901161,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 0.8000000007450581,
+                "backgroundMs": 0,
+                "componentCallMs": 0.8000000007450581,
+                "maxComponentCallMs": 0.8000000007450581,
+                "wallTimeMs": 0.8000000007450581,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.199999999254942,
+            "medianWallTimeMs": 1.299999998882413,
+            "maximumComponentCallMs": 2.599999999627471
+          }
+        },
+        "close-tail": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 1.599999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 1.599999999627471,
+                "maxComponentCallMs": 1.599999999627471,
+                "wallTimeMs": 1.699999999254942,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 1.1000000014901161,
+                "backgroundMs": 0,
+                "componentCallMs": 1.1000000014901161,
+                "maxComponentCallMs": 1.1000000014901161,
+                "wallTimeMs": 1.200000001117587,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 3.300000000745058,
+                "backgroundMs": 0,
+                "componentCallMs": 3.300000000745058,
+                "maxComponentCallMs": 3.300000000745058,
+                "wallTimeMs": 3.300000000745058,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 1.099999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 1.099999999627471,
+                "maxComponentCallMs": 1.099999999627471,
+                "wallTimeMs": 1.099999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 1.400000000372529,
+                "backgroundMs": 0,
+                "componentCallMs": 1.400000000372529,
+                "maxComponentCallMs": 1.400000000372529,
+                "wallTimeMs": 1.5,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.400000000372529,
+            "medianWallTimeMs": 1.5,
+            "maximumComponentCallMs": 3.300000000745058
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 1.700000001117587,
+                "backgroundMs": 0,
+                "componentCallMs": 1.700000001117587,
+                "maxComponentCallMs": 1.700000001117587,
+                "wallTimeMs": 1.700000001117587,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 1.6000000014901161,
+                "backgroundMs": 0,
+                "componentCallMs": 1.6000000014901161,
+                "maxComponentCallMs": 1.6000000014901161,
+                "wallTimeMs": 1.800000000745058,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 1.800000000745058,
+                "backgroundMs": 0,
+                "componentCallMs": 1.800000000745058,
+                "maxComponentCallMs": 1.800000000745058,
+                "wallTimeMs": 1.900000000372529,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 1.099999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 1.099999999627471,
+                "maxComponentCallMs": 1.099999999627471,
+                "wallTimeMs": 1.099999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 1,
+                "backgroundMs": 0,
+                "componentCallMs": 1,
+                "maxComponentCallMs": 1,
+                "wallTimeMs": 1,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.6000000014901161,
+            "medianWallTimeMs": 1.700000001117587,
+            "maximumComponentCallMs": 1.800000000745058
+          }
+        },
+        "reopen-tail": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 34.09999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 34.09999999962747,
+                "maxComponentCallMs": 34.09999999962747,
+                "wallTimeMs": 34.19999999925494,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 22.90000000037253,
+                "backgroundMs": 0,
+                "componentCallMs": 22.90000000037253,
+                "maxComponentCallMs": 22.90000000037253,
+                "wallTimeMs": 23.09999999962747,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 33.5,
+                "backgroundMs": 0,
+                "componentCallMs": 33.5,
+                "maxComponentCallMs": 33.5,
+                "wallTimeMs": 33.59999999962747,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 29.299999998882413,
+                "backgroundMs": 0,
+                "componentCallMs": 29.299999998882413,
+                "maxComponentCallMs": 29.299999998882413,
+                "wallTimeMs": 29.299999998882413,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 39.09999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 39.09999999962747,
+                "maxComponentCallMs": 39.09999999962747,
+                "wallTimeMs": 39.09999999962747,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 33.5,
+            "medianWallTimeMs": 33.59999999962747,
+            "maximumComponentCallMs": 39.09999999962747
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 25.599999997764826,
+                "backgroundMs": 22.799999998882413,
+                "componentCallMs": 48.39999999664724,
+                "maxComponentCallMs": 6.5,
+                "wallTimeMs": 71.10000000149012,
+                "frameCalls": 5
+              },
+              {
+                "run": 2,
+                "drawCallMs": 25.699999999254942,
+                "backgroundMs": 22.89999999664724,
+                "componentCallMs": 48.59999999590218,
+                "maxComponentCallMs": 6.400000000372529,
+                "wallTimeMs": 68.59999999962747,
+                "frameCalls": 5
+              },
+              {
+                "run": 3,
+                "drawCallMs": 26.199999999254942,
+                "backgroundMs": 19.700000001117587,
+                "componentCallMs": 45.90000000037253,
+                "maxComponentCallMs": 6.599999999627471,
+                "wallTimeMs": 91.09999999962747,
+                "frameCalls": 5
+              },
+              {
+                "run": 4,
+                "drawCallMs": 52.79999999888241,
+                "backgroundMs": 42.000000001862645,
+                "componentCallMs": 94.80000000074506,
+                "maxComponentCallMs": 19.799999998882413,
+                "wallTimeMs": 162.19999999925494,
+                "frameCalls": 7
+              },
+              {
+                "run": 5,
+                "drawCallMs": 25.40000000037253,
+                "backgroundMs": 18.999999998137355,
+                "componentCallMs": 44.399999998509884,
+                "maxComponentCallMs": 6.400000000372529,
+                "wallTimeMs": 68.5,
+                "frameCalls": 5
+              }
+            ],
+            "medianComponentCallMs": 48.39999999664724,
+            "medianWallTimeMs": 71.10000000149012,
+            "maximumComponentCallMs": 19.799999998882413
+          }
+        },
+        "closed-correction": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 25.899999998509884,
+                "backgroundMs": 0,
+                "componentCallMs": 25.899999998509884,
+                "maxComponentCallMs": 25.899999998509884,
+                "wallTimeMs": 25.899999998509884,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 19.09999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 19.09999999962747,
+                "maxComponentCallMs": 19.09999999962747,
+                "wallTimeMs": 19.09999999962747,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 27.399999998509884,
+                "backgroundMs": 0,
+                "componentCallMs": 27.399999998509884,
+                "maxComponentCallMs": 27.399999998509884,
+                "wallTimeMs": 27.5,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 78.59999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 78.59999999962747,
+                "maxComponentCallMs": 78.59999999962747,
+                "wallTimeMs": 78.80000000074506,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 18.699999999254942,
+                "backgroundMs": 0,
+                "componentCallMs": 18.699999999254942,
+                "maxComponentCallMs": 18.699999999254942,
+                "wallTimeMs": 18.799999998882413,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 25.899999998509884,
+            "medianWallTimeMs": 25.899999998509884,
+            "maximumComponentCallMs": 78.59999999962747
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 40.30000000074506,
+                "backgroundMs": 70.1999999973923,
+                "componentCallMs": 110.49999999813735,
+                "maxComponentCallMs": 11.099999999627471,
+                "wallTimeMs": 200,
+                "frameCalls": 6
+              },
+              {
+                "run": 2,
+                "drawCallMs": 15.500000001862645,
+                "backgroundMs": 18.399999998509884,
+                "componentCallMs": 33.90000000037253,
+                "maxComponentCallMs": 6.300000000745058,
+                "wallTimeMs": 44.59999999962747,
+                "frameCalls": 3
+              },
+              {
+                "run": 3,
+                "drawCallMs": 24.599999997764826,
+                "backgroundMs": 12.400000000372529,
+                "componentCallMs": 36.999999998137355,
+                "maxComponentCallMs": 6.299999998882413,
+                "wallTimeMs": 45.5,
+                "frameCalls": 4
+              },
+              {
+                "run": 4,
+                "drawCallMs": 59.30000000074506,
+                "backgroundMs": 73.89999999850988,
+                "componentCallMs": 133.19999999925494,
+                "maxComponentCallMs": 15.699999999254942,
+                "wallTimeMs": 262.7000000011176,
+                "frameCalls": 7
+              },
+              {
+                "run": 5,
+                "drawCallMs": 25.39999999664724,
+                "backgroundMs": 13.399999998509884,
+                "componentCallMs": 38.79999999515712,
+                "maxComponentCallMs": 6.400000000372529,
+                "wallTimeMs": 68.69999999925494,
+                "frameCalls": 5
+              }
+            ],
+            "medianComponentCallMs": 38.79999999515712,
+            "medianWallTimeMs": 68.69999999925494,
+            "maximumComponentCallMs": 15.699999999254942
+          }
+        },
+        "remove-closed": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 19.09999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 19.09999999962747,
+                "maxComponentCallMs": 19.09999999962747,
+                "wallTimeMs": 19.200000001117587,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 22.59999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 22.59999999962747,
+                "maxComponentCallMs": 22.59999999962747,
+                "wallTimeMs": 22.59999999962747,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 43.20000000111759,
+                "backgroundMs": 0,
+                "componentCallMs": 43.20000000111759,
+                "maxComponentCallMs": 43.20000000111759,
+                "wallTimeMs": 43.20000000111759,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 23.59999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 23.59999999962747,
+                "maxComponentCallMs": 23.59999999962747,
+                "wallTimeMs": 23.59999999962747,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 28.09999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 28.09999999962747,
+                "maxComponentCallMs": 28.09999999962747,
+                "wallTimeMs": 28.09999999962747,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 23.59999999962747,
+            "medianWallTimeMs": 23.59999999962747,
+            "maximumComponentCallMs": 43.20000000111759
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 26.199999999254942,
+                "backgroundMs": 16.900000002235174,
+                "componentCallMs": 43.100000001490116,
+                "maxComponentCallMs": 9.300000000745058,
+                "wallTimeMs": 77.29999999888241,
+                "frameCalls": 5
+              },
+              {
+                "run": 2,
+                "drawCallMs": 24.199999997392297,
+                "backgroundMs": 12.300000000745058,
+                "componentCallMs": 36.499999998137355,
+                "maxComponentCallMs": 6.299999998882413,
+                "wallTimeMs": 50.29999999888241,
+                "frameCalls": 4
+              },
+              {
+                "run": 3,
+                "drawCallMs": 25.699999999254942,
+                "backgroundMs": 27.5,
+                "componentCallMs": 53.19999999925494,
+                "maxComponentCallMs": 10,
+                "wallTimeMs": 113.19999999925494,
+                "frameCalls": 5
+              },
+              {
+                "run": 4,
+                "drawCallMs": 32.099999997764826,
+                "backgroundMs": 20.200000001117587,
+                "componentCallMs": 52.29999999888241,
+                "maxComponentCallMs": 7.900000000372529,
+                "wallTimeMs": 89.29999999888241,
+                "frameCalls": 5
+              },
+              {
+                "run": 5,
+                "drawCallMs": 39.099999997764826,
+                "backgroundMs": 22.90000000037253,
+                "componentCallMs": 61.999999998137355,
+                "maxComponentCallMs": 10.099999999627471,
+                "wallTimeMs": 90.5,
+                "frameCalls": 6
+              }
+            ],
+            "medianComponentCallMs": 52.29999999888241,
+            "medianWallTimeMs": 89.29999999888241,
+            "maximumComponentCallMs": 10.099999999627471
+          }
+        },
+        "reference": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 33.79999999888241,
+                "backgroundMs": 0,
+                "componentCallMs": 33.79999999888241,
+                "maxComponentCallMs": 33.79999999888241,
+                "wallTimeMs": 33.899999998509884,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 22.299999998882413,
+                "backgroundMs": 0,
+                "componentCallMs": 22.299999998882413,
+                "maxComponentCallMs": 22.299999998882413,
+                "wallTimeMs": 22.5,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 22.90000000037253,
+                "backgroundMs": 0,
+                "componentCallMs": 22.90000000037253,
+                "maxComponentCallMs": 22.90000000037253,
+                "wallTimeMs": 23.09999999962747,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 27.199999999254942,
+                "backgroundMs": 0,
+                "componentCallMs": 27.199999999254942,
+                "maxComponentCallMs": 27.199999999254942,
+                "wallTimeMs": 27.300000000745058,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 69.30000000074506,
+                "backgroundMs": 0,
+                "componentCallMs": 69.30000000074506,
+                "maxComponentCallMs": 69.30000000074506,
+                "wallTimeMs": 69.40000000037253,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 27.199999999254942,
+            "medianWallTimeMs": 27.300000000745058,
+            "maximumComponentCallMs": 69.30000000074506
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 19.499999998137355,
+                "backgroundMs": 12.800000000745058,
+                "componentCallMs": 32.29999999888241,
+                "maxComponentCallMs": 6.599999999627471,
+                "wallTimeMs": 48.59999999962747,
+                "frameCalls": 4
+              },
+              {
+                "run": 2,
+                "drawCallMs": 25.59999999962747,
+                "backgroundMs": 51.20000000111759,
+                "componentCallMs": 76.80000000074506,
+                "maxComponentCallMs": 26.199999999254942,
+                "wallTimeMs": 157.2999999988824,
+                "frameCalls": 5
+              },
+              {
+                "run": 3,
+                "drawCallMs": 24.800000000745058,
+                "backgroundMs": 12.5,
+                "componentCallMs": 37.30000000074506,
+                "maxComponentCallMs": 6.5,
+                "wallTimeMs": 55.69999999925494,
+                "frameCalls": 4
+              },
+              {
+                "run": 4,
+                "drawCallMs": 33.69999999925494,
+                "backgroundMs": 27.199999999254942,
+                "componentCallMs": 60.899999998509884,
+                "maxComponentCallMs": 13,
+                "wallTimeMs": 105.09999999962747,
+                "frameCalls": 5
+              },
+              {
+                "run": 5,
+                "drawCallMs": 30.300000000745058,
+                "backgroundMs": 18.39999999664724,
+                "componentCallMs": 48.6999999973923,
+                "maxComponentCallMs": 10,
+                "wallTimeMs": 95.30000000074506,
+                "frameCalls": 5
+              }
+            ],
+            "medianComponentCallMs": 48.6999999973923,
+            "medianWallTimeMs": 95.30000000074506,
+            "maximumComponentCallMs": 26.199999999254942
+          }
+        },
+        "pan": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 323,
+                "backgroundMs": 0,
+                "componentCallMs": 323,
+                "maxComponentCallMs": 323,
+                "wallTimeMs": 323.09999999962747,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 292.09999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 292.09999999962747,
+                "maxComponentCallMs": 292.09999999962747,
+                "wallTimeMs": 292.09999999962747,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 388.30000000074506,
+                "backgroundMs": 0,
+                "componentCallMs": 388.30000000074506,
+                "maxComponentCallMs": 388.30000000074506,
+                "wallTimeMs": 388.30000000074506,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 217.69999999925494,
+                "backgroundMs": 0,
+                "componentCallMs": 217.69999999925494,
+                "maxComponentCallMs": 217.69999999925494,
+                "wallTimeMs": 217.69999999925494,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 327,
+                "backgroundMs": 0,
+                "componentCallMs": 327,
+                "maxComponentCallMs": 327,
+                "wallTimeMs": 327,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 323,
+            "medianWallTimeMs": 323.09999999962747,
+            "maximumComponentCallMs": 388.30000000074506
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 219.1000000052154,
+                "backgroundMs": 425.3000000026077,
+                "componentCallMs": 644.4000000078231,
+                "maxComponentCallMs": 13.899999998509884,
+                "wallTimeMs": 1067.800000000745,
+                "frameCalls": 33
+              },
+              {
+                "run": 2,
+                "drawCallMs": 295.60000000335276,
+                "backgroundMs": 633.1999999955297,
+                "componentCallMs": 928.7999999988824,
+                "maxComponentCallMs": 22.100000001490116,
+                "wallTimeMs": 1653.9000000003725,
+                "frameCalls": 38
+              },
+              {
+                "run": 3,
+                "drawCallMs": 273.199999993667,
+                "backgroundMs": 584.6999999899417,
+                "componentCallMs": 857.8999999836087,
+                "maxComponentCallMs": 21.800000000745058,
+                "wallTimeMs": 1505.5,
+                "frameCalls": 37
+              },
+              {
+                "run": 4,
+                "drawCallMs": 284.1000000089407,
+                "backgroundMs": 590.399999987334,
+                "componentCallMs": 874.4999999962747,
+                "maxComponentCallMs": 72.59999999962747,
+                "wallTimeMs": 1362,
+                "frameCalls": 31
+              },
+              {
+                "run": 5,
+                "drawCallMs": 243.5000000037253,
+                "backgroundMs": 386.8000000026077,
+                "componentCallMs": 630.300000006333,
+                "maxComponentCallMs": 12.600000001490116,
+                "wallTimeMs": 1082,
+                "frameCalls": 36
+              }
+            ],
+            "medianComponentCallMs": 857.8999999836087,
+            "medianWallTimeMs": 1362,
+            "maximumComponentCallMs": 72.59999999962747
+          }
+        },
+        "restore": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 274,
+                "backgroundMs": 0,
+                "componentCallMs": 274,
+                "maxComponentCallMs": 274,
+                "wallTimeMs": 274.1000000014901,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 215,
+                "backgroundMs": 0,
+                "componentCallMs": 215,
+                "maxComponentCallMs": 215,
+                "wallTimeMs": 215,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 383.19999999925494,
+                "backgroundMs": 0,
+                "componentCallMs": 383.19999999925494,
+                "maxComponentCallMs": 383.19999999925494,
+                "wallTimeMs": 383.19999999925494,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 200.09999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 200.09999999962747,
+                "maxComponentCallMs": 200.09999999962747,
+                "wallTimeMs": 200.19999999925494,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 183.40000000037253,
+                "backgroundMs": 0,
+                "componentCallMs": 183.40000000037253,
+                "maxComponentCallMs": 183.40000000037253,
+                "wallTimeMs": 183.40000000037253,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 215,
+            "medianWallTimeMs": 215,
+            "maximumComponentCallMs": 383.19999999925494
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 187.99999999813735,
+                "backgroundMs": 284.99999999441206,
+                "componentCallMs": 472.9999999925494,
+                "maxComponentCallMs": 10.5,
+                "wallTimeMs": 782.5999999996275,
+                "frameCalls": 29
+              },
+              {
+                "run": 2,
+                "drawCallMs": 223.99999999441206,
+                "backgroundMs": 450.79999998770654,
+                "componentCallMs": 674.7999999821186,
+                "maxComponentCallMs": 17.399999998509884,
+                "wallTimeMs": 1112.199999999255,
+                "frameCalls": 31
+              },
+              {
+                "run": 3,
+                "drawCallMs": 197.89999999850988,
+                "backgroundMs": 354.00000000186265,
+                "componentCallMs": 551.9000000003725,
+                "maxComponentCallMs": 9.700000001117587,
+                "wallTimeMs": 956.1999999992549,
+                "frameCalls": 30
+              },
+              {
+                "run": 4,
+                "drawCallMs": 209.8999999947846,
+                "backgroundMs": 288.4000000078231,
+                "componentCallMs": 498.3000000026077,
+                "maxComponentCallMs": 43,
+                "wallTimeMs": 979.5999999996275,
+                "frameCalls": 27
+              },
+              {
+                "run": 5,
+                "drawCallMs": 177.10000000149012,
+                "backgroundMs": 280.199999993667,
+                "componentCallMs": 457.2999999951571,
+                "maxComponentCallMs": 19.59999999962747,
+                "wallTimeMs": 730.0999999996275,
+                "frameCalls": 25
+              }
+            ],
+            "medianComponentCallMs": 498.3000000026077,
+            "medianWallTimeMs": 956.1999999992549,
+            "maximumComponentCallMs": 43
+          }
+        },
+        "dpr2": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 297.40000000037253,
+                "backgroundMs": 0,
+                "componentCallMs": 297.40000000037253,
+                "maxComponentCallMs": 297.40000000037253,
+                "wallTimeMs": 316.90000000037253,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 262.5,
+                "backgroundMs": 0,
+                "componentCallMs": 262.5,
+                "maxComponentCallMs": 262.5,
+                "wallTimeMs": 262.7000000011176,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 276.5,
+                "backgroundMs": 0,
+                "componentCallMs": 276.5,
+                "maxComponentCallMs": 276.5,
+                "wallTimeMs": 291.19999999925494,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 273.59999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 273.59999999962747,
+                "maxComponentCallMs": 273.59999999962747,
+                "wallTimeMs": 273.59999999962747,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 217.80000000074506,
+                "backgroundMs": 0,
+                "componentCallMs": 217.80000000074506,
+                "maxComponentCallMs": 217.80000000074506,
+                "wallTimeMs": 230.90000000037253,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 273.59999999962747,
+            "medianWallTimeMs": 273.59999999962747,
+            "maximumComponentCallMs": 297.40000000037253
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 175.30000000447035,
+                "backgroundMs": 1037.399999987334,
+                "componentCallMs": 1212.6999999918044,
+                "maxComponentCallMs": 103.79999999888241,
+                "wallTimeMs": 2353.5999999996275,
+                "frameCalls": 16
+              },
+              {
+                "run": 2,
+                "drawCallMs": 134.59999999776483,
+                "backgroundMs": 546.8999999985099,
+                "componentCallMs": 681.4999999962747,
+                "maxComponentCallMs": 16.800000000745058,
+                "wallTimeMs": 1482.5999999996275,
+                "frameCalls": 19
+              },
+              {
+                "run": 3,
+                "drawCallMs": 121.49999999813735,
+                "backgroundMs": 873.0999999884516,
+                "componentCallMs": 994.599999986589,
+                "maxComponentCallMs": 63.69999999925494,
+                "wallTimeMs": 1772.7000000011176,
+                "frameCalls": 16
+              },
+              {
+                "run": 4,
+                "drawCallMs": 169.10000000335276,
+                "backgroundMs": 1113.900000007823,
+                "componentCallMs": 1283.0000000111759,
+                "maxComponentCallMs": 116.80000000074506,
+                "wallTimeMs": 2762.5,
+                "frameCalls": 21
+              },
+              {
+                "run": 5,
+                "drawCallMs": 119.80000000074506,
+                "backgroundMs": 513.6999999973923,
+                "componentCallMs": 633.4999999981374,
+                "maxComponentCallMs": 15.5,
+                "wallTimeMs": 1391.5999999996275,
+                "frameCalls": 17
+              }
+            ],
+            "medianComponentCallMs": 994.599999986589,
+            "medianWallTimeMs": 1772.7000000011176,
+            "maximumComponentCallMs": 116.80000000074506
+          }
+        },
+        "style": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 428.40000000037253,
+                "backgroundMs": 0,
+                "componentCallMs": 428.40000000037253,
+                "maxComponentCallMs": 428.40000000037253,
+                "wallTimeMs": 428.5,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 287.19999999925494,
+                "backgroundMs": 0,
+                "componentCallMs": 287.19999999925494,
+                "maxComponentCallMs": 287.19999999925494,
+                "wallTimeMs": 287.19999999925494,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 306.6000000014901,
+                "backgroundMs": 0,
+                "componentCallMs": 306.6000000014901,
+                "maxComponentCallMs": 306.6000000014901,
+                "wallTimeMs": 306.6000000014901,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 440.40000000037253,
+                "backgroundMs": 0,
+                "componentCallMs": 440.40000000037253,
+                "maxComponentCallMs": 440.40000000037253,
+                "wallTimeMs": 440.40000000037253,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 366.2999999988824,
+                "backgroundMs": 0,
+                "componentCallMs": 366.2999999988824,
+                "maxComponentCallMs": 366.2999999988824,
+                "wallTimeMs": 366.5,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 366.2999999988824,
+            "medianWallTimeMs": 366.5,
+            "maximumComponentCallMs": 440.40000000037253
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 205.90000000968575,
+                "backgroundMs": 1137.800000000745,
+                "componentCallMs": 1343.7000000104308,
+                "maxComponentCallMs": 159.89999999850988,
+                "wallTimeMs": 2706.699999999255,
+                "frameCalls": 22
+              },
+              {
+                "run": 2,
+                "drawCallMs": 120.09999999776483,
+                "backgroundMs": 441.2999999858439,
+                "componentCallMs": 561.3999999836087,
+                "maxComponentCallMs": 13.800000000745058,
+                "wallTimeMs": 1209.199999999255,
+                "frameCalls": 16
+              },
+              {
+                "run": 3,
+                "drawCallMs": 113.29999999701977,
+                "backgroundMs": 509.39999999664724,
+                "componentCallMs": 622.699999993667,
+                "maxComponentCallMs": 12.599999999627471,
+                "wallTimeMs": 1471.699999999255,
+                "frameCalls": 17
+              },
+              {
+                "run": 4,
+                "drawCallMs": 153.59999999590218,
+                "backgroundMs": 642.3999999966472,
+                "componentCallMs": 795.9999999925494,
+                "maxComponentCallMs": 69.40000000037253,
+                "wallTimeMs": 1782.5999999996275,
+                "frameCalls": 19
+              },
+              {
+                "run": 5,
+                "drawCallMs": 114.69999999925494,
+                "backgroundMs": 449.8000000100583,
+                "componentCallMs": 564.5000000093132,
+                "maxComponentCallMs": 23.300000000745058,
+                "wallTimeMs": 1230.5,
+                "frameCalls": 18
+              }
+            ],
+            "medianComponentCallMs": 622.699999993667,
+            "medianWallTimeMs": 1471.699999999255,
+            "maximumComponentCallMs": 159.89999999850988
+          }
+        },
+        "threshold": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 62.59999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 62.59999999962747,
+                "maxComponentCallMs": 62.59999999962747,
+                "wallTimeMs": 62.59999999962747,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 27.699999999254942,
+                "backgroundMs": 0,
+                "componentCallMs": 27.699999999254942,
+                "maxComponentCallMs": 27.699999999254942,
+                "wallTimeMs": 27.699999999254942,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 21.800000000745058,
+                "backgroundMs": 0,
+                "componentCallMs": 21.800000000745058,
+                "maxComponentCallMs": 21.800000000745058,
+                "wallTimeMs": 21.90000000037253,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 16.300000000745058,
+                "backgroundMs": 0,
+                "componentCallMs": 16.300000000745058,
+                "maxComponentCallMs": 16.300000000745058,
+                "wallTimeMs": 16.300000000745058,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 37.59999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 37.59999999962747,
+                "maxComponentCallMs": 37.59999999962747,
+                "wallTimeMs": 37.59999999962747,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 27.699999999254942,
+            "medianWallTimeMs": 27.699999999254942,
+            "maximumComponentCallMs": 62.59999999962747
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 71.29999999888241,
+                "backgroundMs": 0,
+                "componentCallMs": 71.29999999888241,
+                "maxComponentCallMs": 71.29999999888241,
+                "wallTimeMs": 71.39999999850988,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 170.09999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 170.09999999962747,
+                "maxComponentCallMs": 170.09999999962747,
+                "wallTimeMs": 170.2999999988824,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 31.399999998509884,
+                "backgroundMs": 0,
+                "componentCallMs": 31.399999998509884,
+                "maxComponentCallMs": 31.399999998509884,
+                "wallTimeMs": 31.399999998509884,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 43.20000000111759,
+                "backgroundMs": 0,
+                "componentCallMs": 43.20000000111759,
+                "maxComponentCallMs": 43.20000000111759,
+                "wallTimeMs": 43.30000000074506,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 76.59999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 76.59999999962747,
+                "maxComponentCallMs": 76.59999999962747,
+                "wallTimeMs": 76.79999999888241,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 71.29999999888241,
+            "medianWallTimeMs": 71.39999999850988,
+            "maximumComponentCallMs": 170.09999999962747
+          }
+        }
+      }
+    },
+    "perpetual": {
+      "segments": 23850,
+      "runs": 104112,
+      "stages": {
+        "initial": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 764.0999999996275,
+                "backgroundMs": 0,
+                "componentCallMs": 764.0999999996275,
+                "maxComponentCallMs": 764.0999999996275,
+                "wallTimeMs": 769.1999999992549,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 544.2999999988824,
+                "backgroundMs": 0,
+                "componentCallMs": 544.2999999988824,
+                "maxComponentCallMs": 544.2999999988824,
+                "wallTimeMs": 544.2999999988824,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 724.9000000003725,
+                "backgroundMs": 0,
+                "componentCallMs": 724.9000000003725,
+                "maxComponentCallMs": 724.9000000003725,
+                "wallTimeMs": 727.7999999988824,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 754.0999999996275,
+                "backgroundMs": 0,
+                "componentCallMs": 754.0999999996275,
+                "maxComponentCallMs": 754.0999999996275,
+                "wallTimeMs": 754.2999999988824,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 613.8000000007451,
+                "backgroundMs": 0,
+                "componentCallMs": 613.8000000007451,
+                "maxComponentCallMs": 613.8000000007451,
+                "wallTimeMs": 617,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 724.9000000003725,
+            "medianWallTimeMs": 727.7999999988824,
+            "maximumComponentCallMs": 764.0999999996275
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 491.50000000186265,
+                "backgroundMs": 1152.0000000018626,
+                "componentCallMs": 1643.5000000037253,
+                "maxComponentCallMs": 16.300000000745058,
+                "wallTimeMs": 2866.4000000003725,
+                "frameCalls": 71
+              },
+              {
+                "run": 2,
+                "drawCallMs": 517.1999999992549,
+                "backgroundMs": 1081.099999975413,
+                "componentCallMs": 1598.299999974668,
+                "maxComponentCallMs": 25.40000000037253,
+                "wallTimeMs": 2749.7000000011176,
+                "frameCalls": 72
+              },
+              {
+                "run": 3,
+                "drawCallMs": 399.4000000022352,
+                "backgroundMs": 845.0999999847263,
+                "componentCallMs": 1244.4999999869615,
+                "maxComponentCallMs": 19.40000000037253,
+                "wallTimeMs": 2075.9000000003725,
+                "frameCalls": 58
+              },
+              {
+                "run": 4,
+                "drawCallMs": 361.80000000447035,
+                "backgroundMs": 603.2000000011176,
+                "componentCallMs": 965.0000000055879,
+                "maxComponentCallMs": 12.799999998882413,
+                "wallTimeMs": 1546.199999999255,
+                "frameCalls": 56
+              },
+              {
+                "run": 5,
+                "drawCallMs": 328.8999999985099,
+                "backgroundMs": 847.3000000007451,
+                "componentCallMs": 1176.199999999255,
+                "maxComponentCallMs": 17.59999999962747,
+                "wallTimeMs": 1997,
+                "frameCalls": 50
+              }
+            ],
+            "medianComponentCallMs": 1244.4999999869615,
+            "medianWallTimeMs": 2075.9000000003725,
+            "maximumComponentCallMs": 25.40000000037253
+          }
+        },
+        "idle": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 0.599999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 0.599999999627471,
+                "maxComponentCallMs": 0.599999999627471,
+                "wallTimeMs": 0.7999999988824129,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 0.2000000011175871,
+                "backgroundMs": 0,
+                "componentCallMs": 0.2000000011175871,
+                "maxComponentCallMs": 0.2000000011175871,
+                "wallTimeMs": 0.30000000074505806,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 25.300000000745058,
+                "backgroundMs": 0,
+                "componentCallMs": 25.300000000745058,
+                "maxComponentCallMs": 25.300000000745058,
+                "wallTimeMs": 25.40000000037253,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 0.6000000014901161,
+                "backgroundMs": 0,
+                "componentCallMs": 0.6000000014901161,
+                "maxComponentCallMs": 0.6000000014901161,
+                "wallTimeMs": 0.6000000014901161,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 0.40000000037252903,
+                "backgroundMs": 0,
+                "componentCallMs": 0.40000000037252903,
+                "maxComponentCallMs": 0.40000000037252903,
+                "wallTimeMs": 0.40000000037252903,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 0.599999999627471,
+            "medianWallTimeMs": 0.6000000014901161,
+            "maximumComponentCallMs": 25.300000000745058
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 3.099999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 3.099999999627471,
+                "maxComponentCallMs": 3.099999999627471,
+                "wallTimeMs": 3.099999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 0.40000000037252903,
+                "backgroundMs": 0,
+                "componentCallMs": 0.40000000037252903,
+                "maxComponentCallMs": 0.40000000037252903,
+                "wallTimeMs": 0.5,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 0.2999999988824129,
+                "backgroundMs": 0,
+                "componentCallMs": 0.2999999988824129,
+                "maxComponentCallMs": 0.2999999988824129,
+                "wallTimeMs": 0.599999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 0.09999999962747097,
+                "backgroundMs": 0,
+                "componentCallMs": 0.09999999962747097,
+                "maxComponentCallMs": 0.09999999962747097,
+                "wallTimeMs": 0.09999999962747097,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 0.10000000149011612,
+                "backgroundMs": 0,
+                "componentCallMs": 0.10000000149011612,
+                "maxComponentCallMs": 0.10000000149011612,
+                "wallTimeMs": 0.2000000011175871,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 0.2999999988824129,
+            "medianWallTimeMs": 0.5,
+            "maximumComponentCallMs": 3.099999999627471
+          }
+        },
+        "append1": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 3,
+                "backgroundMs": 0,
+                "componentCallMs": 3,
+                "maxComponentCallMs": 3,
+                "wallTimeMs": 3.099999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 1.400000000372529,
+                "backgroundMs": 0,
+                "componentCallMs": 1.400000000372529,
+                "maxComponentCallMs": 1.400000000372529,
+                "wallTimeMs": 1.400000000372529,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 1.5,
+                "backgroundMs": 0,
+                "componentCallMs": 1.5,
+                "maxComponentCallMs": 1.5,
+                "wallTimeMs": 1.6000000014901161,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 1.700000001117587,
+                "backgroundMs": 0,
+                "componentCallMs": 1.700000001117587,
+                "maxComponentCallMs": 1.700000001117587,
+                "wallTimeMs": 1.800000000745058,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 2,
+                "backgroundMs": 0,
+                "componentCallMs": 2,
+                "maxComponentCallMs": 2,
+                "wallTimeMs": 2.200000001117587,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.700000001117587,
+            "medianWallTimeMs": 1.800000000745058,
+            "maximumComponentCallMs": 3
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 2.800000000745058,
+                "backgroundMs": 0,
+                "componentCallMs": 2.800000000745058,
+                "maxComponentCallMs": 2.800000000745058,
+                "wallTimeMs": 3,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 4.799999998882413,
+                "backgroundMs": 0,
+                "componentCallMs": 4.799999998882413,
+                "maxComponentCallMs": 4.799999998882413,
+                "wallTimeMs": 4.799999998882413,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 1.299999998882413,
+                "backgroundMs": 0,
+                "componentCallMs": 1.299999998882413,
+                "maxComponentCallMs": 1.299999998882413,
+                "wallTimeMs": 1.400000000372529,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 1.599999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 1.599999999627471,
+                "maxComponentCallMs": 1.599999999627471,
+                "wallTimeMs": 1.699999999254942,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 1.5,
+                "backgroundMs": 0,
+                "componentCallMs": 1.5,
+                "maxComponentCallMs": 1.5,
+                "wallTimeMs": 1.6000000014901161,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.599999999627471,
+            "medianWallTimeMs": 1.699999999254942,
+            "maximumComponentCallMs": 4.799999998882413
+          }
+        },
+        "append2": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 2.700000001117587,
+                "backgroundMs": 0,
+                "componentCallMs": 2.700000001117587,
+                "maxComponentCallMs": 2.700000001117587,
+                "wallTimeMs": 2.800000000745058,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 1.400000000372529,
+                "backgroundMs": 0,
+                "componentCallMs": 1.400000000372529,
+                "maxComponentCallMs": 1.400000000372529,
+                "wallTimeMs": 1.400000000372529,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 1.299999998882413,
+                "backgroundMs": 0,
+                "componentCallMs": 1.299999998882413,
+                "maxComponentCallMs": 1.299999998882413,
+                "wallTimeMs": 1.5,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 1.8999999985098839,
+                "backgroundMs": 0,
+                "componentCallMs": 1.8999999985098839,
+                "maxComponentCallMs": 1.8999999985098839,
+                "wallTimeMs": 2,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 1.199999999254942,
+                "backgroundMs": 0,
+                "componentCallMs": 1.199999999254942,
+                "maxComponentCallMs": 1.199999999254942,
+                "wallTimeMs": 1.199999999254942,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.400000000372529,
+            "medianWallTimeMs": 1.5,
+            "maximumComponentCallMs": 2.700000001117587
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 1.5,
+                "backgroundMs": 0,
+                "componentCallMs": 1.5,
+                "maxComponentCallMs": 1.5,
+                "wallTimeMs": 1.599999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 4.900000000372529,
+                "backgroundMs": 0,
+                "componentCallMs": 4.900000000372529,
+                "maxComponentCallMs": 4.900000000372529,
+                "wallTimeMs": 5,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 1.599999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 1.599999999627471,
+                "maxComponentCallMs": 1.599999999627471,
+                "wallTimeMs": 1.700000001117587,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 2.300000000745058,
+                "backgroundMs": 0,
+                "componentCallMs": 2.300000000745058,
+                "maxComponentCallMs": 2.300000000745058,
+                "wallTimeMs": 2.599999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 1.5,
+                "backgroundMs": 0,
+                "componentCallMs": 1.5,
+                "maxComponentCallMs": 1.5,
+                "wallTimeMs": 1.599999999627471,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.599999999627471,
+            "medianWallTimeMs": 1.700000001117587,
+            "maximumComponentCallMs": 4.900000000372529
+          }
+        },
+        "append3": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 1.300000000745058,
+                "backgroundMs": 0,
+                "componentCallMs": 1.300000000745058,
+                "maxComponentCallMs": 1.300000000745058,
+                "wallTimeMs": 1.400000000372529,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 1.099999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 1.099999999627471,
+                "maxComponentCallMs": 1.099999999627471,
+                "wallTimeMs": 1.099999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 2.899999998509884,
+                "backgroundMs": 0,
+                "componentCallMs": 2.899999998509884,
+                "maxComponentCallMs": 2.899999998509884,
+                "wallTimeMs": 3,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 1.700000001117587,
+                "backgroundMs": 0,
+                "componentCallMs": 1.700000001117587,
+                "maxComponentCallMs": 1.700000001117587,
+                "wallTimeMs": 1.900000000372529,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 1.199999999254942,
+                "backgroundMs": 0,
+                "componentCallMs": 1.199999999254942,
+                "maxComponentCallMs": 1.199999999254942,
+                "wallTimeMs": 1.199999999254942,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.300000000745058,
+            "medianWallTimeMs": 1.400000000372529,
+            "maximumComponentCallMs": 2.899999998509884
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 1.799999998882413,
+                "backgroundMs": 0,
+                "componentCallMs": 1.799999998882413,
+                "maxComponentCallMs": 1.799999998882413,
+                "wallTimeMs": 2,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 2.399999998509884,
+                "backgroundMs": 0,
+                "componentCallMs": 2.399999998509884,
+                "maxComponentCallMs": 2.399999998509884,
+                "wallTimeMs": 2.399999998509884,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 1,
+                "backgroundMs": 0,
+                "componentCallMs": 1,
+                "maxComponentCallMs": 1,
+                "wallTimeMs": 1.099999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 2.099999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 2.099999999627471,
+                "maxComponentCallMs": 2.099999999627471,
+                "wallTimeMs": 2.300000000745058,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 1,
+                "backgroundMs": 0,
+                "componentCallMs": 1,
+                "maxComponentCallMs": 1,
+                "wallTimeMs": 1,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.799999998882413,
+            "medianWallTimeMs": 2,
+            "maximumComponentCallMs": 2.399999998509884
+          }
+        },
+        "append4": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 1.299999998882413,
+                "backgroundMs": 0,
+                "componentCallMs": 1.299999998882413,
+                "maxComponentCallMs": 1.299999998882413,
+                "wallTimeMs": 1.400000000372529,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 0.900000000372529,
+                "backgroundMs": 0,
+                "componentCallMs": 0.900000000372529,
+                "maxComponentCallMs": 0.900000000372529,
+                "wallTimeMs": 0.900000000372529,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 1.099999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 1.099999999627471,
+                "maxComponentCallMs": 1.099999999627471,
+                "wallTimeMs": 1.099999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 1.199999999254942,
+                "backgroundMs": 0,
+                "componentCallMs": 1.199999999254942,
+                "maxComponentCallMs": 1.199999999254942,
+                "wallTimeMs": 1.199999999254942,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 1.400000000372529,
+                "backgroundMs": 0,
+                "componentCallMs": 1.400000000372529,
+                "maxComponentCallMs": 1.400000000372529,
+                "wallTimeMs": 1.400000000372529,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.199999999254942,
+            "medianWallTimeMs": 1.199999999254942,
+            "maximumComponentCallMs": 1.400000000372529
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 6,
+                "backgroundMs": 0,
+                "componentCallMs": 6,
+                "maxComponentCallMs": 6,
+                "wallTimeMs": 6.099999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 1.900000000372529,
+                "backgroundMs": 0,
+                "componentCallMs": 1.900000000372529,
+                "maxComponentCallMs": 1.900000000372529,
+                "wallTimeMs": 2,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 2.799999998882413,
+                "backgroundMs": 0,
+                "componentCallMs": 2.799999998882413,
+                "maxComponentCallMs": 2.799999998882413,
+                "wallTimeMs": 2.799999998882413,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 1.199999999254942,
+                "backgroundMs": 0,
+                "componentCallMs": 1.199999999254942,
+                "maxComponentCallMs": 1.199999999254942,
+                "wallTimeMs": 1.299999998882413,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 1.599999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 1.599999999627471,
+                "maxComponentCallMs": 1.599999999627471,
+                "wallTimeMs": 1.699999999254942,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.900000000372529,
+            "medianWallTimeMs": 2,
+            "maximumComponentCallMs": 6
+          }
+        },
+        "append5": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 1.299999998882413,
+                "backgroundMs": 0,
+                "componentCallMs": 1.299999998882413,
+                "maxComponentCallMs": 1.299999998882413,
+                "wallTimeMs": 1.299999998882413,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 1.200000001117587,
+                "backgroundMs": 0,
+                "componentCallMs": 1.200000001117587,
+                "maxComponentCallMs": 1.200000001117587,
+                "wallTimeMs": 1.200000001117587,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 1.799999998882413,
+                "backgroundMs": 0,
+                "componentCallMs": 1.799999998882413,
+                "maxComponentCallMs": 1.799999998882413,
+                "wallTimeMs": 1.799999998882413,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 2.099999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 2.099999999627471,
+                "maxComponentCallMs": 2.099999999627471,
+                "wallTimeMs": 2.099999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 1.300000000745058,
+                "backgroundMs": 0,
+                "componentCallMs": 1.300000000745058,
+                "maxComponentCallMs": 1.300000000745058,
+                "wallTimeMs": 1.300000000745058,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.300000000745058,
+            "medianWallTimeMs": 1.300000000745058,
+            "maximumComponentCallMs": 2.099999999627471
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 1.300000000745058,
+                "backgroundMs": 0,
+                "componentCallMs": 1.300000000745058,
+                "maxComponentCallMs": 1.300000000745058,
+                "wallTimeMs": 1.300000000745058,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 1.900000000372529,
+                "backgroundMs": 0,
+                "componentCallMs": 1.900000000372529,
+                "maxComponentCallMs": 1.900000000372529,
+                "wallTimeMs": 2,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 1.300000000745058,
+                "backgroundMs": 0,
+                "componentCallMs": 1.300000000745058,
+                "maxComponentCallMs": 1.300000000745058,
+                "wallTimeMs": 1.300000000745058,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 1.3999999985098839,
+                "backgroundMs": 0,
+                "componentCallMs": 1.3999999985098839,
+                "maxComponentCallMs": 1.3999999985098839,
+                "wallTimeMs": 1.3999999985098839,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 1.300000000745058,
+                "backgroundMs": 0,
+                "componentCallMs": 1.300000000745058,
+                "maxComponentCallMs": 1.300000000745058,
+                "wallTimeMs": 1.300000000745058,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 1.300000000745058,
+            "medianWallTimeMs": 1.300000000745058,
+            "maximumComponentCallMs": 1.900000000372529
+          }
+        },
+        "close-tail": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 1,
+                "backgroundMs": 0,
+                "componentCallMs": 1,
+                "maxComponentCallMs": 1,
+                "wallTimeMs": 1,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 0.599999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 0.599999999627471,
+                "maxComponentCallMs": 0.599999999627471,
+                "wallTimeMs": 0.599999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 0.599999999627471,
+                "backgroundMs": 0,
+                "componentCallMs": 0.599999999627471,
+                "maxComponentCallMs": 0.599999999627471,
+                "wallTimeMs": 0.8000000007450581,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 0.40000000037252903,
+                "backgroundMs": 0,
+                "componentCallMs": 0.40000000037252903,
+                "maxComponentCallMs": 0.40000000037252903,
+                "wallTimeMs": 0.40000000037252903,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 0.8000000007450581,
+                "backgroundMs": 0,
+                "componentCallMs": 0.8000000007450581,
+                "maxComponentCallMs": 0.8000000007450581,
+                "wallTimeMs": 6.099999999627471,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 0.599999999627471,
+            "medianWallTimeMs": 0.8000000007450581,
+            "maximumComponentCallMs": 1
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 0.8999999985098839,
+                "backgroundMs": 0,
+                "componentCallMs": 0.8999999985098839,
+                "maxComponentCallMs": 0.8999999985098839,
+                "wallTimeMs": 1,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 0.5,
+                "backgroundMs": 0,
+                "componentCallMs": 0.5,
+                "maxComponentCallMs": 0.5,
+                "wallTimeMs": 0.599999999627471,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 0.5,
+                "backgroundMs": 0,
+                "componentCallMs": 0.5,
+                "maxComponentCallMs": 0.5,
+                "wallTimeMs": 0.5,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 0.5,
+                "backgroundMs": 0,
+                "componentCallMs": 0.5,
+                "maxComponentCallMs": 0.5,
+                "wallTimeMs": 0.5,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 0.8000000007450581,
+                "backgroundMs": 0,
+                "componentCallMs": 0.8000000007450581,
+                "maxComponentCallMs": 0.8000000007450581,
+                "wallTimeMs": 0.900000000372529,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 0.5,
+            "medianWallTimeMs": 0.599999999627471,
+            "maximumComponentCallMs": 0.8999999985098839
+          }
+        },
+        "reopen-tail": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 134.90000000037253,
+                "backgroundMs": 0,
+                "componentCallMs": 134.90000000037253,
+                "maxComponentCallMs": 134.90000000037253,
+                "wallTimeMs": 134.90000000037253,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 57.29999999888241,
+                "backgroundMs": 0,
+                "componentCallMs": 57.29999999888241,
+                "maxComponentCallMs": 57.29999999888241,
+                "wallTimeMs": 57.29999999888241,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 76.89999999850988,
+                "backgroundMs": 0,
+                "componentCallMs": 76.89999999850988,
+                "maxComponentCallMs": 76.89999999850988,
+                "wallTimeMs": 76.89999999850988,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 87.5,
+                "backgroundMs": 0,
+                "componentCallMs": 87.5,
+                "maxComponentCallMs": 87.5,
+                "wallTimeMs": 87.59999999962747,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 47.90000000037253,
+                "backgroundMs": 0,
+                "componentCallMs": 47.90000000037253,
+                "maxComponentCallMs": 47.90000000037253,
+                "wallTimeMs": 47.90000000037253,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 76.89999999850988,
+            "medianWallTimeMs": 76.89999999850988,
+            "maximumComponentCallMs": 134.90000000037253
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 33.09999999962747,
+                "backgroundMs": 64.20000000111759,
+                "componentCallMs": 97.30000000074506,
+                "maxComponentCallMs": 7.599999999627471,
+                "wallTimeMs": 137.5,
+                "frameCalls": 6
+              },
+              {
+                "run": 2,
+                "drawCallMs": 59.19999999925494,
+                "backgroundMs": 90.30000000074506,
+                "componentCallMs": 149.5,
+                "maxComponentCallMs": 13.5,
+                "wallTimeMs": 268.69999999925494,
+                "frameCalls": 9
+              },
+              {
+                "run": 3,
+                "drawCallMs": 44.000000005587935,
+                "backgroundMs": 51.90000000037253,
+                "componentCallMs": 95.90000000596046,
+                "maxComponentCallMs": 6.300000000745058,
+                "wallTimeMs": 152.30000000074506,
+                "frameCalls": 8
+              },
+              {
+                "run": 4,
+                "drawCallMs": 41.999999998137355,
+                "backgroundMs": 60.5,
+                "componentCallMs": 102.49999999813735,
+                "maxComponentCallMs": 15.399999998509884,
+                "wallTimeMs": 188.40000000037253,
+                "frameCalls": 7
+              },
+              {
+                "run": 5,
+                "drawCallMs": 37.80000000074506,
+                "backgroundMs": 45.899999998509884,
+                "componentCallMs": 83.69999999925494,
+                "maxComponentCallMs": 8.299999998882413,
+                "wallTimeMs": 135.2999999988824,
+                "frameCalls": 7
+              }
+            ],
+            "medianComponentCallMs": 97.30000000074506,
+            "medianWallTimeMs": 152.30000000074506,
+            "maximumComponentCallMs": 15.399999998509884
+          }
+        },
+        "closed-correction": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 55,
+                "backgroundMs": 0,
+                "componentCallMs": 55,
+                "maxComponentCallMs": 55,
+                "wallTimeMs": 55,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 56.59999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 56.59999999962747,
+                "maxComponentCallMs": 56.59999999962747,
+                "wallTimeMs": 56.80000000074506,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 56.80000000074506,
+                "backgroundMs": 0,
+                "componentCallMs": 56.80000000074506,
+                "maxComponentCallMs": 56.80000000074506,
+                "wallTimeMs": 56.90000000037253,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 48.899999998509884,
+                "backgroundMs": 0,
+                "componentCallMs": 48.899999998509884,
+                "maxComponentCallMs": 48.899999998509884,
+                "wallTimeMs": 49.100000001490116,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 49.80000000074506,
+                "backgroundMs": 0,
+                "componentCallMs": 49.80000000074506,
+                "maxComponentCallMs": 49.80000000074506,
+                "wallTimeMs": 49.80000000074506,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 55,
+            "medianWallTimeMs": 55,
+            "maximumComponentCallMs": 56.80000000074506
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 40.400000002235174,
+                "backgroundMs": 77.49999999813735,
+                "componentCallMs": 117.90000000037253,
+                "maxComponentCallMs": 7.599999999627471,
+                "wallTimeMs": 195.80000000074506,
+                "frameCalls": 7
+              },
+              {
+                "run": 2,
+                "drawCallMs": 56.09999999962747,
+                "backgroundMs": 84.3999999947846,
+                "componentCallMs": 140.49999999441206,
+                "maxComponentCallMs": 8.299999998882413,
+                "wallTimeMs": 226,
+                "frameCalls": 9
+              },
+              {
+                "run": 3,
+                "drawCallMs": 38.39999999664724,
+                "backgroundMs": 52.59999999962747,
+                "componentCallMs": 90.99999999627471,
+                "maxComponentCallMs": 6.599999999627471,
+                "wallTimeMs": 150.89999999850988,
+                "frameCalls": 7
+              },
+              {
+                "run": 4,
+                "drawCallMs": 45.30000000074506,
+                "backgroundMs": 56.500000001862645,
+                "componentCallMs": 101.8000000026077,
+                "maxComponentCallMs": 10.099999999627471,
+                "wallTimeMs": 152.2000000011176,
+                "frameCalls": 8
+              },
+              {
+                "run": 5,
+                "drawCallMs": 39.899999998509884,
+                "backgroundMs": 51.20000000670552,
+                "componentCallMs": 91.1000000052154,
+                "maxComponentCallMs": 7.600000001490116,
+                "wallTimeMs": 131.89999999850988,
+                "frameCalls": 7
+              }
+            ],
+            "medianComponentCallMs": 101.8000000026077,
+            "medianWallTimeMs": 152.2000000011176,
+            "maximumComponentCallMs": 10.099999999627471
+          }
+        },
+        "remove-closed": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 74,
+                "backgroundMs": 0,
+                "componentCallMs": 74,
+                "maxComponentCallMs": 74,
+                "wallTimeMs": 74.19999999925494,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 49.69999999925494,
+                "backgroundMs": 0,
+                "componentCallMs": 49.69999999925494,
+                "maxComponentCallMs": 49.69999999925494,
+                "wallTimeMs": 49.90000000037253,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 137.40000000037253,
+                "backgroundMs": 0,
+                "componentCallMs": 137.40000000037253,
+                "maxComponentCallMs": 137.40000000037253,
+                "wallTimeMs": 137.5,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 46.80000000074506,
+                "backgroundMs": 0,
+                "componentCallMs": 46.80000000074506,
+                "maxComponentCallMs": 46.80000000074506,
+                "wallTimeMs": 46.90000000037253,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 54.19999999925494,
+                "backgroundMs": 0,
+                "componentCallMs": 54.19999999925494,
+                "maxComponentCallMs": 54.19999999925494,
+                "wallTimeMs": 54.19999999925494,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 54.19999999925494,
+            "medianWallTimeMs": 54.19999999925494,
+            "maximumComponentCallMs": 137.40000000037253
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 32.09999999962747,
+                "backgroundMs": 43.09999999962747,
+                "componentCallMs": 75.19999999925494,
+                "maxComponentCallMs": 6.599999999627471,
+                "wallTimeMs": 128.2999999988824,
+                "frameCalls": 6
+              },
+              {
+                "run": 2,
+                "drawCallMs": 59.69999999925494,
+                "backgroundMs": 77.40000000223517,
+                "componentCallMs": 137.10000000149012,
+                "maxComponentCallMs": 15.400000000372529,
+                "wallTimeMs": 222.7999999988824,
+                "frameCalls": 8
+              },
+              {
+                "run": 3,
+                "drawCallMs": 68.70000000111759,
+                "backgroundMs": 61.00000000372529,
+                "componentCallMs": 129.70000000484288,
+                "maxComponentCallMs": 42.29999999888241,
+                "wallTimeMs": 188.90000000037253,
+                "frameCalls": 6
+              },
+              {
+                "run": 4,
+                "drawCallMs": 38.40000000037253,
+                "backgroundMs": 36.999999998137355,
+                "componentCallMs": 75.39999999850988,
+                "maxComponentCallMs": 7,
+                "wallTimeMs": 110,
+                "frameCalls": 7
+              },
+              {
+                "run": 5,
+                "drawCallMs": 31.799999998882413,
+                "backgroundMs": 49.20000000484288,
+                "componentCallMs": 81.00000000372529,
+                "maxComponentCallMs": 9.600000001490116,
+                "wallTimeMs": 110.90000000037253,
+                "frameCalls": 6
+              }
+            ],
+            "medianComponentCallMs": 81.00000000372529,
+            "medianWallTimeMs": 128.2999999988824,
+            "maximumComponentCallMs": 42.29999999888241
+          }
+        },
+        "reference": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 50.30000000074506,
+                "backgroundMs": 0,
+                "componentCallMs": 50.30000000074506,
+                "maxComponentCallMs": 50.30000000074506,
+                "wallTimeMs": 50.5,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 68.59999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 68.59999999962747,
+                "maxComponentCallMs": 68.59999999962747,
+                "wallTimeMs": 69.5,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 59.399999998509884,
+                "backgroundMs": 0,
+                "componentCallMs": 59.399999998509884,
+                "maxComponentCallMs": 59.399999998509884,
+                "wallTimeMs": 59.399999998509884,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 46.30000000074506,
+                "backgroundMs": 0,
+                "componentCallMs": 46.30000000074506,
+                "maxComponentCallMs": 46.30000000074506,
+                "wallTimeMs": 46.59999999962747,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 54.19999999925494,
+                "backgroundMs": 0,
+                "componentCallMs": 54.19999999925494,
+                "maxComponentCallMs": 54.19999999925494,
+                "wallTimeMs": 54.19999999925494,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 54.19999999925494,
+            "medianWallTimeMs": 54.19999999925494,
+            "maximumComponentCallMs": 68.59999999962747
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 59.39999999664724,
+                "backgroundMs": 51.69999999925494,
+                "componentCallMs": 111.09999999590218,
+                "maxComponentCallMs": 8.700000001117587,
+                "wallTimeMs": 257,
+                "frameCalls": 10
+              },
+              {
+                "run": 2,
+                "drawCallMs": 53.40000000037253,
+                "backgroundMs": 73.60000000335276,
+                "componentCallMs": 127.00000000372529,
+                "maxComponentCallMs": 11.099999999627471,
+                "wallTimeMs": 284.5,
+                "frameCalls": 8
+              },
+              {
+                "run": 3,
+                "drawCallMs": 38.79999999701977,
+                "backgroundMs": 33.09999999962747,
+                "componentCallMs": 71.89999999664724,
+                "maxComponentCallMs": 6.900000000372529,
+                "wallTimeMs": 137.5,
+                "frameCalls": 7
+              },
+              {
+                "run": 4,
+                "drawCallMs": 46.500000001862645,
+                "backgroundMs": 56.90000000037253,
+                "componentCallMs": 103.40000000223517,
+                "maxComponentCallMs": 8.200000001117587,
+                "wallTimeMs": 204.80000000074506,
+                "frameCalls": 8
+              },
+              {
+                "run": 5,
+                "drawCallMs": 43.100000001490116,
+                "backgroundMs": 43.40000000409782,
+                "componentCallMs": 86.50000000558794,
+                "maxComponentCallMs": 8.400000000372529,
+                "wallTimeMs": 197.59999999962747,
+                "frameCalls": 7
+              }
+            ],
+            "medianComponentCallMs": 103.40000000223517,
+            "medianWallTimeMs": 204.80000000074506,
+            "maximumComponentCallMs": 11.099999999627471
+          }
+        },
+        "pan": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 647.7000000011176,
+                "backgroundMs": 0,
+                "componentCallMs": 647.7000000011176,
+                "maxComponentCallMs": 647.7000000011176,
+                "wallTimeMs": 647.8000000007451,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 955.2000000011176,
+                "backgroundMs": 0,
+                "componentCallMs": 955.2000000011176,
+                "maxComponentCallMs": 955.2000000011176,
+                "wallTimeMs": 955.3000000007451,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 555.0999999996275,
+                "backgroundMs": 0,
+                "componentCallMs": 555.0999999996275,
+                "maxComponentCallMs": 555.0999999996275,
+                "wallTimeMs": 555.0999999996275,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 655,
+                "backgroundMs": 0,
+                "componentCallMs": 655,
+                "maxComponentCallMs": 655,
+                "wallTimeMs": 655,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 870.4000000003725,
+                "backgroundMs": 0,
+                "componentCallMs": 870.4000000003725,
+                "maxComponentCallMs": 870.4000000003725,
+                "wallTimeMs": 870.4000000003725,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 655,
+            "medianWallTimeMs": 655,
+            "maximumComponentCallMs": 955.2000000011176
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 552.5999999884516,
+                "backgroundMs": 1174.5999999977648,
+                "componentCallMs": 1727.1999999862164,
+                "maxComponentCallMs": 19.09999999962747,
+                "wallTimeMs": 2917.2000000011176,
+                "frameCalls": 75
+              },
+              {
+                "run": 2,
+                "drawCallMs": 429.90000000037253,
+                "backgroundMs": 796.0999999921769,
+                "componentCallMs": 1225.9999999925494,
+                "maxComponentCallMs": 15.900000000372529,
+                "wallTimeMs": 2100.199999999255,
+                "frameCalls": 63
+              },
+              {
+                "run": 3,
+                "drawCallMs": 456.3999999985099,
+                "backgroundMs": 988.0000000018626,
+                "componentCallMs": 1444.4000000003725,
+                "maxComponentCallMs": 17.700000001117587,
+                "wallTimeMs": 2519.4000000003725,
+                "frameCalls": 66
+              },
+              {
+                "run": 4,
+                "drawCallMs": 505.8999999985099,
+                "backgroundMs": 1092.2000000104308,
+                "componentCallMs": 1598.1000000089407,
+                "maxComponentCallMs": 27,
+                "wallTimeMs": 2704.0999999996275,
+                "frameCalls": 74
+              },
+              {
+                "run": 5,
+                "drawCallMs": 427.7000000011176,
+                "backgroundMs": 786.2999999951571,
+                "componentCallMs": 1213.9999999962747,
+                "maxComponentCallMs": 18.299999998882413,
+                "wallTimeMs": 2127.199999999255,
+                "frameCalls": 63
+              }
+            ],
+            "medianComponentCallMs": 1444.4000000003725,
+            "medianWallTimeMs": 2519.4000000003725,
+            "maximumComponentCallMs": 27
+          }
+        },
+        "restore": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 548.5,
+                "backgroundMs": 0,
+                "componentCallMs": 548.5,
+                "maxComponentCallMs": 548.5,
+                "wallTimeMs": 548.6999999992549,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 869.6999999992549,
+                "backgroundMs": 0,
+                "componentCallMs": 869.6999999992549,
+                "maxComponentCallMs": 869.6999999992549,
+                "wallTimeMs": 869.8000000007451,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 612.3000000007451,
+                "backgroundMs": 0,
+                "componentCallMs": 612.3000000007451,
+                "maxComponentCallMs": 612.3000000007451,
+                "wallTimeMs": 613.2999999988824,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 633.9000000003725,
+                "backgroundMs": 0,
+                "componentCallMs": 633.9000000003725,
+                "maxComponentCallMs": 633.9000000003725,
+                "wallTimeMs": 633.9000000003725,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 539.7999999988824,
+                "backgroundMs": 0,
+                "componentCallMs": 539.7999999988824,
+                "maxComponentCallMs": 539.7999999988824,
+                "wallTimeMs": 539.7999999988824,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 612.3000000007451,
+            "medianWallTimeMs": 613.2999999988824,
+            "maximumComponentCallMs": 869.6999999992549
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 392.5000000037253,
+                "backgroundMs": 842.2000000122935,
+                "componentCallMs": 1234.7000000160187,
+                "maxComponentCallMs": 13.699999999254942,
+                "wallTimeMs": 1984.7999999988824,
+                "frameCalls": 60
+              },
+              {
+                "run": 2,
+                "drawCallMs": 684.9999999850988,
+                "backgroundMs": 1604.699999993667,
+                "componentCallMs": 2289.699999978766,
+                "maxComponentCallMs": 24.700000001117587,
+                "wallTimeMs": 4124.60000000149,
+                "frameCalls": 86
+              },
+              {
+                "run": 3,
+                "drawCallMs": 460.89999998919666,
+                "backgroundMs": 874.7000000011176,
+                "componentCallMs": 1335.5999999903142,
+                "maxComponentCallMs": 18,
+                "wallTimeMs": 2195,
+                "frameCalls": 70
+              },
+              {
+                "run": 4,
+                "drawCallMs": 378.30000000819564,
+                "backgroundMs": 762.3000000026077,
+                "componentCallMs": 1140.6000000108033,
+                "maxComponentCallMs": 16.700000001117587,
+                "wallTimeMs": 1885.2000000011176,
+                "frameCalls": 58
+              },
+              {
+                "run": 5,
+                "drawCallMs": 431.10000000335276,
+                "backgroundMs": 927.6000000163913,
+                "componentCallMs": 1358.700000019744,
+                "maxComponentCallMs": 50.80000000074506,
+                "wallTimeMs": 2277,
+                "frameCalls": 64
+              }
+            ],
+            "medianComponentCallMs": 1335.5999999903142,
+            "medianWallTimeMs": 2195,
+            "maximumComponentCallMs": 50.80000000074506
+          }
+        },
+        "dpr2": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 580.8000000007451,
+                "backgroundMs": 0,
+                "componentCallMs": 580.8000000007451,
+                "maxComponentCallMs": 580.8000000007451,
+                "wallTimeMs": 594.0999999996275,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 592,
+                "backgroundMs": 0,
+                "componentCallMs": 592,
+                "maxComponentCallMs": 592,
+                "wallTimeMs": 592,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 610,
+                "backgroundMs": 0,
+                "componentCallMs": 610,
+                "maxComponentCallMs": 610,
+                "wallTimeMs": 624.4000000003725,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 635.3999999985099,
+                "backgroundMs": 0,
+                "componentCallMs": 635.3999999985099,
+                "maxComponentCallMs": 635.3999999985099,
+                "wallTimeMs": 635.3999999985099,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 579.6999999992549,
+                "backgroundMs": 0,
+                "componentCallMs": 579.6999999992549,
+                "maxComponentCallMs": 579.6999999992549,
+                "wallTimeMs": 593.0999999996275,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 592,
+            "medianWallTimeMs": 594.0999999996275,
+            "maximumComponentCallMs": 635.3999999985099
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 265.19999999925494,
+                "backgroundMs": 1184.599999986589,
+                "componentCallMs": 1449.799999985844,
+                "maxComponentCallMs": 22,
+                "wallTimeMs": 3292.4000000003725,
+                "frameCalls": 37
+              },
+              {
+                "run": 2,
+                "drawCallMs": 312.70000000298023,
+                "backgroundMs": 1394.4999999869615,
+                "componentCallMs": 1707.1999999899417,
+                "maxComponentCallMs": 22.09999999962747,
+                "wallTimeMs": 3660.800000000745,
+                "frameCalls": 40
+              },
+              {
+                "run": 3,
+                "drawCallMs": 247.19999999180436,
+                "backgroundMs": 1229.3999999854714,
+                "componentCallMs": 1476.5999999772757,
+                "maxComponentCallMs": 14.099999999627471,
+                "wallTimeMs": 3144.5999999996275,
+                "frameCalls": 37
+              },
+              {
+                "run": 4,
+                "drawCallMs": 293.79999999143183,
+                "backgroundMs": 1302.4999999776483,
+                "componentCallMs": 1596.29999996908,
+                "maxComponentCallMs": 22.300000000745058,
+                "wallTimeMs": 3428.5999999996275,
+                "frameCalls": 42
+              },
+              {
+                "run": 5,
+                "drawCallMs": 239.39999999850988,
+                "backgroundMs": 1086.299999974668,
+                "componentCallMs": 1325.699999973178,
+                "maxComponentCallMs": 13.700000001117587,
+                "wallTimeMs": 2853.89999999851,
+                "frameCalls": 36
+              }
+            ],
+            "medianComponentCallMs": 1476.5999999772757,
+            "medianWallTimeMs": 3292.4000000003725,
+            "maximumComponentCallMs": 22.300000000745058
+          }
+        },
+        "style": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 587.5,
+                "backgroundMs": 0,
+                "componentCallMs": 587.5,
+                "maxComponentCallMs": 587.5,
+                "wallTimeMs": 587.5999999996275,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 518.7999999988824,
+                "backgroundMs": 0,
+                "componentCallMs": 518.7999999988824,
+                "maxComponentCallMs": 518.7999999988824,
+                "wallTimeMs": 518.7999999988824,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 591.8000000007451,
+                "backgroundMs": 0,
+                "componentCallMs": 591.8000000007451,
+                "maxComponentCallMs": 591.8000000007451,
+                "wallTimeMs": 591.8000000007451,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 667.5,
+                "backgroundMs": 0,
+                "componentCallMs": 667.5,
+                "maxComponentCallMs": 667.5,
+                "wallTimeMs": 667.5,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 700.7999999988824,
+                "backgroundMs": 0,
+                "componentCallMs": 700.7999999988824,
+                "maxComponentCallMs": 700.7999999988824,
+                "wallTimeMs": 700.7999999988824,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 591.8000000007451,
+            "medianWallTimeMs": 591.8000000007451,
+            "maximumComponentCallMs": 700.7999999988824
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 273.99999999441206,
+                "backgroundMs": 1588.5999999996275,
+                "componentCallMs": 1862.5999999940395,
+                "maxComponentCallMs": 15.299999998882413,
+                "wallTimeMs": 3895.2999999988824,
+                "frameCalls": 41
+              },
+              {
+                "run": 2,
+                "drawCallMs": 232.2999999988824,
+                "backgroundMs": 1198.9000000003725,
+                "componentCallMs": 1431.199999999255,
+                "maxComponentCallMs": 14.599999999627471,
+                "wallTimeMs": 3097.2999999988824,
+                "frameCalls": 35
+              },
+              {
+                "run": 3,
+                "drawCallMs": 294.10000001452863,
+                "backgroundMs": 1335.6999999862164,
+                "componentCallMs": 1629.800000000745,
+                "maxComponentCallMs": 15.5,
+                "wallTimeMs": 3660.300000000745,
+                "frameCalls": 43
+              },
+              {
+                "run": 4,
+                "drawCallMs": 309.80000000447035,
+                "backgroundMs": 1688.3000000081956,
+                "componentCallMs": 1998.100000012666,
+                "maxComponentCallMs": 33,
+                "wallTimeMs": 4295.700000001118,
+                "frameCalls": 40
+              },
+              {
+                "run": 5,
+                "drawCallMs": 246.00000000558794,
+                "backgroundMs": 1162.9999999888241,
+                "componentCallMs": 1408.999999994412,
+                "maxComponentCallMs": 23,
+                "wallTimeMs": 3079.5,
+                "frameCalls": 37
+              }
+            ],
+            "medianComponentCallMs": 1629.800000000745,
+            "medianWallTimeMs": 3660.300000000745,
+            "maximumComponentCallMs": 33
+          }
+        },
+        "threshold": {
+          "Baseline": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 264.19999999925494,
+                "backgroundMs": 0,
+                "componentCallMs": 264.19999999925494,
+                "maxComponentCallMs": 264.19999999925494,
+                "wallTimeMs": 264.30000000074506,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 52.80000000074506,
+                "backgroundMs": 0,
+                "componentCallMs": 52.80000000074506,
+                "maxComponentCallMs": 52.80000000074506,
+                "wallTimeMs": 52.80000000074506,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 161.90000000037253,
+                "backgroundMs": 0,
+                "componentCallMs": 161.90000000037253,
+                "maxComponentCallMs": 161.90000000037253,
+                "wallTimeMs": 162.69999999925494,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 52.69999999925494,
+                "backgroundMs": 0,
+                "componentCallMs": 52.69999999925494,
+                "maxComponentCallMs": 52.69999999925494,
+                "wallTimeMs": 52.80000000074506,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 48.30000000074506,
+                "backgroundMs": 0,
+                "componentCallMs": 48.30000000074506,
+                "maxComponentCallMs": 48.30000000074506,
+                "wallTimeMs": 48.5,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 52.80000000074506,
+            "medianWallTimeMs": 52.80000000074506,
+            "maximumComponentCallMs": 264.19999999925494
+          },
+          "Candidate": {
+            "samples": [
+              {
+                "run": 1,
+                "drawCallMs": 103.59999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 103.59999999962747,
+                "maxComponentCallMs": 103.59999999962747,
+                "wallTimeMs": 103.69999999925494,
+                "frameCalls": 1
+              },
+              {
+                "run": 2,
+                "drawCallMs": 81.90000000037253,
+                "backgroundMs": 0,
+                "componentCallMs": 81.90000000037253,
+                "maxComponentCallMs": 81.90000000037253,
+                "wallTimeMs": 82,
+                "frameCalls": 1
+              },
+              {
+                "run": 3,
+                "drawCallMs": 43.600000001490116,
+                "backgroundMs": 0,
+                "componentCallMs": 43.600000001490116,
+                "maxComponentCallMs": 43.600000001490116,
+                "wallTimeMs": 43.70000000111759,
+                "frameCalls": 1
+              },
+              {
+                "run": 4,
+                "drawCallMs": 67.09999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 67.09999999962747,
+                "maxComponentCallMs": 67.09999999962747,
+                "wallTimeMs": 67.19999999925494,
+                "frameCalls": 1
+              },
+              {
+                "run": 5,
+                "drawCallMs": 43.09999999962747,
+                "backgroundMs": 0,
+                "componentCallMs": 43.09999999962747,
+                "maxComponentCallMs": 43.09999999962747,
+                "wallTimeMs": 43.399999998509884,
+                "frameCalls": 1
+              }
+            ],
+            "medianComponentCallMs": 67.09999999962747,
+            "medianWallTimeMs": 67.19999999925494,
+            "maximumComponentCallMs": 103.59999999962747
+          }
+        }
+      }
+    }
+  }
+}

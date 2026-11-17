@@ -1,0 +1,34 @@
+TAP version 13
+# Subtest: shifted canonical overlap is exact across future rows below old watermark, late cursors, epochs, gaps and decimal sides
+ok 1 - shifted canonical overlap is exact across future rows below old watermark, late cursors, epochs, gaps and decimal sides
+  ---
+  duration_ms: 222.189425
+  type: 'test'
+  ...
+# Subtest: prepared builder publishes exact canonical pages through overlap and restart, and final source changes withhold publication
+ok 2 - prepared builder publishes exact canonical pages through overlap and restart, and final source changes withhold publication
+  ---
+  duration_ms: 270.390691
+  type: 'test'
+  ...
+# Subtest: overlap rejects corrupted prepared bytes and non-overlapping or backward source horizons
+ok 3 - overlap rejects corrupted prepared bytes and non-overlapping or backward source horizons
+  ---
+  duration_ms: 118.599579
+  type: 'test'
+  ...
+# Subtest: an overlap scan beyond its byte budget falls back to the exact FINAL timestamp query
+ok 4 - an overlap scan beyond its byte budget falls back to the exact FINAL timestamp query
+  ---
+  duration_ms: 856.642457
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2977.529846

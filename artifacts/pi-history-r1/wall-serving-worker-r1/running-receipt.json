@@ -1,0 +1,80 @@
+{
+  "container": "fd8809dcf9b4915a8eeac704de509b1bcbd71dce57f9f0bff95ab36c0a4e4098",
+  "startedAt": "2026-11-10T05:19:08.017992294Z",
+  "image": "sha256:3a67ff312a4924289717685b2c7aa53328e80f0dfd3af8e896bd347a3b848d43",
+  "memoryLimit": 402653184,
+  "nanoCpus": 500000000,
+  "readonlyRoot": true,
+  "runtime": {
+    "node": "v22.22.0",
+    "bundleSha256": "b05691524a2eac8ccbb50dddbe729cf015c1adb9e889696f4539d6395d115673"
+  },
+  "controlHealth": {
+    "version": 1,
+    "turn": 68,
+    "busy": true,
+    "counts": {
+      "building": 2,
+      "ready": 0,
+      "failed": 0,
+      "paused": 0
+    },
+    "limits": {
+      "pending": 32,
+      "tracked": 128,
+      "metadataBytes": 1048576
+    },
+    "capacityPaused": false,
+    "consumers": 0,
+    "readers": 0,
+    "pins": 0,
+    "cancelledPins": 0,
+    "consumerLimit": 128,
+    "leaseMs": 15000,
+    "build": "71f62d2efceb8a4ac0fadb9c8a1495bcf1eb4efa"
+  },
+  "protected": [
+    {
+      "name": "/iqterminal-server",
+      "id": "65471260a0cf64311ed57f9b17f1e1daf6de26f073192e292cd07bfb1e193ece",
+      "startedAt": "2026-10-25T10:58:27.590796454Z",
+      "running": true
+    },
+    {
+      "name": "/iqterminal-spot-server",
+      "id": "a4be8d3c68a52de305fd9e2eaa101f50b592b8b108aaf850ddfbc1b2f53428bb",
+      "startedAt": "2026-10-25T10:58:53.322433531Z",
+      "running": true
+    },
+    {
+      "name": "/iqterminal-history-materializer",
+      "id": "d7f786d6c833ee776fc620b8f02209a1e1b1ed5fc3235968272631f3c4cc6a34",
+      "startedAt": "2026-11-06T16:53:52.644213859Z",
+      "running": true
+    },
+    {
+      "name": "/iqterminal-spot-history-materializer",
+      "id": "12489deea96a7d5918661f792e91bd819238696bc62b912308becbaa1bcb1763",
+      "startedAt": "2026-11-06T16:53:52.682114009Z",
+      "running": true
+    },
+    {
+      "name": "/iqterminal-footprint-materializer",
+      "id": "1df92fdc2ce05c4113df9ecd8cb99fbabcf101b3fa04447561116ba929d93698",
+      "startedAt": "2026-11-06T16:53:52.623715016Z",
+      "running": true
+    },
+    {
+      "name": "/iqterminal-spot-footprint-materializer",
+      "id": "8257c2c80dbcae7add967cb4571983e7639c8f96695e3d5d6302ec9b87ef6447",
+      "startedAt": "2026-11-06T16:53:52.693763579Z",
+      "running": true
+    },
+    {
+      "name": "/iqterminal-sql-admission",
+      "id": "625825aa977bcf8e18264ed69e3ed4ca1a9290c5c14416db797a8bf11999032b",
+      "startedAt": "2026-11-06T16:53:48.880958761Z",
+      "running": true
+    }
+  ]
+}

@@ -1,0 +1,190 @@
+TAP version 13
+# Subtest: a busy single hour over 250,000 executions resumes exact canonical cumulative extrema through bounded pages
+ok 1 - a busy single hour over 250,000 executions resumes exact canonical cumulative extrema through bounded pages
+  ---
+  duration_ms: 978.5077
+  type: 'test'
+  ...
+# Subtest: a full last page needs explicit exhaustion, invalid horizons/capacity do not silently drop records
+ok 2 - a full last page needs explicit exhaustion, invalid horizons/capacity do not silently drop records
+  ---
+  duration_ms: 22.904315
+  type: 'test'
+  ...
+# Subtest: interleaved candle timestamps retain each candle exact ID-ordered extrema through restart
+ok 3 - interleaved candle timestamps retain each candle exact ID-ordered extrema through restart
+  ---
+  duration_ms: 3.446993
+  type: 'test'
+  ...
+# Subtest: execution-only preparation has no depth dependency, survives restart, and publishes pinned revisions once
+ok 4 - execution-only preparation has no depth dependency, survives restart, and publishes pinned revisions once
+  ---
+  duration_ms: 213.032741
+  type: 'test'
+  ...
+# Subtest: ordinary polling preserves failed jobs; explicit retry resumes its cursor and success clears the error
+ok 5 - ordinary polling preserves failed jobs; explicit retry resumes its cursor and success clears the error
+  ---
+  duration_ms: 95.527119
+  type: 'test'
+  ...
+# Subtest: default rollover reuses ready slots rather than repeatedly rebuilding full default windows
+ok 6 - default rollover reuses ready slots rather than repeatedly rebuilding full default windows
+  ---
+  duration_ms: 37.679043
+  type: 'test'
+  ...
+# Subtest: current state includes the final old-candle tail before publishing rollover, with exact extrema
+ok 7 - current state includes the final old-candle tail before publishing rollover, with exact extrema
+  ---
+  duration_ms: 74.769049
+  type: 'test'
+  ...
+# Subtest: progressive overlapping polls and defaults share already queued candle work
+ok 8 - progressive overlapping polls and defaults share already queued candle work
+  ---
+  duration_ms: 74.152343
+  type: 'test'
+  ...
+# Subtest: a multi-candle build publishes nearest history first and resumes the older candle at the same horizon
+ok 9 - a multi-candle build publishes nearest history first and resumes the older candle at the same horizon
+  ---
+  duration_ms: 64.505147
+  type: 'test'
+  ...
+# Subtest: completed-job retention cannot evict active current or historical progress
+ok 10 - completed-job retention cannot evict active current or historical progress
+  ---
+  duration_ms: 1349.906488
+  type: 'test'
+  ...
+# Subtest: explicit current bootstrap retry resumes failed progress without resetting healthy builds
+ok 11 - explicit current bootstrap retry resumes failed progress without resetting healthy builds
+  ---
+  duration_ms: 87.926909
+  type: 'test'
+  ...
+# Subtest: current bootstrap never returns an old candle or an unbounded raw replay tail as ready
+ok 12 - current bootstrap never returns an old candle or an unbounded raw replay tail as ready
+  ---
+  duration_ms: 30.128795
+  type: 'test'
+  ...
+# Subtest: current execution preparation uses reserved current SQL admission; history keeps its fair lane
+ok 13 - current execution preparation uses reserved current SQL admission; history keeps its fair lane
+  ---
+  duration_ms: 43.887377
+  type: 'test'
+  ...
+# Subtest: a later execution for the preceding closed candle revises that candle without duplicating the forming bar
+ok 14 - a later execution for the preceding closed candle revises that candle without duplicating the forming bar
+  ---
+  duration_ms: 67.785025
+  type: 'test'
+  ...
+# Subtest: late repair intent survives restart and a full history queue without pausing current preparation
+ok 15 - late repair intent survives restart and a full history queue without pausing current preparation
+  ---
+  duration_ms: 210.668427
+  type: 'test'
+  ...
+# Subtest: a higher-ID old timestamp cannot rewind current bootstrap or prevent its closed-candle repair
+ok 16 - a higher-ID old timestamp cannot rewind current bootstrap or prevent its closed-candle repair
+  ---
+  duration_ms: 45.393432
+  type: 'test'
+  ...
+# Subtest: a correction arriving during a pinned repair schedules the newer horizon without resetting its page cursor
+ok 17 - a correction arriving during a pinned repair schedules the newer horizon without resetting its page cursor
+  ---
+  duration_ms: 122.988845
+  type: 'test'
+  ...
+# Subtest: an older pinned build cannot replace a newer canonical revision, even with a later wall clock
+ok 18 - an older pinned build cannot replace a newer canonical revision, even with a later wall clock
+  ---
+  duration_ms: 26.598704
+  type: 'test'
+  ...
+# Subtest: unchanged canonical content is idempotent across publication clocks and source horizons
+ok 19 - unchanged canonical content is idempotent across publication clocks and source horizons
+  ---
+  duration_ms: 2.152169
+  type: 'test'
+  ...
+# Subtest: canonical history keeps time bounds, while initialized current pages observe bounded ID tails
+ok 20 - canonical history keeps time bounds, while initialized current pages observe bounded ID tails
+  ---
+  duration_ms: 16.540181
+  type: 'test'
+  ...
+# Subtest: atomic checkpoints expose pending and completed corrections without retaining accumulators
+ok 21 - atomic checkpoints expose pending and completed corrections without retaining accumulators
+  ---
+  duration_ms: 47.78983
+  type: 'test'
+  ...
+# Subtest: Retry after a transport failure reads ready history without starting a new materialization
+ok 22 - Retry after a transport failure reads ready history without starting a new materialization
+  ---
+  duration_ms: 22.53434
+  type: 'test'
+  ...
+# Subtest: a completed resumed job re-reads tiles and recomputes missing slots before returning ready
+ok 23 - a completed resumed job re-reads tiles and recomputes missing slots before returning ready
+  ---
+  duration_ms: 67.156762
+  type: 'test'
+  ...
+# Subtest: explicit retry resumes the failed job range rather than re-enqueuing the whole viewport
+ok 24 - explicit retry resumes the failed job range rather than re-enqueuing the whole viewport
+  ---
+  duration_ms: 6.497565
+  type: 'test'
+  ...
+# Subtest: ordinary polling neither resets a healthy build nor retries absent source
+ok 25 - ordinary polling neither resets a healthy build nor retries absent source
+  ---
+  duration_ms: 4.603664
+  type: 'test'
+  ...
+# Subtest: an independently maintained current cursor never suppresses missing historical preparation
+ok 26 - an independently maintained current cursor never suppresses missing historical preparation
+  ---
+  duration_ms: 3.064739
+  type: 'test'
+  ...
+# Subtest: a queued closed-candle revision keeps good tiles visible without claiming ready
+ok 27 - a queued closed-candle revision keeps good tiles visible without claiming ready
+  ---
+  duration_ms: 2.451402
+  type: 'test'
+  ...
+# Subtest: a correction committing around a tile read forces a bounded revision re-read
+ok 28 - a correction committing around a tile read forces a bounded revision re-read
+  ---
+  duration_ms: 1.325807
+  type: 'test'
+  ...
+# Subtest: a completed correction observed through worker health also re-reads stale tiles
+ok 29 - a completed correction observed through worker health also re-reads stale tiles
+  ---
+  duration_ms: 4.797707
+  type: 'test'
+  ...
+# Subtest: failed revision recovery retains good tiles when its worker is unreachable
+ok 30 - failed revision recovery retains good tiles when its worker is unreachable
+  ---
+  duration_ms: 1.685319
+  type: 'test'
+  ...
+1..30
+# tests 30
+# suites 0
+# pass 30
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4223.3315

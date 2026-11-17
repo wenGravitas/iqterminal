@@ -1,0 +1,66 @@
+{
+  "walls": {
+    "spot": {
+      "jobId": "256e630778a80274eec4d1614c01d46c36c2cc3394899c67004ee617a3444aff",
+      "sourceKey": "24c8a4391c1fa82c3f2998b2901555359d741c65957648a86889ee7f6bfc88df",
+      "projectionKey": "d30660bc8d9248ab2dcffed69678380ac6872dfa948ba221992bece2b25fc32a",
+      "request": {
+        "market": "spot",
+        "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794300000000,
+        "to": 1794408600000
+      },
+      "visible": {
+        "from": 1794300300000,
+        "to": 1794408300000
+      },
+      "step": 300000
+    },
+    "perpetual": {
+      "jobId": "b6998237984a78bfb563b766e0df9091fc11fb4cd729b895f27e29c334c03909",
+      "sourceKey": "6e6413da51073c342cff7bd4d8bdfe15598d29d9ebd61f37de7acfdb935113d4",
+      "projectionKey": "1906ce853f918e2d403061ca0e43da1494c4096939595dfa46c6e5109cccf67a",
+      "request": {
+        "market": "perpetual",
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794298500000,
+        "to": 1794408300000
+      },
+      "visible": {
+        "from": 1794299400000,
+        "to": 1794407400000
+      },
+      "step": 900000
+    }
+  },
+  "footprint24": {
+    "end": 1794409200000
+  },
+  "footprint4": {
+    "end": 1794409200000
+  },
+  "worker": {
+    "version": 1,
+    "turn": 39731,
+    "busy": false,
+    "counts": {
+      "building": 0,
+      "ready": 19,
+      "failed": 0,
+      "paused": 0
+    },
+    "limits": {
+      "pending": 32,
+      "tracked": 128,
+      "metadataBytes": 1048576
+    },
+    "capacityPaused": false,
+    "consumers": 0,
+    "readers": 0,
+    "pins": 0,
+    "cancelledPins": 0,
+    "consumerLimit": 128,
+    "leaseMs": 15000,
+    "build": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb"
+  }
+}

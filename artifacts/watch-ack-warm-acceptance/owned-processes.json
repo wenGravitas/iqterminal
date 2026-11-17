@@ -1,0 +1,72 @@
+[
+  {
+    "name": "tunnel-18990",
+    "pid": 59886,
+    "startTicks": "976756",
+    "args": [
+      "ssh",
+      "-N",
+      "-o",
+      "ExitOnForwardFailure=yes",
+      "-o",
+      "ControlMaster=no",
+      "-o",
+      "ControlPath=none",
+      "-o",
+      "Compression=no",
+      "-o",
+      "IPQoS=none",
+      "-o",
+      "ServerAliveInterval=15",
+      "-o",
+      "ServerAliveCountMax=3",
+      "-L",
+      "127.0.0.1:18990:127.0.0.1:18890",
+      "daz@100.124.223.41"
+    ]
+  },
+  {
+    "name": "tunnel-18991",
+    "pid": 59887,
+    "startTicks": "976758",
+    "args": [
+      "ssh",
+      "-N",
+      "-o",
+      "ExitOnForwardFailure=yes",
+      "-o",
+      "ControlMaster=no",
+      "-o",
+      "ControlPath=none",
+      "-o",
+      "Compression=no",
+      "-o",
+      "IPQoS=none",
+      "-o",
+      "ServerAliveInterval=15",
+      "-o",
+      "ServerAliveCountMax=3",
+      "-L",
+      "127.0.0.1:18991:127.0.0.1:18890",
+      "daz@100.124.223.41"
+    ]
+  },
+  {
+    "name": "watch-protocol",
+    "pid": 59888,
+    "startTicks": "976758",
+    "args": [
+      "/home/daz/.nvm/versions/node/v22.23.4/bin/node",
+      "/home/daz/workarea/iqterminal-server-integration-startup-r1/artifacts/watch-ack-warm-acceptance/watch-protocol.mjs"
+    ]
+  },
+  {
+    "name": "preview",
+    "pid": 59889,
+    "startTicks": "976759",
+    "args": [
+      "/home/daz/.nvm/versions/node/v22.23.4/bin/node",
+      "scripts/watch-warm-preview.mjs"
+    ]
+  }
+]

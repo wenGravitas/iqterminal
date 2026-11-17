@@ -1,0 +1,9 @@
+{"phase": "preflight", "root": "/tmp/tmp9x8ogjq2/root", "bytes": 23, "worker": "2222222222222222222222222222222222222222222222222222222222222222", "gateway": "1111111111111111111111111111111111111111111111111111111111111111", "health": {"busy": false, "consumers": 0, "readers": 0, "pins": 0, "counts": {"building": 0}, "build": "same"}, "protected": [{"id": "p", "running": true}]}
+.{"phase": "preflight", "root": "/tmp/tmp7xxxcmrv/root", "bytes": 23, "worker": "2222222222222222222222222222222222222222222222222222222222222222", "gateway": "1111111111111111111111111111111111111111111111111111111111111111", "health": {"busy": false, "consumers": 0, "readers": 0, "pins": 0, "counts": {"building": 0}, "build": "same"}, "protected": [{"id": "p", "running": true}]}
+{"phase": "restored", "files": 1, "bytes": 23, "receipt": "/tmp/tmp7xxxcmrv/receipt.json"}
+{"phase": "resumed", "worker": "2222222222222222222222222222222222222222222222222222222222222222", "gateway": "1111111111111111111111111111111111111111111111111111111111111111", "health": {"busy": false, "consumers": 0, "readers": 0, "pins": 0, "counts": {"building": 0}, "build": "same"}, "protectedUnchanged": true}
+....
+----------------------------------------------------------------------
+Ran 5 tests in 0.149s
+
+OK

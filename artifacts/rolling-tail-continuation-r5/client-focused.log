@@ -1,0 +1,9 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-integration-startup-r1
+
+
+ Test Files  4 passed (4)
+      Tests  108 passed (108)
+   Start at  09:44:55
+   Duration  5.55s (tests 75%, transform 19%, import 5%)
+

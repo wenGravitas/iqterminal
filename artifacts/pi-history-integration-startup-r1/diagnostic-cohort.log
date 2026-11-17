@@ -1,0 +1,10 @@
+{"scenario":"current-only","run":1,"bootstrapMs":4091.5999999996275,"updates":32,"maxReceiveGapMs":1112.0999999996275}
+{"scenario":"concurrent-history","run":1,"bootstrapMs":1519,"updates":19,"maxReceiveGapMs":6034.9000000003725}
+{"scenario":"concurrent-history","run":2,"bootstrapMs":1666.5,"updates":17,"maxReceiveGapMs":4415.699999999255}
+{"scenario":"current-only","run":2,"bootstrapMs":6859.4000000003725,"updates":13,"maxReceiveGapMs":8783.700000001118}
+{"scenario":"current-only","run":3,"bootstrapMs":1801,"updates":31,"maxReceiveGapMs":1214.4000000003725}
+{"scenario":"concurrent-history","run":3,"bootstrapMs":1165.7000000011176,"updates":24,"maxReceiveGapMs":3125.199999999255}
+{"scenario":"concurrent-history","run":4,"bootstrapMs":923.8000000007451,"updates":31,"maxReceiveGapMs":2103}
+{"scenario":"current-only","run":4,"bootstrapMs":2637.800000000745,"updates":29,"maxReceiveGapMs":1518.5}
+{"scenario":"current-only","run":5,"bootstrapMs":2020.9000000003725,"updates":29,"maxReceiveGapMs":2087.5}
+{"scenario":"concurrent-history","run":5,"bootstrapMs":686.2000000011176,"updates":183,"maxReceiveGapMs":3151.0999999996275}

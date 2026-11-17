@@ -1,0 +1,327 @@
+{
+  "handoff-970541b-foot24-r1": [
+    {
+      "run": 1,
+      "completeMs": 6040.199999999255,
+      "historyRequests": 6,
+      "viewIds": 1,
+      "historyLoadAttempts": [
+        {
+          "at": 222.5,
+          "cause": "viewport",
+          "consumer": "footprint:restore-1:footprint:chart-bench:2",
+          "generation": 2,
+          "from": 1793718000000,
+          "to": 1793804400000,
+          "viewKey": "1793718000000:1793804400000:1793718000000:0",
+          "loaded": false,
+          "validated": false
+        }
+      ],
+      "dbReadRows": 1673129,
+      "financialEvidence": {
+        "file": "handoff-970541b-foot24-r1-footprint-24h-1h-1-financial.json",
+        "sha256": "5de6407beff5ab41b9357cc2039f264e2348b68753d1f96e22aa3e94295e931a",
+        "bars": 24,
+        "cells": 530,
+        "scope": "Post-observation canonical financial fields; independently compare to bounded real source, not timing evidence."
+      },
+      "currentState": "live",
+      "currentMessage": "Staging \u00b7 durable execution stream \u00b7 delivery 76ms"
+    },
+    {
+      "run": 2,
+      "completeMs": 8888.199999999255,
+      "historyRequests": 6,
+      "viewIds": 1,
+      "historyLoadAttempts": [
+        {
+          "at": 121.89999999850988,
+          "cause": "viewport",
+          "consumer": "footprint:restore-1:footprint:chart-bench:2",
+          "generation": 2,
+          "from": 1793718000000,
+          "to": 1793804400000,
+          "viewKey": "1793718000000:1793804400000:1793718000000:0",
+          "loaded": false,
+          "validated": false
+        }
+      ],
+      "dbReadRows": 1673129,
+      "financialEvidence": {
+        "file": "handoff-970541b-foot24-r1-footprint-24h-1h-2-financial.json",
+        "sha256": "5de6407beff5ab41b9357cc2039f264e2348b68753d1f96e22aa3e94295e931a",
+        "bars": 24,
+        "cells": 530,
+        "scope": "Post-observation canonical financial fields; independently compare to bounded real source, not timing evidence."
+      },
+      "currentState": "live",
+      "currentMessage": "Staging \u00b7 durable execution stream \u00b7 delivery 42ms"
+    },
+    {
+      "run": 3,
+      "completeMs": 9111.89999999851,
+      "historyRequests": 6,
+      "viewIds": 1,
+      "historyLoadAttempts": [
+        {
+          "at": 530.6999999992549,
+          "cause": "viewport",
+          "consumer": "footprint:restore-1:footprint:chart-bench:2",
+          "generation": 2,
+          "from": 1793718000000,
+          "to": 1793804400000,
+          "viewKey": "1793718000000:1793804400000:1793718000000:0",
+          "loaded": false,
+          "validated": false
+        }
+      ],
+      "dbReadRows": 1673129,
+      "financialEvidence": {
+        "file": "handoff-970541b-foot24-r1-footprint-24h-1h-3-financial.json",
+        "sha256": "5de6407beff5ab41b9357cc2039f264e2348b68753d1f96e22aa3e94295e931a",
+        "bars": 24,
+        "cells": 530,
+        "scope": "Post-observation canonical financial fields; independently compare to bounded real source, not timing evidence."
+      },
+      "currentState": "live",
+      "currentMessage": "Staging \u00b7 durable execution stream \u00b7 delivery 54ms"
+    },
+    {
+      "run": 4,
+      "completeMs": 5083.89999999851,
+      "historyRequests": 6,
+      "viewIds": 1,
+      "historyLoadAttempts": [
+        {
+          "at": 397.1000000014901,
+          "cause": "viewport",
+          "consumer": "footprint:restore-1:footprint:chart-bench:2",
+          "generation": 2,
+          "from": 1793718000000,
+          "to": 1793804400000,
+          "viewKey": "1793718000000:1793804400000:1793718000000:0",
+          "loaded": false,
+          "validated": false
+        }
+      ],
+      "dbReadRows": 1673129,
+      "financialEvidence": {
+        "file": "handoff-970541b-foot24-r1-footprint-24h-1h-4-financial.json",
+        "sha256": "5de6407beff5ab41b9357cc2039f264e2348b68753d1f96e22aa3e94295e931a",
+        "bars": 24,
+        "cells": 530,
+        "scope": "Post-observation canonical financial fields; independently compare to bounded real source, not timing evidence."
+      },
+      "currentState": "live",
+      "currentMessage": "Staging \u00b7 durable execution stream \u00b7 delivery 51ms"
+    },
+    {
+      "run": 5,
+      "completeMs": 5283.699999999255,
+      "historyRequests": 6,
+      "viewIds": 1,
+      "historyLoadAttempts": [
+        {
+          "at": 704.9000000022352,
+          "cause": "viewport",
+          "consumer": "footprint:restore-1:footprint:chart-bench:2",
+          "generation": 2,
+          "from": 1793718000000,
+          "to": 1793804400000,
+          "viewKey": "1793718000000:1793804400000:1793718000000:0",
+          "loaded": false,
+          "validated": false
+        }
+      ],
+      "dbReadRows": 1673129,
+      "financialEvidence": {
+        "file": "handoff-970541b-foot24-r1-footprint-24h-1h-5-financial.json",
+        "sha256": "5de6407beff5ab41b9357cc2039f264e2348b68753d1f96e22aa3e94295e931a",
+        "bars": 24,
+        "cells": 530,
+        "scope": "Post-observation canonical financial fields; independently compare to bounded real source, not timing evidence."
+      },
+      "currentState": "live",
+      "currentMessage": "Staging \u00b7 durable execution stream \u00b7 delivery 51ms"
+    }
+  ],
+  "handoff-970541b-foot4-r1": [
+    {
+      "run": 1,
+      "completeMs": 3179.199999999255,
+      "historyRequests": 1,
+      "viewIds": 1,
+      "historyLoadAttempts": [
+        {
+          "at": 111.20000000298023,
+          "cause": "viewport",
+          "consumer": "footprint:restore-1:footprint:chart-bench:2",
+          "generation": 2,
+          "from": 1793790000000,
+          "to": 1793804400000,
+          "viewKey": "1793790000000:1793804400000:1793790000000:0",
+          "loaded": false,
+          "validated": false
+        }
+      ],
+      "dbReadRows": 374222,
+      "financialEvidence": {
+        "file": "handoff-970541b-foot4-r1-footprint-4h-5m-1-financial.json",
+        "sha256": "77d926a65a674264e8213926e2d6200e49260bb6e3a33582f830fbb2d663b1b4",
+        "bars": 48,
+        "cells": 354,
+        "scope": "Post-observation canonical financial fields; independently compare to bounded real source, not timing evidence."
+      },
+      "currentState": "live",
+      "currentMessage": "Staging \u00b7 retained aggTrades \u00b7 49 bars \u00b7 1 coverage gap(s)"
+    },
+    {
+      "run": 2,
+      "completeMs": 3433,
+      "historyRequests": 1,
+      "viewIds": 1,
+      "historyLoadAttempts": [
+        {
+          "at": 409.69999999925494,
+          "cause": "viewport",
+          "consumer": "footprint:restore-1:footprint:chart-bench:2",
+          "generation": 2,
+          "from": 1793790000000,
+          "to": 1793804400000,
+          "viewKey": "1793790000000:1793804400000:1793790000000:0",
+          "loaded": false,
+          "validated": false
+        }
+      ],
+      "dbReadRows": 374222,
+      "financialEvidence": {
+        "file": "handoff-970541b-foot4-r1-footprint-4h-5m-2-financial.json",
+        "sha256": "77d926a65a674264e8213926e2d6200e49260bb6e3a33582f830fbb2d663b1b4",
+        "bars": 48,
+        "cells": 354,
+        "scope": "Post-observation canonical financial fields; independently compare to bounded real source, not timing evidence."
+      },
+      "currentState": "live",
+      "currentMessage": "Staging \u00b7 durable execution stream \u00b7 delivery 81ms"
+    },
+    {
+      "run": 3,
+      "completeMs": 3370.199999999255,
+      "historyRequests": 1,
+      "viewIds": 1,
+      "historyLoadAttempts": [
+        {
+          "at": 385.4000000022352,
+          "cause": "viewport",
+          "consumer": "footprint:restore-1:footprint:chart-bench:2",
+          "generation": 2,
+          "from": 1793790000000,
+          "to": 1793804400000,
+          "viewKey": "1793790000000:1793804400000:1793790000000:0",
+          "loaded": false,
+          "validated": false
+        }
+      ],
+      "dbReadRows": 374222,
+      "financialEvidence": {
+        "file": "handoff-970541b-foot4-r1-footprint-4h-5m-3-financial.json",
+        "sha256": "77d926a65a674264e8213926e2d6200e49260bb6e3a33582f830fbb2d663b1b4",
+        "bars": 48,
+        "cells": 354,
+        "scope": "Post-observation canonical financial fields; independently compare to bounded real source, not timing evidence."
+      },
+      "currentState": "live",
+      "currentMessage": "Staging \u00b7 durable execution stream \u00b7 delivery 78ms"
+    },
+    {
+      "run": 4,
+      "completeMs": 3030.800000000745,
+      "historyRequests": 1,
+      "viewIds": 1,
+      "historyLoadAttempts": [
+        {
+          "at": 459.30000000074506,
+          "cause": "viewport",
+          "consumer": "footprint:restore-1:footprint:chart-bench:2",
+          "generation": 2,
+          "from": 1793790000000,
+          "to": 1793804400000,
+          "viewKey": "1793790000000:1793804400000:1793790000000:0",
+          "loaded": false,
+          "validated": false
+        }
+      ],
+      "dbReadRows": 374222,
+      "financialEvidence": {
+        "file": "handoff-970541b-foot4-r1-footprint-4h-5m-4-financial.json",
+        "sha256": "77d926a65a674264e8213926e2d6200e49260bb6e3a33582f830fbb2d663b1b4",
+        "bars": 48,
+        "cells": 354,
+        "scope": "Post-observation canonical financial fields; independently compare to bounded real source, not timing evidence."
+      },
+      "currentState": "loading",
+      "currentMessage": "Staging \u00b7 loading retained aggregate executions"
+    },
+    {
+      "run": 5,
+      "completeMs": 3877.300000000745,
+      "historyRequests": 1,
+      "viewIds": 1,
+      "historyLoadAttempts": [
+        {
+          "at": 415.5,
+          "cause": "viewport",
+          "consumer": "footprint:restore-1:footprint:chart-bench:2",
+          "generation": 2,
+          "from": 1793790000000,
+          "to": 1793804400000,
+          "viewKey": "1793790000000:1793804400000:1793790000000:0",
+          "loaded": false,
+          "validated": false
+        }
+      ],
+      "dbReadRows": 374222,
+      "financialEvidence": {
+        "file": "handoff-970541b-foot4-r1-footprint-4h-5m-5-financial.json",
+        "sha256": "77d926a65a674264e8213926e2d6200e49260bb6e3a33582f830fbb2d663b1b4",
+        "bars": 48,
+        "cells": 354,
+        "scope": "Post-observation canonical financial fields; independently compare to bounded real source, not timing evidence."
+      },
+      "currentState": "live",
+      "currentMessage": "Staging \u00b7 durable execution stream \u00b7 delivery 123ms"
+    }
+  ],
+  "handoff-970541b-foot24-quote-reference": [
+    {
+      "run": 1,
+      "completeMs": 11402.89999999851,
+      "historyRequests": 6,
+      "viewIds": 1,
+      "historyLoadAttempts": [
+        {
+          "at": 543.5,
+          "cause": "viewport",
+          "consumer": "footprint:restore-1:footprint:chart-bench:2",
+          "generation": 2,
+          "from": 1793718000000,
+          "to": 1793804400000,
+          "viewKey": "1793718000000:1793804400000:1793718000000:0",
+          "loaded": false,
+          "validated": false
+        }
+      ],
+      "dbReadRows": 1673129,
+      "financialEvidence": {
+        "file": "handoff-970541b-foot24-quote-reference-footprint-24h-1h-1-financial.json",
+        "sha256": "40a50299ba1748eb1876caaa6ec7c23509f3be84be404b7e77db319cf80a3e1b",
+        "bars": 24,
+        "cells": 530,
+        "scope": "Post-observation canonical financial fields; independently compare to bounded real source, not timing evidence."
+      },
+      "currentState": "reconnecting",
+      "currentMessage": "Staging \u00b7 replaying durable cursor \u00b7 delivery 2089ms"
+    }
+  ]
+}

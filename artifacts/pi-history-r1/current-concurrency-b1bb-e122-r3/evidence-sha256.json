@@ -1,0 +1,22 @@
+{
+  "browser-guard-tests.log": "b07f775a2d8139086f4d1d5f0cdf7d23e1101a788556a946f2bd01bb81a88318",
+  "browser-isolation-after.json": "1b912f6da3f7123e27d5154f33df936720c4c16a36ed7e38372f857d6e744277",
+  "concurrent-history-1.png": "dd3de938c7c30d9c05ac90cef75d33a4a51dae837359606cb744b74c2a5b0a87",
+  "concurrent-history-2.png": "c86236891333eeb12ca2fda70a03ce065651e9f1ee8728f908f7bb60888efdb0",
+  "concurrent-history-3.png": "4729d04d76bf5eea5851073dd15dcc517eb70c1524e336293979ec1f5c08e28e",
+  "concurrent-history-4.png": "01aa49a005a81d39f38520c9a776f65e59b29ce4487d8de21d6e9920c592c985",
+  "concurrent-history-5.png": "458f7ab4496e53e55ad248c993f23852453678a942e100b7f17cbc286515c1aa",
+  "current-only-1.png": "7b0421bdb1f6a13bcdec6f78024282a27061408f6d279ceda738420000998dd9",
+  "current-only-2.png": "5deb69fde200fce7135d2c36dbb9402e9b9e3579a151269339df6cb3778743c5",
+  "current-only-3.png": "102da312c46ba3a262db930b8750bad9d96258f63320f63a290c18a47f1ac074",
+  "current-only-4.png": "dbf8636f55a6cbb5f331ce803d36268535267894a78d7f78e1fccb1786af5a5b",
+  "current-only-5.png": "bdb8fc981cd1c2a3fea7df6c68750208fff355261ca810d4dcc81bb1884bb1c4",
+  "executed.mjs": "e95c1d4cf8369f4d76e7b4c676723ab30131940c1b9ba5a88ec5e1283fd93079",
+  "input-windows.json": "cc42dc0783205ca229cc28da43246a0e950cc4d886c55bbe947e70815956587a",
+  "manifest.json": "9f16b18f82b2d77ab85b3e4d5a215c9698a3ca291d0b3074315ca9008415064d",
+  "protected-after.txt": "cb33be9b9c095d04ac4efd45f2732d3b43627d21c84071d89cbc1ac1469d7d47",
+  "report.log": "1b8354731e37073cb26567ff1c24c823710909057e825d135f66c6bc19474ba3",
+  "samples.jsonl": "cd45200237c9796070a0a6f6f9106192e634a85392122397aede47b077e70ab8",
+  "summary.json": "7e777f6dd062c4b7dfc6b82cadade1e083baeed81222b7476ad7ce322abf1263",
+  "validation.json": "e00a277841629950445e26dfd277190bfff2f55eb2e70cbf1da0a53f3801a61f"
+}

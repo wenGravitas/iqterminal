@@ -1,0 +1,299 @@
+{
+  "retained": {
+    "jobId": "940778ce7b1f9265ca019fe787266caddc07da81ad0552d3b0d31e5178e64baa",
+    "request": {
+      "market": "perpetual",
+      "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+      "from": 1794355200000,
+      "to": 1794464342278
+    },
+    "previousQueueEntryAbsent": true,
+    "observationMs": 120044.0387269482,
+    "lastObserved": {
+      "elapsedMs": 118815.6479978934,
+      "state": "building",
+      "preparation": {
+        "id": "940778ce7b1f9265ca019fe787266caddc07da81ad0552d3b0d31e5178e64baa",
+        "request": {
+          "market": "perpetual",
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794355200000,
+          "to": 1794464342278
+        },
+        "lane": "visible",
+        "requestedAt": 1794493123714,
+        "updatedAt": 1794493241369,
+        "lastTurn": 66158,
+        "phase": "projection",
+        "pages": 65,
+        "projectionPages": 61,
+        "parts": 61,
+        "projectionDecodedBytes": 23442899,
+        "projectionCompressedBytes": 1846214,
+        "after": 26470060,
+        "decodedBytes": 125932097,
+        "compressedBytes": 5754656,
+        "leased": true,
+        "paused": false,
+        "canonicalManifestReused": false,
+        "sourceKey": "bc86f69d6aca0912824c95fb017cb3488f45dee9e33340758f5d61e05348b0b8",
+        "coverage": {
+          "status": "partial",
+          "partial": true,
+          "availableFrom": 1793506604584,
+          "confirmedTo": 1794464342278,
+          "gapCount": 2,
+          "gapsTruncated": false,
+          "reason": "Depth continuity gaps are present in the requested range"
+        },
+        "canonicalAvailable": true,
+        "projectionManifestReused": false,
+        "projectionKey": "9146e8c0d0b74327ca3b18e0485a10c8aaa0506b7c67d3efaba2fe260c178e63",
+        "watermark": 26470060,
+        "sourceToken": "1479665eb12e0212c4b8c0a5c2dbc8f920205996382f8b9e29741a704f446bae",
+        "state": "building"
+      },
+      "http": {
+        "status": 200,
+        "ms": 126.6906252130866
+      },
+      "httpError": null
+    },
+    "afterRelease": {
+      "id": "940778ce7b1f9265ca019fe787266caddc07da81ad0552d3b0d31e5178e64baa",
+      "request": {
+        "market": "perpetual",
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794355200000,
+        "to": 1794464342278
+      },
+      "lane": "visible",
+      "requestedAt": 1794493123714,
+      "updatedAt": 1794493243713,
+      "lastTurn": 66162,
+      "phase": "projection",
+      "pages": 65,
+      "projectionPages": 62,
+      "parts": 62,
+      "projectionDecodedBytes": 23541991,
+      "projectionCompressedBytes": 1858154,
+      "after": 26470060,
+      "decodedBytes": 125932097,
+      "compressedBytes": 5754656,
+      "leased": true,
+      "paused": true,
+      "canonicalManifestReused": false,
+      "sourceKey": "bc86f69d6aca0912824c95fb017cb3488f45dee9e33340758f5d61e05348b0b8",
+      "coverage": {
+        "status": "partial",
+        "partial": true,
+        "availableFrom": 1793506604584,
+        "confirmedTo": 1794464342278,
+        "gapCount": 2,
+        "gapsTruncated": false,
+        "reason": "Depth continuity gaps are present in the requested range"
+      },
+      "canonicalAvailable": true,
+      "projectionManifestReused": false,
+      "projectionKey": "9146e8c0d0b74327ca3b18e0485a10c8aaa0506b7c67d3efaba2fe260c178e63",
+      "sourceProof": {
+        "token": "1479665eb12e0212c4b8c0a5c2dbc8f920205996382f8b9e29741a704f446bae",
+        "watermark": 26470060,
+        "from": 1794355200000,
+        "to": 1794464342278,
+        "head": {
+          "cursor": 26470060,
+          "epoch": 1794483004554,
+          "at": 1794493116296
+        },
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1"
+      }
+    },
+    "ready": false,
+    "verification": null,
+    "newRevisionRetry": false,
+    "error": null
+  },
+  "freshNow": {
+    "requested": {
+      "from": 1794385336506,
+      "to": 1794493336506
+    },
+    "observationMs": 60407.701929999996,
+    "marks": {
+      "firstCurrent": null,
+      "firstHistory": null,
+      "completeClaim": null
+    },
+    "status": {
+      "state": "live",
+      "message": "Preparing wall history: canonical; 43 canonical / 0 selected parts.",
+      "coverage": {
+        "from": 1794384000000,
+        "to": 1794493342050,
+        "complete": false,
+        "partial": true,
+        "reason": "Preparing wall history: canonical; 43 canonical / 0 selected parts."
+      },
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "building",
+        "from": 1794384000000,
+        "to": 1794493342050,
+        "rangeComplete": false,
+        "market": "perpetual",
+        "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+        "aggregation": "native",
+        "gaps": [],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "requestComplete": false,
+        "eligibleTo": 1794493328389,
+        "horizonAt": 1794493328388,
+        "loadedThrough": 1794384000000,
+        "preparation": {
+          "id": "9c8c1bfe4918f17698aea43bd8632c19f8c2386769e3e36ae8007300d23c89d5",
+          "phase": "canonical",
+          "state": "building",
+          "pages": 43,
+          "projectionPages": 0,
+          "sourceCoverage": {
+            "availableFrom": 1793506604584,
+            "confirmedTo": 1794493328388,
+            "gapCount": 3,
+            "gapsTruncated": false
+          }
+        },
+        "reason": "Preparing wall history: canonical; 43 canonical / 0 selected parts.",
+        "profileStatus": "backfilling",
+        "midpoint": "71955.15"
+      },
+      "lastConfirmedAt": 1794493394372,
+      "bookScope": {
+        "maxLevelsPerSide": 1000,
+        "bidComplete": false,
+        "askComplete": false,
+        "bidFloor": 73148.6,
+        "askCeiling": 73402.1
+      },
+      "currentSubscribed": true
+    },
+    "paint": {
+      "draws": 236,
+      "rebuilds": 5,
+      "patchProjects": 180,
+      "segments": 16,
+      "visible": 0,
+      "visibleHistorical": 0,
+      "visibleCurrent": 0,
+      "bytes": 3712,
+      "renderMs": 265.9999999925494,
+      "maxRenderMs": 67.19999999552965,
+      "strokes": 0,
+      "lastProjectMs": 0,
+      "lastReferenceMs": 0,
+      "lastPaintMs": 0.10000000149011612,
+      "referenceRebuilds": 4,
+      "referenceSegments": 16,
+      "referenceValueScans": 0,
+      "paintCacheHits": 231,
+      "paintCacheBuilds": 4,
+      "paintStyleVisits": 0,
+      "closedPaintCacheHits": 0,
+      "closedPaintCacheBuilds": 4,
+      "closedPaintCacheAppends": 0,
+      "closedPaintStyleVisits": 0,
+      "settingsNoops": 7,
+      "mappingChecks": 236,
+      "mappingFallbacks": 0,
+      "paintedViewport": {
+        "fromMs": 1794385336506,
+        "toMs": 1794493336506,
+        "minPrice": 71518.575,
+        "maxPrice": 75132.825,
+        "plotWidth": 1756,
+        "plotHeight": 920
+      },
+      "inputRevision": 98,
+      "paintedRevision": 97,
+      "pendingProjectionSegments": 0,
+      "pendingPaintWork": false,
+      "queuedPreparation": false,
+      "preparation": {
+        "slices": 236,
+        "steps": 527,
+        "cancelled": 1,
+        "activeMs": 60.8999999910593,
+        "lastProjectionElapsedMs": 0.19999999552965164,
+        "lastReferenceElapsedMs": 0,
+        "lastSliceMs": 0.29999999701976776,
+        "maxSliceMs": 24,
+        "backgroundMs": 0,
+        "maxBackgroundMs": 0,
+        "yieldMode": "user-visible-post-task",
+        "phase": "idle"
+      },
+      "retainedPaintPaths": 0,
+      "retainedClosedPaintPaths": 0,
+      "retainedClosedPaintSegments": 0,
+      "pendingClosedPaintSegments": 0,
+      "retainedSegments": 16,
+      "openSegments": 16,
+      "retainedReferenceSegments": 0,
+      "referenceExtentValues": 0,
+      "pendingReferenceSegments": 0,
+      "referenceMinimum": 0,
+      "referenceMaximum": 0,
+      "retainedDrawables": 0,
+      "p95RenderMs": 3.6999999955296516,
+      "mounted": true,
+      "archiveSegments": 0,
+      "directSegments": 16,
+      "valueRuns": 16,
+      "archiveValueRuns": 0,
+      "directValueRuns": 16,
+      "valueHistoryLimited": false,
+      "episodeHistoryLimited": false
+    },
+    "error": null
+  },
+  "postflightJobs": [
+    {
+      "id": "940778ce7b1f9265ca019fe787266caddc07da81ad0552d3b0d31e5178e64baa",
+      "request": {
+        "market": "perpetual",
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794355200000,
+        "to": 1794464342278
+      },
+      "phase": "projection",
+      "pages": 65,
+      "projectionPages": 63,
+      "paused": true,
+      "failed": null,
+      "sourceKey": "bc86f69d6aca0912824c95fb017cb3488f45dee9e33340758f5d61e05348b0b8",
+      "projectionKey": "9146e8c0d0b74327ca3b18e0485a10c8aaa0506b7c67d3efaba2fe260c178e63",
+      "leased": true
+    },
+    {
+      "id": "9c8c1bfe4918f17698aea43bd8632c19f8c2386769e3e36ae8007300d23c89d5",
+      "request": {
+        "market": "perpetual",
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794384000000,
+        "to": 1794493328389
+      },
+      "phase": "canonical",
+      "pages": 45,
+      "projectionPages": 0,
+      "paused": true,
+      "failed": null,
+      "sourceKey": "1921a2a4669bcc75990cd65ba47dd3305b62c2148483609288dfeb3a4f071924",
+      "projectionKey": null,
+      "leased": true
+    }
+  ],
+  "classification": "PENDING for both stated ranges; not absent source or failed preparation"
+}

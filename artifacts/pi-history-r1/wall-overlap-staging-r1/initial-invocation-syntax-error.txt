@@ -1,0 +1,4 @@
+  File "<stdin>", line 10
+    env={**os.environ,**values,'CH_URL':'http://127.0.0.1:18790','CH_USER':'iqterminal','IQ_WALL_OVERLAP_VERIFY':'1','IQ_'fd3b2d6897f14bb41732239e3ab7f10835be75d2'_COMMIT':'fd3b2d6897f14bb41732239e3ab7f10835be75d2'}
+                                                                                                                         ^
+SyntaxError: ':' expected after dictionary key

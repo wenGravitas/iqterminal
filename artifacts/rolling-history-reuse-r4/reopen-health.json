@@ -1,0 +1,107 @@
+{
+  "utc": 1794561000.5422902,
+  "gateway": {
+    "enabled": true,
+    "build": "f1fb0d696312a6019f9194edba61a2dc225bc6c3",
+    "metrics": {
+      "requests": 719,
+      "rejected": 0,
+      "bytes": 4167178,
+      "serializeMs": 175.88180399957056,
+      "legacyHeatmap": 0,
+      "legacyFootprint": 0,
+      "closedTileReads": 0,
+      "manifests": 0,
+      "orderWallPages": 352,
+      "peakRss": 176054272,
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4,
+      "rss": 162893824
+    },
+    "wallProjectionEncoding": {
+      "active": 0,
+      "limit": 3,
+      "cacheEntries": 8,
+      "cacheBytes": 2905767
+    },
+    "materializer": {
+      "version": 1,
+      "head": {
+        "cursor": 27137685,
+        "at": 1794561000039,
+        "epoch": 1794545330548
+      },
+      "live": {
+        "cursor": 27137685,
+        "at": 1794561000039,
+        "from": 1794561000000,
+        "widths": [
+          10,
+          25,
+          50,
+          100,
+          250,
+          1000
+        ]
+      },
+      "archive": {
+        "pinned": {
+          "pages": 1,
+          "processed": 14,
+          "cursor": 27137670,
+          "lag": 0,
+          "caughtUp": true
+        },
+        "current": [
+          {
+            "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+            "lane": "pinned",
+            "pages": 1,
+            "processed": 14,
+            "cursor": 27137670,
+            "lag": 0,
+            "caughtUp": true
+          },
+          {
+            "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+            "lane": "pinned",
+            "pages": 1,
+            "processed": 15,
+            "cursor": 23241778,
+            "lag": 0,
+            "caughtUp": true
+          }
+        ],
+        "custom": [],
+        "customWorker": "perpetual-materializer"
+      },
+      "metrics": {
+        "startedAt": 1793984035129,
+        "lastPoll": 1794561000970,
+        "lastPersist": 1794560703295,
+        "records": 5654738,
+        "closedBuckets": 11538,
+        "liveLagMs": 0,
+        "derivedBytes": 1186061590,
+        "freeBytes": 185773096960,
+        "paused": false,
+        "error": "",
+        "pages": 219788,
+        "pageMs": 9137855.787671514,
+        "accumulateMs": 6407495.712945165,
+        "persistMs": 925654.5925641697,
+        "peakRss": 615284736,
+        "sourceHeadAgeMs": 1106,
+        "liveAgeMs": 1106,
+        "rss": 495886336
+      },
+      "backlog": []
+    },
+    "sqlAdmission": {
+      "enabled": false
+    }
+  },
+  "gatewayMs": 800.9479379979894
+}

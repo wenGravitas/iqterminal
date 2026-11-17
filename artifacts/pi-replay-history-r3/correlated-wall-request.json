@@ -1,0 +1,289 @@
+{
+  "proxy": [
+    {
+      "kind": "startup-proxy",
+      "id": "3e387344-fbee-4ee0-a6c1-13be345546c0",
+      "event": "arrival",
+      "ms": 0.0564820000436157,
+      "path": "/market-data/v2/history/walls/projection-batch",
+      "counts": {
+        "active": 0,
+        "historicalActive": 0,
+        "currentActive": 0,
+        "nativeActive": 0,
+        "bulkActive": 0,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 168.558591,
+      "dropped": 0
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "3e387344-fbee-4ee0-a6c1-13be345546c0",
+      "event": "admitted",
+      "ms": 0.23937099997419864,
+      "path": "/market-data/v2/history/walls/projection-batch",
+      "counts": {
+        "active": 1,
+        "historicalActive": 1,
+        "currentActive": 0,
+        "nativeActive": 0,
+        "bulkActive": 1,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 168.558591,
+      "dropped": 0
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "3e387344-fbee-4ee0-a6c1-13be345546c0",
+      "event": "proxy-start",
+      "ms": 0.38533399999141693,
+      "path": "/v2/history/walls/projection-batch",
+      "counts": {
+        "active": 1,
+        "historicalActive": 1,
+        "currentActive": 0,
+        "nativeActive": 0,
+        "bulkActive": 1,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 168.558591,
+      "dropped": 0
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "3e387344-fbee-4ee0-a6c1-13be345546c0",
+      "event": "upstream-request",
+      "ms": 0.9143349999794737,
+      "path": "/v2/history/walls/projection-batch",
+      "counts": {
+        "active": 1,
+        "historicalActive": 1,
+        "currentActive": 0,
+        "nativeActive": 0,
+        "bulkActive": 1,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 168.558591,
+      "dropped": 0,
+      "reusedSocket": true
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "3e387344-fbee-4ee0-a6c1-13be345546c0",
+      "event": "socket-assigned",
+      "ms": 0.9910939999390393,
+      "path": "/v2/history/walls/projection-batch",
+      "counts": {
+        "active": 1,
+        "historicalActive": 1,
+        "currentActive": 0,
+        "nativeActive": 0,
+        "bulkActive": 1,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 168.558591,
+      "dropped": 0,
+      "connecting": false,
+      "reusedSocket": true
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "3e387344-fbee-4ee0-a6c1-13be345546c0",
+      "event": "upstream-request-finish",
+      "ms": 1.401465000002645,
+      "path": "/v2/history/walls/projection-batch",
+      "counts": {
+        "active": 1,
+        "historicalActive": 1,
+        "currentActive": 0,
+        "nativeActive": 0,
+        "bulkActive": 1,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 168.558591,
+      "dropped": 0
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "3e387344-fbee-4ee0-a6c1-13be345546c0",
+      "event": "upstream-headers",
+      "ms": 512.0724530000007,
+      "path": "/v2/history/walls/projection-batch",
+      "counts": {
+        "active": 1,
+        "historicalActive": 1,
+        "currentActive": 0,
+        "nativeActive": 0,
+        "bulkActive": 1,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 168.558591,
+      "dropped": 0,
+      "status": 200,
+      "queueMs": 0.9,
+      "headerMs": 511.05
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "3e387344-fbee-4ee0-a6c1-13be345546c0",
+      "event": "upstream-response-end",
+      "ms": 612.1052490000147,
+      "path": "/v2/history/walls/projection-batch",
+      "counts": {
+        "active": 1,
+        "historicalActive": 1,
+        "currentActive": 0,
+        "nativeActive": 0,
+        "bulkActive": 1,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 168.558591,
+      "dropped": 0
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "3e387344-fbee-4ee0-a6c1-13be345546c0",
+      "event": "upstream-close",
+      "ms": 612.3686570000136,
+      "path": "/v2/history/walls/projection-batch",
+      "counts": {
+        "active": 1,
+        "historicalActive": 1,
+        "currentActive": 0,
+        "nativeActive": 0,
+        "bulkActive": 1,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 168.558591,
+      "dropped": 0
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "3e387344-fbee-4ee0-a6c1-13be345546c0",
+      "event": "response-finish",
+      "ms": 612.5942489999579,
+      "path": "/v2/history/walls/projection-batch",
+      "counts": {
+        "active": 1,
+        "historicalActive": 1,
+        "currentActive": 0,
+        "nativeActive": 0,
+        "bulkActive": 1,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 168.558591,
+      "dropped": 0,
+      "status": 200
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "3e387344-fbee-4ee0-a6c1-13be345546c0",
+      "event": "response-close",
+      "ms": 612.7132869999623,
+      "path": "/v2/history/walls/projection-batch",
+      "counts": {
+        "active": 0,
+        "historicalActive": 0,
+        "currentActive": 0,
+        "nativeActive": 0,
+        "bulkActive": 0,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 168.558591,
+      "dropped": 0,
+      "finished": true,
+      "status": 200
+    }
+  ],
+  "gateway": [
+    {
+      "kind": "startup-gateway",
+      "id": "3e387344-fbee-4ee0-a6c1-13be345546c0",
+      "event": "arrival",
+      "ms": 0.005396999418735504,
+      "path": "/v2/history/walls/projection-batch",
+      "counts": {
+        "active": 1,
+        "history": 1,
+        "reservedCurrent": 1,
+        "limit": 4
+      },
+      "eventLoopMaxMs": 68.878335,
+      "dropped": 0
+    },
+    {
+      "kind": "startup-gateway",
+      "id": "3e387344-fbee-4ee0-a6c1-13be345546c0",
+      "event": "admitted",
+      "ms": 0.10009700059890747,
+      "path": "/v2/history/walls/projection-batch",
+      "counts": {
+        "active": 2,
+        "history": 2,
+        "reservedCurrent": 1,
+        "limit": 4
+      },
+      "eventLoopMaxMs": 68.878335,
+      "dropped": 0,
+      "managed": true,
+      "operationId": "12c66846-74a3-46d0-83cd-ce2676204cfc"
+    },
+    {
+      "kind": "startup-gateway",
+      "id": "3e387344-fbee-4ee0-a6c1-13be345546c0",
+      "event": "response-finish",
+      "ms": 215.27520000189543,
+      "path": "/v2/history/walls/projection-batch",
+      "counts": {
+        "active": 2,
+        "history": 2,
+        "reservedCurrent": 1,
+        "limit": 4
+      },
+      "eventLoopMaxMs": 68.878335,
+      "dropped": 0,
+      "status": 200
+    },
+    {
+      "kind": "startup-gateway",
+      "id": "3e387344-fbee-4ee0-a6c1-13be345546c0",
+      "event": "response-close",
+      "ms": 215.79089900106192,
+      "path": "/v2/history/walls/projection-batch",
+      "counts": {
+        "active": 1,
+        "history": 1,
+        "reservedCurrent": 1,
+        "limit": 4
+      },
+      "eventLoopMaxMs": 68.878335,
+      "dropped": 0,
+      "finished": true,
+      "status": 200
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+
+> iqterminal-server@0.1.0 test:wall-snapshot /home/daz/workarea/iqterminal-server-perf-history
+> python3 tests/wall-derived-snapshot-drill.test.py
+
+{"phase": "preflight", "root": "/tmp/tmpbfobh1vo/root", "bytes": 23, "worker": "2222222222222222222222222222222222222222222222222222222222222222", "gateway": "1111111111111111111111111111111111111111111111111111111111111111", "health": {"busy": false, "consumers": 0, "readers": 0, "pins": 0, "counts": {"building": 0}, "build": "same"}, "protected": [{"id": "p", "running": true}]}
+.{"phase": "preflight", "root": "/tmp/tmpyad8oe5_/root", "bytes": 23, "worker": "2222222222222222222222222222222222222222222222222222222222222222", "gateway": "1111111111111111111111111111111111111111111111111111111111111111", "health": {"busy": false, "consumers": 0, "readers": 0, "pins": 0, "counts": {"building": 0}, "build": "same"}, "protected": [{"id": "p", "running": true}]}
+{"phase": "restored", "files": 1, "bytes": 23, "receipt": "/tmp/tmpyad8oe5_/receipt.json"}
+{"phase": "resumed", "worker": "2222222222222222222222222222222222222222222222222222222222222222", "gateway": "1111111111111111111111111111111111111111111111111111111111111111", "health": {"busy": false, "consumers": 0, "readers": 0, "pins": 0, "counts": {"building": 0}, "build": "same"}, "protectedUnchanged": true}
+....
+----------------------------------------------------------------------
+Ran 5 tests in 0.017s
+
+OK

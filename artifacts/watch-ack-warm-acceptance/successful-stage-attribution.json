@@ -1,0 +1,650 @@
+[
+  {
+    "phase": "parent",
+    "request": {
+      "path": "projection-batch",
+      "startFromActionMs": 37386.343994140625,
+      "headersMs": 1021.548,
+      "endMs": 3463.114,
+      "endFromActionMs": 40849.4580078125,
+      "status": 200,
+      "terminalEvent": "complete",
+      "requestId": "db18e1d5-bc00-4a8a-b85e-c7329abda41b",
+      "serverTiming": "preparedread;dur=205.62, db;dur=0, proxyqueue;dur=1.04, proxyheader;dur=1018.12"
+    },
+    "gateway": [
+      {
+        "kind": "startup-gateway",
+        "id": "db18e1d5-bc00-4a8a-b85e-c7329abda41b",
+        "event": "arrival",
+        "ms": 0.005482999986270443,
+        "path": "/v2/history/walls/projection-batch",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "db18e1d5-bc00-4a8a-b85e-c7329abda41b",
+        "event": "admitted",
+        "ms": 0.08539399999426678,
+        "path": "/v2/history/walls/projection-batch",
+        "counts": {
+          "active": 1,
+          "history": 1,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "managed": true,
+        "operationId": "7ad3ad17-167f-49d7-ae9b-11379266779d"
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "db18e1d5-bc00-4a8a-b85e-c7329abda41b",
+        "event": "response-finish",
+        "ms": 206.01617899999837,
+        "path": "/v2/history/walls/projection-batch",
+        "counts": {
+          "active": 1,
+          "history": 1,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "status": 200
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "db18e1d5-bc00-4a8a-b85e-c7329abda41b",
+        "event": "response-close",
+        "ms": 206.3985569999786,
+        "path": "/v2/history/walls/projection-batch",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "finished": true,
+        "status": 200
+      }
+    ]
+  },
+  {
+    "phase": "parent",
+    "request": {
+      "path": "discover",
+      "startFromActionMs": 2718.800048828125,
+      "headersMs": 3130.872,
+      "endMs": 3163.042,
+      "endFromActionMs": 5881.842041015625,
+      "status": 200,
+      "terminalEvent": "complete",
+      "requestId": "4385edae-ddd5-4c53-9e66-19cdf383fa86",
+      "serverTiming": "admission;dur=0, db;dur=130.09, sqlqueue;dur=125.33, dbdecode;dur=0.02, project;dur=0.00, serialize;dur=0.36, total;dur=168.45, proxyqueue;dur=906.19, proxyheader;dur=2217.00"
+    },
+    "gateway": [
+      {
+        "kind": "startup-gateway",
+        "id": "4385edae-ddd5-4c53-9e66-19cdf383fa86",
+        "event": "arrival",
+        "ms": 0.002425000013317913,
+        "path": "/v2/history/walls/discover",
+        "counts": {
+          "active": 2,
+          "history": 2,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 20.856831,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "4385edae-ddd5-4c53-9e66-19cdf383fa86",
+        "event": "admitted",
+        "ms": 0.10054600000148639,
+        "path": "/v2/history/walls/discover",
+        "counts": {
+          "active": 3,
+          "history": 3,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 20.856831,
+        "dropped": 0,
+        "managed": true,
+        "operationId": "b512a239-7da1-4cfd-a750-6a282e5db193"
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "4385edae-ddd5-4c53-9e66-19cdf383fa86",
+        "event": "response-finish",
+        "ms": 168.71993900000234,
+        "path": "/v2/history/walls/discover",
+        "counts": {
+          "active": 2,
+          "history": 2,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 20.856831,
+        "dropped": 0,
+        "status": 200
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "4385edae-ddd5-4c53-9e66-19cdf383fa86",
+        "event": "response-close",
+        "ms": 168.75763800001005,
+        "path": "/v2/history/walls/discover",
+        "counts": {
+          "active": 1,
+          "history": 1,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 20.856831,
+        "dropped": 0,
+        "finished": true,
+        "status": 200
+      }
+    ]
+  },
+  {
+    "phase": "extension-1",
+    "request": {
+      "path": "discover",
+      "startFromActionMs": 1808.673828125,
+      "headersMs": 2535.8,
+      "endMs": 2548.298,
+      "endFromActionMs": 4356.971923828125,
+      "status": 200,
+      "terminalEvent": "complete",
+      "requestId": "ea182419-167a-4cc1-a130-e3e01b1318e0",
+      "serverTiming": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.48, total;dur=4.45, proxyqueue;dur=4.61, proxyheader;dur=2519.83"
+    },
+    "gateway": [
+      {
+        "kind": "startup-gateway",
+        "id": "ea182419-167a-4cc1-a130-e3e01b1318e0",
+        "event": "arrival",
+        "ms": 0.014261000033002347,
+        "path": "/v2/history/walls/discover",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "ea182419-167a-4cc1-a130-e3e01b1318e0",
+        "event": "admitted",
+        "ms": 0.24995300004957244,
+        "path": "/v2/history/walls/discover",
+        "counts": {
+          "active": 1,
+          "history": 1,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "managed": true,
+        "operationId": "0ee7faba-2df6-4ff2-86b4-186b32b47481"
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "ea182419-167a-4cc1-a130-e3e01b1318e0",
+        "event": "response-finish",
+        "ms": 5.087987000006251,
+        "path": "/v2/history/walls/discover",
+        "counts": {
+          "active": 1,
+          "history": 1,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "status": 200
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "ea182419-167a-4cc1-a130-e3e01b1318e0",
+        "event": "response-close",
+        "ms": 5.168898000032641,
+        "path": "/v2/history/walls/discover",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "finished": true,
+        "status": 200
+      }
+    ]
+  },
+  {
+    "phase": "extension-1",
+    "request": {
+      "path": "source",
+      "startFromActionMs": 8869.577880859375,
+      "headersMs": 1902.71,
+      "endMs": 1940.768,
+      "endFromActionMs": 10810.345947265625,
+      "status": 200,
+      "terminalEvent": "failed",
+      "requestId": "c7960657-002a-4b98-a5cd-7ee4afb14a95",
+      "serverTiming": "admission;dur=0, db;dur=417.30, sqlqueue;dur=275.27, dbdecode;dur=0.32, project;dur=0.00, serialize;dur=0.48, total;dur=419.17, proxyqueue;dur=1.38, proxyheader;dur=1897.33"
+    },
+    "gateway": [
+      {
+        "kind": "startup-gateway",
+        "id": "c7960657-002a-4b98-a5cd-7ee4afb14a95",
+        "event": "arrival",
+        "ms": 0.013199999986682087,
+        "path": "/v2/history/walls/source",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "c7960657-002a-4b98-a5cd-7ee4afb14a95",
+        "event": "admitted",
+        "ms": 0.22229299996979535,
+        "path": "/v2/history/walls/source",
+        "counts": {
+          "active": 1,
+          "history": 1,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "managed": true,
+        "operationId": "5c6a2552-f09a-4789-8f6e-978de182efe7"
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "c7960657-002a-4b98-a5cd-7ee4afb14a95",
+        "event": "response-finish",
+        "ms": 419.5841430000146,
+        "path": "/v2/history/walls/source",
+        "counts": {
+          "active": 1,
+          "history": 1,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "status": 200
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "c7960657-002a-4b98-a5cd-7ee4afb14a95",
+        "event": "response-close",
+        "ms": 419.61341900000116,
+        "path": "/v2/history/walls/source",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "finished": true,
+        "status": 200
+      }
+    ]
+  },
+  {
+    "phase": "extension-2",
+    "request": {
+      "path": "discover",
+      "startFromActionMs": 2146.9990234375,
+      "headersMs": 6319.852,
+      "endMs": 6394.876,
+      "endFromActionMs": 8541.875,
+      "status": 200,
+      "terminalEvent": "complete",
+      "requestId": "e8e92cde-d584-40fd-a5e7-1c6e47afa547",
+      "serverTiming": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=1.08, total;dur=8.56, proxyqueue;dur=0.82, proxyheader;dur=6301.67"
+    },
+    "gateway": [
+      {
+        "kind": "startup-gateway",
+        "id": "e8e92cde-d584-40fd-a5e7-1c6e47afa547",
+        "event": "arrival",
+        "ms": 0.01786800002446398,
+        "path": "/v2/history/walls/discover",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "e8e92cde-d584-40fd-a5e7-1c6e47afa547",
+        "event": "admitted",
+        "ms": 0.29279600002337247,
+        "path": "/v2/history/walls/discover",
+        "counts": {
+          "active": 1,
+          "history": 1,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "managed": true,
+        "operationId": "836d0650-e45e-4a60-b03c-4a0676213b45"
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "e8e92cde-d584-40fd-a5e7-1c6e47afa547",
+        "event": "response-finish",
+        "ms": 9.602351000008639,
+        "path": "/v2/history/walls/discover",
+        "counts": {
+          "active": 1,
+          "history": 1,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "status": 200
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "e8e92cde-d584-40fd-a5e7-1c6e47afa547",
+        "event": "response-close",
+        "ms": 9.761245000001509,
+        "path": "/v2/history/walls/discover",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "finished": true,
+        "status": 200
+      }
+    ]
+  },
+  {
+    "phase": "extension-2",
+    "request": {
+      "path": "source",
+      "startFromActionMs": 14398.702880859375,
+      "headersMs": 3152.286,
+      "endMs": 3196.121,
+      "endFromActionMs": 17594.823974609375,
+      "status": 200,
+      "terminalEvent": "complete",
+      "requestId": "2779f143-6f59-45af-ba45-fd92a3338c84",
+      "serverTiming": "admission;dur=0, db;dur=334.53, sqlqueue;dur=191.88, dbdecode;dur=0.58, project;dur=0.00, serialize;dur=0.55, total;dur=336.84, proxyqueue;dur=1.39, proxyheader;dur=3123.67"
+    },
+    "gateway": [
+      {
+        "kind": "startup-gateway",
+        "id": "2779f143-6f59-45af-ba45-fd92a3338c84",
+        "event": "arrival",
+        "ms": 0.008674999990034848,
+        "path": "/v2/history/walls/source",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "2779f143-6f59-45af-ba45-fd92a3338c84",
+        "event": "admitted",
+        "ms": 0.16282099997624755,
+        "path": "/v2/history/walls/source",
+        "counts": {
+          "active": 1,
+          "history": 1,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "managed": true,
+        "operationId": "0721c6c0-9589-42e7-a910-8945ed0cffda"
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "2779f143-6f59-45af-ba45-fd92a3338c84",
+        "event": "response-finish",
+        "ms": 337.2452950000297,
+        "path": "/v2/history/walls/source",
+        "counts": {
+          "active": 1,
+          "history": 1,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "status": 200
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "2779f143-6f59-45af-ba45-fd92a3338c84",
+        "event": "response-close",
+        "ms": 337.29336599999806,
+        "path": "/v2/history/walls/source",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "finished": true,
+        "status": 200
+      }
+    ]
+  },
+  {
+    "phase": "reopen",
+    "request": {
+      "path": "discover",
+      "startFromActionMs": 7125.326904296875,
+      "headersMs": 926.047,
+      "endMs": 3316.308,
+      "endFromActionMs": 10441.635009765625,
+      "status": 200,
+      "terminalEvent": "failed",
+      "requestId": "cfd486a6-d855-4a7d-9146-32f2ef2ece4b",
+      "serverTiming": "admission;dur=0, db;dur=149.06, sqlqueue;dur=20.04, dbdecode;dur=0.32, project;dur=0.00, serialize;dur=32.07, total;dur=200.16, proxyqueue;dur=1.35, proxyheader;dur=907.47"
+    },
+    "gateway": [
+      {
+        "kind": "startup-gateway",
+        "id": "cfd486a6-d855-4a7d-9146-32f2ef2ece4b",
+        "event": "arrival",
+        "ms": 0.004596999962814152,
+        "path": "/v2/history/walls/discover",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "cfd486a6-d855-4a7d-9146-32f2ef2ece4b",
+        "event": "admitted",
+        "ms": 0.09629299998050556,
+        "path": "/v2/history/walls/discover",
+        "counts": {
+          "active": 1,
+          "history": 1,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "managed": true,
+        "operationId": "f4838841-4a0c-4761-8927-72a2f10220a1"
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "cfd486a6-d855-4a7d-9146-32f2ef2ece4b",
+        "event": "response-finish",
+        "ms": 200.53853399999207,
+        "path": "/v2/history/walls/discover",
+        "counts": {
+          "active": 1,
+          "history": 1,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "status": 200
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "cfd486a6-d855-4a7d-9146-32f2ef2ece4b",
+        "event": "response-close",
+        "ms": 200.59147799998755,
+        "path": "/v2/history/walls/discover",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "finished": true,
+        "status": 200
+      }
+    ]
+  },
+  {
+    "phase": "reopen",
+    "request": {
+      "path": "reader",
+      "startFromActionMs": 11472.764892578125,
+      "headersMs": 1507.553,
+      "endMs": 1552.76,
+      "endFromActionMs": 13025.52490234375,
+      "status": 200,
+      "terminalEvent": "failed",
+      "requestId": "98dd4039-36cd-4a35-9261-5089c861e4a9",
+      "serverTiming": "readercontrol;dur=21.89, proxyqueue;dur=2.32, proxyheader;dur=1496.72"
+    },
+    "gateway": [
+      {
+        "kind": "startup-gateway",
+        "id": "98dd4039-36cd-4a35-9261-5089c861e4a9",
+        "event": "arrival",
+        "ms": 0.003275000024586916,
+        "path": "/v2/history/walls/reader",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "98dd4039-36cd-4a35-9261-5089c861e4a9",
+        "event": "admitted",
+        "ms": 0.06960200000321493,
+        "path": "/v2/history/walls/reader",
+        "counts": {
+          "active": 2,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "managed": true,
+        "operationId": "44667613-e6c8-42a0-9f50-b8f4f01bafaa"
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "98dd4039-36cd-4a35-9261-5089c861e4a9",
+        "event": "response-finish",
+        "ms": 22.13495600002352,
+        "path": "/v2/history/walls/reader",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "status": 200
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "98dd4039-36cd-4a35-9261-5089c861e4a9",
+        "event": "response-close",
+        "ms": 22.17606500000693,
+        "path": "/v2/history/walls/reader",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 37.126143,
+        "dropped": 0,
+        "finished": true,
+        "status": 200
+      }
+    ]
+  }
+]

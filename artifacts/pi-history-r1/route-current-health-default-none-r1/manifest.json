@@ -1,0 +1,13 @@
+{
+  "apiBuild": "e122f9d8d3995d5b6b907a1519cd6b2f639fa751",
+  "routes": "Five fresh default/none alternating pairs; temporary18881, explicit independent TCP SSH, compression off, no connection sharing",
+  "scriptSha256": "5404e4dc08a977cffef8808892775b4b1ed5bf0d5751ffbe7c1d689b2eb25625",
+  "exitCode": 0,
+  "healthBuildValidated": true,
+  "unchangedTransports": [
+    549996,
+    550014
+  ],
+  "currentScriptSetting": "Inherited default QoS remains unchanged; no live tunnel restarted",
+  "scope": "Current-health header/receipt diagnostic, no browser/exchange connection, historical workload or paint gate."
+}

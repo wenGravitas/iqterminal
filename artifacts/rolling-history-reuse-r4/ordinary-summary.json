@@ -1,0 +1,145 @@
+{
+  "scope": "Finite ordinary initial/reopen cohort. Initial cold browser target required preparation; reopen uses completed client prefix and separately prepares the newer range. Neither is an empty-client/already-ready-full-server latency certification.",
+  "transitions": [
+    {
+      "utc": "2026-11-13T09:01:07.604Z",
+      "phase": "initial",
+      "observerElapsedMs": 11458.722342000001,
+      "documentPhaseMs": 8693,
+      "job": "e0b20c741d2111f3365a16fc6e52cca2f349a2db3ccd70728baa2ffdff6eeb99",
+      "requestComplete": false,
+      "loadedThrough": 1794451500000,
+      "requestedTo": 1794560465222,
+      "eligibleTo": 1794560458243,
+      "state": "building"
+    },
+    {
+      "utc": "2026-11-13T09:05:11.250Z",
+      "phase": "initial",
+      "observerElapsedMs": 255100.532281,
+      "documentPhaseMs": 252339,
+      "job": null,
+      "requestComplete": false,
+      "loadedThrough": 1794451500000,
+      "requestedTo": 1794560465222,
+      "eligibleTo": 1794560458243,
+      "state": "loading"
+    },
+    {
+      "utc": "2026-11-13T09:05:31.256Z",
+      "phase": "initial",
+      "observerElapsedMs": 275106.68882599997,
+      "documentPhaseMs": 272366.200000003,
+      "job": null,
+      "requestComplete": true,
+      "loadedThrough": 1794560458242,
+      "requestedTo": 1794560465222,
+      "eligibleTo": 1794560458243,
+      "state": "partial"
+    },
+    {
+      "utc": "2026-11-13T09:06:09.803Z",
+      "phase": "reopen",
+      "observerElapsedMs": 1622.7257399999653,
+      "documentPhaseMs": 1375.7999999970198,
+      "job": null,
+      "requestComplete": false,
+      "loadedThrough": 1794451500000,
+      "requestedTo": 1794560768711,
+      "eligibleTo": 1794560458243,
+      "state": "loading"
+    },
+    {
+      "utc": "2026-11-13T09:06:12.059Z",
+      "phase": "reopen",
+      "observerElapsedMs": 3878.8803779999726,
+      "documentPhaseMs": 3689.199999999255,
+      "job": "91084ab45a86e4085ad335b3a3ef9ad3b8d4f192231f1fcfcd8976d6b7edfb73",
+      "requestComplete": false,
+      "loadedThrough": 1794451500000,
+      "requestedTo": 1794560768711,
+      "eligibleTo": 1794560762372,
+      "state": "building"
+    },
+    {
+      "utc": "2026-11-13T09:06:18.719Z",
+      "phase": "reopen",
+      "observerElapsedMs": 10538.020182000007,
+      "documentPhaseMs": 10448.0,
+      "job": "91084ab45a86e4085ad335b3a3ef9ad3b8d4f192231f1fcfcd8976d6b7edfb73",
+      "requestComplete": false,
+      "loadedThrough": 1794560458242,
+      "requestedTo": 1794560768711,
+      "eligibleTo": 1794560762372,
+      "state": "building"
+    },
+    {
+      "utc": "2026-11-13T09:10:45.946Z",
+      "phase": "reopen",
+      "observerElapsedMs": 277765.870959,
+      "documentPhaseMs": 277564.299999997,
+      "job": "e7534e1798dab7d5038c97203e9e7b325bc18033c1d12df93335c69b540fe609",
+      "requestComplete": false,
+      "loadedThrough": 1794560762371,
+      "requestedTo": 1794560769801,
+      "eligibleTo": 1794560762372,
+      "state": "building"
+    }
+  ],
+  "remainingTailPreparation": {
+    "readyEligibleTo": 1794560762372,
+    "nextTargetTo": 1794560769801,
+    "extensionMs": 7429,
+    "originalReopenRequestedTo": 1794560768711,
+    "normalRequestEndAdvanceMs": 1090,
+    "browserDelivery": "All105 parts of the eligible prepared projection received; final whole-view validation switched to the advanced request before a requestComplete snapshot. Pending at five-minute cap. Exact UI trigger for the millisecond end advance was not separately instrumented."
+  },
+  "errors": {
+    "count": 128,
+    "kinds": {
+      "net::ERR_ABORTED": 128
+    },
+    "scope": "128 ERR_ABORTED discovery request events preserved; individual cancellation attribution not established by this harness. No page errors or durable stream resets/errors observed."
+  },
+  "cleanup": {
+    "subscriptions": 0,
+    "groups": 0,
+    "historyJobs": 0,
+    "historyActiveJobs": 0,
+    "historyConsumers": 0,
+    "warmBuilds": 0,
+    "warmReplayJobs": 0,
+    "warmReplayConsumers": 0,
+    "warmEntries": 2,
+    "warmBytes": 9110845,
+    "warmSegments": 80101,
+    "warmRuns": 375200,
+    "readerControl": {
+      "submitted": 14,
+      "coalesced": 0,
+      "cancelled": 0,
+      "completed": 14,
+      "failed": 0,
+      "peakActive": 1,
+      "queueMs": 1351.8999999985099,
+      "runMs": 7805.599999997765,
+      "active": 0,
+      "queued": 0
+    }
+  },
+  "executionStreams": [
+    {
+      "id": 3,
+      "executionMessages": 1017,
+      "confirmedAcks": 1016,
+      "firstConfirmed": 3519758827,
+      "lastConfirmed": 3519768344,
+      "maxCompleteMessageGapMs": 4172.199999999255,
+      "maxEncodedMessageBytes": 110746,
+      "errors": [],
+      "closes": [],
+      "resets": []
+    }
+  ],
+  "maxSampledHeapBytes": 274764724
+}

@@ -1,0 +1,9 @@
+{"cycle":0,"firstMs":4281.60000000149,"completeMs":11254.39999999851,"projectors":0,"workerHeap":[25881392],"paintFailure":null}
+{"cycle":1,"firstMs":1485.3999999985099,"completeMs":9843.699999999255,"projectors":0,"workerHeap":[48916008],"paintFailure":null}
+{"cycle":2,"firstMs":1370.3999999985099,"completeMs":11084.89999999851,"projectors":0,"workerHeap":[51519208],"paintFailure":null}
+{"cycle":3,"firstMs":3686.60000000149,"completeMs":7949.199999999255,"projectors":0,"workerHeap":[49655840],"paintFailure":null}
+{"cycle":4,"firstMs":956.2000000029802,"completeMs":10290.800000000745,"projectors":0,"workerHeap":[49505644],"paintFailure":null}
+{"cycle":5,"firstMs":772.3000000007451,"completeMs":null,"projectors":0,"workerHeap":[49996536],"paintFailure":"TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."}
+{"cycle":6,"firstMs":1781.199999999255,"completeMs":8838.60000000149,"projectors":0,"workerHeap":[51571220],"paintFailure":null}
+{"cycle":7,"firstMs":811.4000000022352,"completeMs":10273,"projectors":0,"workerHeap":[49581672],"paintFailure":null}
+{"cycle":8,"firstMs":356.20000000298023,"completeMs":11835.900000002235,"projectors":0,"workerHeap":[50289844],"paintFailure":null}

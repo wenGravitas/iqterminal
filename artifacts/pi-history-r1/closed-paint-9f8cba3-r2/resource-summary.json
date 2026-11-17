@@ -1,0 +1,24 @@
+{
+  "scope": "Sampled owned process-tree RSS/Swap, not unique physical memory or application heap plateau. Shared Chromium pages may appear in several RSS values. Sampling excludes some startup/input preparation; no whole-run peak claim. Driver and two reference/candidate primitives are both included.",
+  "samples": 97,
+  "sampledElapsedSeconds": 196.88438839100127,
+  "peakOwnedRssSumKb": 4109404,
+  "peakOwnedSwapSumKb": 795328,
+  "parentPid": 775696,
+  "peakParentRssKb": 925864,
+  "firstHost": {
+    "MemAvailable": "2143972 kB",
+    "SwapTotal": "33094924 kB",
+    "SwapFree": "31680436 kB"
+  },
+  "lastHost": {
+    "MemAvailable": "1426796 kB",
+    "SwapTotal": "33094924 kB",
+    "SwapFree": "28854388 kB"
+  },
+  "end": {
+    "ended": true,
+    "parentStillSame": false,
+    "elapsedSeconds": 198.90752645100292
+  }
+}

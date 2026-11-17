@@ -1,0 +1,9 @@
+{
+  "seconds": 180,
+  "endedUtc": "2026-11-16T13:46:04.770Z",
+  "lanes": 3,
+  "intervalMs": 5000,
+  "deadlineMs": 12000,
+  "lateMarkerMs": 4000,
+  "observer": "one persistent SSH control session; no overlapping request per lane"
+}

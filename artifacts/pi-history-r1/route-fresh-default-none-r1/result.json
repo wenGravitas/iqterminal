@@ -1,0 +1,10 @@
+{
+  "samples": 10,
+  "cleanup": {
+    "temporarySshPid": 705846,
+    "exitCode": 0,
+    "exitSignal": null,
+    "portStillListening": false
+  },
+  "scope": "Five alternating fresh TCP route pairs; both QoS variants use new independent SSH per sample. Canonical part hashes independently checked; request phases use client monotonic time. HTTP compressed body length excludes SSH/Tailscale overhead. Validation overlaps inclusive elapsed; not additive. This is one batch, not30h chart loading acceptance, live-confirmation continuity or production change. No persistent SSH settings changed. All failed samples retained; timestamps are client-local."
+}

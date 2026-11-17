@@ -1,0 +1,11 @@
+file:///home/daz/workarea/iqterminal-perf-history/scripts/pi-history-bench.mjs:23
+if(process.env.IQ_BENCH_BUILD)try{execFileSync('git',['cat-file','-e',process.env.IQ_BENCH_BUILD+'^{commit}'],{stdio:'ignore'});}catch{throw Error('IQ_BENCH_BUILD is not a known local source commit; verify/fetch the deployed identity before opening a browser');}
+                                                                                                                                             ^
+
+Error: IQ_BENCH_BUILD is not a known local source commit; verify/fetch the deployed identity before opening a browser
+    at file:///home/daz/workarea/iqterminal-perf-history/scripts/pi-history-bench.mjs:23:142
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.23.4

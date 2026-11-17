@@ -1,0 +1,38 @@
+{
+  "scope": "Read-only existing transport snapshot; no ping/probe/configuration change during loading",
+  "monotonic": 17865.485156137,
+  "sshConfig": {
+    "hostname": "100.124.223.41",
+    "port": "22"
+  },
+  "connections": [
+    {
+      "socket": "ESTAB      0      0               100.110.77.55:56658          100.124.223.41:22    users:((\"ssh\",pid=188916,fd=3))",
+      "tcp": "\t cubic wscale:8,7 rto:880 rtt:297.996/103.623 ato:40 mss:1228 pmtu:1280 rcvmss:1200 advmss:1228 cwnd:8 ssthresh:7 bytes_sent:97274 bytes_retrans:2665 bytes_acked:94610 bytes_received:15944015 segs_out:5640 segs_in:11351 data_segs_out:730 data_segs_in:10664 send 263735bps lastsnd:10464 lastrcv:10240 lastack:10240 pacing_rate 316480bps delivery_rate 136480bps delivered:693 app_limited busy:310284ms retrans:0/38 rcv_rtt:304.5 rcv_space:556660 rcv_ssthresh:3268608 minrtt:189.48 rcv_ooopack:271 snd_wnd:524288                          "
+    },
+    {
+      "socket": "ESTAB      0      0               100.110.77.55:48508          100.124.223.41:22    users:((\"ssh\",pid=188974,fd=3))",
+      "tcp": "\t cubic wscale:8,7 rto:3636 rtt:646.659/746.593 ato:40 mss:1228 pmtu:1280 rcvmss:1200 advmss:1228 cwnd:3 ssthresh:2 bytes_sent:30909 bytes_retrans:2428 bytes_acked:28482 bytes_received:138667 segs_out:1068 segs_in:1089 data_segs_out:415 data_segs_in:688 send 45576bps lastsnd:2824 lastrcv:2736 lastack:1352 pacing_rate 54688bps delivery_rate 91456bps delivered:381 app_limited busy:207504ms retrans:0/29 rcv_rtt:269 rcv_space:23483 rcv_ssthresh:188155 minrtt:202.076 rcv_ooopack:6 snd_wnd:524288                                         "
+    }
+  ],
+  "tailscale": {
+    "state": "Running",
+    "health": [],
+    "peer": [
+      {
+        "HostName": "sd-fn-01",
+        "DNSName": "sd-fn-01.tailc14e8b.ts.net.",
+        "TailscaleIPs": [
+          "100.124.223.41",
+          "fd7a:115c:a1e0::a701:dfa8"
+        ],
+        "CurAddr": "65.21.65.212:41641",
+        "Relay": "hel",
+        "Active": true,
+        "Online": true,
+        "RxBytes": 92331776,
+        "TxBytes": 4447536
+      }
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "build": "821092d83943b3e17bba88ee6a0a41657d17807a",
+  "phase": "restore",
+  "error": "Error: Released history interests did not settle: {\"walls\":{\"warmAdmissions\":0,\"warmCapacityMisses\":0,\"warmInvalidMisses\":0,\"warmCompactBuilds\":0,\"warmRevisionReuses\":0,\"warmBuildFailures\":0,\"warmDecodeFailures\":0,\"incrementalSegments\":0,\"fullReconciliations\":0,\"comparisonVisits\":0,\"subscriptions\":0,\"groups\":0,\"historyRequests\":0,\"currentPages\":0,\"historyPages\":0,\"bytes\":0,\"historyBytes\":0,\"historyResponseHeadersMs\":0,\"historyBodyReadMs\":0,\"historyJsonParseMs\":0,\"historyValidationMs\":0,\"historyProjectorApplyMs\":0,\"historyUpdateCallbackMs\":0,\"historyEventLoopYieldDelayMs\":0,\"currentPatches\":0,\"ringDrops\":0,\"failures\":0,\"projections\":[],\"historyJobs\":0,\"readerControl\":{\"submitted\":0,\"coalesced\":0,\"cancelled\":0,\"completed\":0,\"failed\":0,\"peakActive\":0,\"queueMs\":0,\"runMs\":0,\"active\":0,\"queued\":0},\"warmTimings\":[],\"warmEntries\":0,\"warmBuilds\":0,\"warmReplayJobs\":0,\"warmReplaySegments\":0,\"warmReplayRuns\":0,\"warmCompactEntries\":0,\"warmReplayConsumers\":0,\"warmSegments\":0,\"warmRuns\":0,\"warmBytes\":0,\"historyConsumers\":0,\"ringPages\":0,\"ringBytes\":0,\"recentHistoryRequests\":[],\"historyPageTiming\":{\"totalPages\":0,\"retainedSamples\":0,\"completeSample\":true,\"p50\":{\"responseHeadersMs\":null,\"responseBodyReadMs\":null,\"jsonParseMs\":null,\"validationMs\":null,\"projectorApplyMs\":null,\"updateCallbackMs\":null,\"eventLoopYieldDelayMs\":null,\"responseBytes\":null},\"p95\":{\"responseHeadersMs\":null,\"responseBodyReadMs\":null,\"jsonParseMs\":null,\"validationMs\":null,\"projectorApplyMs\":null,\"updateCallbackMs\":null,\"eventLoopYieldDelayMs\":null,\"responseBytes\":null},\"max\":{\"responseHeadersMs\":null,\"responseBodyReadMs\":null,\"jsonParseMs\":null,\"validationMs\":null,\"projectorApplyMs\":null,\"updateCallbackMs\":null,\"eventLoopYieldDelayMs\":null,\"responseBytes\":null}}},\"staging\":{\"nativePresentation\":{\"hits\":0,\"admissions\":0,\"capacityMisses\":0,\"entries\":0,\"rows\":0,\"accountedBytes\":0,\"activeLeases\":0,\"retainedKeys\":0,\"limits\":{\"entries\":2,\"rows\":1000,\"accountedBytes\":1048576,\"ttlMs\":60000,\"activeLeases\":128}},\"scheduler\":{\"submitted\":0,\"coalesced\":0,\"cancelled\":0,\"completed\":0,\"failed\":0,\"peakActive\":0,\"queueMs\":0,\"runMs\":0,\"active\":0,\"queued\":0},\"requests\":[],\"config\":{\"dataMode\":\"staging\",\"historyTiles\":true,\"build\":\"821092d83943b3e17bba88ee6a0a41657d17807a\"},\"views\":[],\"source\":\"staging\",\"transport\":\"websocket\",\"streams\":[],\"groups\":0,\"subscriptions\":0,\"retainedLiveBars\":0,\"preparedClosedBars\":0,\"retainedBars\":0},\"activeRequests\":1}",
+  "failures": [
+    {
+      "phase": "restore",
+      "url": "http://127.0.0.1:4185/market-data/v1/native-candles?interval=15m",
+      "error": "net::ERR_ABORTED"
+    }
+  ],
+  "pageErrors": [],
+  "activeRequestsAtCleanup": 1,
+  "scope": "No plateau claim without all exact-coverage cycles and inspection of retained heap/queue trend."
+}

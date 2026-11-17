@@ -1,0 +1,59 @@
+{
+  "elapsedMs": 1842.5368539992633,
+  "request": {
+    "market": "spot",
+    "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+    "from": 1794272700000,
+    "to": 1794381300000
+  },
+  "headers": {
+    "Vary": "Origin",
+    "x-iq-request-id": "54a5423e-2d88-40e0-9cc2-8629790f4fd5",
+    "x-iq-view-id": "stage112-protocol-probe",
+    "content-type": "application/json",
+    "cache-control": "no-store",
+    "content-length": "222550",
+    "x-iq-decoded-bytes": "222550",
+    "x-iq-db-queries": "4",
+    "x-iq-db-read-rows": "378696",
+    "x-iq-db-read-bytes": "272580733",
+    "server-timing": "admission;dur=0, db;dur=345.05, sqlqueue;dur=52.23, dbdecode;dur=0.28, project;dur=0.00, serialize;dur=0.71, total;dur=352.42, proxyqueue;dur=1.21, proxyheader;dur=1065.60",
+    "date": "Wed, 11 Nov 2026 07:58:33 GMT",
+    "connection": "close",
+    "x-iq-proxy-queue-ms": "1.21",
+    "x-iq-proxy-header-ms": "1065.60"
+  },
+  "state": "ready",
+  "eligibility": {
+    "version": 1,
+    "kind": "wall-eligible-discovery-v1",
+    "requested": {
+      "market": "spot",
+      "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+      "from": 1794272700000,
+      "to": 1794381300000
+    },
+    "request": {
+      "market": "spot",
+      "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+      "from": 1794272700000,
+      "to": 1794381300000
+    },
+    "horizon": {
+      "version": 1,
+      "kind": "wall-source-horizon-v1",
+      "market": "spot",
+      "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+      "head": {
+        "cursor": 21470718,
+        "epoch": 1794370288142,
+        "at": 1794383911351
+      },
+      "availableFrom": 1793521565645
+    }
+  },
+  "sourceToken": "e6b28663d3844d47c9f45e963982aea2fd6183b1c3434ccc74db404a9878f2d8",
+  "canonicalKey": "472b13ce377aac103ae241ff5034db222d43cb79b697260a22e2bae210bea169",
+  "projectionKey": "91c6431cd38e6bfbcc342df20781a36f6bc26de8f6e6b687c4096cd7dbee52f4",
+  "decodedBytes": 222550
+}

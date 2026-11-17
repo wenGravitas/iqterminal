@@ -1,0 +1,33 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-projection.test.ts (25 tests | 1 failed | 24 skipped) 1121ms
+   × first wall member leaves admission for native prices before bounded batch pipelining 1118ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > first wall member leaves admission for native prices before bounded batch pipelining
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/prepared-wall-projection.test.ts:150:46
+    148|   await vi.waitFor(()=>expect(t.calls.length).toBeGreaterThan(0));
+    149|   native=historyScheduler.read('fixture-visible-native-prices','candle…
+    150|   await vi.waitFor(()=>expect(nativeStarted).toBe(true));expect(t.call…
+       |                                              ^
+    151|   releaseFirst();await vi.waitFor(()=>expect(t.calls).toHaveLength(2))…
+    152|   const result=await work;await native;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 24 skipped (25)
+   Start at  13:29:24
+   Duration  2.11s (tests 58%, transform 36%, import 5%)
+

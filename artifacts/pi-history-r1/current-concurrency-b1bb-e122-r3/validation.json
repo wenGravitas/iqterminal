@@ -1,0 +1,7 @@
+{
+  "syntax": "Both updated scripts pass node --check",
+  "browserGuardTests": "4 passed",
+  "reportExitCode": 1,
+  "reportExitReason": "Expected: one reserved current/health timeout. Coverage and captured-cohort checks pass; no false green from eventual completion.",
+  "futureProbe": "Now also records status.transport for cursor-focused follow-up; executed.mjs is the exact earlier source used for this cohort and is not retroactively edited."
+}

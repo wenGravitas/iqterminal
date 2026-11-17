@@ -1,0 +1,4 @@
+{
+  "phase": "input before timings",
+  "error": "Playwright response fulfillment supplies gzip bytes directly to fetch rather than applying HTTP Content-Encoding decoding. JSON parser saw gzip magic. No draw samples. Browser closed in finally. Next helper explicitly decompresses the fixture stream in Chromium."
+}

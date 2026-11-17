@@ -1,0 +1,22 @@
+{
+  "backendCommit": "dbfcef4a8d948e8043245868ea03c397f2e89243",
+  "frontendEnvironment": {
+    "historyTaskYield": "user-visible-post-task",
+    "historyBackgroundYield": "background-post-task",
+    "dataMode": "staging",
+    "historyTiles": true,
+    "build": "a6e253b0663e5829d3078f537ae51e1de0251fca"
+  },
+  "backendSourceSha256": "9611cde25fda7f2bd945a76f114f2fe11f67f0affaf7cd17d45554b454dd80fa",
+  "compiledComparisons": 48,
+  "formerPolicyMismatches": 48,
+  "scope": "Compiled production chart range method with explicit fixture transport. No financial source, loading latency or foreground UX acceptance.",
+  "browser": "headless system Chromium with SwiftShader; explicit transport fixture",
+  "preservedDirtyScreenshots": 11,
+  "deployedBackend": false,
+  "latencyAcceptance": "Unmeasured by this test; original cold wall gate remains failed",
+  "refRefresh": {
+    "result": "success after transient DNS failure",
+    "main": "7aedc1896805be507382b8f5feb0e00775a4aa00"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "scope": "Supplemental same-pinned-window five-run production build comparison, with shared discovery interception; not release acceptance",
+  "build": "691e68e846a696e28b453c9cb5fa25ad5ccae758",
+  "completeMs": [
+    9766.89999999851,
+    9736.89999999851,
+    10441.39999999851,
+    10859.10000000149,
+    10217.60000000149
+  ],
+  "medianMs": 10217.60000000149,
+  "maxMs": 10859.10000000149,
+  "firstHistoryMs": [
+    3567.699999999255,
+    3530.39999999851,
+    3606.300000000745,
+    4071,
+    4689.699999999255
+  ],
+  "allFinancialCountsAndSourceValidated": true,
+  "conclusion": "All five complete; latency target failed. No demonstrated full-view latency improvement; original product cohort contains a censored sample."
+}

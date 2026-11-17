@@ -1,0 +1,10 @@
+{
+  "samples": 2,
+  "cleanup": {
+    "temporarySshPid": 701105,
+    "exitCode": 0,
+    "exitSignal": null,
+    "portStillListening": false
+  },
+  "scope": "One read-only paired route pilot. Canonical part hashes independently checked; request phases use client monotonic time. HTTP compressed body length excludes SSH/Tailscale overhead. Validation overlaps inclusive elapsed; not additive. Not five-run loading acceptance, live-confirmation continuity, network cause proof or production change."
+}

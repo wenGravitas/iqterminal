@@ -1,0 +1,184 @@
+TAP version 13
+# Subtest: polling an admitted building job renews interest without repeating source discovery/hash work
+ok 1 - polling an admitted building job renews interest without repeating source discovery/hash work
+  ---
+  duration_ms: 8.639168
+  type: 'test'
+  ...
+# Subtest: ordinary discovery admits a consumer-scoped exact request without waiting for a source build
+ok 2 - ordinary discovery admits a consumer-scoped exact request without waiting for a source build
+  ---
+  duration_ms: 6.175784
+  type: 'test'
+  ...
+# Subtest: disabled, older clients and explicitly ineligible source do not enqueue
+ok 3 - disabled, older clients and explicitly ineligible source do not enqueue
+  ---
+  duration_ms: 0.538017
+  type: 'test'
+  ...
+# Subtest: only a missing compatible selected projection queues work when canonical data is ready
+ok 4 - only a missing compatible selected projection queues work when canonical data is ready
+  ---
+  duration_ms: 0.576295
+  type: 'test'
+  ...
+# Subtest: explicit Retry tokens pass through while malformed consumer identity never reaches admission
+ok 5 - explicit Retry tokens pass through while malformed consumer identity never reaches admission
+  ---
+  duration_ms: 0.924276
+  type: 'test'
+  ...
+# Subtest: cancelled discovery releases only its consumer even when admission completed before the reply
+ok 6 - cancelled discovery releases only its consumer even when admission completed before the reply
+  ---
+  duration_ms: 35.840559
+  type: 'test'
+  ...
+# Subtest: explicit shared derived root maps canonical and selected files without changing disabled defaults
+ok 7 - explicit shared derived root maps canonical and selected files without changing disabled defaults
+  ---
+  duration_ms: 0.899665
+  type: 'test'
+  ...
+# Subtest: eligible discovery clamps only the future end and preserves exact prepared proof/discovery behavior
+ok 8 - eligible discovery clamps only the future end and preserves exact prepared proof/discovery behavior
+  ---
+  duration_ms: 1.736904
+  type: 'test'
+  ...
+# Subtest: different future whitespace resolves to identical past requests without consuming retained left coverage
+ok 9 - different future whitespace resolves to identical past requests without consuming retained left coverage
+  ---
+  duration_ms: 2.059866
+  type: 'test'
+  ...
+# Subtest: wholly future requests return explicit ineligible time without admitting a job or claiming covered empty source
+ok 10 - wholly future requests return explicit ineligible time without admitting a job or claiming covered empty source
+  ---
+  duration_ms: 1.570812
+  type: 'test'
+  ...
+# Subtest: resolved building polls pin the eligible request and do not repeat horizon or source work
+ok 11 - resolved building polls pin the eligible request and do not repeat horizon or source work
+  ---
+  duration_ms: 2.101181
+  type: 'test'
+  ...
+# Subtest: cancellation after metadata cannot enqueue obsolete eligible work
+ok 12 - cancellation after metadata cannot enqueue obsolete eligible work
+  ---
+  duration_ms: 1.373923
+  type: 'test'
+  ...
+# Subtest: only negotiated projection responses omit canonical page claims and preserve the verified source fence
+ok 13 - only negotiated projection responses omit canonical page claims and preserve the verified source fence
+  ---
+  duration_ms: 13.495029
+  type: 'test'
+  ...
+# Subtest: projection source snapshots cannot use a different proof, range or pinned head
+ok 14 - projection source snapshots cannot use a different proof, range or pinned head
+  ---
+  duration_ms: 16.120597
+  type: 'test'
+  ...
+# Subtest: published selected history is independently discoverable while canonical availability remains separate
+ok 15 - published selected history is independently discoverable while canonical availability remains separate
+  ---
+  duration_ms: 1.071665
+  type: 'test'
+  ...
+# Subtest: building polls do not repeatedly hash stale selected snapshots; a ready selected component can bypass a canonical upgrade
+ok 16 - building polls do not repeatedly hash stale selected snapshots; a ready selected component can bypass a canonical upgrade
+  ---
+  duration_ms: 1.120608
+  type: 'test'
+  ...
+# Subtest: independent publication admission is opt-in and default gateway RPC remains compatible with older workers
+ok 17 - independent publication admission is opt-in and default gateway RPC remains compatible with older workers
+  ---
+  duration_ms: 7.666651
+  type: 'test'
+  ...
+# Subtest: disabled independent source flag never discovers a published experimental source, including ready job polls
+ok 18 - disabled independent source flag never discovers a published experimental source, including ready job polls
+  ---
+  duration_ms: 0.864165
+  type: 'test'
+  ...
+# Subtest: queue completion follows durable publication; restart keeps parent dependencies and legacy upgrade cannot block selected readiness
+ok 19 - queue completion follows durable publication; restart keeps parent dependencies and legacy upgrade cannot block selected readiness
+  ---
+  duration_ms: 1880.298649
+  type: 'test'
+  ...
+# Subtest: a rejected extension continues ordinary exact preparation without claiming a source failure
+ok 20 - a rejected extension continues ordinary exact preparation without claiming a source failure
+  ---
+  duration_ms: 2019.151493
+  type: 'test'
+  ...
+# Subtest: legacy demand arriving during a tail build preserves its selected result and subsequently prepares canonical delivery
+ok 21 - legacy demand arriving during a tail build preserves its selected result and subsequently prepares canonical delivery
+  ---
+  duration_ms: 807.711752
+  type: 'test'
+  ...
+# Subtest: publication failure retains dependencies and exact selected data; explicit retry clears the error without rebuilding
+ok 22 - publication failure retains dependencies and exact selected data; explicit retry clears the error without rebuilding
+  ---
+  duration_ms: 906.006467
+  type: 'test'
+  ...
+# Subtest: feature-disabled workers retain canonical preparation for a selected-only admission
+ok 23 - feature-disabled workers retain canonical preparation for a selected-only admission
+  ---
+  duration_ms: 1106.460481
+  type: 'test'
+  ...
+# Subtest: legacy upgrade reserves an ordinary pending slot and cannot exceed the existing queue bound
+ok 24 - legacy upgrade reserves an ordinary pending slot and cannot exceed the existing queue bound
+  ---
+  duration_ms: 1117.479814
+  type: 'test'
+  ...
+# Subtest: independent source publication is protocol-latched, revision-validated and idempotent without a canonical page claim
+ok 25 - independent source publication is protocol-latched, revision-validated and idempotent without a canonical page claim
+  ---
+  duration_ms: 1178.469581
+  type: 'test'
+  ...
+# Subtest: missing or corrupt selected parts prevent publication, and restoring the cause permits the same pinned publication
+ok 26 - missing or corrupt selected parts prevent publication, and restoring the cause permits the same pinned publication
+  ---
+  duration_ms: 1345.671346
+  type: 'test'
+  ...
+# Subtest: lookup validation rejects corruption, stale revisions and unavailable source without turning them into covered empty history
+ok 27 - lookup validation rejects corruption, stale revisions and unavailable source without turning them into covered empty history
+  ---
+  duration_ms: 988.818132
+  type: 'test'
+  ...
+# Subtest: independent reader leases pin both namespaces through retirement, peer cancellation and bounded cleanup
+ok 28 - independent reader leases pin both namespaces through retirement, peer cancellation and bounded cleanup
+  ---
+  duration_ms: 904.583078
+  type: 'test'
+  ...
+# Subtest: a published financial revision cannot be replaced by changed active values under the same source identity
+ok 29 - a published financial revision cannot be replaced by changed active values under the same source identity
+  ---
+  duration_ms: 833.249739
+  type: 'test'
+  ...
+1..29
+# tests 29
+# suites 0
+# pass 29
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8791.411607

@@ -1,0 +1,97 @@
+{
+  "targetReady": false,
+  "jobs": [],
+  "source": {
+    "version": 1,
+    "market": "perpetual",
+    "instrument": "binance:perpetual:BTCUSDT",
+    "collector": {
+      "state": "live",
+      "message": "Durable WebSocket aggregate executions",
+      "lastUpdate": 1794390940388,
+      "retries": 0
+    },
+    "depth": {
+      "head": {
+        "cursor": 25465559,
+        "at": 1794390940884,
+        "epoch": 1794309145901
+      },
+      "status": {
+        "state": "live",
+        "message": "Durable standard diff-depth \u00b7 RPI excluded \u00b7 partial outer regions",
+        "epoch": 1794309145901,
+        "lastUpdate": 1794390941700,
+        "bidFloor": 74175.9,
+        "askCeiling": 74437.8,
+        "sequence": 12077592723565
+      },
+      "metrics": {
+        "events": 14330795,
+        "changes": 1708711560,
+        "wireBytes": 38224136250,
+        "storedPayloadBytes": 133063804802,
+        "overflows": 0,
+        "reconnects": 167,
+        "queue": 8,
+        "levels": 196774,
+        "startAt": 1792925907805
+      },
+      "retention": {
+        "lastRun": 1794389308427,
+        "error": null
+      }
+    },
+    "metrics": {
+      "transport": "websocket",
+      "queue": 0,
+      "overflows": 0,
+      "recoveries": 252,
+      "exchangeToReceiveMs": 126,
+      "receiveToDurableMs": 387,
+      "ingestionLagMs": 2006
+    },
+    "disk": {
+      "bytes": 6904027554,
+      "free": 188885794816,
+      "paused": false
+    },
+    "watermark": {
+      "id": 3516114969,
+      "timeMs": 1794390939724
+    },
+    "tickSize": 0.1,
+    "oi": {
+      "lastObservedAt": 1794390926451,
+      "error": null,
+      "stale": false
+    },
+    "netPositioning": {
+      "version": 1,
+      "pendingIntervals": 0,
+      "feeds": {
+        "binance": {
+          "state": "live",
+          "source": "binance:fapi/v1/openInterest",
+          "lastObservedAt": 1794390926451,
+          "lastError": null,
+          "epoch": 1794390660047,
+          "sourceTimeQuality": "exchange-event"
+        },
+        "hyperliquid": {
+          "state": "live",
+          "source": "hyperliquid:metaAndAssetCtxs",
+          "lastObservedAt": 1794390927607,
+          "lastError": null,
+          "epoch": 1794384386703,
+          "lastTradeAt": 1794390941278,
+          "overflows": 37,
+          "reconnects": 161,
+          "sourceTimeQuality": "collector-sampled"
+        }
+      },
+      "bufferedHyperliquidTrades": 483,
+      "bufferCapacity": 10000
+    }
+  }
+}

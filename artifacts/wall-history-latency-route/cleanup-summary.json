@@ -1,0 +1,53 @@
+{
+  "utc": 1794840477.448749,
+  "candidate": {
+    "consumers": 0,
+    "readers": 0,
+    "pins": 0,
+    "capacityPaused": false,
+    "version": 1,
+    "busy": false
+  },
+  "protectedCount": 35,
+  "incumbentVersion": 4,
+  "rootsBytes": 1790434139,
+  "candidateBytes": 61564062,
+  "freeBytes": 185519308800,
+  "archiveLagSeconds": {
+    "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1": 1.2027490234375,
+    "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1": 5.0887490234375,
+    "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1": 344175.08774902346
+  },
+  "collectorOverflows": {
+    "usdm": null,
+    "spot": null
+  },
+  "protectedIdentitiesVerified": 35,
+  "candidateRolesStopped": true,
+  "candidateLock": false,
+  "localListeners4204_18990_18991": false,
+  "executionOverflowsBeforeAfter": {
+    "USD-M": [
+      2,
+      2
+    ],
+    "Spot": [
+      0,
+      0
+    ]
+  },
+  "depthOverflowsBeforeAfter": {
+    "USD-M": [
+      0,
+      0
+    ],
+    "Spot": [
+      0,
+      0
+    ]
+  },
+  "unrelatedHyperliquidNetPositioningOverflowsBeforeAfter": [
+    51,
+    52
+  ]
+}

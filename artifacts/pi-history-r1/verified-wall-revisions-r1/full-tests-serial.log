@@ -1,0 +1,36 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-projection.test.ts (25 tests | 1 failed) 3252ms
+   × compact cached history paints before a delayed current bootstrap and last release cancels it 134ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > compact cached history paints before a delayed current bootstrap and last release cancels it
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/prepared-wall-projection.test.ts:298:104
+    296|   service.subscribe('live',{market:'binance-spot',from,to,settings,fol…
+    297|   await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('live')…
+    298|   expect(events.filter(e=>e.ids?.includes('live')).every(e=>e.status.a…
+       |                                                                                                        ^
+    299|   service.unsubscribe('live');expect(signals[0]!.aborted).toBe(true);e…
+    300|   await vi.waitFor(()=>expect(service.diagnostics().warmReplayJobs).to…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 146 passed | 2 skipped (149)
+      Tests  1 failed | 1312 passed | 2 skipped (1315)
+   Start at  08:29:23
+   Duration  113.67s (tests 72%, import 18%, transform 9%, worker 1%)
+
+    Isolate  149 workers spawned · ~189ms startup each (spawn + environment, per file)
+             at least ~27.95s faster with isolate: false — reuses workers across files instead of one per file
+

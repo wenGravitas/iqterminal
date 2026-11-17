@@ -1,0 +1,22 @@
+{
+  "id": "8fe11fe46320826919adc1aa784ea126b58de5bdb1b5032bdeecb06057157ba3",
+  "name": "/iqterminal-wall-stage147-warm-reference-r1",
+  "image": "sha256:3a67ff312a4924289717685b2c7aa53328e80f0dfd3af8e896bd347a3b848d43",
+  "state": {
+    "Status": "exited",
+    "Running": false,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 0,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-11-11T09:58:01.740214539Z",
+    "FinishedAt": "2026-11-11T09:58:13.397064125Z"
+  },
+  "network": "none",
+  "readOnlyRoot": true,
+  "nanoCPUs": 500000000,
+  "memoryBytes": 402653184
+}

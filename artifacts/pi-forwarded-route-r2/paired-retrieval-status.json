@@ -1,0 +1,12 @@
+{
+  "bothRemoteWindowsRetrieved": true,
+  "remoteSamplerConnectionCount": 1,
+  "perProbeSshConnections": 0,
+  "uncompressedRetrievalFailures": [
+    55,
+    35
+  ],
+  "retrievalFailuresOutsideMeasurement": true,
+  "finalMethod": "gzip after both windows, no measurement repeated",
+  "atUtc": 1794492837.5338569
+}

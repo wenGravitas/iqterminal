@@ -1,0 +1,40 @@
+{
+  "scope": "Raw scoped evidence; a manifest verifies bytes, not performance acceptance. Failed attempts and superseded summaries are retained.",
+  "files": [
+    {
+      "path": "concurrent-history-1.cpuprofile",
+      "bytes": 375391,
+      "sha256": "d8417d61ce8bebd2a4d7720f03c207e4160907985ffe0a32240e670b18300038"
+    },
+    {
+      "path": "concurrent-history-1.png",
+      "bytes": 138269,
+      "sha256": "a80483dad9808b54cc12f3f77d95915823b3c9caf239663d7fc41caf1f937171"
+    },
+    {
+      "path": "current-only-1.cpuprofile",
+      "bytes": 157630,
+      "sha256": "44786d426abacf7d643a44df5cbd1f76f34559f79174c3278d939f81da16d64d"
+    },
+    {
+      "path": "current-only-1.png",
+      "bytes": 54512,
+      "sha256": "37f91d9c87cff7344e175f2c4d4125c773a12a5a299c9ba395240c9776038899"
+    },
+    {
+      "path": "executed.mjs",
+      "bytes": 11071,
+      "sha256": "198c650ffb4fe95b609289572cc2561dff1a88d3a95d2d50015458f3476221c8"
+    },
+    {
+      "path": "input-windows.json",
+      "bytes": 26,
+      "sha256": "c27e20765a79131ba2ec523d4f6481a3a672b02bf255005d0679181256e0aee8"
+    },
+    {
+      "path": "samples.jsonl",
+      "bytes": 169178,
+      "sha256": "bf79b0215f7cdffa7c6d85747a1890ff0dd08b581d563bc74d08cf5689f98533"
+    }
+  ]
+}

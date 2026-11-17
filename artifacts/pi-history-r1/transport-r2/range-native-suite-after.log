@@ -1,0 +1,37 @@
+
+Running 6 tests using 1 worker
+
+(node:195235) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/native-candle-history.spec.ts:12:36 › saved 5m wall view one candle back survives closed bootstrap then first forming candle (3.4s)
+  ✓  2 tests/browser/native-candle-history.spec.ts:12:36 › saved 15m wall view one candle back survives closed bootstrap then first forming candle (3.7s)
+  ✘  3 tests/browser/native-candle-history.spec.ts:34:1 › native30hpricecontext paints before bootstrap and retains current volume and newer historical reads (4.9s)
+(node:195877) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  4 tests/browser/native-candle-history.spec.ts:66:1 › nativepricepan preserves the requested past and current bars within the5000barbudget (4.9s)
+  ✓  5 tests/browser/native-candle-history.spec.ts:91:1 › warm native prices paint independently while their revision validation waits and later corrects exact quote volume (4.4s)
+  ✓  6 tests/browser/native-candle-history.spec.ts:121:1 › bootstrap-owned history seeds warm prices even when independent native history pages fail (5.4s)
+
+
+  1) tests/browser/native-candle-history.spec.ts:34:1 › native30hpricecontext paints before bootstrap and retains current volume and newer historical reads 
+
+    Error: expect(received).toHaveLength(expected)
+
+    Expected length: 1
+    Received length: 2
+    Received array:  ["/market-data/v1/native-candles?interval=5m&from=1794028200000&market=spot", "/market-data/v1/native-candles?interval=5m&from=1794028200000&market=spot"]
+
+      60 |   expect(after.history).toHaveLength(360);expect(after.history.every((c:any)=>c.c===80040&&c.quoteVolume===160080)).toBe(true);expect(after.last.v).toBe(8);
+      61 |   expect(after.view).toEqual({from:from/1000,to:to/1000});expect(after.status.state).toBe('live');expect(after.status.nativeHistory.viewport).toMatchObject({state:'ready',loadedSlots:360});
+    > 62 |   expect(requests.filter(u=>u.includes('from='))).toHaveLength(1);
+         |                                                   ^
+      63 |   await expect(page.locator('.candle-panel').first()).toContainText('Native prices loaded · 360/360 closed bars');
+      64 |  }finally{release();}
+      65 | });
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/native-candle-history.spec.ts:62:51
+
+    Error Context: test-results/native-candle-history-nati-a8c2a--and-newer-historical-reads/error-context.md
+
+  1 failed
+    tests/browser/native-candle-history.spec.ts:34:1 › native30hpricecontext paints before bootstrap and retains current volume and newer historical reads 
+  5 passed (33.7s)

@@ -1,0 +1,11 @@
+/iqterminal-wall-serving-13730f7-r1 dca671725098a47d7592f9af201b4d7b2d63887d761e5caf737799da7855123c running 2026-11-10T12:34:42.26515369Z
+/iqterminal-wall-gateway-71f62d2-r2 569422becf7c417d91b2ca6eb90a6a8264a0c10ae49421f352e94ccd225e60ae running 2026-11-10T05:33:42.292832996Z
+/iqterminal-history-api 8b087d255b7262ff5b1543475c8c26610758ca8b37f0f99af8b54f3e0848336d running 2026-11-09T10:14:21.244270641Z
+/iqterminal-server 65471260a0cf64311ed57f9b17f1e1daf6de26f073192e292cd07bfb1e193ece running 2026-10-25T10:58:27.590796454Z
+/iqterminal-spot-server a4be8d3c68a52de305fd9e2eaa101f50b592b8b108aaf850ddfbc1b2f53428bb running 2026-10-25T10:58:53.322433531Z
+/iqterminal-history-materializer d7f786d6c833ee776fc620b8f02209a1e1b1ed5fc3235968272631f3c4cc6a34 running 2026-11-06T16:53:52.644213859Z
+/iqterminal-spot-history-materializer 12489deea96a7d5918661f792e91bd819238696bc62b912308becbaa1bcb1763 running 2026-11-06T16:53:52.682114009Z
+/iqterminal-footprint-materializer 1df92fdc2ce05c4113df9ecd8cb99fbabcf101b3fa04447561116ba929d93698 running 2026-11-06T16:53:52.623715016Z
+/iqterminal-spot-footprint-materializer 8257c2c80dbcae7add967cb4571983e7639c8f96695e3d5d6302ec9b87ef6447 running 2026-11-06T16:53:52.693763579Z
+/iqterminal-sql-admission 625825aa977bcf8e18264ed69e3ed4ca1a9290c5c14416db797a8bf11999032b running 2026-11-06T16:53:48.880958761Z
+{"version":1,"turn":30771,"busy":false,"counts":{"building":0,"ready":16,"failed":0,"paused":0},"limits":{"pending":32,"tracked":128,"metadataBytes":1048576},"capacityPaused":false,"consumers":0,"readers":0,"pins":0,"cancelledPins":0,"consumerLimit":128,"leaseMs":15000,"build":"13730f76752ec9db7f2253aa541fd4131e578141"}

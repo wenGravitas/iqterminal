@@ -52,7 +52,7 @@ try {
   if (boundExpired) throw new Error('Probe hard bound expired during preflight');
   await mkdir('artifacts/order-walls', { recursive: true });
   activeBrowser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium', headless: true,
-    args: ['--class=IQTerminalPerf', '--no-sandbox', '--enable-webgl'], ignoreDefaultArgs: ['--enable-unsafe-swiftshader'] });
+    args: ['--class=IQTerminalPerf','--no-sandbox', '--enable-webgl'], ignoreDefaultArgs: ['--enable-unsafe-swiftshader'] });
   browser = activeBrowser;
   result.browser = { version: browser.version(), executable: process.env.CHROMIUM_PATH || '/usr/bin/chromium',
     headless: true, viewport: { width: 1366, height: 860 }, deviceScaleFactor: 1,

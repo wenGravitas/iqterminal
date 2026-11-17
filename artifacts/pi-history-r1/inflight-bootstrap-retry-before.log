@@ -1,0 +1,33 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/staging-service.test.ts (24 tests | 1 failed | 23 skipped) 202ms
+   × a normal bootstrap response cannot consume a Retry queued while it was in flight 182ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/staging-service.test.ts > a normal bootstrap response cannot consume a Retry queued while it was in flight
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/staging-service.test.ts:319:74
+    317|   service.command({type:'footprint-retry',id:'queued-retry'});release(…
+    318|   now+=1001;await vi.advanceTimersByTimeAsync(1001);
+    319|   expect(urls.filter(url=>new URL(url).searchParams.get('retry')==='1'…
+       |                                                                          ^
+    320|   const group=[...(service as any).groups.values()][0];expect(group.la…
+    321|  }finally{service.dispose();}
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 23 skipped (24)
+   Start at  15:39:00
+   Duration  1.65s (transform 68%, tests 18%, import 13%, worker 1%)
+

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "market": "spot",
+      "key": "583d8561c6dd81ddfb3fa948ae2d63c84457df0164f6ce017d9080b9e77e04bb",
+      "sourceToken": "aaddfcbf86e76510d462d491b820100d54c1257e90d0e190b0eb4ea1fe7fc9c8",
+      "canonicalKey": "cfb242b1aaf80316eab0a900c30c5511dc159f4c356f00b26701e017c5f71d9f"
+    },
+    {
+      "market": "perpetual",
+      "key": "54e196831ff5f22302c4384919a6b82b146387838a74887b65b8ff048909aa74",
+      "sourceToken": "09e5611063306489c8a99ab60cbbc013356116794b6e752a1f2d2859b45fc1bd",
+      "canonicalKey": "386e2e9f49b1386b358da27f6ba1e669703c0ae232abfaed147aa26414ad65e2"
+    }
+  ]
+}

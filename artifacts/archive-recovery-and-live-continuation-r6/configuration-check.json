@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "onlyEffectiveDifference": "index_mark_cache_size=134217728",
+  "beforeSha256": "d732f8bcf5d1aa053e42dabc9b37ed4d1d478630f12c728ebff5d8e9285ce744",
+  "afterSha256": "fefdfeeaea5da98df1efbcd36cc3ddaaa077705a6848d43c7867a594a9b52e06",
+  "financialApplicationSourceDiffFrom771265c": "",
+  "backendBuild": "pnpm typecheck and pnpm build pass; source application same as771265c, no deployment of rebuilt application"
+}

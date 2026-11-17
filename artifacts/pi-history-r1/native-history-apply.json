@@ -1,0 +1,159 @@
+{
+  "kind": "deterministic-chart-kernel-diagnostic-not-acceptance",
+  "build": "a1dc934f23a82987c2912de0a4578af8488ca3f9",
+  "base": "http://127.0.0.1:4181",
+  "rendering": "normal-headed-chromium-gles",
+  "fixture": true,
+  "samples": [
+    {
+      "run": 1,
+      "method": "patch",
+      "applyMs": 356.30000000074506,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 1,
+      "method": "snapshot",
+      "applyMs": 1.5,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 2,
+      "method": "snapshot",
+      "applyMs": 1.800000000745058,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 2,
+      "method": "patch",
+      "applyMs": 449.3999999985099,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 3,
+      "method": "patch",
+      "applyMs": 251.10000000149012,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 3,
+      "method": "snapshot",
+      "applyMs": 1,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 4,
+      "method": "snapshot",
+      "applyMs": 1.199999999254942,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 4,
+      "method": "patch",
+      "applyMs": 190.5,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 5,
+      "method": "patch",
+      "applyMs": 191.10000000149012,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 5,
+      "method": "snapshot",
+      "applyMs": 1.300000000745058,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    }
+  ],
+  "canonicalEquivalent": true,
+  "renderer": {
+    "draws": 26,
+    "backend": "canvas2d"
+  },
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+  "resources": {
+    "load": "5.06 4.37 4.77 7/1336 243471\n",
+    "mem": "MemTotal:        8142664 kB\nMemFree:          154132 kB\nMemAvailable:     804020 kB\nBuffers:           19664 kB\nCached:          1705020 kB\nSwapCached:          788 kB\nActive:          3575152 kB\nInactive:        2186836 kB\nActive(anon):    2882344 kB\nInactive(anon):  1987344 kB\nActive(file):     692808 kB\nInactive(file):   199492 kB\nUnevictable:      749796 kB\nMlocked:             136 kB\nSwapTotal:      33094924 kB\nSwapFree:       31169708 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              6588 kB\nWriteback:             0 kB\nAnonPages:       4787332 kB\nMapped:           742156 kB\nShmem:            831700 kB\nKReclaimable:     193308 kB\nSlab:             310672 kB\nSReclaimable:     193308 kB\nSUnreclaim:       117364 kB\nKernelStack:       21408 kB\nPageTables:        99016 kB\nSecPageTables:       180 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   27758256 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      332012 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:               8 kB\n"
+  }
+}

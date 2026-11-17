@@ -1,0 +1,20 @@
+{"phase": "renewed", "turn": 1, "elapsedMs": 11.565327644348145, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 9, "elapsedMs": 32029.986432753503, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 17, "elapsedMs": 64150.82615800202, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 25, "elapsedMs": 96261.05003617704, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 33, "elapsedMs": 128367.81231872737, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 41, "elapsedMs": 160447.67627120018, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 49, "elapsedMs": 192575.46527963132, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 57, "elapsedMs": 224585.59245429933, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 65, "elapsedMs": 256600.78984685242, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 73, "elapsedMs": 288617.6211182028, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 81, "elapsedMs": 320633.32039583474, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 89, "elapsedMs": 352647.451704368, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 97, "elapsedMs": 384859.2897159979, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 105, "elapsedMs": 416874.90918301046, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 113, "elapsedMs": 448892.7973797545, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 121, "elapsedMs": 480906.88322205096, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 129, "elapsedMs": 512917.87599772215, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 137, "elapsedMs": 544932.5836664066, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "renewed", "turn": 145, "elapsedMs": 576950.331219472, "consumers": ["stage147-fresh-warm-perpetual"]}
+{"phase": "released", "elapsedMs": 588880.5938242003, "consumers": ["stage147-fresh-warm-perpetual"]}

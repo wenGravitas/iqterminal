@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: canonical experiment removes only optional transport capabilities
+ok 1 - canonical experiment removes only optional transport capabilities
+  ---
+  duration_ms: 2.937538
+  type: 'test'
+  ...
+# Subtest: building work is unchanged and unsupported experiment fails explicitly
+ok 2 - building work is unchanged and unsupported experiment fails explicitly
+  ---
+  duration_ms: 0.969989
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 126.169663

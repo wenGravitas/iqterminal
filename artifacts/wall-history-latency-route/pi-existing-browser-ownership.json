@@ -1,0 +1,66 @@
+[
+  {
+    "pid": 12915,
+    "ppid": 12776,
+    "comm": "chromium",
+    "program": "/usr/lib/chromium/chromium",
+    "selectedFlags": [
+      "--type=zygote"
+    ],
+    "action": "unrelated foreground browser; preserved"
+  },
+  {
+    "pid": 12919,
+    "ppid": 12916,
+    "comm": "chromium",
+    "program": "/usr/lib/chromium/chromium",
+    "selectedFlags": [
+      "--type=zygote"
+    ],
+    "action": "unrelated foreground browser; preserved"
+  },
+  {
+    "pid": 12939,
+    "ppid": 12915,
+    "comm": "chromium",
+    "program": "/usr/lib/chromium/chromium",
+    "selectedFlags": [
+      "--type=gpu-process",
+      "--ozone-platform=x11"
+    ],
+    "action": "unrelated foreground browser; preserved"
+  },
+  {
+    "pid": 13169,
+    "ppid": 12919,
+    "comm": "chromium",
+    "program": "/usr/lib/chromium/chromium",
+    "selectedFlags": [
+      "--type=renderer",
+      "--ozone-platform=x11"
+    ],
+    "action": "unrelated foreground browser; preserved"
+  },
+  {
+    "pid": 13180,
+    "ppid": 12919,
+    "comm": "chromium",
+    "program": "/usr/lib/chromium/chromium",
+    "selectedFlags": [
+      "--type=renderer",
+      "--ozone-platform=x11"
+    ],
+    "action": "unrelated foreground browser; preserved"
+  },
+  {
+    "pid": 14112,
+    "ppid": 12919,
+    "comm": "chromium",
+    "program": "/usr/lib/chromium/chromium",
+    "selectedFlags": [
+      "--type=renderer",
+      "--ozone-platform=x11"
+    ],
+    "action": "unrelated foreground browser; preserved"
+  }
+]

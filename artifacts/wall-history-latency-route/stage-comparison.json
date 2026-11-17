@@ -1,0 +1,587 @@
+{
+  "clean-baseline": [
+    {
+      "phase": "parent",
+      "actionToPaintMs": 18173.900000000373,
+      "navigationToPaintMs": 18484,
+      "witnessLagMs": 4.899999998509884,
+      "requests": [
+        {
+          "path": "discover",
+          "startFromActionMs": 4014.42578125,
+          "headersMs": 3297.396,
+          "endMs": 3511.135,
+          "endFromActionMs": 7525.560791015625,
+          "status": 200,
+          "terminalEvent": "failed",
+          "requestId": "57455d78-1a11-4eee-a0ee-fccc4d78fa33",
+          "serverTiming": "admission;dur=0, db;dur=703.39, sqlqueue;dur=467.22, dbdecode;dur=0.06, project;dur=0.00, serialize;dur=17.41, total;dur=742.96, proxyqueue;dur=26.97, proxyheader;dur=3254.63"
+        },
+        {
+          "path": "reader",
+          "startFromActionMs": 7583.06884765625,
+          "headersMs": 613.149,
+          "endMs": 670.904,
+          "endFromActionMs": 8253.972900390625,
+          "status": 200,
+          "terminalEvent": "failed",
+          "requestId": "b4285ca0-965a-46e8-9818-2c94001e6af2",
+          "serverTiming": "readercontrol;dur=38.50, proxyqueue;dur=4.70, proxyheader;dur=594.88"
+        },
+        {
+          "path": "projection-batch",
+          "startFromActionMs": 8471.222900390625,
+          "headersMs": 1200.158,
+          "endMs": 1787.715,
+          "endFromActionMs": 10258.93798828125,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "8f54ebeb-1bb5-4529-a8c5-461adeba5a0e",
+          "serverTiming": "preparedread;dur=15.57, db;dur=0, proxyqueue;dur=1.71, proxyheader;dur=1178.40"
+        },
+        {
+          "path": "projection-batch",
+          "startFromActionMs": 9746.912109375,
+          "headersMs": 1410.335,
+          "endMs": 2197.797,
+          "endFromActionMs": 11944.709228515625,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "ba247663-0e93-4595-a818-f1913a6a63d3",
+          "serverTiming": "preparedread;dur=15.53, db;dur=0, proxyqueue;dur=6.25, proxyheader;dur=1393.33"
+        },
+        {
+          "path": "projection-batch",
+          "startFromActionMs": 12255.590087890625,
+          "headersMs": 777.511,
+          "endMs": 1889.402,
+          "endFromActionMs": 14144.9921875,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "c8abd54e-f1f7-42b2-8087-0f340a8df471",
+          "serverTiming": "preparedread;dur=20.28, db;dur=0, proxyqueue;dur=0.72, proxyheader;dur=767.30"
+        },
+        {
+          "path": "reader",
+          "startFromActionMs": 13337.491943359375,
+          "headersMs": 775.114,
+          "endMs": 815.423,
+          "endFromActionMs": 14152.9150390625,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "159ef8d7-db0f-4c17-8ed6-31dd038cb5e8",
+          "serverTiming": "readercontrol;dur=1.17, proxyqueue;dur=1.62, proxyheader;dur=764.63"
+        },
+        {
+          "path": "projection-batch",
+          "startFromActionMs": 13780.31591796875,
+          "headersMs": 999.515,
+          "endMs": 1527.763,
+          "endFromActionMs": 15308.078857421875,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "811f4bdd-8740-4c74-b34f-fb7cad53d9a5",
+          "serverTiming": "preparedread;dur=12.47, db;dur=0, proxyqueue;dur=3.95, proxyheader;dur=978.40"
+        },
+        {
+          "path": "source",
+          "startFromActionMs": 15731.333984375,
+          "headersMs": 1004.915,
+          "endMs": 1044.359,
+          "endFromActionMs": 16775.69287109375,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "eb862e6d-c440-434f-9e60-6e6f268447a9",
+          "serverTiming": "admission;dur=0, db;dur=435.25, sqlqueue;dur=183.08, dbdecode;dur=0.07, project;dur=0.00, serialize;dur=0.28, total;dur=436.06, proxyqueue;dur=4.59, proxyheader;dur=950.90"
+        },
+        {
+          "path": "preparation",
+          "startFromActionMs": 17106.761962890625,
+          "headersMs": 425.729,
+          "endMs": 561.466,
+          "endFromActionMs": 17668.22802734375,
+          "status": 200,
+          "terminalEvent": "failed",
+          "requestId": "afe51bcb-d16e-42f7-a49f-413c968302ac",
+          "serverTiming": "proxyqueue;dur=2.59, proxyheader;dur=402.60"
+        }
+      ]
+    },
+    {
+      "phase": "extension-1",
+      "actionToPaintMs": 6178.0999999996275,
+      "navigationToPaintMs": null,
+      "witnessLagMs": 106.79999999888241,
+      "requests": [
+        {
+          "path": "discover",
+          "startFromActionMs": 223.0029296875,
+          "headersMs": 1131.511,
+          "endMs": 2117.468,
+          "endFromActionMs": 2340.470947265625,
+          "status": 200,
+          "terminalEvent": "failed",
+          "requestId": "37f08f1c-2a2d-41cd-bc75-2827693d41cd",
+          "serverTiming": "admission;dur=0, db;dur=482.53, sqlqueue;dur=257.13, dbdecode;dur=0.06, project;dur=0.00, serialize;dur=16.68, total;dur=518.70, proxyqueue;dur=1.29, proxyheader;dur=1115.86"
+        },
+        {
+          "path": "reader",
+          "startFromActionMs": 2386.39306640625,
+          "headersMs": 283.047,
+          "endMs": 311.8,
+          "endFromActionMs": 2698.193115234375,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "77790dbe-96f6-4171-80b7-cd49e301b325",
+          "serverTiming": "readercontrol;dur=19.78, proxyqueue;dur=6.74, proxyheader;dur=267.00"
+        },
+        {
+          "path": "projection-batch",
+          "startFromActionMs": 2944.171142578125,
+          "headersMs": 319.675,
+          "endMs": 345.885,
+          "endFromActionMs": 3290.05615234375,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "29fef8c5-d724-4cc3-924c-a1c27e99d067",
+          "serverTiming": "preparedread;dur=30.68, db;dur=0, proxyqueue;dur=1.27, proxyheader;dur=308.80"
+        },
+        {
+          "path": "source",
+          "startFromActionMs": 4112.674072265625,
+          "headersMs": 559.286,
+          "endMs": 595.808,
+          "endFromActionMs": 4708.482177734375,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "bfba85f1-17a2-4000-9402-f790f990d1f4",
+          "serverTiming": "admission;dur=0, db;dur=273.84, sqlqueue;dur=46.30, dbdecode;dur=0.07, project;dur=0.00, serialize;dur=0.31, total;dur=274.72, proxyqueue;dur=1.49, proxyheader;dur=535.40"
+        },
+        {
+          "path": "preparation",
+          "startFromActionMs": 5905.375244140625,
+          "headersMs": 279.532,
+          "endMs": 350.293,
+          "endFromActionMs": 6255.668212890625,
+          "status": 200,
+          "terminalEvent": "failed",
+          "requestId": "d58577e6-9e3c-401f-acc5-1dbde17825c5",
+          "serverTiming": "proxyqueue;dur=3.04, proxyheader;dur=265.83"
+        }
+      ]
+    },
+    {
+      "phase": "extension-2",
+      "actionToPaintMs": 6547.200000001118,
+      "navigationToPaintMs": null,
+      "witnessLagMs": 86.40000000037253,
+      "requests": [
+        {
+          "path": "discover",
+          "startFromActionMs": 259.392333984375,
+          "headersMs": 1043.32,
+          "endMs": 1916.016,
+          "endFromActionMs": 2175.408447265625,
+          "status": 200,
+          "terminalEvent": "failed",
+          "requestId": "67393983-0f78-4df8-ae20-3e524936a374",
+          "serverTiming": "admission;dur=0, db;dur=385.37, sqlqueue;dur=168.90, dbdecode;dur=0.08, project;dur=0.00, serialize;dur=14.94, total;dur=418.46, proxyqueue;dur=13.83, proxyheader;dur=1018.68"
+        },
+        {
+          "path": "reader",
+          "startFromActionMs": 2237.994140625,
+          "headersMs": 294.459,
+          "endMs": 337.219,
+          "endFromActionMs": 2575.213134765625,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "8d4bd362-b795-452f-a463-0d0fd24063b5",
+          "serverTiming": "readercontrol;dur=22.35, proxyqueue;dur=1.97, proxyheader;dur=284.37"
+        },
+        {
+          "path": "projection-batch",
+          "startFromActionMs": 2871.525146484375,
+          "headersMs": 464.213,
+          "endMs": 551.569,
+          "endFromActionMs": 3423.09423828125,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "cf2331c9-d6fa-478b-8a08-8433ad9fa8a5",
+          "serverTiming": "preparedread;dur=22.27, db;dur=0, proxyqueue;dur=0.87, proxyheader;dur=353.60"
+        },
+        {
+          "path": "source",
+          "startFromActionMs": 4685.985107421875,
+          "headersMs": 888.399,
+          "endMs": 916.785,
+          "endFromActionMs": 5602.77001953125,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "dca528b9-177b-4435-b0e9-7562bf6b8310",
+          "serverTiming": "admission;dur=0, db;dur=597.01, sqlqueue;dur=399.57, dbdecode;dur=0.04, project;dur=0.00, serialize;dur=0.37, total;dur=598.03, proxyqueue;dur=1.24, proxyheader;dur=877.46"
+        },
+        {
+          "path": "preparation",
+          "startFromActionMs": 5914.383056640625,
+          "headersMs": 387.214,
+          "endMs": 487.127,
+          "endFromActionMs": 6401.510009765625,
+          "status": 200,
+          "terminalEvent": "failed",
+          "requestId": "c20ac2b1-190b-4714-ad89-8ae356abbf04",
+          "serverTiming": "proxyqueue;dur=3.64, proxyheader;dur=297.74"
+        }
+      ]
+    },
+    {
+      "phase": "reopen",
+      "actionToPaintMs": 11007.5,
+      "navigationToPaintMs": null,
+      "witnessLagMs": 268,
+      "requests": [
+        {
+          "path": "discover",
+          "startFromActionMs": 452.551025390625,
+          "headersMs": 875.161,
+          "endMs": 2021.832,
+          "endFromActionMs": 2474.383056640625,
+          "status": 200,
+          "terminalEvent": "failed",
+          "requestId": "ec3ab0e8-b3d1-4219-b1cc-870d9c2a9578",
+          "serverTiming": "admission;dur=0, db;dur=277.04, sqlqueue;dur=61.24, dbdecode;dur=0.04, project;dur=0.00, serialize;dur=12.61, total;dur=305.76, proxyqueue;dur=1.37, proxyheader;dur=856.76"
+        },
+        {
+          "path": "reader",
+          "startFromActionMs": 2591.003173828125,
+          "headersMs": 283.35,
+          "endMs": 326.569,
+          "endFromActionMs": 2917.572265625,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "b1b077e0-0571-42d5-809e-e41637ac5444",
+          "serverTiming": "readercontrol;dur=17.54, proxyqueue;dur=0.94, proxyheader;dur=274.54"
+        },
+        {
+          "path": "source",
+          "startFromActionMs": 5063.606201171875,
+          "headersMs": 883.364,
+          "endMs": 906.095,
+          "endFromActionMs": 5969.701171875,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "86fba8aa-320e-4c79-afde-09dbe30e5cb0",
+          "serverTiming": "admission;dur=0, db;dur=625.05, sqlqueue;dur=399.11, dbdecode;dur=0.05, project;dur=0.00, serialize;dur=0.32, total;dur=626.02, proxyqueue;dur=1.74, proxyheader;dur=868.05"
+        },
+        {
+          "path": "preparation",
+          "startFromActionMs": 6490.35595703125,
+          "headersMs": 264.6,
+          "endMs": 376.166,
+          "endFromActionMs": 6866.52197265625,
+          "status": 200,
+          "terminalEvent": "failed",
+          "requestId": "71bf0140-4a90-4551-b0d1-905f19bf9670",
+          "serverTiming": "proxyqueue;dur=1.24, proxyheader;dur=256.25"
+        }
+      ]
+    }
+  ],
+  "clean-candidate": [
+    {
+      "phase": "parent",
+      "actionToPaintMs": 16679.89999999851,
+      "navigationToPaintMs": 16967.099999999627,
+      "witnessLagMs": 135.5,
+      "requests": [
+        {
+          "path": "discover",
+          "startFromActionMs": 2218.38232421875,
+          "headersMs": 1673.539,
+          "endMs": 3386.762,
+          "endFromActionMs": 5605.144287109375,
+          "status": 200,
+          "terminalEvent": "failed",
+          "requestId": "83546eab-d85b-449d-8bf2-acc9caa995da",
+          "serverTiming": "admission;dur=0, db;dur=713.43, sqlqueue;dur=485.25, dbdecode;dur=0.07, project;dur=0.00, serialize;dur=13.41, total;dur=749.06, proxyqueue;dur=18.67, proxyheader;dur=1618.41"
+        },
+        {
+          "path": "reader",
+          "startFromActionMs": 5626.106201171875,
+          "headersMs": 1050.196,
+          "endMs": 1139.163,
+          "endFromActionMs": 6765.269287109375,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "63e70e42-59ed-4f80-abbb-e8080770f93f",
+          "serverTiming": "readercontrol;dur=31.54, proxyqueue;dur=13.02, proxyheader;dur=1021.10"
+        },
+        {
+          "path": "projection-batch",
+          "startFromActionMs": 6865.495361328125,
+          "headersMs": 928.69,
+          "endMs": 2869.312,
+          "endFromActionMs": 9734.807373046875,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "992443b2-c0f5-4dc9-af30-28b514652b4d",
+          "serverTiming": "preparedread;dur=23.40, db;dur=0, proxyqueue;dur=1.26, proxyheader;dur=918.28"
+        },
+        {
+          "path": "projection-batch",
+          "startFromActionMs": 7925.56640625,
+          "headersMs": 2117.841,
+          "endMs": 2392.158,
+          "endFromActionMs": 10317.724365234375,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "a948dc30-2e5e-45af-b0f8-0e20947a8e9f",
+          "serverTiming": "preparedread;dur=15.00, db;dur=0, proxyqueue;dur=2.21, proxyheader;dur=2094.89"
+        },
+        {
+          "path": "projection-batch",
+          "startFromActionMs": 10220.216064453125,
+          "headersMs": 382.762,
+          "endMs": 767.546,
+          "endFromActionMs": 10987.761962890625,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "15da08eb-572c-4e48-9b7c-09a07a3045d2",
+          "serverTiming": "preparedread;dur=11.53, db;dur=0, proxyqueue;dur=9.68, proxyheader;dur=351.64"
+        },
+        {
+          "path": "reader",
+          "startFromActionMs": 11818.085205078125,
+          "headersMs": 878.299,
+          "endMs": 926.927,
+          "endFromActionMs": 12745.01220703125,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "67ae3afd-1144-4bb1-bfaa-a535dcde9bbc",
+          "serverTiming": "readercontrol;dur=4.95, proxyqueue;dur=1.17, proxyheader;dur=852.56"
+        },
+        {
+          "path": "projection-batch",
+          "startFromActionMs": 13239.2783203125,
+          "headersMs": 842.314,
+          "endMs": 1857.97,
+          "endFromActionMs": 15097.248291015625,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "472990f6-1856-445c-810a-f6f23502bc8c",
+          "serverTiming": "preparedread;dur=21.79, db;dur=0, proxyqueue;dur=1.32, proxyheader;dur=833.10"
+        },
+        {
+          "path": "source",
+          "startFromActionMs": 15190.5361328125,
+          "headersMs": 821.163,
+          "endMs": 857.438,
+          "endFromActionMs": 16047.97412109375,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "b833f04a-fc1a-4b76-acaa-c5dd60cda79b",
+          "serverTiming": "admission;dur=0, db;dur=329.59, sqlqueue;dur=105.03, dbdecode;dur=0.05, project;dur=0.00, serialize;dur=0.20, total;dur=330.27, proxyqueue;dur=1.50, proxyheader;dur=811.12"
+        },
+        {
+          "path": "preparation",
+          "startFromActionMs": 16475.977294921875,
+          "headersMs": 502.477,
+          "endMs": 615.98,
+          "endFromActionMs": 17091.957275390625,
+          "status": 200,
+          "terminalEvent": "failed",
+          "requestId": "dc78c111-96d0-43a9-ab27-0480bba4ca58",
+          "serverTiming": "proxyqueue;dur=2.75, proxyheader;dur=487.05"
+        }
+      ]
+    },
+    {
+      "phase": "extension-1",
+      "actionToPaintMs": 9032.199999999255,
+      "navigationToPaintMs": null,
+      "witnessLagMs": 74.5,
+      "requests": [
+        {
+          "path": "discover",
+          "startFromActionMs": 807.370849609375,
+          "headersMs": 1435.014,
+          "endMs": 3233.909,
+          "endFromActionMs": 4041.27978515625,
+          "status": 200,
+          "terminalEvent": "failed",
+          "requestId": "81e46bd1-ac33-4ba3-9b65-ff5532f94a9d",
+          "serverTiming": "admission;dur=0, db;dur=509.52, sqlqueue;dur=291.87, dbdecode;dur=0.05, project;dur=0.00, serialize;dur=16.18, total;dur=555.29, proxyqueue;dur=8.54, proxyheader;dur=1411.36"
+        },
+        {
+          "path": "reader",
+          "startFromActionMs": 4142.00390625,
+          "headersMs": 455.429,
+          "endMs": 508.788,
+          "endFromActionMs": 4650.7919921875,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "2a335dfc-762a-4d74-889e-892a7fb9d591",
+          "serverTiming": "readercontrol;dur=29.16, proxyqueue;dur=1.23, proxyheader;dur=444.09"
+        },
+        {
+          "path": "projection-batch",
+          "startFromActionMs": 5748.494140625,
+          "headersMs": 766.407,
+          "endMs": 810.846,
+          "endFromActionMs": 6559.340087890625,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "a7938760-899c-42c4-86b5-a1517633ef5e",
+          "serverTiming": "preparedread;dur=14.73, db;dur=0, proxyqueue;dur=5.85, proxyheader;dur=739.92"
+        },
+        {
+          "path": "source",
+          "startFromActionMs": 7259.699951171875,
+          "headersMs": 1087.176,
+          "endMs": 1112.44,
+          "endFromActionMs": 8372.139892578125,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "b38948bb-da66-4d7c-bfc9-8625fb59a573",
+          "serverTiming": "admission;dur=0, db;dur=688.86, sqlqueue;dur=459.67, dbdecode;dur=0.06, project;dur=0.00, serialize;dur=0.33, total;dur=689.74, proxyqueue;dur=7.62, proxyheader;dur=1068.24"
+        },
+        {
+          "path": "preparation",
+          "startFromActionMs": 8621.43505859375,
+          "headersMs": 438.207,
+          "endMs": 520.523,
+          "endFromActionMs": 9141.9580078125,
+          "status": 200,
+          "terminalEvent": "failed",
+          "requestId": "9bf8a5e4-6f92-4221-9e8d-cd721c1c3fa5",
+          "serverTiming": "proxyqueue;dur=4.65, proxyheader;dur=423.58"
+        }
+      ]
+    },
+    {
+      "phase": "extension-2",
+      "actionToPaintMs": 13222.700000001118,
+      "navigationToPaintMs": null,
+      "witnessLagMs": 9.0,
+      "requests": [
+        {
+          "path": "discover",
+          "startFromActionMs": 368.43798828125,
+          "headersMs": 3831.7,
+          "endMs": 7901.788,
+          "endFromActionMs": 8270.22607421875,
+          "status": 200,
+          "terminalEvent": "failed",
+          "requestId": "b9b5676a-2f39-428b-8c22-3f102fb650dd",
+          "serverTiming": "admission;dur=0, db;dur=417.96, sqlqueue;dur=194.02, dbdecode;dur=0.08, project;dur=0.00, serialize;dur=15.41, total;dur=456.14, proxyqueue;dur=8.14, proxyheader;dur=3815.18"
+        },
+        {
+          "path": "reader",
+          "startFromActionMs": 8284.073974609375,
+          "headersMs": 1065.451,
+          "endMs": 1078.202,
+          "endFromActionMs": 9362.27587890625,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "7b4e68ed-fc31-4a04-a2f0-a2c52d82dd96",
+          "serverTiming": "readercontrol;dur=20.73, proxyqueue;dur=1.23, proxyheader;dur=1059.30"
+        },
+        {
+          "path": "projection-batch",
+          "startFromActionMs": 9554.80322265625,
+          "headersMs": 1119.207,
+          "endMs": 1172.019,
+          "endFromActionMs": 10726.822265625,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "722b1f44-f5b8-41d1-b774-288fc34bf1c6",
+          "serverTiming": "preparedread;dur=21.29, db;dur=0, proxyqueue;dur=1.50, proxyheader;dur=1105.24"
+        },
+        {
+          "path": "source",
+          "startFromActionMs": 10870.35107421875,
+          "headersMs": 1602.829,
+          "endMs": 1640.857,
+          "endFromActionMs": 12511.2080078125,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "a8f4f43f-e13c-4da1-a41e-3664c341fb94",
+          "serverTiming": "admission;dur=0, db;dur=621.03, sqlqueue;dur=397.78, dbdecode;dur=0.06, project;dur=0.00, serialize;dur=0.34, total;dur=621.84, proxyqueue;dur=1.29, proxyheader;dur=1587.04"
+        },
+        {
+          "path": "preparation",
+          "startFromActionMs": 12737.658935546875,
+          "headersMs": 1261.53,
+          "endMs": 1322.083,
+          "endFromActionMs": 14059.741943359375,
+          "status": 200,
+          "terminalEvent": "failed",
+          "requestId": "55497a83-85f3-44c0-98d5-95fd5c8d77ec",
+          "serverTiming": "proxyqueue;dur=1.62, proxyheader;dur=1245.73"
+        }
+      ]
+    },
+    {
+      "phase": "reopen",
+      "actionToPaintMs": 11191.5,
+      "navigationToPaintMs": null,
+      "witnessLagMs": 193,
+      "requests": [
+        {
+          "path": "discover",
+          "startFromActionMs": 234.965087890625,
+          "headersMs": 2268.603,
+          "endMs": 2371.605,
+          "endFromActionMs": 2606.570068359375,
+          "status": 200,
+          "terminalEvent": "failed",
+          "requestId": "a1f4be26-8e18-438d-8490-aea57ecf4190",
+          "serverTiming": "admission;dur=0, db;dur=339.54, sqlqueue;dur=119.36, dbdecode;dur=0.04, project;dur=0.00, serialize;dur=12.28, total;dur=366.19, proxyqueue;dur=1.52, proxyheader;dur=2248.01"
+        },
+        {
+          "path": "reader",
+          "startFromActionMs": 2616.3662109375,
+          "headersMs": 1085.266,
+          "endMs": 1103.24,
+          "endFromActionMs": 3719.606201171875,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "a56162c5-32a2-4f2e-abce-6aa9d53969c2",
+          "serverTiming": "readercontrol;dur=47.39, proxyqueue;dur=1.41, proxyheader;dur=1077.93"
+        },
+        {
+          "path": "source",
+          "startFromActionMs": 7970.529052734375,
+          "headersMs": 618.39,
+          "endMs": 643.543,
+          "endFromActionMs": 8614.072021484375,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "c55f32b8-7e9e-4159-bf7e-e8d296356e60",
+          "serverTiming": "admission;dur=0, db;dur=281.89, sqlqueue;dur=65.63, dbdecode;dur=0.04, project;dur=0.00, serialize;dur=0.41, total;dur=283.04, proxyqueue;dur=1.93, proxyheader;dur=606.26"
+        },
+        {
+          "path": "reader",
+          "startFromActionMs": 8868.584228515625,
+          "headersMs": 519.464,
+          "endMs": 545.446,
+          "endFromActionMs": 9414.0302734375,
+          "status": 200,
+          "terminalEvent": "complete",
+          "requestId": "b9f87052-4c50-4b9f-b637-7aab6d5fef84",
+          "serverTiming": "readercontrol;dur=4.26, proxyqueue;dur=1.60, proxyheader;dur=502.16"
+        },
+        {
+          "path": "preparation",
+          "startFromActionMs": 10719.998046875,
+          "headersMs": 470.657,
+          "endMs": 495.285,
+          "endFromActionMs": 11215.282958984375,
+          "status": 200,
+          "terminalEvent": "failed",
+          "requestId": "f0314deb-5210-4445-a38b-74e6dfe89726",
+          "serverTiming": "proxyqueue;dur=3.64, proxyheader;dur=460.36"
+        }
+      ]
+    }
+  ]
+}

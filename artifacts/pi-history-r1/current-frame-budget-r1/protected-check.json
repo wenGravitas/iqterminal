@@ -1,0 +1,70 @@
+{
+  "apiBuild": "dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51",
+  "exactIdsAndStartTimesUnchanged": true,
+  "running": true,
+  "checks": [
+    {
+      "name": "/iqterminal-server",
+      "idMatches": true,
+      "startMatches": true,
+      "running": true,
+      "id": "65471260a0cf64311ed57f9b17f1e1daf6de26f073192e292cd07bfb1e193ece",
+      "startedAt": "2026-10-25T10:58:27.590796454Z"
+    },
+    {
+      "name": "/iqterminal-spot-server",
+      "idMatches": true,
+      "startMatches": true,
+      "running": true,
+      "id": "a4be8d3c68a52de305fd9e2eaa101f50b592b8b108aaf850ddfbc1b2f53428bb",
+      "startedAt": "2026-10-25T10:58:53.322433531Z"
+    },
+    {
+      "name": "/iqterminal-history-materializer",
+      "idMatches": true,
+      "startMatches": true,
+      "running": true,
+      "id": "d7f786d6c833ee776fc620b8f02209a1e1b1ed5fc3235968272631f3c4cc6a34",
+      "startedAt": "2026-11-06T16:53:52.644213859Z"
+    },
+    {
+      "name": "/iqterminal-spot-history-materializer",
+      "idMatches": true,
+      "startMatches": true,
+      "running": true,
+      "id": "12489deea96a7d5918661f792e91bd819238696bc62b912308becbaa1bcb1763",
+      "startedAt": "2026-11-06T16:53:52.682114009Z"
+    },
+    {
+      "name": "/iqterminal-footprint-materializer",
+      "idMatches": true,
+      "startMatches": true,
+      "running": true,
+      "id": "1df92fdc2ce05c4113df9ecd8cb99fbabcf101b3fa04447561116ba929d93698",
+      "startedAt": "2026-11-06T16:53:52.623715016Z"
+    },
+    {
+      "name": "/iqterminal-spot-footprint-materializer",
+      "idMatches": true,
+      "startMatches": true,
+      "running": true,
+      "id": "8257c2c80dbcae7add967cb4571983e7639c8f96695e3d5d6302ec9b87ef6447",
+      "startedAt": "2026-11-06T16:53:52.693763579Z"
+    },
+    {
+      "name": "/iqterminal-sql-admission",
+      "idMatches": true,
+      "startMatches": true,
+      "running": true,
+      "id": "625825aa977bcf8e18264ed69e3ed4ca1a9290c5c14416db797a8bf11999032b",
+      "startedAt": "2026-11-06T16:53:48.880958761Z"
+    }
+  ],
+  "api": [
+    "/iqterminal-history-api",
+    "8b087d255b7262ff5b1543475c8c26610758ca8b37f0f99af8b54f3e0848336d",
+    "2026-11-09T10:14:21.244270641Z",
+    "running",
+    "sha256:3a67ff312a4924289717685b2c7aa53328e80f0dfd3af8e896bd347a3b848d43"
+  ]
+}

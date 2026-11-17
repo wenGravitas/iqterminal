@@ -1,0 +1,29 @@
+{
+  "source": "binance-native-kline",
+  "market": "spot",
+  "instrument": "binance:spot:BTCUSDT",
+  "candles": [
+    {
+      "t": 1793696400000,
+      "o": 76644.01,
+      "h": 76706.93,
+      "l": 76628,
+      "c": 76702.01,
+      "v": 97.08002,
+      "quoteVolume": 7442641.526364,
+      "revision": 1794115379452,
+      "closed": true
+    },
+    {
+      "t": 1793696700000,
+      "o": 76702,
+      "h": 76841.21,
+      "l": 76702,
+      "c": 76779.85,
+      "v": 79.70269,
+      "quoteVolume": 6119927.3103088,
+      "revision": 1794115379452,
+      "closed": true
+    }
+  ]
+}

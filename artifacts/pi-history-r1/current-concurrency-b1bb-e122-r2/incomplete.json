@@ -1,0 +1,5 @@
+{
+  "phase": "between-pairs health",
+  "completedSamples": 2,
+  "terminalError": "Health result did not contain expected API build; assertion ended process before remaining pairs. Samples retained. Not a five-run comparison. Custom profile already prepared and has partial source; active custom-build condition unproven."
+}

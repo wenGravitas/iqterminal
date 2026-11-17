@@ -1,0 +1,162 @@
+{
+  "source": "artifacts/pi-history-r1/stage33-footprint24-five-samples.jsonl",
+  "method": "Pi client observations; navigation-relative main-thread painted content; null is not complete; every sample retained; no p95 from five runs. Recorded rendering labels require their browser-environment receipts; this report does not independently certify foreground execution.",
+  "renderingModes": [
+    "headless-gles"
+  ],
+  "scenarios": [
+    {
+      "case": "footprint-24h-1h",
+      "samplesMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null,
+      "sampleCount": 5,
+      "requestedSpanVerified": true,
+      "footprintCoverage": [
+        {
+          "valid": false,
+          "reason": "Missing or changed requested/eligible interval"
+        },
+        {
+          "valid": false,
+          "reason": "Missing or changed requested/eligible interval"
+        },
+        {
+          "valid": false,
+          "reason": "Missing or changed requested/eligible interval"
+        },
+        {
+          "valid": false,
+          "reason": "Missing or changed requested/eligible interval"
+        },
+        {
+          "valid": false,
+          "reason": "Missing or changed requested/eligible interval"
+        }
+      ],
+      "environmentVerified": true,
+      "wallReferenceVerified": null,
+      "environments": [
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+        }
+      ],
+      "gate": "FAIL",
+      "limitsMs": {
+        "median": 5000,
+        "maximum": 10000
+      },
+      "firstHistoricalPaintMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "firstHistory3sGate": null,
+      "builds": [
+        "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "requested": {
+            "from": 1794294000000,
+            "to": 1794380400000
+          },
+          "viewport": null,
+          "paintedClosedBars": 0,
+          "formingPainted": false,
+          "archive": {},
+          "exception": "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."
+        },
+        {
+          "run": 2,
+          "requested": {
+            "from": 1794294000000,
+            "to": 1794380400000
+          },
+          "viewport": null,
+          "paintedClosedBars": 0,
+          "formingPainted": false,
+          "archive": {},
+          "exception": "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."
+        },
+        {
+          "run": 3,
+          "requested": {
+            "from": 1794294000000,
+            "to": 1794380400000
+          },
+          "viewport": null,
+          "paintedClosedBars": 0,
+          "formingPainted": false,
+          "archive": {},
+          "exception": "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."
+        },
+        {
+          "run": 4,
+          "requested": {
+            "from": 1794294000000,
+            "to": 1794380400000
+          },
+          "viewport": null,
+          "paintedClosedBars": 0,
+          "formingPainted": false,
+          "archive": {},
+          "exception": "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."
+        },
+        {
+          "run": 5,
+          "requested": {
+            "from": 1794294000000,
+            "to": 1794380400000
+          },
+          "viewport": null,
+          "paintedClosedBars": 0,
+          "formingPainted": false,
+          "archive": {},
+          "exception": "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."
+        }
+      ]
+    }
+  ]
+}

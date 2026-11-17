@@ -1,0 +1,1487 @@
+From https://github.com/wenGravitas/iqterminal-server
+ * branch            perf/pi-history-r1 -> FETCH_HEAD
+Updating f519c44..7256fd4
+Fast-forward
+ compose.yaml                              |   1 +
+ docs/PI-HISTORY-OPEN-CORRECTNESS.md       |  68 ++++++++++++++
+ docs/PI-HISTORY-PERFORMANCE-R1.md         | 131 +++++++++++++++++++++++++++
+ ops/pi-execution-id-index.mjs             |   3 +-
+ ops/pi-footprint-digest-reference.mjs     |  16 ++++
+ ops/pi-footprint-source-version-proof.mjs |  23 +++++
+ ops/pi-history-r1-rollout.sh              |   6 ++
+ src/footprint-build.ts                    |  15 +++-
+ src/footprint-jobs.ts                     | 144 ++++++++++++++++++++++--------
+ src/footprint-materializer.ts             |   2 +-
+ src/footprint-revisions.ts                |  27 ++++++
+ src/footprint-source-version.ts           |  27 ++++++
+ src/history-footprints.ts                 | 127 +++++++++++++++++++++-----
+ tests/footprint-jobs.test.ts              | 117 +++++++++++++++++++++---
+ tests/footprint-publication.test.ts       |  46 ++++++++++
+ tests/footprint-revisions.test.ts         |  16 ++++
+ tests/footprint-source-version.test.ts    |  22 +++++
+ tests/history-footprints-api.test.ts      |  58 +++++++++++-
+ 18 files changed, 771 insertions(+), 78 deletions(-)
+ create mode 100644 docs/PI-HISTORY-OPEN-CORRECTNESS.md
+ create mode 100644 ops/pi-footprint-digest-reference.mjs
+ create mode 100644 ops/pi-footprint-source-version-proof.mjs
+ create mode 100644 src/footprint-revisions.ts
+ create mode 100644 src/footprint-source-version.ts
+ create mode 100644 tests/footprint-publication.test.ts
+ create mode 100644 tests/footprint-revisions.test.ts
+ create mode 100644 tests/footprint-source-version.test.ts
+
+> iqterminal-server@0.1.0 typecheck
+> tsc --noEmit
+
+
+> iqterminal-server@0.1.0 test
+> tsx --test tests/*.test.ts
+
+TAP version 13
+# Subtest: event payload reads keep FINAL and bounded canonical selection ahead of payload decoding
+ok 1 - event payload reads keep FINAL and bounded canonical selection ahead of payload decoding
+  ---
+  duration_ms: 0.743026
+  type: 'test'
+  ...
+# Subtest: event key selection cannot exceed the incumbent carry-in or table bounds
+ok 2 - event key selection cannot exceed the incumbent carry-in or table bounds
+  ---
+  duration_ms: 0.31755
+  type: 'test'
+  ...
+# Subtest: REST identity, source timestamps, aggregate semantics and exact notional
+ok 3 - REST identity, source timestamps, aggregate semantics and exact notional
+  ---
+  duration_ms: 1.511222
+  type: 'test'
+  ...
+# Subtest: sequence boundaries and incomplete recovery
+ok 4 - sequence boundaries and incomplete recovery
+  ---
+  duration_ms: 0.355726
+  type: 'test'
+  ...
+# Subtest: common accumulator conserves base/actual-price quote across timeframe
+ok 5 - common accumulator conserves base/actual-price quote across timeframe
+  ---
+  duration_ms: 1.630934
+  type: 'test'
+  ...
+# Subtest: bounded cursor/range validation
+ok 6 - bounded cursor/range validation
+  ---
+  duration_ms: 0.20312
+  type: 'test'
+  ...
+# Subtest: request boundaries cannot label a truncated larger-timeframe bar complete
+ok 7 - request boundaries cannot label a truncated larger-timeframe bar complete
+  ---
+  duration_ms: 0.170062
+  type: 'test'
+  ...
+# Subtest: recovery plans preserve missing intervals beyond supported history
+ok 8 - recovery plans preserve missing intervals beyond supported history
+  ---
+  duration_ms: 0.109997
+  type: 'test'
+  ...
+# Subtest: recovery pages deduplicate inclusive overlap and keep unresolved ID gaps
+ok 9 - recovery pages deduplicate inclusive overlap and keep unresolved ID gaps
+  ---
+  duration_ms: 0.312853
+  type: 'test'
+  ...
+# Subtest: corrupt checkpoints are rejected without resetting coverage
+ok 10 - corrupt checkpoints are rejected without resetting coverage
+  ---
+  duration_ms: 0.172674
+  type: 'test'
+  ...
+# Subtest: CVD projects the existing spot table with exact signed notional and a durable FINAL watermark
+ok 11 - CVD projects the existing spot table with exact signed notional and a durable FINAL watermark
+  ---
+  duration_ms: 15.00005
+  type: 'test'
+  ...
+# Subtest: live refresh replaces changed minutes and periodic repair revises older buckets without adding twice
+ok 12 - live refresh replaces changed minutes and periodic repair revises older buckets without adding twice
+  ---
+  duration_ms: 19.192947
+  type: 'test'
+  ...
+# Subtest: unknown history, source staleness, market identity and request bounds stay explicit
+ok 13 - unknown history, source staleness, market identity and request bounds stay explicit
+  ---
+  duration_ms: 21.610213
+  type: 'test'
+  ...
+# Subtest: over-budget or invalid database projections cannot be passed off as complete history
+ok 14 - over-budget or invalid database projections cannot be passed off as complete history
+  ---
+  duration_ms: 0.81766
+  type: 'test'
+  ...
+# Subtest: coverage repair refreshes authoritative buckets before declaring the gap repaired
+ok 15 - coverage repair refreshes authoritative buckets before declaring the gap repaired
+  ---
+  duration_ms: 7.976044
+  type: 'test'
+  ...
+# Subtest: parallel SQL reads get distinct request-correlated query IDs and report read costs
+ok 16 - parallel SQL reads get distinct request-correlated query IDs and report read costs
+  ---
+  duration_ms: 21.19452
+  type: 'test'
+  ...
+# Subtest: failed SQL attempts are counted and timed
+ok 17 - failed SQL attempts are counted and timed
+  ---
+  duration_ms: 0.991614
+  type: 'test'
+  ...
+# Subtest: cancellable read queries opt into server cancellation without changing writes
+ok 18 - cancellable read queries opt into server cancellation without changing writes
+  ---
+  duration_ms: 1.632402
+  type: 'test'
+  ...
+# Subtest: HTTP 200 streamed SQL exceptions cannot masquerade as valid rows
+ok 19 - HTTP 200 streamed SQL exceptions cannot masquerade as valid rows
+  ---
+  duration_ms: 2.069147
+  type: 'test'
+  ...
+# Subtest: projects exact visible BTC quantities and USDT notionals with side-specific coverage
+ok 20 - projects exact visible BTC quantities and USDT notionals with side-specific coverage
+  ---
+  duration_ms: 3.841141
+  type: 'test'
+  ...
+# Subtest: defaults to a 160-row viewport around the committed best quote and caps explicit ranges
+ok 21 - defaults to a 160-row viewport around the committed best quote and caps explicit ranges
+  ---
+  duration_ms: 4.157736
+  type: 'test'
+  ...
+# Subtest: only committed ordered records advance the projection; gaps and cursor jumps clear quantities
+ok 22 - only committed ordered records advance the projection; gaps and cursor jumps clear quantities
+  ---
+  duration_ms: 2.872215
+  type: 'test'
+  ...
+# Subtest: truncated 5,000-level edges remain partial or unknown instead of asserting empty depth
+ok 23 - truncated 5,000-level edges remain partial or unknown instead of asserting empty depth
+  ---
+  duration_ms: 49.045793
+  type: 'test'
+  ...
+# Subtest: invalidates its bounded row cache after each newly committed delta
+ok 24 - invalidates its bounded row cache after each newly committed delta
+  ---
+  duration_ms: 0.590665
+  type: 'test'
+  ...
+# Subtest: stale collector status keeps the last durable quantities, marking known sides stale and preserving unknown edges
+ok 25 - stale collector status keeps the last durable quantities, marking known sides stale and preserving unknown edges
+  ---
+  duration_ms: 0.29405
+  type: 'test'
+  ...
+# Subtest: lazy row integration is identical across quiet rows, same-time changes, gaps, epochs and checkpoints
+ok 26 - lazy row integration is identical across quiet rows, same-time changes, gaps, epochs and checkpoints
+  ---
+  duration_ms: 4551.959679
+  type: 'test'
+  ...
+# Subtest: a repeated sequence with a new record cursor cannot change quantities
+ok 27 - a repeated sequence with a new record cursor cannot change quantities
+  ---
+  duration_ms: 0.253939
+  type: 'test'
+  ...
+# Subtest: snapshot bridging, absolute replacements, outside levels, quiet known levels and removal
+ok 28 - snapshot bridging, absolute replacements, outside levels, quiet known levels and removal
+  ---
+  duration_ms: 1.688174
+  type: 'test'
+  ...
+# Subtest: checkpoint replay preserves outer known-zero metadata without implying unknown zeros
+ok 29 - checkpoint replay preserves outer known-zero metadata without implying unknown zeros
+  ---
+  duration_ms: 2.363404
+  type: 'test'
+  ...
+# Subtest: simultaneous price sums, weighted time, true peak and quote price notionals
+ok 30 - simultaneous price sums, weighted time, true peak and quote price notionals
+  ---
+  duration_ms: 0.727238
+  type: 'test'
+  ...
+# Subtest: history/live duplicates do not create artificial walls; gaps invalidate outer state
+ok 31 - history/live duplicates do not create artificial walls; gaps invalidate outer state
+  ---
+  duration_ms: 0.444246
+  type: 'test'
+  ...
+# Subtest: replay from reconstruction checkpoint equals original stream over retained interval
+ok 32 - replay from reconstruction checkpoint equals original stream over retained interval
+  ---
+  duration_ms: 0.572102
+  type: 'test'
+  ...
+# Subtest: retention keeps entire checkpoint dependency epochs including current epoch
+ok 33 - retention keeps entire checkpoint dependency epochs including current epoch
+  ---
+  duration_ms: 0.114719
+  type: 'test'
+  ...
+# Subtest: same-millisecond observed simultaneous peaks are not lost
+ok 34 - same-millisecond observed simultaneous peaks are not lost
+  ---
+  duration_ms: 0.318898
+  type: 'test'
+  ...
+# Subtest: seed plus continuous deltas matches replay with redundant intermediate checkpoints
+ok 35 - seed plus continuous deltas matches replay with redundant intermediate checkpoints
+  ---
+  duration_ms: 2.775793
+  type: 'test'
+  ...
+# (node:5060) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: server restores genuine raw history without backdating signals, then keeps collecting without clients
+ok 36 - server restores genuine raw history without backdating signals, then keeps collecting without clients
+  ---
+  duration_ms: 643.155654
+  type: 'test'
+  ...
+# Subtest: server restart restores timestamp-eligible calibration and marks active continuity interrupted
+ok 37 - server restart restores timestamp-eligible calibration and marks active continuity interrupted
+  ---
+  duration_ms: 384.256484
+  type: 'test'
+  ...
+# Subtest: server configurations are stable, bounded, and independent of chart display and notification preferences
+ok 38 - server configurations are stable, bounded, and independent of chart display and notification preferences
+  ---
+  duration_ms: 333.531949
+  type: 'test'
+  ...
+# Subtest: wrong source identity, sequence gaps and interrupted persistence never become complete signals
+ok 39 - wrong source identity, sequence gaps and interrupted persistence never become complete signals
+  ---
+  duration_ms: 213.805291
+  type: 'test'
+  ...
+# Subtest: canonical engine supports calibration-only admission without producing retrospective events or pane scores
+ok 40 - canonical engine supports calibration-only admission without producing retrospective events or pane scores
+  ---
+  duration_ms: 1.255305
+  type: 'test'
+  ...
+# Subtest: notification claims survive reload and require fresh real transition availability
+ok 41 - notification claims survive reload and require fresh real transition availability
+  ---
+  duration_ms: 258.122989
+  type: 'test'
+  ...
+# Subtest: availability is stamped after a delayed durable read, not at request start
+ok 42 - availability is stamped after a delayed durable read, not at request start
+  ---
+  duration_ms: 408.759066
+  type: 'test'
+  ...
+# Subtest: a new source sequence gap interrupts and durably retains a pending observation
+ok 43 - a new source sequence gap interrupts and durably retains a pending observation
+  ---
+  duration_ms: 426.021277
+  type: 'test'
+  ...
+# Subtest: a busy single hour over 250,000 executions resumes exact canonical cumulative extrema through bounded pages
+ok 44 - a busy single hour over 250,000 executions resumes exact canonical cumulative extrema through bounded pages
+  ---
+  duration_ms: 253.348024
+  type: 'test'
+  ...
+# Subtest: a full last page needs explicit exhaustion, invalid horizons/capacity do not silently drop records
+ok 45 - a full last page needs explicit exhaustion, invalid horizons/capacity do not silently drop records
+  ---
+  duration_ms: 5.315874
+  type: 'test'
+  ...
+# Subtest: interleaved candle timestamps retain each candle exact ID-ordered extrema through restart
+ok 46 - interleaved candle timestamps retain each candle exact ID-ordered extrema through restart
+  ---
+  duration_ms: 0.666117
+  type: 'test'
+  ...
+# Subtest: execution-only preparation has no depth dependency, survives restart, and publishes pinned revisions once
+ok 47 - execution-only preparation has no depth dependency, survives restart, and publishes pinned revisions once
+  ---
+  duration_ms: 156.698897
+  type: 'test'
+  ...
+# Subtest: ordinary polling preserves failed jobs; explicit retry resumes its cursor and success clears the error
+ok 48 - ordinary polling preserves failed jobs; explicit retry resumes its cursor and success clears the error
+  ---
+  duration_ms: 213.103686
+  type: 'test'
+  ...
+# Subtest: default rollover reuses ready slots rather than repeatedly rebuilding full default windows
+ok 49 - default rollover reuses ready slots rather than repeatedly rebuilding full default windows
+  ---
+  duration_ms: 76.747341
+  type: 'test'
+  ...
+# Subtest: current state includes the final old-candle tail before publishing rollover, with exact extrema
+ok 50 - current state includes the final old-candle tail before publishing rollover, with exact extrema
+  ---
+  duration_ms: 119.14215
+  type: 'test'
+  ...
+# Subtest: progressive overlapping polls and defaults share already queued candle work
+ok 51 - progressive overlapping polls and defaults share already queued candle work
+  ---
+  duration_ms: 181.164465
+  type: 'test'
+  ...
+# Subtest: a multi-candle build publishes nearest history first and resumes the older candle at the same horizon
+ok 52 - a multi-candle build publishes nearest history first and resumes the older candle at the same horizon
+  ---
+  duration_ms: 101.970994
+  type: 'test'
+  ...
+# Subtest: completed-job retention cannot evict active current or historical progress
+ok 53 - completed-job retention cannot evict active current or historical progress
+  ---
+  duration_ms: 5038.222993
+  type: 'test'
+  ...
+# Subtest: explicit current bootstrap retry resumes failed progress without resetting healthy builds
+ok 54 - explicit current bootstrap retry resumes failed progress without resetting healthy builds
+  ---
+  duration_ms: 269.366105
+  type: 'test'
+  ...
+# Subtest: current bootstrap never returns an old candle or an unbounded raw replay tail as ready
+ok 55 - current bootstrap never returns an old candle or an unbounded raw replay tail as ready
+  ---
+  duration_ms: 69.942841
+  type: 'test'
+  ...
+# Subtest: current execution preparation uses reserved current SQL admission; history keeps its fair lane
+ok 56 - current execution preparation uses reserved current SQL admission; history keeps its fair lane
+  ---
+  duration_ms: 188.424113
+  type: 'test'
+  ...
+# Subtest: a later execution for the preceding closed candle revises that candle without duplicating the forming bar
+ok 57 - a later execution for the preceding closed candle revises that candle without duplicating the forming bar
+  ---
+  duration_ms: 230.453067
+  type: 'test'
+  ...
+# Subtest: late repair intent survives restart and a full history queue without pausing current preparation
+ok 58 - late repair intent survives restart and a full history queue without pausing current preparation
+  ---
+  duration_ms: 1312.654933
+  type: 'test'
+  ...
+# Subtest: a higher-ID old timestamp cannot rewind current bootstrap or prevent its closed-candle repair
+ok 59 - a higher-ID old timestamp cannot rewind current bootstrap or prevent its closed-candle repair
+  ---
+  duration_ms: 233.830138
+  type: 'test'
+  ...
+# Subtest: a correction arriving during a pinned repair schedules the newer horizon without resetting its page cursor
+ok 60 - a correction arriving during a pinned repair schedules the newer horizon without resetting its page cursor
+  ---
+  duration_ms: 429.725278
+  type: 'test'
+  ...
+# Subtest: multi-hour current recovery retains its ID cursor and repairs older closed slots instead of jumping past them
+ok 61 - multi-hour current recovery retains its ID cursor and repairs older closed slots instead of jumping past them
+  ---
+  duration_ms: 237.527995
+  type: 'test'
+  ...
+# Subtest: source revision tokens coalesce polls, defer actual changes until a page completes, and refresh completed jobs once
+ok 62 - source revision tokens coalesce polls, defer actual changes until a page completes, and refresh completed jobs once
+  ---
+  duration_ms: 324.659351
+  type: 'test'
+  ...
+# Subtest: an older pinned build cannot replace a newer canonical revision, even with a later wall clock
+ok 63 - an older pinned build cannot replace a newer canonical revision, even with a later wall clock
+  ---
+  duration_ms: 2.713609
+  type: 'test'
+  ...
+# Subtest: unchanged canonical content is idempotent across publication clocks and source horizons
+ok 64 - unchanged canonical content is idempotent across publication clocks and source horizons
+  ---
+  duration_ms: 0.647469
+  type: 'test'
+  ...
+# Subtest: canonical history keeps time bounds, while initialized current pages observe bounded ID tails
+ok 65 - canonical history keeps time bounds, while initialized current pages observe bounded ID tails
+  ---
+  duration_ms: 0.604562
+  type: 'test'
+  ...
+# Subtest: current cursor seed uses the canonical first ID of the highest observed candle when head timestamps regress
+ok 66 - current cursor seed uses the canonical first ID of the highest observed candle when head timestamps regress
+  ---
+  duration_ms: 0.753005
+  type: 'test'
+  ...
+# Subtest: current seed rejects missing retained source instead of advancing past the unavailable cursor
+ok 67 - current seed rejects missing retained source instead of advancing past the unavailable cursor
+  ---
+  duration_ms: 0.718334
+  type: 'test'
+  ...
+# Subtest: normal current tails require the measured index and bounded SQL read work
+ok 68 - normal current tails require the measured index and bounded SQL read work
+  ---
+  duration_ms: 0.288503
+  type: 'test'
+  ...
+# Subtest: publication refuses a same-count changed canonical input and enriches legacy content idempotently
+ok 69 - publication refuses a same-count changed canonical input and enriches legacy content idempotently
+  ---
+  duration_ms: 1.31389
+  type: 'test'
+  ...
+# Subtest: atomic checkpoints expose pending and completed corrections without retaining accumulators
+ok 70 - atomic checkpoints expose pending and completed corrections without retaining accumulators
+  ---
+  duration_ms: 26.809733
+  type: 'test'
+  ...
+# Subtest: page digests survive restart and duplicate input without losing UInt256 precision
+ok 71 - page digests survive restart and duplicate input without losing UInt256 precision
+  ---
+  duration_ms: 6.258645
+  type: 'test'
+  ...
+# Subtest: scalar source versions retain canonical FINAL, Decimal input hashing, pinned horizon and work bounds
+ok 72 - scalar source versions retain canonical FINAL, Decimal input hashing, pinned horizon and work bounds
+  ---
+  duration_ms: 1.025204
+  type: 'test'
+  ...
+# Subtest: historical admission cannot consume the current/health reserve and releases idempotently
+ok 73 - historical admission cannot consume the current/health reserve and releases idempotently
+  ---
+  duration_ms: 1.048012
+  type: 'test'
+  ...
+# Subtest: incremental sparse tiles match authoritative replay: average
+ok 74 - incremental sparse tiles match authoritative replay: average
+  ---
+  duration_ms: 1200.35586
+  type: 'test'
+  ...
+# Subtest: incremental sparse tiles match authoritative replay: peak
+ok 75 - incremental sparse tiles match authoritative replay: peak
+  ---
+  duration_ms: 875.436035
+  type: 'test'
+  ...
+# Subtest: incremental sparse tiles match authoritative replay: last
+ok 76 - incremental sparse tiles match authoritative replay: last
+  ---
+  duration_ms: 999.246243
+  type: 'test'
+  ...
+# Subtest: simultaneous price peaks are not the sum of independent fine-row peaks
+ok 77 - simultaneous price peaks are not the sum of independent fine-row peaks
+  ---
+  duration_ms: 0.376914
+  type: 'test'
+  ...
+# Subtest: checkpoint before a snapshot bridge preserves unbridged sequence semantics
+ok 78 - checkpoint before a snapshot bridge preserves unbridged sequence semantics
+  ---
+  duration_ms: 0.294037
+  type: 'test'
+  ...
+# Subtest: duplicate finalization and checkpoint resume produce identical sufficient statistics
+ok 79 - duplicate finalization and checkpoint resume produce identical sufficient statistics
+  ---
+  duration_ms: 11.156107
+  type: 'test'
+  ...
+# Subtest: fractional tick-aligned rows retain reference boundary arithmetic
+ok 80 - fractional tick-aligned rows retain reference boundary arithmetic
+  ---
+  duration_ms: 51.691209
+  type: 'test'
+  ...
+# Subtest: checkpoint calculation identity cannot silently cross a schema or feed change
+ok 81 - checkpoint calculation identity cannot silently cross a schema or feed change
+  ---
+  duration_ms: 0.569123
+  type: 'test'
+  ...
+# Subtest: Retry after a transport failure reads ready history without starting a new materialization
+ok 82 - Retry after a transport failure reads ready history without starting a new materialization
+  ---
+  duration_ms: 5.741534
+  type: 'test'
+  ...
+# Subtest: a completed resumed job re-reads tiles and recomputes missing slots before returning ready
+ok 83 - a completed resumed job re-reads tiles and recomputes missing slots before returning ready
+  ---
+  duration_ms: 20.856208
+  type: 'test'
+  ...
+# Subtest: explicit retry resumes the failed job range rather than re-enqueuing the whole viewport
+ok 84 - explicit retry resumes the failed job range rather than re-enqueuing the whole viewport
+  ---
+  duration_ms: 2.376254
+  type: 'test'
+  ...
+# Subtest: ordinary polling neither resets a healthy build nor retries absent source
+ok 85 - ordinary polling neither resets a healthy build nor retries absent source
+  ---
+  duration_ms: 6.129191
+  type: 'test'
+  ...
+# Subtest: an independently maintained current cursor never suppresses missing historical preparation
+ok 86 - an independently maintained current cursor never suppresses missing historical preparation
+  ---
+  duration_ms: 2.725096
+  type: 'test'
+  ...
+# Subtest: a queued closed-candle revision keeps good tiles visible without claiming ready
+ok 87 - a queued closed-candle revision keeps good tiles visible without claiming ready
+  ---
+  duration_ms: 0.864323
+  type: 'test'
+  ...
+# Subtest: a correction committing around a tile read forces a bounded revision re-read
+ok 88 - a correction committing around a tile read forces a bounded revision re-read
+  ---
+  duration_ms: 0.521353
+  type: 'test'
+  ...
+# Subtest: a completed correction observed through worker health also re-reads stale tiles
+ok 89 - a completed correction observed through worker health also re-reads stale tiles
+  ---
+  duration_ms: 1.339837
+  type: 'test'
+  ...
+# Subtest: failed revision recovery retains good tiles when its worker is unreachable
+ok 90 - failed revision recovery retains good tiles when its worker is unreachable
+  ---
+  duration_ms: 0.686145
+  type: 'test'
+  ...
+# Subtest: an inactive unusual configuration discovers a same-count canonical correction and reuses its healthy repair
+ok 91 - an inactive unusual configuration discovers a same-count canonical correction and reuses its healthy repair
+  ---
+  duration_ms: 3.151534
+  type: 'test'
+  ...
+# Subtest: a legacy tile remains visible but cannot claim current canonical validation
+ok 92 - a legacy tile remains visible but cannot claim current canonical validation
+  ---
+  duration_ms: 2.871784
+  type: 'test'
+  ...
+# Subtest: absent retained source keeps old tiles explicitly unavailable without launching a futile rebuild
+ok 93 - absent retained source keeps old tiles explicitly unavailable without launching a futile rebuild
+  ---
+  duration_ms: 3.377572
+  type: 'test'
+  ...
+# Subtest: an unconfirmed closed boundary stays building independently of a healthy live source
+ok 94 - an unconfirmed closed boundary stays building independently of a healthy live source
+  ---
+  duration_ms: 1.054615
+  type: 'test'
+  ...
+# Subtest: a drained closed bucket survives publication failure and process restart
+ok 95 - a drained closed bucket survives publication failure and process restart
+  ---
+  duration_ms: 39.444879
+  type: 'test'
+  ...
+# Subtest: publication acknowledges payloads before manifest, retries are idempotent, corrections revise without adding totals
+ok 96 - publication acknowledges payloads before manifest, retries are idempotent, corrections revise without adding totals
+  ---
+  duration_ms: 16.456542
+  type: 'test'
+  ...
+# Subtest: gzip and identity responses preserve the same JSON and negotiate bounded response headers
+ok 97 - gzip and identity responses preserve the same JSON and negotiate bounded response headers
+  ---
+  duration_ms: 8.232355
+  type: 'test'
+  ...
+# Subtest: gzip is skipped when the body is below the existing 4 KiB response threshold
+ok 98 - gzip is skipped when the body is below the existing 4 KiB response threshold
+  ---
+  duration_ms: 0.30187
+  type: 'test'
+  ...
+# Subtest: Spot and USD-M share native ids and times without sharing durable identity
+ok 99 - Spot and USD-M share native ids and times without sharing durable identity
+  ---
+  duration_ms: 2.517672
+  type: 'test'
+  ...
+# Subtest: Spot market config uses Spot feed identity and Spot public endpoints
+ok 100 - Spot market config uses Spot feed identity and Spot public endpoints
+  ---
+  duration_ms: 0.250719
+  type: 'test'
+  ...
+# Subtest: Spot REST aggregate rows without wire event and symbol fields normalize as Spot executions
+ok 101 - Spot REST aggregate rows without wire event and symbol fields normalize as Spot executions
+  ---
+  duration_ms: 0.195542
+  type: 'test'
+  ...
+# Subtest: positioning API query supports only bounded perpetual methods and venues
+ok 102 - positioning API query supports only bounded perpetual methods and venues
+  ---
+  duration_ms: 2.296461
+  type: 'test'
+  ...
+# Subtest: positioning API range is capped at four hours and duplicate or malformed bounds fail closed
+ok 103 - positioning API range is capped at four hours and duplicate or malformed bounds fail closed
+  ---
+  duration_ms: 0.446249
+  type: 'test'
+  ...
+# Subtest: positioning response rows stay capped and expose truncation past the limit
+ok 104 - positioning response rows stay capped and expose truncation past the limit
+  ---
+  duration_ms: 0.548302
+  type: 'test'
+  ...
+# Subtest: persisted Decimal text stays exact and refuses JSON numbers
+ok 105 - persisted Decimal text stays exact and refuses JSON numbers
+  ---
+  duration_ms: 1.728669
+  type: 'test'
+  ...
+# Subtest: price plus OI allocates signed increases and decreases and conserves every change
+ok 106 - price plus OI allocates signed increases and decreases and conserves every change
+  ---
+  duration_ms: 1.419557
+  type: 'test'
+  ...
+# Subtest: aggressor flow classifies from signed native BTC quantity, not quote notional
+ok 107 - aggressor flow classifies from signed native BTC quantity, not quote notional
+  ---
+  duration_ms: 1.312695
+  type: 'test'
+  ...
+# Subtest: single-sided flow quantities work and flow timestamps use exact half-open interval boundaries
+ok 108 - single-sided flow quantities work and flow timestamps use exact half-open interval boundaries
+  ---
+  duration_ms: 0.413865
+  type: 'test'
+  ...
+# Subtest: neutral direction is unclassified and zero OI is confirmed zero without direction inputs
+ok 109 - neutral direction is unclassified and zero OI is confirmed zero without direction inputs
+  ---
+  duration_ms: 0.41207
+  type: 'test'
+  ...
+# Subtest: stale, future-only, invalid and cross-feed price inputs remain unavailable instead of zeros
+ok 110 - stale, future-only, invalid and cross-feed price inputs remain unavailable instead of zeros
+  ---
+  duration_ms: 0.516565
+  type: 'test'
+  ...
+# Subtest: duplicate, repeated, out-of-order and invalid OI observations cannot create spikes
+ok 111 - duplicate, repeated, out-of-order and invalid OI observations cannot create spikes
+  ---
+  duration_ms: 0.419851
+  type: 'test'
+  ...
+# Subtest: coarse OI cadence is allowed when the collector marks continuity complete
+ok 112 - coarse OI cadence is allowed when the collector marks continuity complete
+  ---
+  duration_ms: 0.282203
+  type: 'test'
+  ...
+# Subtest: late-flow grace needs a same-feed source watermark beyond the boundary
+ok 113 - late-flow grace needs a same-feed source watermark beyond the boundary
+  ---
+  duration_ms: 0.555872
+  type: 'test'
+  ...
+# Subtest: future flow is ignored and a trade-stream reconnect cannot bridge old-epoch prints
+ok 114 - future flow is ignored and a trade-stream reconnect cannot bridge old-epoch prints
+  ---
+  duration_ms: 0.577695
+  type: 'test'
+  ...
+# Subtest: BTC conservation is exact to source precision for one-satoshi OI changes and accumulated flow
+ok 115 - BTC conservation is exact to source precision for one-satoshi OI changes and accumulated flow
+  ---
+  duration_ms: 0.379626
+  type: 'test'
+  ...
+# Subtest: flow gaps, incomplete coverage, cross-feed coverage and conflicting duplicate trades are unavailable
+ok 116 - flow gaps, incomplete coverage, cross-feed coverage and conflicting duplicate trades are unavailable
+  ---
+  duration_ms: 2.033406
+  type: 'test'
+  ...
+# Subtest: provenance preserves raw observation source and receive timestamps and exact attribution boundary
+ok 117 - provenance preserves raw observation source and receive timestamps and exact attribution boundary
+  ---
+  duration_ms: 0.249762
+  type: 'test'
+  ...
+# Subtest: Hyperliquid public trades normalize base size and aggressor side without USD conversion
+ok 118 - Hyperliquid public trades normalize base size and aggressor side without USD conversion
+  ---
+  duration_ms: 0.735059
+  type: 'test'
+  ...
+# Subtest: Hyperliquid open interest uses coin size and makes collector-sampled source timing explicit
+ok 119 - Hyperliquid open interest uses coin size and makes collector-sampled source timing explicit
+  ---
+  duration_ms: 0.425812
+  type: 'test'
+  ...
+# Subtest: Binance BTCUSDT open interest preserves its supported base-size field and rejects unsupported inputs
+ok 120 - Binance BTCUSDT open interest preserves its supported base-size field and rejects unsupported inputs
+  ---
+  duration_ms: 0.352306
+  type: 'test'
+  ...
+# Subtest: the Hyperliquid working set bounds memory, deduplicates, and retains exact boundary prices/flow
+ok 121 - the Hyperliquid working set bounds memory, deduplicates, and retains exact boundary prices/flow
+  ---
+  duration_ms: 0.537963
+  type: 'test'
+  ...
+# Subtest: full-source rank finds distant qualifiers beyond five thousand closer prices on each side
+ok 122 - full-source rank finds distant qualifiers beyond five thousand closer prices on each side
+  ---
+  duration_ms: 122.037451
+  type: 'test'
+  ...
+# Subtest: default ten-percent Top10 cannot reconstruct a narrower two-percent rank
+ok 123 - default ten-percent Top10 cannot reconstruct a narrower two-percent rank
+  ---
+  duration_ms: 1.83188
+  type: 'test'
+  ...
+# Subtest: pinned IDs match both canonical markets and delayed profiles encode exact eligibility and confirmation
+ok 124 - pinned IDs match both canonical markets and delayed profiles encode exact eligibility and confirmation
+  ---
+  duration_ms: 0.718411
+  type: 'test'
+  ...
+# Subtest: archive profiles publish the same canonical feed identity the frontend validates
+ok 125 - archive profiles publish the same canonical feed identity the frontend validates
+  ---
+  duration_ms: 0.164448
+  type: 'test'
+  ...
+# Subtest: history pages keep patch cursors mid-range and advance a quiet terminal tail to its watermark
+ok 126 - history pages keep patch cursors mid-range and advance a quiet terminal tail to its watermark
+  ---
+  duration_ms: 1.114537
+  type: 'test'
+  ...
+# Subtest: history continuation cursors remain on the last applied event before terminal watermark advancement
+ok 127 - history continuation cursors remain on the last applied event before terminal watermark advancement
+  ---
+  duration_ms: 0.883272
+  type: 'test'
+  ...
+# Subtest: history and current pages close repeated timestamps across interleaved cursors and replacement epochs
+ok 128 - history and current pages close repeated timestamps across interleaved cursors and replacement epochs
+  ---
+  duration_ms: 2.122483
+  type: 'test'
+  ...
+# Subtest: history API emits canonical singular candidate and removal sides for seeds and patches
+ok 129 - history API emits canonical singular candidate and removal sides for seeds and patches
+  ---
+  duration_ms: 0.910164
+  type: 'test'
+  ...
+# Subtest: seven-day history without a retained carry-in anchor is unavailable rather than empty
+ok 130 - seven-day history without a retained carry-in anchor is unavailable rather than empty
+  ---
+  duration_ms: 0.858894
+  type: 'test'
+  ...
+# Subtest: archive retention setting is bounded and drives the supported query horizon
+ok 131 - archive retention setting is bounded and drives the supported query horizon
+  ---
+  duration_ms: 1.036174
+  type: 'test'
+  ...
+# Subtest: archive migration applies the runtime horizon and preserves carry-in anchors beyond it
+ok 132 - archive migration applies the runtime horizon and preserves carry-in anchors beyond it
+  ---
+  duration_ms: 6.256078
+  type: 'test'
+  ...
+# Subtest: staging rollout backs up a running container when its image object was pruned
+ok 133 - staging rollout backs up a running container when its image object was pruned
+  ---
+  duration_ms: 0.631768
+  type: 'test'
+  ...
+# Subtest: current deltas retain the pinned head and coverage while a later profile head advances
+ok 134 - current deltas retain the pinned head and coverage while a later profile head advances
+  ---
+  duration_ms: 0.619181
+  type: 'test'
+  ...
+# Subtest: current validity stays distinct from partial observed band scope and gap state
+ok 135 - current validity stays distinct from partial observed band scope and gap state
+  ---
+  duration_ms: 0.486632
+  type: 'test'
+  ...
+# Subtest: current bootstrap scopes its latest gap and locates a seed before loading payload
+ok 136 - current bootstrap scopes its latest gap and locates a seed before loading payload
+  ---
+  duration_ms: 1.370202
+  type: 'test'
+  ...
+# Subtest: midpoint-only movement reevaluates band eligibility and gives reentry a new identity
+ok 137 - midpoint-only movement reevaluates band eligibility and gives reentry a new identity
+  ---
+  duration_ms: 1.649777
+  type: 'test'
+  ...
+# Subtest: confirmation waits for the first unchanged raw observation beyond its boundary
+ok 138 - confirmation waits for the first unchanged raw observation beyond its boundary
+  ---
+  duration_ms: 0.630319
+  type: 'test'
+  ...
+# Subtest: delayed confirmation starts when the configured minimum or Top N eligibility begins
+ok 139 - delayed confirmation starts when the configured minimum or Top N eligibility begins
+  ---
+  duration_ms: 0.842404
+  type: 'test'
+  ...
+# Subtest: level-map and delta capacity overflows censor candidates as capacity-unknown, separately from source gaps
+ok 140 - level-map and delta capacity overflows censor candidates as capacity-unknown, separately from source gaps
+  ---
+  duration_ms: 20.163213
+  type: 'test'
+  ...
+# Subtest: ambiguous progress insert reloads committed cursor and does not replay a confirmed batch
+ok 141 - ambiguous progress insert reloads committed cursor and does not replay a confirmed batch
+  ---
+  duration_ms: 0.920357
+  type: 'test'
+  ...
+# Subtest: current lane commits a start-unknown checkpoint anchor before advancing its watermark
+ok 142 - current lane commits a start-unknown checkpoint anchor before advancing its watermark
+  ---
+  duration_ms: 0.602985
+  type: 'test'
+  ...
+# Subtest: materializer retries from durable progress after both a write and recovery read fail
+ok 143 - materializer retries from durable progress after both a write and recovery read fail
+  ---
+  duration_ms: 0.665148
+  type: 'test'
+  ...
+# Subtest: archive materializer continues epoch discovery beyond the first 1,024 expired epochs
+ok 144 - archive materializer continues epoch discovery beyond the first 1,024 expired epochs
+  ---
+  duration_ms: 0.850944
+  type: 'test'
+  ...
+# Subtest: missing retained source cursor inside one batch records a gap and censors prior selection
+ok 145 - missing retained source cursor inside one batch records a gap and censors prior selection
+  ---
+  duration_ms: 0.754349
+  type: 'test'
+  ...
+# Subtest: custom admission stores confirmation, Top N and minimum-notional identity fields
+ok 146 - custom admission stores confirmation, Top N and minimum-notional identity fields
+  ---
+  duration_ms: 0.709497
+  type: 'test'
+  ...
+# Subtest: raw archive head reuses the depth reader source scope and sorting-key order for both markets
+ok 147 - raw archive head reuses the depth reader source scope and sorting-key order for both markets
+  ---
+  duration_ms: 0.235173
+  type: 'test'
+  ...
+# Subtest: restore finds a scoped checkpoint by metadata before a primary-key payload fetch
+ok 148 - restore finds a scoped checkpoint by metadata before a primary-key payload fetch
+  ---
+  duration_ms: 0.671075
+  type: 'test'
+  ...
+# Subtest: central coordinator services every admitted current lane before fair custom history pages
+ok 149 - central coordinator services every admitted current lane before fair custom history pages
+  ---
+  duration_ms: 1.443663
+  type: 'test'
+  ...
+# Subtest: fixed price buckets rank exact sum(price times quantity), not bucket price times volume
+ok 150 - fixed price buckets rank exact sum(price times quantity), not bucket price times volume
+  ---
+  duration_ms: 0.263925
+  type: 'test'
+  ...
+# Subtest: native prices and quantities retain decimal precision and exact quote notional
+ok 151 - native prices and quantities retain decimal precision and exact quote notional
+  ---
+  duration_ms: 0.217878
+  type: 'test'
+  ...
+# Subtest: rank exit, observed zero, explicit gap and replacement epoch remain distinct
+ok 152 - rank exit, observed zero, explicit gap and replacement epoch remain distinct
+  ---
+  duration_ms: 0.756162
+  type: 'test'
+  ...
+# Subtest: price ties rank deterministically within each side and midpoint precision is exact
+ok 153 - price ties rank deterministically within each side and midpoint precision is exact
+  ---
+  duration_ms: 0.22935
+  type: 'test'
+  ...
+# Subtest: display delivery batches exact events with a fixed watermark and resumable cursor
+ok 154 - display delivery batches exact events with a fixed watermark and resumable cursor
+  ---
+  duration_ms: 14.354799
+  type: 'test'
+  ...
+# Subtest: independent raw replay matches full-observed ranks beyond 5k nearer prices on both sides
+ok 155 - independent raw replay matches full-observed ranks beyond 5k nearer prices on both sides
+  ---
+  duration_ms: 169.759336
+  type: 'test'
+  ...
+# Subtest: current checkpoint bootstrap and historical backfill keep unchanged outer walls known beyond 5k nearer levels
+ok 156 - current checkpoint bootstrap and historical backfill keep unchanged outer walls known beyond 5k nearer levels
+  ---
+  duration_ms: 235.633123
+  type: 'test'
+  ...
+# Subtest: first observation beyond the snapshot edge stays start-unknown while an absent interior level has a known zero-to-positive start
+ok 157 - first observation beyond the snapshot edge stays start-unknown while an absent interior level has a known zero-to-positive start
+  ---
+  duration_ms: 0.668816
+  type: 'test'
+  ...
+# Subtest: per-price zero tombstones stay bounded under churn and a missing tombstone never becomes a known zero
+ok 158 - per-price zero tombstones stay bounded under churn and a missing tombstone never becomes a known zero
+  ---
+  duration_ms: 2.3019
+  type: 'test'
+  ...
+# Subtest: 200k unique add-zero churn keeps positive-book selection valid and evicted prices restart as unknown
+ok 159 - 200k unique add-zero churn keeps positive-book selection valid and evicted prices restart as unknown
+  ---
+  duration_ms: 2015.075038
+  type: 'test'
+  ...
+# Subtest: known zero-to-positive start remains intact in the current anchor and after materializer restart
+ok 160 - known zero-to-positive start remains intact in the current anchor and after materializer restart
+  ---
+  duration_ms: 2.088351
+  type: 'test'
+  ...
+# Subtest: legacy checkpoint bounds are not inferred from isolated observed outer levels
+ok 161 - legacy checkpoint bounds are not inferred from isolated observed outer levels
+  ---
+  duration_ms: 0.322045
+  type: 'test'
+  ...
+# Subtest: same-epoch legacy checkpoints keep authoritative seed bounds without widening to observed extrema
+ok 162 - same-epoch legacy checkpoints keep authoritative seed bounds without widening to observed extrema
+  ---
+  duration_ms: 0.370553
+  type: 'test'
+  ...
+# Subtest: unchanged candidate enters and leaves the band only when the midpoint moves
+ok 163 - unchanged candidate enters and leaves the band only when the midpoint moves
+  ---
+  duration_ms: 0.736116
+  type: 'test'
+  ...
+# Subtest: Top10 notional prefix supports exact TopN and minimum filters derived from the raw book
+ok 164 - Top10 notional prefix supports exact TopN and minimum filters derived from the raw book
+  ---
+  duration_ms: 6.139672
+  type: 'test'
+  ...
+# Subtest: fixed price aggregation ranks exact sum(price times quantity) against raw replay
+ok 165 - fixed price aggregation ranks exact sum(price times quantity) against raw replay
+  ---
+  duration_ms: 0.603698
+  type: 'test'
+  ...
+# Subtest: independent raw replay confirms native precision and deterministic equal-notional side ties
+ok 166 - independent raw replay confirms native precision and deterministic equal-notional side ties
+  ---
+  duration_ms: 0.78106
+  type: 'test'
+  ...
+# Subtest: 30-hour, adjacent, and seven-day reads retain one watermark, closed pages, and explicit expiry
+ok 167 - 30-hour, adjacent, and seven-day reads retain one watermark, closed pages, and explicit expiry
+  ---
+  duration_ms: 28.937373
+  type: 'test'
+  ...
+# Subtest: paged archive replay reconstructs the same selected candidates as the independent raw book oracle
+ok 168 - paged archive replay reconstructs the same selected candidates as the independent raw book oracle
+  ---
+  duration_ms: 3.559579
+  type: 'test'
+  ...
+# Subtest: materializer restart and duplicate overlap preserve candidate identity and the committed cursor
+ok 169 - materializer restart and duplicate overlap preserve candidate identity and the committed cursor
+  ---
+  duration_ms: 1.288605
+  type: 'test'
+  ...
+# Subtest: every admitted custom current profile gets a bounded turn before fair custom history backfill
+ok 170 - every admitted custom current profile gets a bounded turn before fair custom history backfill
+  ---
+  duration_ms: 1.936097
+  type: 'test'
+  ...
+# Subtest: custom admission repairs only fully defaulted legacy metadata without resetting slot or replay progress
+ok 171 - custom admission repairs only fully defaulted legacy metadata without resetting slot or replay progress
+  ---
+  duration_ms: 0.361546
+  type: 'test'
+  ...
+# Subtest: coordinator canonicalizes a stale defaulted row before it can overwrite an interleaved admission repair
+ok 172 - coordinator canonicalizes a stale defaulted row before it can overwrite an interleaved admission repair
+  ---
+  duration_ms: 0.590603
+  type: 'test'
+  ...
+# Subtest: projection returns exact best-N entrants and zero removals from the whole observed book
+ok 173 - projection returns exact best-N entrants and zero removals from the whole observed book
+  ---
+  duration_ms: 3.469138
+  type: 'test'
+  ...
+# Subtest: incremental top-N projection matches a sorted-book reference through promotions and evictions
+ok 174 - incremental top-N projection matches a sorted-book reference through promotions and evictions
+  ---
+  duration_ms: 143.166574
+  type: 'test'
+  ...
+# Subtest: checkpoint resumes pu continuity; invalid delta is exposed as a gap and requires a new seed
+ok 175 - checkpoint resumes pu continuity; invalid delta is exposed as a gap and requires a new seed
+  ---
+  duration_ms: 0.692698
+  type: 'test'
+  ...
+# Subtest: same-millisecond cursor groups close before a continuation cursor advances
+ok 176 - same-millisecond cursor groups close before a continuation cursor advances
+  ---
+  duration_ms: 0.164343
+  type: 'test'
+  ...
+# Subtest: initial history returns the actual seed and ordered pre-window deltas; synthetic gaps survive reseeding
+ok 177 - initial history returns the actual seed and ordered pre-window deltas; synthetic gaps survive reseeding
+  ---
+  duration_ms: 2.104715
+  type: 'test'
+  ...
+# Subtest: a cursor that maps to multiple retained records fails closed
+ok 178 - a cursor that maps to multiple retained records fails closed
+  ---
+  duration_ms: 0.224656
+  type: 'test'
+  ...
+# Subtest: HTTP saturation leaves capacity for durable cursor replay
+ok 179 - HTTP saturation leaves capacity for durable cursor replay
+  ---
+  duration_ms: 0.559484
+  type: 'test'
+  ...
+# Subtest: admit one complete heatmap query before any database or worker work
+ok 180 - admit one complete heatmap query before any database or worker work
+  ---
+  duration_ms: 0.119347
+  type: 'test'
+  ...
+# Subtest: buffers Spot events, discards updates through the snapshot id, then bridges at id plus one
+ok 181 - buffers Spot events, discards updates through the snapshot id, then bridges at id plus one
+  ---
+  duration_ms: 2.242399
+  type: 'test'
+  ...
+# Subtest: uses absolute replacement quantities and shared-book zero tombstones
+ok 182 - uses absolute replacement quantities and shared-book zero tombstones
+  ---
+  duration_ms: 0.489807
+  type: 'test'
+  ...
+# Subtest: rejects an initial bridge that skips snapshot lastUpdateId plus one
+ok 183 - rejects an initial bridge that skips snapshot lastUpdateId plus one
+  ---
+  duration_ms: 0.614967
+  type: 'test'
+  ...
+# Subtest: detects a post-bridge gap from U greater than local update id plus one
+ok 184 - detects a post-bridge gap from U greater than local update id plus one
+  ---
+  duration_ms: 0.435557
+  type: 'test'
+  ...
+# Subtest: a gap invalidates its epoch and reconnect requires a fresh snapshot bridge
+ok 185 - a gap invalidates its epoch and reconnect requires a fresh snapshot bridge
+  ---
+  duration_ms: 0.414771
+  type: 'test'
+  ...
+# Subtest: accepts a 5,000-level snapshot and reports only its observed outer bounds
+ok 186 - accepts a 5,000-level snapshot and reports only its observed outer bounds
+  ---
+  duration_ms: 20.202991
+  type: 'test'
+  ...
+# Subtest: shared SQL admission reserves current capacity across all historical callers
+ok 187 - shared SQL admission reserves current capacity across all historical callers
+  ---
+  duration_ms: 2.292825
+  type: 'test'
+  ...
+# Subtest: background SQL progresses between bounded bursts of visible queries
+ok 188 - background SQL progresses between bounded bursts of visible queries
+  ---
+  duration_ms: 2.160374
+  type: 'test'
+  ...
+# Subtest: continuous current arrivals cannot starve an independent build
+ok 189 - continuous current arrivals cannot starve an independent build
+  ---
+  duration_ms: 2.399208
+  type: 'test'
+  ...
+# Subtest: bounded queue cancellation releases every stale consumer
+ok 190 - bounded queue cancellation releases every stale consumer
+  ---
+  duration_ms: 3.223755
+  type: 'test'
+  ...
+# Subtest: shared SQL proxy bounds upstream work and preserves authenticated query bytes/metadata
+ok 191 - shared SQL proxy bounds upstream work and preserves authenticated query bytes/metadata
+  ---
+  duration_ms: 274.28997
+  type: 'test'
+  ...
+# Subtest: queued cancellation never reaches ClickHouse and releases its admission reference
+ok 192 - queued cancellation never reaches ClickHouse and releases its admission reference
+  ---
+  duration_ms: 13.581408
+  type: 'test'
+  ...
+# Subtest: active cancellation closes the upstream and releases the shared slot
+ok 193 - active cancellation closes the upstream and releases the shared slot
+  ---
+  duration_ms: 4.072598
+  type: 'test'
+  ...
+# Subtest: out-of-order and duplicate delivery reconcile to one contiguous sequence
+ok 194 - out-of-order and duplicate delivery reconcile to one contiguous sequence
+  ---
+  duration_ms: 1.135689
+  type: 'test'
+  ...
+# Subtest: missing IDs and regressing timestamps never publish a contiguous cursor
+ok 195 - missing IDs and regressing timestamps never publish a contiguous cursor
+  ---
+  duration_ms: 0.160629
+  type: 'test'
+  ...
+# Subtest: overflow is explicit and durable replay can repair discarded volatile records
+ok 196 - overflow is explicit and durable replay can repair discarded volatile records
+  ---
+  duration_ms: 0.213149
+  type: 'test'
+  ...
+# Subtest: WebSocket publication timestamps and actual notional are preserved
+ok 197 - WebSocket publication timestamps and actual notional are preserved
+  ---
+  duration_ms: 0.446108
+  type: 'test'
+  ...
+# Subtest: identity conflicts cannot overwrite a buffered execution
+ok 198 - identity conflicts cannot overwrite a buffered execution
+  ---
+  duration_ms: 0.11927
+  type: 'test'
+  ...
+# (node:5387) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: validates native ticks and explicit future expiry
+ok 199 - validates native ticks and explicit future expiry
+  ---
+  duration_ms: 1.887274
+  type: 'test'
+  ...
+# Subtest: complete causal baseline then selling, limited progress and executed reclaim
+ok 200 - complete causal baseline then selling, limited progress and executed reclaim
+  ---
+  duration_ms: 2.721653
+  type: 'test'
+  ...
+# Subtest: silence cannot satisfy reclaim or invalidation dwell
+ok 201 - silence cannot satisfy reclaim or invalidation dwell
+  ---
+  duration_ms: 0.750172
+  type: 'test'
+  ...
+# Subtest: invalidation wins; immutable confirmation is never overwritten
+ok 202 - invalidation wins; immutable confirmation is never overwritten
+  ---
+  duration_ms: 0.528865
+  type: 'test'
+  ...
+# Subtest: partial outer depth and a continuity gap cannot confirm
+ok 203 - partial outer depth and a continuity gap cannot confirm
+  ---
+  duration_ms: 0.706616
+  type: 'test'
+  ...
+# Subtest: no baseline means no encounter, no selling pressure means no confirmation
+ok 204 - no baseline means no encounter, no selling pressure means no confirmation
+  ---
+  duration_ms: 0.580344
+  type: 'test'
+  ...
+# Subtest: same admitted input sequence reproduces frozen evidence and transitions
+ok 205 - same admitted input sequence reproduces frozen evidence and transitions
+  ---
+  duration_ms: 1.336568
+  type: 'test'
+  ...
+# Subtest: SQLite commits cursor, state and outbox atomically and survives reopening
+ok 206 - SQLite commits cursor, state and outbox atomically and survives reopening
+  ---
+  duration_ms: 350.817963
+  type: 'test'
+  ...
+# Subtest: retention preserves pinned seed and ordered journal; expired clips report unavailable
+ok 207 - retention preserves pinned seed and ordered journal; expired clips report unavailable
+  ---
+  duration_ms: 3.166137
+  type: 'test'
+  ...
+# Subtest: encounter pagination preserves simultaneous contacts at a cursor boundary
+ok 208 - encounter pagination preserves simultaneous contacts at a cursor boundary
+  ---
+  duration_ms: 4.273171
+  type: 'test'
+  ...
+# Subtest: durable notification claim is at most once across connections and silent for old events
+ok 209 - durable notification claim is at most once across connections and silent for old events
+  ---
+  duration_ms: 394.666476
+  type: 'test'
+  ...
+# Subtest: quantity thresholds do not lose a decimal boundary through repeated addition
+ok 210 - quantity thresholds do not lose a decimal boundary through repeated addition
+  ---
+  duration_ms: 1.177086
+  type: 'test'
+  ...
+# Subtest: outbox cursor remains monotonic when retention removes every old event
+ok 211 - outbox cursor remains monotonic when retention removes every old event
+  ---
+  duration_ms: 0.674624
+  type: 'test'
+  ...
+1..211
+# tests 211
+# suites 0
+# pass 211
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9673.97647
+
+> iqterminal-server@0.1.0 build
+> esbuild src/server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/server.mjs && esbuild src/depth-worker.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/depth-worker.mjs && esbuild src/watch-server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/watch-server.mjs && esbuild src/history-gateway.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/history-gateway.mjs && esbuild src/history-materializer.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/history-materializer.mjs && esbuild src/effort-server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/effort-server.mjs && esbuild src/liquidation-server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/liquidation-server.mjs && esbuild src/footprint-materializer.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/footprint-materializer.mjs && esbuild src/sql-proxy-main.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/sql-proxy-main.mjs
+
+
+  dist/server.mjs  151.7kb
+
+⚡ Done in 8ms
+
+  dist/depth-worker.mjs  9.8kb
+
+⚡ Done in 1ms
+
+  dist/watch-server.mjs  45.6kb
+
+⚡ Done in 3ms
+
+  dist/history-gateway.mjs  76.3kb
+
+⚡ Done in 5ms
+
+  dist/history-materializer.mjs  145.6kb
+
+⚡ Done in 8ms
+
+  dist/effort-server.mjs  41.2kb
+
+⚡ Done in 4ms
+
+  dist/liquidation-server.mjs  34.3kb
+
+⚡ Done in 3ms
+
+  dist/footprint-materializer.mjs  55.4kb
+
+⚡ Done in 3ms
+
+  dist/sql-proxy-main.mjs  6.2kb
+
+⚡ Done in 1ms
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 375B done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/node:22.22.0-bookworm-slim
+#2 DONE 0.2s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 103B done
+#3 DONE 0.1s
+
+#4 [internal] load build context
+#4 DONE 0.0s
+
+#5 [build 1/7] FROM docker.io/library/node:22.22.0-bookworm-slim@sha256:dd9d21971ec4395903fa6143c2b9267d048ae01ca6d3ea96f16cb30df6187d94
+#5 resolve docker.io/library/node:22.22.0-bookworm-slim@sha256:dd9d21971ec4395903fa6143c2b9267d048ae01ca6d3ea96f16cb30df6187d94 0.1s done
+#5 DONE 0.1s
+
+#4 [internal] load build context
+#4 transferring context: 53.83kB done
+#4 DONE 0.1s
+
+#6 [build 2/7] WORKDIR /app
+#6 CACHED
+
+#7 [build 3/7] COPY package*.json ./
+#7 CACHED
+
+#8 [build 4/7] RUN npm ci
+#8 CACHED
+
+#9 [build 5/7] COPY src src
+#9 DONE 0.3s
+
+#10 [build 6/7] COPY tsconfig.json ./
+#10 DONE 0.4s
+
+#11 [build 7/7] RUN npm run build
+#11 0.707 
+#11 0.707 > iqterminal-server@0.1.0 build
+#11 0.707 > esbuild src/server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/server.mjs && esbuild src/depth-worker.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/depth-worker.mjs && esbuild src/watch-server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/watch-server.mjs && esbuild src/history-gateway.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/history-gateway.mjs && esbuild src/history-materializer.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/history-materializer.mjs && esbuild src/effort-server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/effort-server.mjs && esbuild src/liquidation-server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/liquidation-server.mjs && esbuild src/footprint-materializer.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/footprint-materializer.mjs && esbuild src/sql-proxy-main.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/sql-proxy-main.mjs
+#11 0.707 
+#11 0.736 
+#11 0.736   dist/server.mjs  151.7kb
+#11 0.736 
+#11 0.736 ⚡ Done in 13ms
+#11 0.741 
+#11 0.741   dist/depth-worker.mjs  9.8kb
+#11 0.741 
+#11 0.741 ⚡ Done in 2ms
+#11 0.746 
+#11 0.746   dist/watch-server.mjs  45.6kb
+#11 0.746 
+#11 0.746 ⚡ Done in 3ms
+#11 0.752 
+#11 0.752   dist/history-gateway.mjs  76.3kb
+#11 0.752 
+#11 0.752 ⚡ Done in 4ms
+#11 0.764 
+#11 0.764   dist/history-materializer.mjs  145.6kb
+#11 0.764 
+#11 0.764 ⚡ Done in 9ms
+#11 0.769 
+#11 0.769   dist/effort-server.mjs  41.2kb
+#11 0.769 
+#11 0.769 ⚡ Done in 3ms
+#11 0.774 
+#11 0.774   dist/liquidation-server.mjs  34.3kb
+#11 0.774 
+#11 0.774 ⚡ Done in 3ms
+#11 0.780 
+#11 0.780   dist/footprint-materializer.mjs  55.4kb
+#11 0.780 
+#11 0.780 ⚡ Done in 4ms
+#11 0.784 
+#11 0.784   dist/sql-proxy-main.mjs  6.2kb
+#11 0.784 
+#11 0.784 ⚡ Done in 2ms
+#11 DONE 0.9s
+
+#12 [stage-1 4/5] RUN npm ci --omit=dev && npm cache clean --force
+#12 CACHED
+
+#13 [stage-1 5/5] COPY --from=build /app/dist dist
+#13 DONE 0.2s
+
+#14 exporting to image
+#14 exporting layers
+#14 exporting layers 0.6s done
+#14 exporting manifest sha256:1eac1d969e8be6c31f48f42933eff61e620b225257e176f51d9b22c5cbd524a8 0.1s done
+#14 exporting config sha256:aab6453fd5fa6b42765af76a4edb620f76ff9026e4173a6e1a427ffef99cfe20 0.1s done
+#14 exporting attestation manifest sha256:eac16c76581049d91d571b01384eb3fbd06bd30e5536f5776d8d794605b71a69
+#14 exporting attestation manifest sha256:eac16c76581049d91d571b01384eb3fbd06bd30e5536f5776d8d794605b71a69 0.2s done
+#14 exporting manifest list sha256:18465486a2b2a631254f96c5d801408d310a0b087f47ce16d520779de23a1430
+#14 exporting manifest list sha256:18465486a2b2a631254f96c5d801408d310a0b087f47ce16d520779de23a1430 0.1s done
+#14 naming to docker.io/library/iqterminal-perf-history:7256fd44af9728619a93d6191639d5e39e8d74ee done
+#14 unpacking to docker.io/library/iqterminal-perf-history:7256fd44af9728619a93d6191639d5e39e8d74ee 0.1s done
+#14 DONE 1.3s
+ Container iqterminal-sql-admission Recreate 
+ Container iqterminal-sql-admission Recreated 
+ Container iqterminal-sql-admission Starting 
+ Container iqterminal-sql-admission Started 
+curl: (7) Failed to connect to 127.0.0.1 port 18790 after 0 ms: Couldn't connect to server
+ Container iqterminal-history-materializer Recreate 
+ Container iqterminal-footprint-materializer Recreate 
+ Container iqterminal-spot-footprint-materializer Recreate 
+ Container iqterminal-spot-history-materializer Recreate 
+ Container iqterminal-spot-footprint-materializer Recreated 
+ Container iqterminal-footprint-materializer Recreated 
+ Container iqterminal-spot-history-materializer Recreated 
+ Container iqterminal-history-api Recreate 
+ Container iqterminal-history-api Recreated 
+ Container iqterminal-history-materializer Recreated 
+ Container iqterminal-spot-history-materializer Starting 
+ Container iqterminal-spot-footprint-materializer Starting 
+ Container iqterminal-history-materializer Starting 
+ Container iqterminal-footprint-materializer Starting 
+ Container iqterminal-spot-history-materializer Started 
+ Container iqterminal-spot-history-materializer Waiting 
+ Container iqterminal-history-materializer Started 
+ Container iqterminal-footprint-materializer Started 
+ Container iqterminal-spot-footprint-materializer Started 
+ Container iqterminal-spot-history-materializer Healthy 
+ Container iqterminal-history-api Starting 
+ Container iqterminal-history-api Started 
+Staging serving commit 7256fd44af9728619a93d6191639d5e39e8d74ee; collector identities unchanged. Record: /home/daz/iqterminal-perf-history/artifacts/pi-history-r1/deploy-7256fd44af9728619a93d6191639d5e39e8d74ee

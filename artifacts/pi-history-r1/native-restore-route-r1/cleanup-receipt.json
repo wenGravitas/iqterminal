@@ -1,0 +1,25 @@
+{
+  "ownedPreview": {
+    "pid": 365614,
+    "args": [
+      "node",
+      "./node_modules/.bin/../.pnpm/vite@8.3.4_@types+node@26.6.4/node_modules/vite/bin/vite.js",
+      "preview",
+      "--mode",
+      "staging",
+      "--outDir",
+      "/tmp/iqterminal-native-restore-dist",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "4189",
+      "--strictPort"
+    ],
+    "cwd": "/home/daz/workarea/iqterminal-perf-history",
+    "action": "SIGTERM"
+  },
+  "listenerCheck": "State  Recv-Q Send-Q Local Address:Port  Peer Address:PortProcess                           \nLISTEN 0      511        127.0.0.1:4187       0.0.0.0:*    users:((\"node\",pid=263125,fd=21))\nLISTEN 0      128        127.0.0.1:18780      0.0.0.0:*    users:((\"ssh\",pid=188916,fd=4))  \nLISTEN 0      128        127.0.0.1:18781      0.0.0.0:*    users:((\"ssh\",pid=265761,fd=4))  \n",
+  "ownedPreviewExitCode": 143,
+  "observerExitCode": 0,
+  "scope": "Only owned4188/4189Vite children and bounded observer processes were stopped. Existing4187and two SSH forwards remain."
+}

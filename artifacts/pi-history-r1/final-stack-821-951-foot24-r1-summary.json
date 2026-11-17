@@ -1,0 +1,80 @@
+{
+  "case": "footprint-24h-1h",
+  "build": "821092d83943b3e17bba88ee6a0a41657d17807a",
+  "route": "http://127.0.0.1:4185",
+  "rendering": "headless-gles",
+  "requested": {
+    "from": 1793718000000,
+    "to": 1793804400000
+  },
+  "samples": [
+    {
+      "run": 1,
+      "firstUsefulHistoryMs": 6331,
+      "completeMs": 8141.60000000149,
+      "requestedSlots": 24,
+      "paintedSlots": 24,
+      "validatedSlots": 24,
+      "missing": [],
+      "unvalidated": [],
+      "failures": [],
+      "coverageValid": true
+    },
+    {
+      "run": 2,
+      "firstUsefulHistoryMs": 3756.900000002235,
+      "completeMs": 5742.10000000149,
+      "requestedSlots": 24,
+      "paintedSlots": 24,
+      "validatedSlots": 24,
+      "missing": [],
+      "unvalidated": [],
+      "failures": [],
+      "coverageValid": true
+    },
+    {
+      "run": 3,
+      "firstUsefulHistoryMs": 2809.39999999851,
+      "completeMs": 9876,
+      "requestedSlots": 24,
+      "paintedSlots": 24,
+      "validatedSlots": 24,
+      "missing": [],
+      "unvalidated": [],
+      "failures": [],
+      "coverageValid": true
+    },
+    {
+      "run": 4,
+      "firstUsefulHistoryMs": 2838.699999999255,
+      "completeMs": 6429.099999997765,
+      "requestedSlots": 24,
+      "paintedSlots": 24,
+      "validatedSlots": 24,
+      "missing": [],
+      "unvalidated": [],
+      "failures": [],
+      "coverageValid": true
+    },
+    {
+      "run": 5,
+      "firstUsefulHistoryMs": 3027.099999997765,
+      "completeMs": 5592.800000000745,
+      "requestedSlots": 24,
+      "paintedSlots": 24,
+      "validatedSlots": 24,
+      "missing": [],
+      "unvalidated": [],
+      "failures": [],
+      "coverageValid": true
+    }
+  ],
+  "medianMs": 6429.099999997765,
+  "maximumMs": 9876,
+  "targets": {
+    "medianMs": 5000,
+    "maximumMs": 10000
+  },
+  "pass": false,
+  "scope": "Complete available footprint loading only; all five samples retained. No finite-subset median, p95, current/warm/wall/cold-build or foreground acceptance."
+}

@@ -1,0 +1,1243 @@
+[
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-8-preview",
+    "event": "arrival",
+    "ms": 0.026167000003624707,
+    "path": "/market-data/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 81.657855,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-8-preview",
+    "event": "admitted",
+    "ms": 0.17525899998145178,
+    "path": "/market-data/v2/history/health",
+    "counts": {
+      "active": 2,
+      "historicalActive": 0,
+      "currentActive": 2,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 81.657855,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-8-preview",
+    "event": "proxy-start",
+    "ms": 0.2973319999873638,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 2,
+      "historicalActive": 0,
+      "currentActive": 2,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 81.657855,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-8-preview",
+    "event": "upstream-request",
+    "ms": 1.0900499999988824,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 2,
+      "historicalActive": 0,
+      "currentActive": 2,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 81.657855,
+    "dropped": 0,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-8-preview",
+    "event": "socket-assigned",
+    "ms": 1.1562540000013541,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 2,
+      "historicalActive": 0,
+      "currentActive": 2,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 81.657855,
+    "dropped": 0,
+    "connecting": true,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-8-preview",
+    "event": "socket-connected",
+    "ms": 1.3894929999951273,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 2,
+      "historicalActive": 0,
+      "currentActive": 2,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 81.657855,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-8-preview",
+    "event": "upstream-request-finish",
+    "ms": 1.553622000006726,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 2,
+      "historicalActive": 0,
+      "currentActive": 2,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 81.657855,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-8-preview",
+    "event": "response-close",
+    "ms": 4005.8825589999906,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 2,
+      "historicalActive": 0,
+      "currentActive": 2,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 81.657855,
+    "dropped": 0,
+    "finished": false,
+    "status": 200
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-8-preview",
+    "event": "upstream-error",
+    "ms": 4006.1534089999914,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 81.657855,
+    "dropped": 0,
+    "code": "ECONNRESET"
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-8-preview",
+    "event": "upstream-close",
+    "ms": 4006.1929829999863,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 81.657855,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "arrival",
+    "ms": 0.0237409999826923,
+    "path": "/market-data/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "historicalActive": 1,
+      "currentActive": 1,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "admitted",
+    "ms": 0.14914699998917058,
+    "path": "/market-data/v2/history/footprint-current",
+    "counts": {
+      "active": 3,
+      "historicalActive": 1,
+      "currentActive": 2,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "proxy-start",
+    "ms": 0.29847999999765307,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 3,
+      "historicalActive": 1,
+      "currentActive": 2,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "upstream-request",
+    "ms": 0.9773840000270866,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 3,
+      "historicalActive": 1,
+      "currentActive": 2,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "socket-assigned",
+    "ms": 1.0404020000132732,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 3,
+      "historicalActive": 1,
+      "currentActive": 2,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0,
+    "connecting": true,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "socket-connected",
+    "ms": 1.3101419999729842,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 3,
+      "historicalActive": 1,
+      "currentActive": 2,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "upstream-request-finish",
+    "ms": 1.546066000009887,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 3,
+      "historicalActive": 1,
+      "currentActive": 2,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "arrival",
+    "ms": 0.030666999984532595,
+    "path": "/market-data/v2/history/footprint-current",
+    "counts": {
+      "active": 3,
+      "historicalActive": 1,
+      "currentActive": 2,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "admitted",
+    "ms": 0.19501800002763048,
+    "path": "/market-data/v2/history/footprint-current",
+    "counts": {
+      "active": 4,
+      "historicalActive": 1,
+      "currentActive": 3,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "proxy-start",
+    "ms": 0.41664599999785423,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 4,
+      "historicalActive": 1,
+      "currentActive": 3,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "upstream-request",
+    "ms": 1.338623000017833,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 4,
+      "historicalActive": 1,
+      "currentActive": 3,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "socket-assigned",
+    "ms": 1.4402339999796823,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 4,
+      "historicalActive": 1,
+      "currentActive": 3,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0,
+    "connecting": true,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "socket-connected",
+    "ms": 1.8876020000316203,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 4,
+      "historicalActive": 1,
+      "currentActive": 3,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "upstream-request-finish",
+    "ms": 2.129507999983616,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 4,
+      "historicalActive": 1,
+      "currentActive": 3,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "upstream-headers",
+    "ms": 4167.936254,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 3,
+      "historicalActive": 1,
+      "currentActive": 2,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0,
+    "status": 200,
+    "queueMs": 0.97,
+    "headerMs": 4166.93
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "upstream-response-end",
+    "ms": 4169.92048500001,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 3,
+      "historicalActive": 1,
+      "currentActive": 2,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "upstream-close",
+    "ms": 4170.548667000025,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 3,
+      "historicalActive": 1,
+      "currentActive": 2,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "response-finish",
+    "ms": 4170.8929430000135,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 3,
+      "historicalActive": 1,
+      "currentActive": 2,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0,
+    "status": 200
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "response-close",
+    "ms": 4171.054645999975,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "historicalActive": 1,
+      "currentActive": 1,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0,
+    "finished": true,
+    "status": 200
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "response-close",
+    "ms": 4003.851609000005,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "historicalActive": 1,
+      "currentActive": 1,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0,
+    "finished": false,
+    "status": 200
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "upstream-error",
+    "ms": 4004.3096440000227,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "historicalActive": 1,
+      "currentActive": 0,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0,
+    "code": "ECONNRESET"
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "upstream-close",
+    "ms": 4004.38616200001,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "historicalActive": 1,
+      "currentActive": 0,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 89.063423,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-8-preview",
+    "event": "arrival",
+    "ms": 0.0023739999742247164,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-8-preview",
+    "event": "admitted",
+    "ms": 0.06505099998321384,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "managed": true,
+    "operationId": "08091939-5d75-4be2-bd6c-da7f7a1945c9"
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-8-preview",
+    "event": "health-dependencies-start",
+    "ms": 0.09153899998636916,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-8-preview",
+    "event": "client-aborted",
+    "ms": 1.1555350000271574,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-8-preview",
+    "event": "response-close",
+    "ms": 1.1874340000213124,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "finished": false,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-8-preview",
+    "event": "health-dependencies-end",
+    "ms": 916.7088210000074,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "arrival",
+    "ms": 0.006056000012904406,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "admitted",
+    "ms": 0.09646500000962988,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "managed": true,
+    "operationId": "51698ae9-6984-4c01-9f87-4b5b1afbd5a3"
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "downstream-dispatch",
+    "ms": 0.13815799995791167,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "targetPort": 18788,
+    "pathOverride": "/current"
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "downstream-socket",
+    "ms": 0.5012119999737479,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "targetPort": 18788,
+    "connecting": true,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "downstream-connected",
+    "ms": 0.6330949999974109,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "targetPort": 18788
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "downstream-request-finish",
+    "ms": 0.6919110000017099,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "downstream-headers",
+    "ms": 1.8325070000137202,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "targetPort": 18788,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "downstream-response-end",
+    "ms": 1.9985490000108257,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "downstream-close",
+    "ms": 2.0816309999790974,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "response-finish",
+    "ms": 2.1472179999691434,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-40-8c27d463",
+    "event": "response-close",
+    "ms": 2.1814460000023246,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "finished": true,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "arrival",
+    "ms": 0.004705000028479844,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "admitted",
+    "ms": 0.08706699998583645,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "managed": true,
+    "operationId": "3e7ab6b8-33f1-4c2c-9eb9-386be07fb803"
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "downstream-dispatch",
+    "ms": 0.12937099998816848,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "targetPort": 18788,
+    "pathOverride": "/current"
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "downstream-socket",
+    "ms": 0.2887000000337139,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "targetPort": 18788,
+    "connecting": false,
+    "reusedSocket": true
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "downstream-request-finish",
+    "ms": 0.39772499998798594,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-forward",
+    "event": "arrival",
+    "ms": 0.0022829999797977507,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-forward",
+    "event": "admitted",
+    "ms": 0.03889799996977672,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "managed": true,
+    "operationId": "aa2eed8a-6dba-4d36-a84d-9872cd425c4e"
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-forward",
+    "event": "downstream-dispatch",
+    "ms": 0.07020299998112023,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "targetPort": 18788,
+    "pathOverride": "/current"
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-forward",
+    "event": "downstream-socket",
+    "ms": 0.3022699999855831,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "targetPort": 18788,
+    "connecting": true,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-forward",
+    "event": "downstream-connected",
+    "ms": 0.39995699998689815,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "targetPort": 18788
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-forward",
+    "event": "downstream-request-finish",
+    "ms": 0.447996000002604,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "downstream-headers",
+    "ms": 1.0025529999984428,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "targetPort": 18788,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "downstream-response-end",
+    "ms": 1.1365879999939352,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "response-finish",
+    "ms": 1.2303780000074767,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "response-close",
+    "ms": 1.2632810000213794,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "finished": true,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-preview",
+    "event": "downstream-close",
+    "ms": 1.4020069999969564,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-forward",
+    "event": "downstream-headers",
+    "ms": 0.9828470000065863,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "targetPort": 18788,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-forward",
+    "event": "downstream-response-end",
+    "ms": 1.0973760000197217,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-forward",
+    "event": "response-finish",
+    "ms": 1.1833139999653213,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-forward",
+    "event": "response-close",
+    "ms": 1.214363000006415,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0,
+    "finished": true,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "startup-r1-diagnostic-mon-13-forward",
+    "event": "downstream-close",
+    "ms": 1.3324859999702312,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 27.738111,
+    "dropped": 0
+  }
+]

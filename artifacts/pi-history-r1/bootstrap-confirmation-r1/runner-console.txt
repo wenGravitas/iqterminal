@@ -1,0 +1,2 @@
+{"type":"footprint","error":"TimeoutError: page.waitForFunction: Timeout 30000ms exceeded.","intercepts":3}
+{"type":"candle","error":"TimeoutError: page.waitForFunction: Timeout 30000ms exceeded.","intercepts":6}

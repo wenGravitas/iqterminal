@@ -1,0 +1,46 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/order-walls-archive.test.ts (55 tests | 1 failed) 5382ms
+   ❯ OrderWallsArchiveService fixed-watermark identity bridge (25)
+     × commits an already-ready shared replacement without restoring obsolete loading metadata 30ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/order-walls-archive.test.ts > OrderWallsArchiveService fixed-watermark identity bridge > commits an already-ready shared replacement without restoring obsolete loading metadata
+AssertionError: expected { …(18) } to match object { to: 1800001860000, …(3) }
+(15 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "loadedThrough": 1800001859999,
+-   "rangeComplete": true,
+-   "requestComplete": true,
+-   "to": 1800001860000,
++   "rangeComplete": false,
++   "requestComplete": false,
++   "to": 1800001800000,
+  }
+
+ ❯ tests/order-walls-archive.test.ts:1032:37
+    1030|       service.updateViewport('old-view',from,targetTo,true);await flus…
+    1031|       const latest=events.filter(event=>event.ids?.includes('old-view'…
+    1032|       expect(latest.status.archive).toMatchObject({to:targetTo,loadedT…
+       |                                     ^
+    1033|       expect(reads).toBe(2);expect(service.diagnostics()).toMatchObjec…
+    1034|       expect(publishedSegments(events.filter(event=>event.ids?.include…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 97 passed (98)
+   Start at  08:24:38
+   Duration  7.25s (tests 70%, transform 26%, import 4%)
+
+  Transform  transforming modules took 4.12s · 26% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+

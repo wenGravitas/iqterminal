@@ -1,0 +1,6 @@
+{"utc":"2026-11-17T04:49:00.360Z","error":"TypeError: fetch failed","scope":"owned preview startup precondition, before timed browser"}
+{"utc":"2026-11-17T04:49:00.629Z","error":"TypeError: fetch failed","scope":"owned preview startup precondition, before timed browser"}
+{"utc":"2026-11-17T04:49:00.912Z","error":"TypeError: fetch failed","scope":"owned preview startup precondition, before timed browser"}
+{"utc":"2026-11-17T04:49:01.168Z","error":"TypeError: fetch failed","scope":"owned preview startup precondition, before timed browser"}
+{"utc":"2026-11-17T04:49:01.441Z","error":"TypeError: fetch failed","scope":"owned preview startup precondition, before timed browser"}
+{"utc":"2026-11-17T04:49:02.758Z","elapsedMs":2848.381439,"build":"300fa5d00f607d7e3a990b128523ea265af363f5","status":200}

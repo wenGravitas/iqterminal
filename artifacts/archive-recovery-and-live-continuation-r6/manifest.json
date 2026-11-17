@@ -1,0 +1,8 @@
+{
+  "task": "archive-recovery-and-live-continuation-r6",
+  "startUtc": "2026-11-15T09:15:00Z",
+  "recoveryCheckpointUtc": "2026-11-15T10:15:00Z",
+  "experimentCutoffUtc": "2026-11-15T11:45:00Z",
+  "deadlineUtc": "2026-11-15T12:15:00Z",
+  "priorR6Found": false
+}

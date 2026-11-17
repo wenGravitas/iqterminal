@@ -1,0 +1,13 @@
+{
+  "scope": "explicit offline fixture; not source/latency acceptance",
+  "browser": "155.0.8059.79",
+  "workspace": 9,
+  "calls": 2,
+  "attempts": 2,
+  "body": [
+    {
+      "exact": "123.0000000000001"
+    }
+  ],
+  "bundleSha256": "e8b21dec3d3be1b8388af17c0629661cf8d0b628f85fc538a4074e1acb3a4aa1"
+}

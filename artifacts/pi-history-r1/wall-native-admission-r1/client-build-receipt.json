@@ -1,0 +1,10 @@
+{
+  "build": "397f07ade191e0d361e4a0ddae4b0764e005fb09",
+  "url": "http://127.0.0.1:4187",
+  "mainAsset": "/theme-init.js",
+  "indexSha256": "4048f3a3b18fbd6c8b1612fcf3ba929a0fdbe69e4da79af3ffb7df95accd0c11",
+  "mainSha256": "ee0ad566d7fcb052323fccff72e6abb2bdb6c5a0dcff2e45fa4e565146371cae",
+  "dataMode": "staging",
+  "historyTiles": true,
+  "scope": "Served index and main match production dist; runtime worker configuration must also pass each sample."
+}

@@ -1,0 +1,3792 @@
+{
+  "executionProof": [
+    {
+      "run": 1,
+      "scenario": "current-only",
+      "pass": true,
+      "failures": [],
+      "catchingUpStatuses": 0,
+      "appliedBatches": 37,
+      "appliedExecutions": 266,
+      "confirmedAckBatches": 37,
+      "fromCursor": 3513565188,
+      "toCursor": 3513565454,
+      "confirmedThrough": 3513565439,
+      "sourceCursorJumps": 0,
+      "maxWorkerApplyMs": 8.099999997764826,
+      "maxWorkerLifetimeReceiptGapMs": 827.1999999992549
+    },
+    {
+      "run": 1,
+      "scenario": "concurrent-history",
+      "pass": true,
+      "failures": [],
+      "catchingUpStatuses": 2,
+      "appliedBatches": 17,
+      "appliedExecutions": 357,
+      "confirmedAckBatches": 17,
+      "fromCursor": 3513565594,
+      "toCursor": 3513565951,
+      "confirmedThrough": 3513565924,
+      "sourceCursorJumps": 0,
+      "maxWorkerApplyMs": 27.199999999254942,
+      "maxWorkerLifetimeReceiptGapMs": 4601.699999999255
+    },
+    {
+      "run": 2,
+      "scenario": "current-only",
+      "pass": false,
+      "failures": [
+        "missing or invalid worker execution proof"
+      ]
+    },
+    {
+      "run": 2,
+      "scenario": "concurrent-history",
+      "pass": true,
+      "failures": [],
+      "catchingUpStatuses": 0,
+      "appliedBatches": 36,
+      "appliedExecutions": 417,
+      "confirmedAckBatches": 36,
+      "fromCursor": 3513570293,
+      "toCursor": 3513570710,
+      "confirmedThrough": 3513570709,
+      "sourceCursorJumps": 0,
+      "maxWorkerApplyMs": 12.700000002980232,
+      "maxWorkerLifetimeReceiptGapMs": 857.1000000014901
+    },
+    {
+      "run": 3,
+      "scenario": "current-only",
+      "pass": true,
+      "failures": [],
+      "catchingUpStatuses": 1,
+      "appliedBatches": 33,
+      "appliedExecutions": 191,
+      "confirmedAckBatches": 33,
+      "fromCursor": 3513570863,
+      "toCursor": 3513571054,
+      "confirmedThrough": 3513571051,
+      "sourceCursorJumps": 0,
+      "maxWorkerApplyMs": 8.800000000745058,
+      "maxWorkerLifetimeReceiptGapMs": 1300.3999999985099
+    },
+    {
+      "run": 3,
+      "scenario": "concurrent-history",
+      "pass": true,
+      "failures": [],
+      "catchingUpStatuses": 0,
+      "appliedBatches": 36,
+      "appliedExecutions": 594,
+      "confirmedAckBatches": 36,
+      "fromCursor": 3513571216,
+      "toCursor": 3513571810,
+      "confirmedThrough": 3513571788,
+      "sourceCursorJumps": 0,
+      "maxWorkerApplyMs": 17.800000000745058,
+      "maxWorkerLifetimeReceiptGapMs": 1060.300000000745
+    },
+    {
+      "run": 4,
+      "scenario": "current-only",
+      "pass": true,
+      "failures": [],
+      "catchingUpStatuses": 0,
+      "appliedBatches": 35,
+      "appliedExecutions": 199,
+      "confirmedAckBatches": 35,
+      "fromCursor": 3513574215,
+      "toCursor": 3513574414,
+      "confirmedThrough": 3513574411,
+      "sourceCursorJumps": 0,
+      "maxWorkerApplyMs": 24.400000002235174,
+      "maxWorkerLifetimeReceiptGapMs": 1403.199999999255
+    },
+    {
+      "run": 4,
+      "scenario": "concurrent-history",
+      "pass": true,
+      "failures": [],
+      "catchingUpStatuses": 4,
+      "appliedBatches": 17,
+      "appliedExecutions": 304,
+      "confirmedAckBatches": 17,
+      "fromCursor": 3513574464,
+      "toCursor": 3513574768,
+      "confirmedThrough": 3513574761,
+      "sourceCursorJumps": 0,
+      "maxWorkerApplyMs": 5.199999999254942,
+      "maxWorkerLifetimeReceiptGapMs": 3490.39999999851
+    },
+    {
+      "run": 5,
+      "scenario": "current-only",
+      "pass": false,
+      "failures": [
+        "missing or invalid worker execution proof"
+      ]
+    },
+    {
+      "run": 5,
+      "scenario": "concurrent-history",
+      "pass": true,
+      "failures": [],
+      "catchingUpStatuses": 0,
+      "appliedBatches": 34,
+      "appliedExecutions": 187,
+      "confirmedAckBatches": 34,
+      "fromCursor": 3513575401,
+      "toCursor": 3513575588,
+      "confirmedThrough": 3513575586,
+      "sourceCursorJumps": 0,
+      "maxWorkerApplyMs": 17.5,
+      "maxWorkerLifetimeReceiptGapMs": 1286.5
+    }
+  ],
+  "allExecutionChainsConfirmed": false,
+  "coverageProof": [
+    {
+      "run": 1,
+      "panels": [
+        {
+          "id": "chart-history-five",
+          "from": 1794211200000,
+          "to": 1794225600000,
+          "expectedSlots": 48,
+          "paintedSlots": 48,
+          "allPaintedSlots": 48,
+          "outsideRequestedTimes": [],
+          "validatedSlots": 48,
+          "exact": true
+        },
+        {
+          "id": "chart-history-hour",
+          "from": 1794139200000,
+          "to": 1794225600000,
+          "expectedSlots": 24,
+          "paintedSlots": 24,
+          "allPaintedSlots": 24,
+          "outsideRequestedTimes": [],
+          "validatedSlots": 24,
+          "exact": true
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "panels": [
+        {
+          "id": "chart-history-five",
+          "from": 1794211200000,
+          "to": 1794225600000,
+          "expectedSlots": 48,
+          "paintedSlots": 48,
+          "allPaintedSlots": 48,
+          "outsideRequestedTimes": [],
+          "validatedSlots": 48,
+          "exact": true
+        },
+        {
+          "id": "chart-history-hour",
+          "from": 1794139200000,
+          "to": 1794225600000,
+          "expectedSlots": 24,
+          "paintedSlots": 24,
+          "allPaintedSlots": 24,
+          "outsideRequestedTimes": [],
+          "validatedSlots": 24,
+          "exact": true
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "panels": [
+        {
+          "id": "chart-history-five",
+          "from": 1794211200000,
+          "to": 1794225600000,
+          "expectedSlots": 48,
+          "paintedSlots": 48,
+          "allPaintedSlots": 48,
+          "outsideRequestedTimes": [],
+          "validatedSlots": 48,
+          "exact": true
+        },
+        {
+          "id": "chart-history-hour",
+          "from": 1794139200000,
+          "to": 1794225600000,
+          "expectedSlots": 24,
+          "paintedSlots": 24,
+          "allPaintedSlots": 24,
+          "outsideRequestedTimes": [],
+          "validatedSlots": 24,
+          "exact": true
+        }
+      ]
+    },
+    {
+      "run": 4,
+      "panels": [
+        {
+          "id": "chart-history-five",
+          "from": 1794211200000,
+          "to": 1794225600000,
+          "expectedSlots": 48,
+          "paintedSlots": 48,
+          "allPaintedSlots": 48,
+          "outsideRequestedTimes": [],
+          "validatedSlots": 48,
+          "exact": true
+        },
+        {
+          "id": "chart-history-hour",
+          "from": 1794139200000,
+          "to": 1794225600000,
+          "expectedSlots": 24,
+          "paintedSlots": 24,
+          "allPaintedSlots": 24,
+          "outsideRequestedTimes": [],
+          "validatedSlots": 24,
+          "exact": true
+        }
+      ]
+    },
+    {
+      "run": 5,
+      "panels": [
+        {
+          "id": "chart-history-five",
+          "from": 1794211200000,
+          "to": 1794225600000,
+          "expectedSlots": 48,
+          "paintedSlots": 48,
+          "allPaintedSlots": 48,
+          "outsideRequestedTimes": [],
+          "validatedSlots": 48,
+          "exact": true
+        },
+        {
+          "id": "chart-history-hour",
+          "from": 1794139200000,
+          "to": 1794225600000,
+          "expectedSlots": 24,
+          "paintedSlots": 24,
+          "allPaintedSlots": 24,
+          "outsideRequestedTimes": [],
+          "validatedSlots": 24,
+          "exact": true
+        }
+      ]
+    }
+  ],
+  "allFiveRequestedPaintedAndValidated": true,
+  "scope": "Alternating five current-only and five two-history observations over the Pi SSH/Vite route, with fresh browser contexts. Bootstrap is receipt of a live feed status, not proof of current chart paint. Client monotonic receive gaps include observation boundaries. Failed or incomplete observation intervals remain null in observation metric distributions; no finite-subset median is reported. These are not exchange gaps. Source ingestion lag is a server-reported duration, not subtraction of host clocks. Custom profile may already be prepared; its receipt and materializer health must prove actual build contention separately. Headless evidence does not certify normal foreground UX. Do not infer memory plateau from short isolated contexts.",
+  "builds": [
+    "8aaab36a2e4c305633877de7438f6b0883f5b4c1"
+  ],
+  "backends": [
+    "dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51"
+  ],
+  "scenarios": {
+    "current-only": {
+      "runs": 5,
+      "errors": [
+        null,
+        "AssertionError [ERR_ASSERTION]: {\"error\":\"TimeoutError: apiRequestContext.get: Timeout 12000ms exceeded.\\nCall log:\\n\\u001b[2m  - → GET http://127.0.0.1:4188/market-data/v2/history/health\\u001b[22m\\n\\u001b[2m    - user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36\\u001b[22m\\n\\u001b[2m    - accept: */*\\u001b[22m\\n\\u001b[2m    - accept-encoding: gzip,deflate,br\\u001b[22m\\n\",\"_probe\":{\"elapsedMs\":12015.992465}}\n+ actual - expected\n\n+ undefined\n- 'dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51'\n",
+        null,
+        null,
+        "AssertionError [ERR_ASSERTION]: Live badge without a confirmed execution ACK chain"
+      ],
+      "completedObservations": [
+        true,
+        false,
+        true,
+        true,
+        false
+      ],
+      "bootstrapMs": {
+        "samples": [
+          923.1000000014901,
+          null,
+          283.5999999977648,
+          1089.4000000022352,
+          6235.70000000298
+        ],
+        "observations": 4,
+        "median": null,
+        "maximum": null
+      },
+      "updates": {
+        "samples": [
+          36,
+          null,
+          33,
+          35,
+          null
+        ],
+        "observations": 3,
+        "median": null,
+        "maximum": null
+      },
+      "maxReceiveGapMs": {
+        "samples": [
+          832.5,
+          null,
+          1293.2999999970198,
+          1411.6000000014901,
+          null
+        ],
+        "observations": 3,
+        "median": null,
+        "maximum": null
+      },
+      "maxPageLongTaskMs": {
+        "samples": [
+          1010,
+          null,
+          1944,
+          1276,
+          null
+        ],
+        "observations": 3,
+        "median": null,
+        "maximum": null
+      },
+      "maxObservedLongTaskMs": {
+        "samples": [
+          153,
+          null,
+          62,
+          62,
+          null
+        ],
+        "observations": 3,
+        "median": null,
+        "maximum": null
+      },
+      "maxFrameMs": {
+        "samples": [
+          716.5999999999999,
+          null,
+          533.1999999999998,
+          666.5999999999999,
+          null
+        ],
+        "observations": 3,
+        "median": null,
+        "maximum": null
+      },
+      "sourceIngestionLagMs": {
+        "samples": [
+          1099,
+          1110,
+          984,
+          992,
+          2288
+        ],
+        "observations": 5,
+        "median": 1099,
+        "maximum": 2288
+      },
+      "healthFailures": [
+        {
+          "before": null,
+          "after": null,
+          "sourceBefore": null,
+          "sourceAfter": null
+        },
+        {
+          "before": "TimeoutError: apiRequestContext.get: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:4188/market-data/v2/history/health\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n",
+          "after": null,
+          "sourceBefore": "TimeoutError: apiRequestContext.get: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:4188/market-data/v1/health\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n",
+          "sourceAfter": null
+        },
+        {
+          "before": null,
+          "after": null,
+          "sourceBefore": null,
+          "sourceAfter": null
+        },
+        {
+          "before": null,
+          "after": null,
+          "sourceBefore": null,
+          "sourceAfter": null
+        },
+        {
+          "before": null,
+          "after": null,
+          "sourceBefore": null,
+          "sourceAfter": null
+        }
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "panels": []
+        },
+        {
+          "run": 2
+        },
+        {
+          "run": 3,
+          "panels": []
+        },
+        {
+          "run": 4,
+          "panels": []
+        },
+        {
+          "run": 5,
+          "panels": []
+        }
+      ],
+      "failedRequests": [
+        {
+          "run": 1,
+          "requests": []
+        },
+        {
+          "run": 2,
+          "requests": []
+        },
+        {
+          "run": 3,
+          "requests": []
+        },
+        {
+          "run": 4,
+          "requests": []
+        },
+        {
+          "run": 5,
+          "requests": []
+        }
+      ]
+    },
+    "concurrent-history": {
+      "runs": 5,
+      "errors": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "completedObservations": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "bootstrapMs": {
+        "samples": [
+          250.89999999850988,
+          310.30000000074506,
+          463,
+          322.30000000074506,
+          283.5
+        ],
+        "observations": 5,
+        "median": 310.30000000074506,
+        "maximum": 463
+      },
+      "updates": {
+        "samples": [
+          17,
+          36,
+          37,
+          17,
+          34
+        ],
+        "observations": 5,
+        "median": 34,
+        "maximum": 37
+      },
+      "maxReceiveGapMs": {
+        "samples": [
+          4601.800000000745,
+          1085.699999999255,
+          856.5,
+          3595,
+          1292.1000000014901
+        ],
+        "observations": 5,
+        "median": 1292.1000000014901,
+        "maximum": 4601.800000000745
+      },
+      "maxPageLongTaskMs": {
+        "samples": [
+          1121,
+          1203,
+          1324,
+          1077,
+          2402
+        ],
+        "observations": 5,
+        "median": 1203,
+        "maximum": 2402
+      },
+      "maxObservedLongTaskMs": {
+        "samples": [
+          651,
+          366,
+          588,
+          301,
+          594
+        ],
+        "observations": 5,
+        "median": 588,
+        "maximum": 651
+      },
+      "maxFrameMs": {
+        "samples": [
+          733.4000000000005,
+          949.8999999999996,
+          583.2999999999993,
+          616.5999999999995,
+          1233.2999999999993
+        ],
+        "observations": 5,
+        "median": 733.4000000000005,
+        "maximum": 1233.2999999999993
+      },
+      "sourceIngestionLagMs": {
+        "samples": [
+          847,
+          758,
+          994,
+          984,
+          856
+        ],
+        "observations": 5,
+        "median": 856,
+        "maximum": 994
+      },
+      "healthFailures": [
+        {
+          "before": null,
+          "after": null,
+          "sourceBefore": null,
+          "sourceAfter": null
+        },
+        {
+          "before": null,
+          "after": null,
+          "sourceBefore": null,
+          "sourceAfter": null
+        },
+        {
+          "before": null,
+          "after": null,
+          "sourceBefore": null,
+          "sourceAfter": null
+        },
+        {
+          "before": null,
+          "after": null,
+          "sourceBefore": null,
+          "sourceAfter": null
+        },
+        {
+          "before": null,
+          "after": null,
+          "sourceBefore": null,
+          "sourceAfter": null
+        }
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "panels": [
+            {
+              "id": "chart-history-five",
+              "paintedTimes": [
+                1794211200,
+                1794211500,
+                1794211800,
+                1794212100,
+                1794212400,
+                1794212700,
+                1794213000,
+                1794213300,
+                1794213600,
+                1794213900,
+                1794214200,
+                1794214500,
+                1794214800,
+                1794215100,
+                1794215400,
+                1794215700,
+                1794216000,
+                1794216300,
+                1794216600,
+                1794216900,
+                1794217200,
+                1794217500,
+                1794217800,
+                1794218100,
+                1794218400,
+                1794218700,
+                1794219000,
+                1794219300,
+                1794219600,
+                1794219900,
+                1794220200,
+                1794220500,
+                1794220800,
+                1794221100,
+                1794221400,
+                1794221700,
+                1794222000,
+                1794222300,
+                1794222600,
+                1794222900,
+                1794223200,
+                1794223500,
+                1794223800,
+                1794224100,
+                1794224400,
+                1794224700,
+                1794225000,
+                1794225300
+              ],
+              "history": {
+                "views": 1,
+                "ready": true,
+                "validated": true,
+                "ranges": [
+                  {
+                    "from": 1794211200000,
+                    "to": 1794225600000,
+                    "progress": {
+                      "viewId": "view-bee174e6-dbd2-474c-bc38-46db7fc360dc-2",
+                      "firstUsefulMs": 879.0999999977648,
+                      "completeMs": 885.6999999992549,
+                      "from": 1794211200000,
+                      "to": 1794225600000,
+                      "requestedSlots": 48,
+                      "loadedSlots": 48,
+                      "validatedSlots": 48,
+                      "slots": [
+                        {
+                          "from": 1794211200000,
+                          "to": 1794211500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794211500000,
+                          "to": 1794211800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794211800000,
+                          "to": 1794212100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794212100000,
+                          "to": 1794212400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794212400000,
+                          "to": 1794212700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794212700000,
+                          "to": 1794213000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213000000,
+                          "to": 1794213300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213300000,
+                          "to": 1794213600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213600000,
+                          "to": 1794213900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213900000,
+                          "to": 1794214200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214200000,
+                          "to": 1794214500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214500000,
+                          "to": 1794214800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214800000,
+                          "to": 1794215100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794215100000,
+                          "to": 1794215400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794215400000,
+                          "to": 1794215700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794215700000,
+                          "to": 1794216000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216000000,
+                          "to": 1794216300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216300000,
+                          "to": 1794216600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216600000,
+                          "to": 1794216900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216900000,
+                          "to": 1794217200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794217200000,
+                          "to": 1794217500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794217500000,
+                          "to": 1794217800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794217800000,
+                          "to": 1794218100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218100000,
+                          "to": 1794218400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218400000,
+                          "to": 1794218700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218700000,
+                          "to": 1794219000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219000000,
+                          "to": 1794219300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219300000,
+                          "to": 1794219600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219600000,
+                          "to": 1794219900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219900000,
+                          "to": 1794220200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794220200000,
+                          "to": 1794220500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794220500000,
+                          "to": 1794220800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794220800000,
+                          "to": 1794221100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794221100000,
+                          "to": 1794221400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794221400000,
+                          "to": 1794221700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794221700000,
+                          "to": 1794222000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222000000,
+                          "to": 1794222300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222300000,
+                          "to": 1794222600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222600000,
+                          "to": 1794222900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222900000,
+                          "to": 1794223200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794223200000,
+                          "to": 1794223500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794223500000,
+                          "to": 1794223800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794223800000,
+                          "to": 1794224100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794224100000,
+                          "to": 1794224400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794224400000,
+                          "to": 1794224700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794224700000,
+                          "to": 1794225000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794225000000,
+                          "to": 1794225300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794225300000,
+                          "to": 1794225600000,
+                          "validated": true,
+                          "state": "ready"
+                        }
+                      ],
+                      "capacityLimited": false
+                    }
+                  }
+                ],
+                "capacityLimited": false
+              }
+            },
+            {
+              "id": "chart-history-hour",
+              "paintedTimes": [
+                1794139200,
+                1794142800,
+                1794146400,
+                1794150000,
+                1794153600,
+                1794157200,
+                1794160800,
+                1794164400,
+                1794168000,
+                1794171600,
+                1794175200,
+                1794178800,
+                1794182400,
+                1794186000,
+                1794189600,
+                1794193200,
+                1794196800,
+                1794200400,
+                1794204000,
+                1794207600,
+                1794211200,
+                1794214800,
+                1794218400,
+                1794222000
+              ],
+              "history": {
+                "views": 1,
+                "ready": true,
+                "validated": true,
+                "ranges": [
+                  {
+                    "from": 1794139200000,
+                    "to": 1794225600000,
+                    "progress": {
+                      "viewId": "view-bee174e6-dbd2-474c-bc38-46db7fc360dc-6",
+                      "firstUsefulMs": 24.099999997764826,
+                      "completeMs": 2359.2999999970198,
+                      "from": 1794139200000,
+                      "to": 1794225600000,
+                      "requestedSlots": 24,
+                      "loadedSlots": 24,
+                      "validatedSlots": 24,
+                      "slots": [
+                        {
+                          "from": 1794139200000,
+                          "to": 1794142800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794142800000,
+                          "to": 1794146400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794146400000,
+                          "to": 1794150000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794150000000,
+                          "to": 1794153600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794153600000,
+                          "to": 1794157200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794157200000,
+                          "to": 1794160800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794160800000,
+                          "to": 1794164400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794164400000,
+                          "to": 1794168000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794168000000,
+                          "to": 1794171600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794171600000,
+                          "to": 1794175200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794175200000,
+                          "to": 1794178800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794178800000,
+                          "to": 1794182400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794182400000,
+                          "to": 1794186000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794186000000,
+                          "to": 1794189600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794189600000,
+                          "to": 1794193200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794193200000,
+                          "to": 1794196800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794196800000,
+                          "to": 1794200400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794200400000,
+                          "to": 1794204000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794204000000,
+                          "to": 1794207600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794207600000,
+                          "to": 1794211200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794211200000,
+                          "to": 1794214800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214800000,
+                          "to": 1794218400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218400000,
+                          "to": 1794222000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222000000,
+                          "to": 1794225600000,
+                          "validated": true,
+                          "state": "ready"
+                        }
+                      ],
+                      "capacityLimited": false
+                    }
+                  }
+                ],
+                "capacityLimited": false
+              }
+            }
+          ]
+        },
+        {
+          "run": 2,
+          "panels": [
+            {
+              "id": "chart-history-five",
+              "paintedTimes": [
+                1794211200,
+                1794211500,
+                1794211800,
+                1794212100,
+                1794212400,
+                1794212700,
+                1794213000,
+                1794213300,
+                1794213600,
+                1794213900,
+                1794214200,
+                1794214500,
+                1794214800,
+                1794215100,
+                1794215400,
+                1794215700,
+                1794216000,
+                1794216300,
+                1794216600,
+                1794216900,
+                1794217200,
+                1794217500,
+                1794217800,
+                1794218100,
+                1794218400,
+                1794218700,
+                1794219000,
+                1794219300,
+                1794219600,
+                1794219900,
+                1794220200,
+                1794220500,
+                1794220800,
+                1794221100,
+                1794221400,
+                1794221700,
+                1794222000,
+                1794222300,
+                1794222600,
+                1794222900,
+                1794223200,
+                1794223500,
+                1794223800,
+                1794224100,
+                1794224400,
+                1794224700,
+                1794225000,
+                1794225300
+              ],
+              "history": {
+                "views": 1,
+                "ready": true,
+                "validated": true,
+                "ranges": [
+                  {
+                    "from": 1794211200000,
+                    "to": 1794225600000,
+                    "progress": {
+                      "viewId": "view-ac553b94-6eff-4975-a46c-37335ac17fd2-2",
+                      "firstUsefulMs": 932.8999999985099,
+                      "completeMs": 944.3999999985099,
+                      "from": 1794211200000,
+                      "to": 1794225600000,
+                      "requestedSlots": 48,
+                      "loadedSlots": 48,
+                      "validatedSlots": 48,
+                      "slots": [
+                        {
+                          "from": 1794211200000,
+                          "to": 1794211500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794211500000,
+                          "to": 1794211800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794211800000,
+                          "to": 1794212100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794212100000,
+                          "to": 1794212400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794212400000,
+                          "to": 1794212700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794212700000,
+                          "to": 1794213000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213000000,
+                          "to": 1794213300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213300000,
+                          "to": 1794213600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213600000,
+                          "to": 1794213900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213900000,
+                          "to": 1794214200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214200000,
+                          "to": 1794214500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214500000,
+                          "to": 1794214800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214800000,
+                          "to": 1794215100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794215100000,
+                          "to": 1794215400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794215400000,
+                          "to": 1794215700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794215700000,
+                          "to": 1794216000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216000000,
+                          "to": 1794216300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216300000,
+                          "to": 1794216600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216600000,
+                          "to": 1794216900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216900000,
+                          "to": 1794217200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794217200000,
+                          "to": 1794217500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794217500000,
+                          "to": 1794217800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794217800000,
+                          "to": 1794218100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218100000,
+                          "to": 1794218400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218400000,
+                          "to": 1794218700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218700000,
+                          "to": 1794219000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219000000,
+                          "to": 1794219300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219300000,
+                          "to": 1794219600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219600000,
+                          "to": 1794219900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219900000,
+                          "to": 1794220200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794220200000,
+                          "to": 1794220500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794220500000,
+                          "to": 1794220800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794220800000,
+                          "to": 1794221100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794221100000,
+                          "to": 1794221400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794221400000,
+                          "to": 1794221700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794221700000,
+                          "to": 1794222000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222000000,
+                          "to": 1794222300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222300000,
+                          "to": 1794222600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222600000,
+                          "to": 1794222900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222900000,
+                          "to": 1794223200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794223200000,
+                          "to": 1794223500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794223500000,
+                          "to": 1794223800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794223800000,
+                          "to": 1794224100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794224100000,
+                          "to": 1794224400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794224400000,
+                          "to": 1794224700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794224700000,
+                          "to": 1794225000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794225000000,
+                          "to": 1794225300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794225300000,
+                          "to": 1794225600000,
+                          "validated": true,
+                          "state": "ready"
+                        }
+                      ],
+                      "capacityLimited": false
+                    }
+                  }
+                ],
+                "capacityLimited": false
+              }
+            },
+            {
+              "id": "chart-history-hour",
+              "paintedTimes": [
+                1794139200,
+                1794142800,
+                1794146400,
+                1794150000,
+                1794153600,
+                1794157200,
+                1794160800,
+                1794164400,
+                1794168000,
+                1794171600,
+                1794175200,
+                1794178800,
+                1794182400,
+                1794186000,
+                1794189600,
+                1794193200,
+                1794196800,
+                1794200400,
+                1794204000,
+                1794207600,
+                1794211200,
+                1794214800,
+                1794218400,
+                1794222000
+              ],
+              "history": {
+                "views": 1,
+                "ready": true,
+                "validated": true,
+                "ranges": [
+                  {
+                    "from": 1794139200000,
+                    "to": 1794225600000,
+                    "progress": {
+                      "viewId": "view-ac553b94-6eff-4975-a46c-37335ac17fd2-6",
+                      "firstUsefulMs": 23.800000000745058,
+                      "completeMs": 1612.300000000745,
+                      "from": 1794139200000,
+                      "to": 1794225600000,
+                      "requestedSlots": 24,
+                      "loadedSlots": 24,
+                      "validatedSlots": 24,
+                      "slots": [
+                        {
+                          "from": 1794139200000,
+                          "to": 1794142800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794142800000,
+                          "to": 1794146400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794146400000,
+                          "to": 1794150000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794150000000,
+                          "to": 1794153600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794153600000,
+                          "to": 1794157200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794157200000,
+                          "to": 1794160800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794160800000,
+                          "to": 1794164400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794164400000,
+                          "to": 1794168000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794168000000,
+                          "to": 1794171600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794171600000,
+                          "to": 1794175200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794175200000,
+                          "to": 1794178800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794178800000,
+                          "to": 1794182400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794182400000,
+                          "to": 1794186000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794186000000,
+                          "to": 1794189600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794189600000,
+                          "to": 1794193200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794193200000,
+                          "to": 1794196800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794196800000,
+                          "to": 1794200400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794200400000,
+                          "to": 1794204000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794204000000,
+                          "to": 1794207600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794207600000,
+                          "to": 1794211200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794211200000,
+                          "to": 1794214800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214800000,
+                          "to": 1794218400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218400000,
+                          "to": 1794222000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222000000,
+                          "to": 1794225600000,
+                          "validated": true,
+                          "state": "ready"
+                        }
+                      ],
+                      "capacityLimited": false
+                    }
+                  }
+                ],
+                "capacityLimited": false
+              }
+            }
+          ]
+        },
+        {
+          "run": 3,
+          "panels": [
+            {
+              "id": "chart-history-five",
+              "paintedTimes": [
+                1794211200,
+                1794211500,
+                1794211800,
+                1794212100,
+                1794212400,
+                1794212700,
+                1794213000,
+                1794213300,
+                1794213600,
+                1794213900,
+                1794214200,
+                1794214500,
+                1794214800,
+                1794215100,
+                1794215400,
+                1794215700,
+                1794216000,
+                1794216300,
+                1794216600,
+                1794216900,
+                1794217200,
+                1794217500,
+                1794217800,
+                1794218100,
+                1794218400,
+                1794218700,
+                1794219000,
+                1794219300,
+                1794219600,
+                1794219900,
+                1794220200,
+                1794220500,
+                1794220800,
+                1794221100,
+                1794221400,
+                1794221700,
+                1794222000,
+                1794222300,
+                1794222600,
+                1794222900,
+                1794223200,
+                1794223500,
+                1794223800,
+                1794224100,
+                1794224400,
+                1794224700,
+                1794225000,
+                1794225300
+              ],
+              "history": {
+                "views": 1,
+                "ready": true,
+                "validated": true,
+                "ranges": [
+                  {
+                    "from": 1794211200000,
+                    "to": 1794225600000,
+                    "progress": {
+                      "viewId": "view-cd06698b-8b17-46dd-8d79-2a68e5acf942-2",
+                      "firstUsefulMs": 910.8000000007451,
+                      "completeMs": 920.1000000014901,
+                      "from": 1794211200000,
+                      "to": 1794225600000,
+                      "requestedSlots": 48,
+                      "loadedSlots": 48,
+                      "validatedSlots": 48,
+                      "slots": [
+                        {
+                          "from": 1794211200000,
+                          "to": 1794211500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794211500000,
+                          "to": 1794211800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794211800000,
+                          "to": 1794212100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794212100000,
+                          "to": 1794212400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794212400000,
+                          "to": 1794212700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794212700000,
+                          "to": 1794213000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213000000,
+                          "to": 1794213300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213300000,
+                          "to": 1794213600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213600000,
+                          "to": 1794213900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213900000,
+                          "to": 1794214200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214200000,
+                          "to": 1794214500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214500000,
+                          "to": 1794214800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214800000,
+                          "to": 1794215100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794215100000,
+                          "to": 1794215400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794215400000,
+                          "to": 1794215700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794215700000,
+                          "to": 1794216000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216000000,
+                          "to": 1794216300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216300000,
+                          "to": 1794216600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216600000,
+                          "to": 1794216900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216900000,
+                          "to": 1794217200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794217200000,
+                          "to": 1794217500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794217500000,
+                          "to": 1794217800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794217800000,
+                          "to": 1794218100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218100000,
+                          "to": 1794218400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218400000,
+                          "to": 1794218700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218700000,
+                          "to": 1794219000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219000000,
+                          "to": 1794219300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219300000,
+                          "to": 1794219600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219600000,
+                          "to": 1794219900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219900000,
+                          "to": 1794220200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794220200000,
+                          "to": 1794220500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794220500000,
+                          "to": 1794220800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794220800000,
+                          "to": 1794221100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794221100000,
+                          "to": 1794221400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794221400000,
+                          "to": 1794221700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794221700000,
+                          "to": 1794222000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222000000,
+                          "to": 1794222300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222300000,
+                          "to": 1794222600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222600000,
+                          "to": 1794222900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222900000,
+                          "to": 1794223200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794223200000,
+                          "to": 1794223500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794223500000,
+                          "to": 1794223800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794223800000,
+                          "to": 1794224100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794224100000,
+                          "to": 1794224400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794224400000,
+                          "to": 1794224700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794224700000,
+                          "to": 1794225000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794225000000,
+                          "to": 1794225300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794225300000,
+                          "to": 1794225600000,
+                          "validated": true,
+                          "state": "ready"
+                        }
+                      ],
+                      "capacityLimited": false
+                    }
+                  }
+                ],
+                "capacityLimited": false
+              }
+            },
+            {
+              "id": "chart-history-hour",
+              "paintedTimes": [
+                1794139200,
+                1794142800,
+                1794146400,
+                1794150000,
+                1794153600,
+                1794157200,
+                1794160800,
+                1794164400,
+                1794168000,
+                1794171600,
+                1794175200,
+                1794178800,
+                1794182400,
+                1794186000,
+                1794189600,
+                1794193200,
+                1794196800,
+                1794200400,
+                1794204000,
+                1794207600,
+                1794211200,
+                1794214800,
+                1794218400,
+                1794222000
+              ],
+              "history": {
+                "views": 1,
+                "ready": true,
+                "validated": true,
+                "ranges": [
+                  {
+                    "from": 1794139200000,
+                    "to": 1794225600000,
+                    "progress": {
+                      "viewId": "view-cd06698b-8b17-46dd-8d79-2a68e5acf942-6",
+                      "firstUsefulMs": 14.400000002235174,
+                      "completeMs": 1989.800000000745,
+                      "from": 1794139200000,
+                      "to": 1794225600000,
+                      "requestedSlots": 24,
+                      "loadedSlots": 24,
+                      "validatedSlots": 24,
+                      "slots": [
+                        {
+                          "from": 1794139200000,
+                          "to": 1794142800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794142800000,
+                          "to": 1794146400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794146400000,
+                          "to": 1794150000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794150000000,
+                          "to": 1794153600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794153600000,
+                          "to": 1794157200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794157200000,
+                          "to": 1794160800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794160800000,
+                          "to": 1794164400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794164400000,
+                          "to": 1794168000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794168000000,
+                          "to": 1794171600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794171600000,
+                          "to": 1794175200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794175200000,
+                          "to": 1794178800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794178800000,
+                          "to": 1794182400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794182400000,
+                          "to": 1794186000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794186000000,
+                          "to": 1794189600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794189600000,
+                          "to": 1794193200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794193200000,
+                          "to": 1794196800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794196800000,
+                          "to": 1794200400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794200400000,
+                          "to": 1794204000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794204000000,
+                          "to": 1794207600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794207600000,
+                          "to": 1794211200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794211200000,
+                          "to": 1794214800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214800000,
+                          "to": 1794218400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218400000,
+                          "to": 1794222000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222000000,
+                          "to": 1794225600000,
+                          "validated": true,
+                          "state": "ready"
+                        }
+                      ],
+                      "capacityLimited": false
+                    }
+                  }
+                ],
+                "capacityLimited": false
+              }
+            }
+          ]
+        },
+        {
+          "run": 4,
+          "panels": [
+            {
+              "id": "chart-history-five",
+              "paintedTimes": [
+                1794211200,
+                1794211500,
+                1794211800,
+                1794212100,
+                1794212400,
+                1794212700,
+                1794213000,
+                1794213300,
+                1794213600,
+                1794213900,
+                1794214200,
+                1794214500,
+                1794214800,
+                1794215100,
+                1794215400,
+                1794215700,
+                1794216000,
+                1794216300,
+                1794216600,
+                1794216900,
+                1794217200,
+                1794217500,
+                1794217800,
+                1794218100,
+                1794218400,
+                1794218700,
+                1794219000,
+                1794219300,
+                1794219600,
+                1794219900,
+                1794220200,
+                1794220500,
+                1794220800,
+                1794221100,
+                1794221400,
+                1794221700,
+                1794222000,
+                1794222300,
+                1794222600,
+                1794222900,
+                1794223200,
+                1794223500,
+                1794223800,
+                1794224100,
+                1794224400,
+                1794224700,
+                1794225000,
+                1794225300
+              ],
+              "history": {
+                "views": 1,
+                "ready": true,
+                "validated": true,
+                "ranges": [
+                  {
+                    "from": 1794211200000,
+                    "to": 1794225600000,
+                    "progress": {
+                      "viewId": "view-c3adc959-25d1-447e-9fe7-df7c1480dce1-2",
+                      "firstUsefulMs": 1098.199999999255,
+                      "completeMs": 1119.6000000014901,
+                      "from": 1794211200000,
+                      "to": 1794225600000,
+                      "requestedSlots": 48,
+                      "loadedSlots": 48,
+                      "validatedSlots": 48,
+                      "slots": [
+                        {
+                          "from": 1794211200000,
+                          "to": 1794211500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794211500000,
+                          "to": 1794211800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794211800000,
+                          "to": 1794212100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794212100000,
+                          "to": 1794212400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794212400000,
+                          "to": 1794212700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794212700000,
+                          "to": 1794213000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213000000,
+                          "to": 1794213300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213300000,
+                          "to": 1794213600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213600000,
+                          "to": 1794213900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213900000,
+                          "to": 1794214200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214200000,
+                          "to": 1794214500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214500000,
+                          "to": 1794214800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214800000,
+                          "to": 1794215100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794215100000,
+                          "to": 1794215400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794215400000,
+                          "to": 1794215700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794215700000,
+                          "to": 1794216000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216000000,
+                          "to": 1794216300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216300000,
+                          "to": 1794216600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216600000,
+                          "to": 1794216900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216900000,
+                          "to": 1794217200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794217200000,
+                          "to": 1794217500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794217500000,
+                          "to": 1794217800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794217800000,
+                          "to": 1794218100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218100000,
+                          "to": 1794218400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218400000,
+                          "to": 1794218700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218700000,
+                          "to": 1794219000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219000000,
+                          "to": 1794219300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219300000,
+                          "to": 1794219600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219600000,
+                          "to": 1794219900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219900000,
+                          "to": 1794220200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794220200000,
+                          "to": 1794220500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794220500000,
+                          "to": 1794220800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794220800000,
+                          "to": 1794221100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794221100000,
+                          "to": 1794221400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794221400000,
+                          "to": 1794221700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794221700000,
+                          "to": 1794222000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222000000,
+                          "to": 1794222300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222300000,
+                          "to": 1794222600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222600000,
+                          "to": 1794222900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222900000,
+                          "to": 1794223200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794223200000,
+                          "to": 1794223500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794223500000,
+                          "to": 1794223800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794223800000,
+                          "to": 1794224100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794224100000,
+                          "to": 1794224400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794224400000,
+                          "to": 1794224700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794224700000,
+                          "to": 1794225000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794225000000,
+                          "to": 1794225300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794225300000,
+                          "to": 1794225600000,
+                          "validated": true,
+                          "state": "ready"
+                        }
+                      ],
+                      "capacityLimited": false
+                    }
+                  }
+                ],
+                "capacityLimited": false
+              }
+            },
+            {
+              "id": "chart-history-hour",
+              "paintedTimes": [
+                1794139200,
+                1794142800,
+                1794146400,
+                1794150000,
+                1794153600,
+                1794157200,
+                1794160800,
+                1794164400,
+                1794168000,
+                1794171600,
+                1794175200,
+                1794178800,
+                1794182400,
+                1794186000,
+                1794189600,
+                1794193200,
+                1794196800,
+                1794200400,
+                1794204000,
+                1794207600,
+                1794211200,
+                1794214800,
+                1794218400,
+                1794222000
+              ],
+              "history": {
+                "views": 1,
+                "ready": true,
+                "validated": true,
+                "ranges": [
+                  {
+                    "from": 1794139200000,
+                    "to": 1794225600000,
+                    "progress": {
+                      "viewId": "view-c3adc959-25d1-447e-9fe7-df7c1480dce1-6",
+                      "firstUsefulMs": 40.69999999925494,
+                      "completeMs": 1325.3999999985099,
+                      "from": 1794139200000,
+                      "to": 1794225600000,
+                      "requestedSlots": 24,
+                      "loadedSlots": 24,
+                      "validatedSlots": 24,
+                      "slots": [
+                        {
+                          "from": 1794139200000,
+                          "to": 1794142800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794142800000,
+                          "to": 1794146400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794146400000,
+                          "to": 1794150000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794150000000,
+                          "to": 1794153600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794153600000,
+                          "to": 1794157200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794157200000,
+                          "to": 1794160800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794160800000,
+                          "to": 1794164400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794164400000,
+                          "to": 1794168000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794168000000,
+                          "to": 1794171600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794171600000,
+                          "to": 1794175200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794175200000,
+                          "to": 1794178800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794178800000,
+                          "to": 1794182400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794182400000,
+                          "to": 1794186000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794186000000,
+                          "to": 1794189600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794189600000,
+                          "to": 1794193200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794193200000,
+                          "to": 1794196800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794196800000,
+                          "to": 1794200400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794200400000,
+                          "to": 1794204000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794204000000,
+                          "to": 1794207600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794207600000,
+                          "to": 1794211200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794211200000,
+                          "to": 1794214800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214800000,
+                          "to": 1794218400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218400000,
+                          "to": 1794222000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222000000,
+                          "to": 1794225600000,
+                          "validated": true,
+                          "state": "ready"
+                        }
+                      ],
+                      "capacityLimited": false
+                    }
+                  }
+                ],
+                "capacityLimited": false
+              }
+            }
+          ]
+        },
+        {
+          "run": 5,
+          "panels": [
+            {
+              "id": "chart-history-five",
+              "paintedTimes": [
+                1794211200,
+                1794211500,
+                1794211800,
+                1794212100,
+                1794212400,
+                1794212700,
+                1794213000,
+                1794213300,
+                1794213600,
+                1794213900,
+                1794214200,
+                1794214500,
+                1794214800,
+                1794215100,
+                1794215400,
+                1794215700,
+                1794216000,
+                1794216300,
+                1794216600,
+                1794216900,
+                1794217200,
+                1794217500,
+                1794217800,
+                1794218100,
+                1794218400,
+                1794218700,
+                1794219000,
+                1794219300,
+                1794219600,
+                1794219900,
+                1794220200,
+                1794220500,
+                1794220800,
+                1794221100,
+                1794221400,
+                1794221700,
+                1794222000,
+                1794222300,
+                1794222600,
+                1794222900,
+                1794223200,
+                1794223500,
+                1794223800,
+                1794224100,
+                1794224400,
+                1794224700,
+                1794225000,
+                1794225300
+              ],
+              "history": {
+                "views": 1,
+                "ready": true,
+                "validated": true,
+                "ranges": [
+                  {
+                    "from": 1794211200000,
+                    "to": 1794225600000,
+                    "progress": {
+                      "viewId": "view-210b2d12-ffc2-4735-ad1f-7b536c654f85-2",
+                      "firstUsefulMs": 1179.6000000014901,
+                      "completeMs": 1185.8999999985099,
+                      "from": 1794211200000,
+                      "to": 1794225600000,
+                      "requestedSlots": 48,
+                      "loadedSlots": 48,
+                      "validatedSlots": 48,
+                      "slots": [
+                        {
+                          "from": 1794211200000,
+                          "to": 1794211500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794211500000,
+                          "to": 1794211800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794211800000,
+                          "to": 1794212100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794212100000,
+                          "to": 1794212400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794212400000,
+                          "to": 1794212700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794212700000,
+                          "to": 1794213000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213000000,
+                          "to": 1794213300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213300000,
+                          "to": 1794213600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213600000,
+                          "to": 1794213900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794213900000,
+                          "to": 1794214200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214200000,
+                          "to": 1794214500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214500000,
+                          "to": 1794214800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214800000,
+                          "to": 1794215100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794215100000,
+                          "to": 1794215400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794215400000,
+                          "to": 1794215700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794215700000,
+                          "to": 1794216000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216000000,
+                          "to": 1794216300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216300000,
+                          "to": 1794216600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216600000,
+                          "to": 1794216900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794216900000,
+                          "to": 1794217200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794217200000,
+                          "to": 1794217500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794217500000,
+                          "to": 1794217800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794217800000,
+                          "to": 1794218100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218100000,
+                          "to": 1794218400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218400000,
+                          "to": 1794218700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218700000,
+                          "to": 1794219000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219000000,
+                          "to": 1794219300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219300000,
+                          "to": 1794219600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219600000,
+                          "to": 1794219900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794219900000,
+                          "to": 1794220200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794220200000,
+                          "to": 1794220500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794220500000,
+                          "to": 1794220800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794220800000,
+                          "to": 1794221100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794221100000,
+                          "to": 1794221400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794221400000,
+                          "to": 1794221700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794221700000,
+                          "to": 1794222000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222000000,
+                          "to": 1794222300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222300000,
+                          "to": 1794222600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222600000,
+                          "to": 1794222900000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222900000,
+                          "to": 1794223200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794223200000,
+                          "to": 1794223500000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794223500000,
+                          "to": 1794223800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794223800000,
+                          "to": 1794224100000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794224100000,
+                          "to": 1794224400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794224400000,
+                          "to": 1794224700000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794224700000,
+                          "to": 1794225000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794225000000,
+                          "to": 1794225300000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794225300000,
+                          "to": 1794225600000,
+                          "validated": true,
+                          "state": "ready"
+                        }
+                      ],
+                      "capacityLimited": false
+                    }
+                  }
+                ],
+                "capacityLimited": false
+              }
+            },
+            {
+              "id": "chart-history-hour",
+              "paintedTimes": [
+                1794139200,
+                1794142800,
+                1794146400,
+                1794150000,
+                1794153600,
+                1794157200,
+                1794160800,
+                1794164400,
+                1794168000,
+                1794171600,
+                1794175200,
+                1794178800,
+                1794182400,
+                1794186000,
+                1794189600,
+                1794193200,
+                1794196800,
+                1794200400,
+                1794204000,
+                1794207600,
+                1794211200,
+                1794214800,
+                1794218400,
+                1794222000
+              ],
+              "history": {
+                "views": 1,
+                "ready": true,
+                "validated": true,
+                "ranges": [
+                  {
+                    "from": 1794139200000,
+                    "to": 1794225600000,
+                    "progress": {
+                      "viewId": "view-210b2d12-ffc2-4735-ad1f-7b536c654f85-6",
+                      "firstUsefulMs": 29.399999998509884,
+                      "completeMs": 1310.8999999985099,
+                      "from": 1794139200000,
+                      "to": 1794225600000,
+                      "requestedSlots": 24,
+                      "loadedSlots": 24,
+                      "validatedSlots": 24,
+                      "slots": [
+                        {
+                          "from": 1794139200000,
+                          "to": 1794142800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794142800000,
+                          "to": 1794146400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794146400000,
+                          "to": 1794150000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794150000000,
+                          "to": 1794153600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794153600000,
+                          "to": 1794157200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794157200000,
+                          "to": 1794160800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794160800000,
+                          "to": 1794164400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794164400000,
+                          "to": 1794168000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794168000000,
+                          "to": 1794171600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794171600000,
+                          "to": 1794175200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794175200000,
+                          "to": 1794178800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794178800000,
+                          "to": 1794182400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794182400000,
+                          "to": 1794186000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794186000000,
+                          "to": 1794189600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794189600000,
+                          "to": 1794193200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794193200000,
+                          "to": 1794196800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794196800000,
+                          "to": 1794200400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794200400000,
+                          "to": 1794204000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794204000000,
+                          "to": 1794207600000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794207600000,
+                          "to": 1794211200000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794211200000,
+                          "to": 1794214800000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794214800000,
+                          "to": 1794218400000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794218400000,
+                          "to": 1794222000000,
+                          "validated": true,
+                          "state": "ready"
+                        },
+                        {
+                          "from": 1794222000000,
+                          "to": 1794225600000,
+                          "validated": true,
+                          "state": "ready"
+                        }
+                      ],
+                      "capacityLimited": false
+                    }
+                  }
+                ],
+                "capacityLimited": false
+              }
+            }
+          ]
+        }
+      ],
+      "failedRequests": [
+        {
+          "run": 1,
+          "requests": [
+            {
+              "url": "http://127.0.0.1:4188/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4188/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            }
+          ]
+        },
+        {
+          "run": 2,
+          "requests": [
+            {
+              "url": "http://127.0.0.1:4188/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            }
+          ]
+        },
+        {
+          "run": 3,
+          "requests": [
+            {
+              "url": "http://127.0.0.1:4188/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4188/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            }
+          ]
+        },
+        {
+          "run": 4,
+          "requests": [
+            {
+              "url": "http://127.0.0.1:4188/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4188/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4188/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            }
+          ]
+        },
+        {
+          "run": 5,
+          "requests": [
+            {
+              "url": "http://127.0.0.1:4188/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4188/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "completeCohort": false,
+  "customBuild": [
+    {
+      "run": 1,
+      "scenario": "current-only",
+      "before": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23877058,
+          "sourceHeadCursor": 23877058,
+          "lagCursors": 0,
+          "currentCursor": 23877058,
+          "currentAt": 1794229414639,
+          "currentValid": true
+        }
+      ],
+      "after": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23877338,
+          "sourceHeadCursor": 23877338,
+          "lagCursors": 0,
+          "currentCursor": 23877338,
+          "currentAt": 1794229443097,
+          "currentValid": true
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "scenario": "concurrent-history",
+      "before": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23877443,
+          "sourceHeadCursor": 23877443,
+          "lagCursors": 0,
+          "currentCursor": 23877443,
+          "currentAt": 1794229453708,
+          "currentValid": true
+        }
+      ],
+      "after": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23877662,
+          "sourceHeadCursor": 23877662,
+          "lagCursors": 0,
+          "currentCursor": 23877662,
+          "currentAt": 1794229476046,
+          "currentValid": true
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "scenario": "current-only",
+      "after": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23879538,
+          "sourceHeadCursor": 23879538,
+          "lagCursors": 0,
+          "currentCursor": 23879538,
+          "currentAt": 1794229667419,
+          "currentValid": true
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "scenario": "concurrent-history",
+      "before": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23879602,
+          "sourceHeadCursor": 23879602,
+          "lagCursors": 0,
+          "currentCursor": 23879602,
+          "currentAt": 1794229673373,
+          "currentValid": true
+        }
+      ],
+      "after": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23879923,
+          "sourceHeadCursor": 23879923,
+          "lagCursors": 0,
+          "currentCursor": 23879923,
+          "currentAt": 1794229705851,
+          "currentValid": true
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "scenario": "current-only",
+      "before": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23880005,
+          "sourceHeadCursor": 23880005,
+          "lagCursors": 0,
+          "currentCursor": 23880005,
+          "currentAt": 1794229714216,
+          "currentValid": true
+        }
+      ],
+      "after": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23880255,
+          "sourceHeadCursor": 23880255,
+          "lagCursors": 0,
+          "currentCursor": 23880255,
+          "currentAt": 1794229739614,
+          "currentValid": true
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "scenario": "concurrent-history",
+      "before": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23880330,
+          "sourceHeadCursor": 23880330,
+          "lagCursors": 0,
+          "currentCursor": 23880330,
+          "currentAt": 1794229747264,
+          "currentValid": true
+        }
+      ],
+      "after": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23880560,
+          "sourceHeadCursor": 23880560,
+          "lagCursors": 0,
+          "currentCursor": 23880560,
+          "currentAt": 1794229770622,
+          "currentValid": true
+        }
+      ]
+    },
+    {
+      "run": 4,
+      "scenario": "current-only",
+      "before": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23882145,
+          "sourceHeadCursor": 23882145,
+          "lagCursors": 0,
+          "currentCursor": 23882145,
+          "currentAt": 1794229931785,
+          "currentValid": true
+        }
+      ],
+      "after": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23882435,
+          "sourceHeadCursor": 23882435,
+          "lagCursors": 0,
+          "currentCursor": 23882435,
+          "currentAt": 1794229961262,
+          "currentValid": true
+        }
+      ]
+    },
+    {
+      "run": 4,
+      "scenario": "concurrent-history",
+      "before": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23882481,
+          "sourceHeadCursor": 23882481,
+          "lagCursors": 0,
+          "currentCursor": 23882481,
+          "currentAt": 1794229965852,
+          "currentValid": true
+        }
+      ],
+      "after": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23882819,
+          "sourceHeadCursor": 23882819,
+          "lagCursors": 0,
+          "currentCursor": 23882819,
+          "currentAt": 1794230000226,
+          "currentValid": true
+        }
+      ]
+    },
+    {
+      "run": 5,
+      "scenario": "current-only",
+      "before": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23882914,
+          "sourceHeadCursor": 23882914,
+          "lagCursors": 0,
+          "currentCursor": 23882914,
+          "currentAt": 1794230009916,
+          "currentValid": true
+        }
+      ],
+      "after": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23883040,
+          "sourceHeadCursor": 23883040,
+          "lagCursors": 0,
+          "currentCursor": 23883040,
+          "currentAt": 1794230022768,
+          "currentValid": true
+        }
+      ]
+    },
+    {
+      "run": 5,
+      "scenario": "concurrent-history",
+      "before": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23883153,
+          "sourceHeadCursor": 23883153,
+          "lagCursors": 0,
+          "currentCursor": 23883153,
+          "currentAt": 1794230034192,
+          "currentValid": true
+        }
+      ],
+      "after": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "ready",
+          "progressCursor": 23883393,
+          "sourceHeadCursor": 23883393,
+          "lagCursors": 0,
+          "currentCursor": 23883393,
+          "currentAt": 1794230058570,
+          "currentValid": true
+        }
+      ]
+    }
+  ],
+  "noCurrentTimeouts": "FAILED OBSERVATION: reserved current/health request failure; causal attribution remains incomplete",
+  "concurrentHistoryAcceptance": "INCOMPLETE: requires attribution against current-only baseline and exact confirmation/cursor continuity; no automatic pass from receive counts. Inspect customBuild cursor progress rather than inferring no build from a ready historical window."
+}

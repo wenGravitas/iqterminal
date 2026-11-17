@@ -1,0 +1,17 @@
+{
+  "applicationBuild": "821092d83943b3e17bba88ee6a0a41657d17807a",
+  "scope": "Local functional validation of idle wall-cache lifetime; not latency, exact-source browser, heap plateau or cold-build acceptance.",
+  "results": {
+    "focused": "48 passed",
+    "full": "1189 passed; 2 skipped",
+    "typecheck": "passed",
+    "productionBuild": "passed"
+  },
+  "sha256": {
+    "typecheck.log": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961",
+    "focused-tests.log": "e8a13b88a93f922f9301c5748facf17def65f036046d9ce46cf82c779637e3fa",
+    "full-tests.log": "c337ab4f4b9660289f872e76b7c808ea8264d4aa2e2842a89879e96f1760cdb4",
+    "build.log": "97cd1e590d75e90535a8de55efb743e46bf014a66974f5c169085a0176e4fc81",
+    "red-before-fix.log": "3d7a3ad098dd27606b04c14c64117923ced9d3f73315b95b5760aa71a32865e5"
+  }
+}

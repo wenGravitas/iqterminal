@@ -1,0 +1,119 @@
+{
+  "scope": "Five alternating pairs, headless actual Pi route; other applications left running. No foreground/current-concurrency acceptance. Individual child run=1 is preserved; numbered aggregates use independent paired round1..5. Raw children remain unchanged.",
+  "decision": "Reject and revert eight-part grouping: lower completion median but longer maximum chart draws in every pair; all loading gates fail. Retain source-validation overlap.",
+  "control": {
+    "samples": [
+      {
+        "round": 1,
+        "firstHistoryMs": 5167.0999999996275,
+        "completeMs": 11872.699999999255,
+        "draws": 31,
+        "renderMs": 2775.7999999970198,
+        "maxRenderMs": 352.59999999962747,
+        "beforeLoad": "8.16 9.63 7.36 11/1265 168337",
+        "afterLoad": "9.49 9.86 7.47 12/1300 168725"
+      },
+      {
+        "round": 2,
+        "firstHistoryMs": 6160.299999998882,
+        "completeMs": 12698.099999999627,
+        "draws": 20,
+        "renderMs": 3716.2999999932945,
+        "maxRenderMs": 474.5,
+        "beforeLoad": "12.62 10.61 7.82 6/1265 170800",
+        "afterLoad": "13.78 11.02 8.02 7/1306 170956"
+      },
+      {
+        "round": 3,
+        "firstHistoryMs": 4839.299999998882,
+        "completeMs": 10442.39999999851,
+        "draws": 20,
+        "renderMs": 3071.6999999955297,
+        "maxRenderMs": 385.5,
+        "beforeLoad": "14.52 11.22 8.10 14/1266 171401",
+        "afterLoad": "15.32 11.49 8.22 12/1302 171518"
+      },
+      {
+        "round": 4,
+        "firstHistoryMs": 4063.2999999988824,
+        "completeMs": 9853.799999998882,
+        "draws": 17,
+        "renderMs": 3458.4999999981374,
+        "maxRenderMs": 407,
+        "beforeLoad": "13.04 11.38 8.32 14/1270 173611",
+        "afterLoad": "13.29 11.53 8.42 14/1278 173975"
+      },
+      {
+        "round": 5,
+        "firstHistoryMs": 4772.800000000745,
+        "completeMs": 12307.800000000745,
+        "draws": 30,
+        "renderMs": 3382.39999999851,
+        "maxRenderMs": 377.69999999925494,
+        "beforeLoad": "12.87 11.47 8.42 9/1272 174404",
+        "afterLoad": "14.13 11.82 8.58 16/1302 174803"
+      }
+    ],
+    "completionMedianMs": 11872.699999999255,
+    "completionMaximumMs": 12698.099999999627,
+    "medianOfMaximumChartDrawsMs": 385.5
+  },
+  "grouped": {
+    "samples": [
+      {
+        "round": 1,
+        "firstHistoryMs": 3772.5,
+        "completeMs": 10094.599999999627,
+        "draws": 20,
+        "renderMs": 2536.6000000033528,
+        "maxRenderMs": 644.4000000003725,
+        "beforeLoad": "9.61 9.88 7.49 10/1259 169181",
+        "afterLoad": "10.72 10.10 7.59 9/1296 169529"
+      },
+      {
+        "round": 2,
+        "firstHistoryMs": 5782.9000000003725,
+        "completeMs": 12474,
+        "draws": 18,
+        "renderMs": 3855.10000000149,
+        "maxRenderMs": 984.1999999992549,
+        "beforeLoad": "10.74 10.12 7.60 4/1261 169967",
+        "afterLoad": "12.94 10.63 7.81 11/1295 170376"
+      },
+      {
+        "round": 3,
+        "firstHistoryMs": 5265.5999999996275,
+        "completeMs": 11396.700000001118,
+        "draws": 20,
+        "renderMs": 2356.400000002235,
+        "maxRenderMs": 639,
+        "beforeLoad": "14.90 11.47 8.23 10/1264 172204",
+        "afterLoad": "14.25 11.49 8.29 11/1295 172367"
+      },
+      {
+        "round": 4,
+        "firstHistoryMs": 5095,
+        "completeMs": 9789.300000000745,
+        "draws": 15,
+        "renderMs": 2062.9000000003725,
+        "maxRenderMs": 534.1999999992549,
+        "beforeLoad": "13.43 11.37 8.27 8/1261 172781",
+        "afterLoad": "13.04 11.38 8.32 13/1283 173152"
+      },
+      {
+        "round": 5,
+        "firstHistoryMs": 4254.300000000745,
+        "completeMs": 10685.300000000745,
+        "draws": 16,
+        "renderMs": 3108.500000005588,
+        "maxRenderMs": 531.2000000011176,
+        "beforeLoad": "13.72 11.78 8.59 10/1270 175272",
+        "afterLoad": "12.83 11.67 8.60 11/1286 175412"
+      }
+    ],
+    "completionMedianMs": 10685.300000000745,
+    "completionMaximumMs": 12474,
+    "medianOfMaximumChartDrawsMs": 639
+  },
+  "groupingDrawRegressionEveryPair": true
+}

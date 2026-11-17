@@ -1,0 +1,219 @@
+[
+  {
+    "kind": "startup-proxy",
+    "id": "95054cc4-2b30-424d-8ece-2bb7ff261f14",
+    "event": "arrival",
+    "ms": 0.8865070000001651,
+    "path": "/market-data/v2/history/walls/discover",
+    "counts": {
+      "active": 0,
+      "historicalActive": 0,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 80.347135,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "95054cc4-2b30-424d-8ece-2bb7ff261f14",
+    "event": "admitted",
+    "ms": 1.391795000000002,
+    "path": "/market-data/v2/history/walls/discover",
+    "counts": {
+      "active": 1,
+      "historicalActive": 1,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 1,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 80.347135,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "95054cc4-2b30-424d-8ece-2bb7ff261f14",
+    "event": "proxy-start",
+    "ms": 3.1287019999999757,
+    "path": "/v2/history/walls/discover",
+    "counts": {
+      "active": 1,
+      "historicalActive": 1,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 1,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 80.347135,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "95054cc4-2b30-424d-8ece-2bb7ff261f14",
+    "event": "upstream-request",
+    "ms": 7.110783999999967,
+    "path": "/v2/history/walls/discover",
+    "counts": {
+      "active": 1,
+      "historicalActive": 1,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 1,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 80.347135,
+    "dropped": 0,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "95054cc4-2b30-424d-8ece-2bb7ff261f14",
+    "event": "socket-assigned",
+    "ms": 7.439822000000277,
+    "path": "/v2/history/walls/discover",
+    "counts": {
+      "active": 1,
+      "historicalActive": 1,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 1,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 80.347135,
+    "dropped": 0,
+    "connecting": true,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "95054cc4-2b30-424d-8ece-2bb7ff261f14",
+    "event": "socket-connected",
+    "ms": 8.790508999999929,
+    "path": "/v2/history/walls/discover",
+    "counts": {
+      "active": 1,
+      "historicalActive": 1,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 1,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 80.347135,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "95054cc4-2b30-424d-8ece-2bb7ff261f14",
+    "event": "upstream-request-finish",
+    "ms": 9.293075000000044,
+    "path": "/v2/history/walls/discover",
+    "counts": {
+      "active": 1,
+      "historicalActive": 1,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 1,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 80.347135,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "95054cc4-2b30-424d-8ece-2bb7ff261f14",
+    "event": "upstream-headers",
+    "ms": 10778.833897,
+    "path": "/v2/history/walls/discover",
+    "counts": {
+      "active": 1,
+      "historicalActive": 1,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 1,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 83.099647,
+    "dropped": 0,
+    "status": 200,
+    "queueMs": 7.04,
+    "headerMs": 10771.72
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "95054cc4-2b30-424d-8ece-2bb7ff261f14",
+    "event": "response-close",
+    "ms": 11720.421955,
+    "path": "/v2/history/walls/discover",
+    "counts": {
+      "active": 1,
+      "historicalActive": 1,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 1,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 83.099647,
+    "dropped": 0,
+    "finished": false,
+    "status": 200
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "95054cc4-2b30-424d-8ece-2bb7ff261f14",
+    "event": "upstream-response-aborted",
+    "ms": 11727.046318,
+    "path": "/v2/history/walls/discover",
+    "counts": {
+      "active": 0,
+      "historicalActive": 0,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 83.099647,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "95054cc4-2b30-424d-8ece-2bb7ff261f14",
+    "event": "upstream-close",
+    "ms": 11727.382392000001,
+    "path": "/v2/history/walls/discover",
+    "counts": {
+      "active": 0,
+      "historicalActive": 0,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 83.099647,
+    "dropped": 0
+  }
+]

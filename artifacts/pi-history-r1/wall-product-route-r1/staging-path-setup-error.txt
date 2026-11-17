@@ -1,0 +1,5 @@
+From /tmp/iqterminal-wall-product-dca1bb8.bundle
+ * branch            HEAD       -> FETCH_HEAD
+HEAD is now at dca1bb8 serve exact product wall tuples through a backward compatible transport capability
+Preparing worktree (detached HEAD dca1bb8)
+/bin/bash: line 1: node: command not found

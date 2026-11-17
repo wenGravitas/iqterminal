@@ -1,0 +1,68 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-projection.test.ts (25 tests | 4 failed) 4169ms
+   × independent revision read overlaps final assembly but cannot publish completion until validated 1043ms
+   × newer quiet-head rebinding restores retained history once without a transport-metadata clone 12ms
+   × older quiet-head rebinding restores retained history once without a transport-metadata clone 8ms
+   × prepared warm revisits retain detached presentation without a second mutable projector or history clone 54ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > independent revision read overlaps final assembly but cannot publish completion until validated
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/prepared-wall-projection.test.ts:92:46
+     90|  const work=loadOrderWallsArchive({request:{market:'binance-spot',from…
+     91|  try{
+     92|   await vi.waitFor(()=>expect(finalRestored).toBe(true));
+       |                                              ^
+     93|   expect(updates.every(u=>u.status.archive.requestComplete===false)).t…
+     94|   release();const result=await work;expect(result.status.archive?.requ…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > newer quiet-head rebinding restores retained history once without a transport-metadata clone
+ FAIL  tests/prepared-wall-projection.test.ts > older quiet-head rebinding restores retained history once without a transport-metadata clone
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/prepared-wall-projection.test.ts:211:28
+    209|   expect(result).not.toBeNull();expect(checkpoint).not.toHaveBeenCalle…
+    210|   const completeRestores=restore.mock.calls.filter(([value])=>(value a…
+    211|   expect(completeRestores).toHaveLength(1);expect(completeRestores[0]!…
+       |                            ^
+    212|   const reference=new OrderWallsArchiveProjector(settings,from,to);ref…
+    213|   expect(result!.projector.snapshot()).toEqual(reference.snapshot());e…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > prepared warm revisits retain detached presentation without a second mutable projector or history clone
+TypeError: Cannot read properties of undefined (reading 'censorOpen')
+ ❯ tests/prepared-wall-projection.test.ts:228:13
+    226|   const completed=restore.mock.results.map(result=>result.value as Ord…
+    227|   // Even an active replay mutation cannot change the detached cached …
+    228|   completed.censorOpen(to,'Test replay mutation after cache admission'…
+       |             ^
+    229|   service.unsubscribe('first');expect(service.diagnostics()).toMatchOb…
+    230|   phase=1;service.subscribe('revisit',subscription);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  4 failed | 30 passed (34)
+   Start at  16:55:43
+   Duration  5.58s (tests 80%, transform 17%, import 3%)
+

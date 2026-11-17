@@ -1,0 +1,16 @@
+[
+  {
+    "repository": ".",
+    "observedApplication": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+    "testedToolingHead": "cdbb020986f2d0737ed398505980be5195175b06",
+    "applicationSourceDiffExit": 0,
+    "diff": ""
+  },
+  {
+    "repository": "../iqterminal-server-integration-startup-r1",
+    "observedApplication": "83c8cf2709dba91f01d5a24421ae5bc875c96db5",
+    "testedToolingHead": "0b6afa25cf1213b59dc6e94d1ad0b7ab5425234b",
+    "applicationSourceDiffExit": 0,
+    "diff": ""
+  }
+]

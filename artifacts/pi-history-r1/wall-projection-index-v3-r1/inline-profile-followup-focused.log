@@ -1,0 +1,130 @@
+TAP version 13
+# Subtest: bounded closed-record preparation resumes and exactly restores original walls and subsequent patches
+ok 1 - bounded closed-record preparation resumes and exactly restores original walls and subsequent patches
+  ---
+  duration_ms: 427.67307
+  type: 'test'
+  ...
+# Subtest: source and content failures preserve the validated prefix and explicit gaps through retry
+ok 2 - source and content failures preserve the validated prefix and explicit gaps through retry
+  ---
+  duration_ms: 184.178441
+  type: 'test'
+  ...
+# Subtest: aggregate retained capacity includes closed records outside the active checkpoint
+ok 3 - aggregate retained capacity includes closed records outside the active checkpoint
+  ---
+  duration_ms: 141.309967
+  type: 'test'
+  ...
+# Subtest: a persisted V3 checkpoint missing its closed index is rejected before any publication and resumes after repair
+ok 4 - a persisted V3 checkpoint missing its closed index is rejected before any publication and resumes after repair
+  ---
+  duration_ms: 209.381639
+  type: 'test'
+  ...
+# Subtest: private header overhead falls back at the exact legacy byte boundary without widening the logical budget
+ok 5 - private header overhead falls back at the exact legacy byte boundary without widening the logical budget
+  ---
+  duration_ms: 549.317823
+  type: 'test'
+  ...
+# Subtest: a crash after final V2 progress but before manifest publication recovers without folding again
+ok 6 - a crash after final V2 progress but before manifest publication recovers without folding again
+  ---
+  duration_ms: 126.147785
+  type: 'test'
+  ...
+# Subtest: the incumbent512-part boundary falls back to exact V2 before extra index files, including crash leftovers and final-write retry
+ok 7 - the incumbent512-part boundary falls back to exact V2 before extra index files, including crash leftovers and final-write retry
+  ---
+  duration_ms: 873.849664
+  type: 'test'
+  ...
+# Subtest: a closed wall larger than one transport part preserves every exact point across fragments
+ok 8 - a closed wall larger than one transport part preserves every exact point across fragments
+  ---
+  duration_ms: 1548.534503
+  type: 'test'
+  ...
+# Subtest: identical nonterminal prefix copies one bounded output per turn, resumes and replays old final page plus future rows below its watermark exactly
+ok 9 - identical nonterminal prefix copies one bounded output per turn, resumes and replays old final page plus future rows below its watermark exactly
+  ---
+  duration_ms: 575.951137
+  type: 'test'
+  ...
+# Subtest: changed event input rejects prefix reuse and folds from the first canonical page
+ok 10 - changed event input rejects prefix reuse and folds from the first canonical page
+  ---
+  duration_ms: 618.707138
+  type: 'test'
+  ...
+# Subtest: changed epoch input rejects prefix reuse and folds from the first canonical page
+ok 11 - changed epoch input rejects prefix reuse and folds from the first canonical page
+  ---
+  duration_ms: 714.093243
+  type: 'test'
+  ...
+# Subtest: changed gap input rejects prefix reuse and folds from the first canonical page
+ok 12 - changed gap input rejects prefix reuse and folds from the first canonical page
+  ---
+  duration_ms: 557.333922
+  type: 'test'
+  ...
+# Subtest: corrupt extension prefix is rejected and changed target proof cannot publish a copied prefix
+ok 13 - corrupt extension prefix is rejected and changed target proof cannot publish a copied prefix
+  ---
+  duration_ms: 322.532925
+  type: 'test'
+  ...
+# Subtest: bounded inline indexes and mid-build V3 conversion publish identical financial and prefix bytes
+ok 14 - bounded inline indexes and mid-build V3 conversion publish identical financial and prefix bytes
+  ---
+  duration_ms: 306.642927
+  type: 'test'
+  ...
+# Subtest: delta roots reconstruct exact legacy JSON, updates, tombstones and deletion/reinsertion order after every page
+ok 15 - delta roots reconstruct exact legacy JSON, updates, tombstones and deletion/reinsertion order after every page
+  ---
+  duration_ms: 263.804338
+  type: 'test'
+  ...
+# Subtest: objects written before a root commit are harmless orphans, and both protected roots survive bounded compaction cleanup
+ok 16 - objects written before a root commit are harmless orphans, and both protected roots survive bounded compaction cleanup
+  ---
+  duration_ms: 8795.427352
+  type: 'test'
+  ...
+# Subtest: corrupt descriptor/Bloom bytes and compressed data are rejected, never treated as absent entries
+ok 17 - corrupt descriptor/Bloom bytes and compressed data are rejected, never treated as absent entries
+  ---
+  duration_ms: 21.052193
+  type: 'test'
+  ...
+# Subtest: large repeated corrections compact by live bytes before the descriptor count bound
+ok 18 - large repeated corrections compact by live bytes before the descriptor count bound
+  ---
+  duration_ms: 765.246316
+  type: 'test'
+  ...
+# Subtest: cleanup avoids retained shard stats while no-follow financial reads still reject a replaced retained object
+ok 19 - cleanup avoids retained shard stats while no-follow financial reads still reject a replaced retained object
+  ---
+  duration_ms: 32.489445
+  type: 'test'
+  ...
+# Subtest: capacity observations use final page mutations, including a deletion after a temporarily larger total
+ok 20 - capacity observations use final page mutations, including a deletion after a temporarily larger total
+  ---
+  duration_ms: 36.982448
+  type: 'test'
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10410.509227

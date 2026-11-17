@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: a canceled response with an unresolved trace cannot prevent sample finalization
+ok 1 - a canceled response with an unresolved trace cannot prevent sample finalization
+  ---
+  duration_ms: 31.005861
+  type: 'test'
+  ...
+# Subtest: completed and failed traces finish without retaining a cleanup timer
+ok 2 - completed and failed traces finish without retaining a cleanup timer
+  ---
+  duration_ms: 2.205828
+  type: 'test'
+  ...
+# Subtest: ready closed history cannot end a current-display observation before healthy current paint
+ok 3 - ready closed history cannot end a current-display observation before healthy current paint
+  ---
+  duration_ms: 1.2262
+  type: 'test'
+  ...
+# Subtest: extended current observation remains active after both current and history paint
+ok 4 - extended current observation remains active after both current and history paint
+  ---
+  duration_ms: 0.699424
+  type: 'test'
+  ...
+# Subtest: wall history observation stays open until native closed coverage is inspected
+ok 5 - wall history observation stays open until native closed coverage is inspected
+  ---
+  duration_ms: 0.943461
+  type: 'test'
+  ...
+# Subtest: native coverage cannot hide a missing interior candle behind endpoints, extra bars or a forming bar
+ok 6 - native coverage cannot hide a missing interior candle behind endpoints, extra bars or a forming bar
+  ---
+  duration_ms: 1.201589
+  type: 'test'
+  ...
+# Subtest: future whitespace leaves five eligible closed slots and requires independent forming paint
+ok 7 - future whitespace leaves five eligible closed slots and requires independent forming paint
+  ---
+  duration_ms: 1.113257
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 227.2753

@@ -1,0 +1,10 @@
+{
+  "browser": "155.0.8059.79",
+  "node": "v22.19.0",
+  "arch": "arm64",
+  "sourceBase": "4ff1a2ebfc9c97f6d2f60758188d79cd4b7633e2",
+  "candidateHelperSha256": "fe8c5bce0ad9e16d3578b304b06d4407c93536d50dd680e0a7474bbcb5e39482",
+  "load": "4.78 5.45 6.06 6/1246 252861",
+  "memory": "MemTotal:        8142664 kB\nMemFree:          844688 kB\nMemAvailable:    1538956 kB\nBuffers:           39616 kB\nCached:          1498308 kB\nSwapCached:          668 kB\nActive:          3160280 kB\nInactive:        2327124 kB\nActive(anon):    2629144 kB\nInactive(anon):  1904432 kB\nActive(file):     531136 kB\nInactive(file):   422692 kB\nUnevictable:      495804 kB\nMlocked:             136 kB\nSwapTotal:      33094924 kB\nSwapFree:       31256416 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              1472 kB\nWriteback:             0 kB\nAnonPages:       4445988 kB\nMapped:           707540 kB\nShmem:            583312 kB\nKReclaimable:     159012 kB\nSlab:             264192 kB\nSReclaimable:     159012 kB\nSUnreclaim:       105180 kB\nKernelStack:       19708 kB\nPageTables:        80704 kB\nSecPageTables:        92 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   24190320 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      330468 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:             352 kB\n",
+  "scope": "Actual Pi headless Chromium dedicated worker; compiler terminal before measurement. Captured immutable canonical batches, no API/exchange reads or chart paint. Message heartbeat is synthetic scheduling input, not current feed confirmation."
+}

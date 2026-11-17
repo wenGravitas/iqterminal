@@ -1,0 +1,372 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-history.test.ts (42 tests | 2 failed) 2588ms
+   × service Retry clears query build failure with stable command metadata 140ms
+   × service Retry clears source-changed build failure with stable command metadata 115ms
+ ❯ tests/prepared-wall-projection.test.ts (27 tests | 21 failed) 14669ms
+   × actual archive loader imports exact prepared cells, retains gaps and rebases only the quiet head 141ms
+   × explicit projection capability accepts a manifest above the legacy discovery budget 25ms
+   × painted prepared records remain incomplete while final independent source validation is delayed or fails 1032ms
+   × independent revision read overlaps final assembly but cannot publish completion until validated 1023ms
+   × cancel during overlapped source validation retains partial data and prevents completion 1010ms
+   × global checkpoint failure remains fatal when overlapping source validation also rejects 12ms
+   × shared service joins and Retry retain the prepared presentation until the full replacement validates 1014ms
+   × prepared completion preserves already painted segments and a late join still receives a full snapshot 1006ms
+   × projection retry attempts reach page diagnostics and financial records publish once 12ms
+   × newer quiet-head rebinding restores retained history once without a transport-metadata clone 4ms
+   × older quiet-head rebinding restores retained history once without a transport-metadata clone 4ms
+   × prepared warm revisits retain detached presentation without a second mutable projector or history clone 1010ms
+   × compact warm replay is shared, survives one unsubscribe and never marks fresh coverage complete 1014ms
+   × compact cached history paints and validates independently of delayed current bootstrap; last release cancels current 1008ms
+   × bounded compact builds cancel obsolete work and cannot overwrite a later completed view 1016ms
+   × a corrupt compact cache falls back to the good fresh prefix and recovers without resetting its job 1011ms
+   × identical complete prepared manifest validates warm rows without a second presentation snapshot 1007ms
+   × changed presentation metadata with the same source token cannot reuse warm geometry 1011ms
+   × an unfinished warm replay cannot certify complete presentation from a matching revision 1009ms
+   × a late shared join cannot turn unavailable prepared coverage into validated cached history 1024ms
+   × eligible prepared history preserves exact rows and requested bounds across future whitespace 7ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 23 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-history.test.ts > service Retry clears query build failure with stable command metadata
+ FAIL  tests/prepared-wall-history.test.ts > service Retry clears source-changed build failure with stable command metadata
+AssertionError: expected 2 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ tests/prepared-wall-history.test.ts:84:146
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > actual archive loader imports exact prepared cells, retains gaps and rebases only the quiet head
+ReferenceError: init is not defined
+ ❯ tests/prepared-wall-projection.test.ts:48:164
+
+ ❯ correlatedFetcher src/feed/order-walls-archive.ts:426:144
+ ❯ Object.run src/feed/prepared-wall-admission.ts:56:25
+ ❯ src/feed/history-scheduler.ts:20:37
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > explicit projection capability accepts a manifest above the legacy discovery budget
+ReferenceError: init is not defined
+ ❯ Object.<anonymous> tests/prepared-wall-projection.test.ts:48:164
+
+ ❯ fetcher tests/prepared-wall-projection.test.ts:70:191
+ ❯ correlatedFetcher src/feed/order-walls-archive.ts:426:144
+ ❯ Object.run src/feed/prepared-wall-admission.ts:56:25
+ ❯ src/feed/history-scheduler.ts:20:37
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > painted prepared records remain incomplete while final independent source validation is delayed or fails
+AssertionError: expected '/market-data/v2/history/walls/discover' to match /\/source$/source$
+
+- Expected:
+/\/source$/
+
++ Received:
+"/market-data/v2/history/walls/discover"
+
+ ❯ tests/prepared-wall-projection.test.ts:76:46
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > independent revision read overlaps final assembly but cannot publish completion until validated
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/prepared-wall-projection.test.ts:93:46
+     91|  const work=loadOrderWallsArchive({request:{market:'binance-spot',from…
+     92|  try{
+     93|   await vi.waitFor(()=>expect(finalRestored).toBe(true));
+       |                                              ^
+     94|   expect(updates.every(u=>u.status.archive.requestComplete===false)).t…
+     95|   release();const result=await work;expect(result.status.archive?.requ…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > cancel during overlapped source validation retains partial data and prevents completion
+AssertionError: expected '/market-data/v2/history/walls/discover' to match /\/source$/source$
+
+- Expected:
+/\/source$/
+
++ Received:
+"/market-data/v2/history/walls/discover"
+
+ ❯ tests/prepared-wall-projection.test.ts:107:48
+    105|  const work=loadOrderWallsArchive({request:{market:'binance-spot',from…
+    106|  try{
+    107|   await vi.waitFor(()=>expect(io.calls.at(-1)).toMatch(/\/source$/));
+       |                                                ^
+    108|   controller.abort();release();await expect(work).rejects.toThrow(/abo…
+    109|   expect(updates.at(-1).presentation.size).toBe(f.full.segments.length…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > global checkpoint failure remains fatal when overlapping source validation also rejects
+AssertionError: expected [Function] to throw error matching /Invalid wall projection checkpoint/ but got 'init is not defined'
+
+- Expected:
+/Invalid wall projection checkpoint/
+
++ Received:
+"init is not defined"
+
+ ❯ tests/prepared-wall-projection.test.ts:121:136
+    119|  f.texts[0]=JSON.stringify(rows);Object.assign(f.manifest.parts[0],{ha…
+    120|  const io=transport(f,{changed:true}),updates:any[]=[];
+    121|  await expect(loadOrderWallsArchive({request:{market:'binance-spot',fr…
+       |                                                                                                                                        ^
+    122|  expect(io.calls.filter(path=>path.endsWith('/source'))).toHaveLength(…
+    123|  expect(updates.every(u=>u.status.archive.requestComplete===false)).to…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > shared service joins and Retry retain the prepared presentation until the full replacement validates
+AssertionError: expected 'Order Walls history request failed: i…' to match /source changed/
+
+- Expected:
+/source changed/
+
++ Received:
+"Order Walls history request failed: init is not defined"
+
+ ❯ tests/prepared-wall-projection.test.ts:162:146
+    160|  const fetcher:typeof fetch=(input,init)=>(phase===0?old:next).fetcher…
+    161|  try{
+    162|   service.subscribe('one',{market:'binance-spot',from,to,settings,foll…
+       |                                                                                                                                                  ^
+    163|   expect(events.some(event=>event.kind==='patch'&&event.patches?.some(…
+    164|   const before=events.length;phase=1;service.retry('one');await vi.wai…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > prepared completion preserves already painted segments and a late join still receives a full snapshot
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/prepared-wall-projection.test.ts:178:165
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > projection retry attempts reach page diagnostics and financial records publish once
+ReferenceError: init is not defined
+ ❯ Object.<anonymous> tests/prepared-wall-projection.test.ts:48:164
+
+ ❯ fetcher tests/prepared-wall-projection.test.ts:192:12
+ ❯ correlatedFetcher src/feed/order-walls-archive.ts:426:144
+ ❯ Object.run src/feed/prepared-wall-admission.ts:56:25
+ ❯ src/feed/history-scheduler.ts:20:37
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > newer quiet-head rebinding restores retained history once without a transport-metadata clone
+ FAIL  tests/prepared-wall-projection.test.ts > older quiet-head rebinding restores retained history once without a transport-metadata clone
+ReferenceError: init is not defined
+ ❯ tests/prepared-wall-projection.test.ts:48:164
+
+ ❯ Object.run src/feed/prepared-wall-admission.ts:56:25
+ ❯ src/feed/history-scheduler.ts:20:37
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > prepared warm revisits retain detached presentation without a second mutable projector or history clone
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/prepared-wall-projection.test.ts:225:118
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > compact warm replay is shared, survives one unsubscribe and never marks fresh coverage complete
+AssertionError: expected { warmAdmissions: +0, …(46) } to match object { warmEntries: 1, …(2) }
+(60 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "warmBuilds": 0,
+-   "warmCompactEntries": 1,
+-   "warmEntries": 1,
++   "warmCompactEntries": 0,
++   "warmEntries": 0,
+  }
+
+ ❯ tests/prepared-wall-projection.test.ts:269:93
+    267|  const subscription={market:'binance-spot' as const,from,to,settings,f…
+    268|  try{
+    269|   service.subscribe('seed',subscription);await vi.waitFor(()=>expect(s…
+       |                                                                                             ^
+    270|   expect(service.diagnostics().projections).toHaveLength(0);phase=1;se…
+    271|   await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('b')&&e…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > compact cached history paints and validates independently of delayed current bootstrap; last release cancels current
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/prepared-wall-projection.test.ts:296:157
+    294|  },()=>to+1000,0);
+    295|  try{
+    296|   service.subscribe('seed',{market:'binance-spot',from,to,settings,fol…
+       |                                                                                                                                                             ^
+    297|   service.subscribe('live',{market:'binance-spot',from,to,settings,fol…
+    298|   await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('live')…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > bounded compact builds cancel obsolete work and cannot overwrite a later completed view
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/prepared-wall-projection.test.ts:314:176
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > a corrupt compact cache falls back to the good fresh prefix and recovers without resetting its job
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/prepared-wall-projection.test.ts:326:107
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > identical complete prepared manifest validates warm rows without a second presentation snapshot
+AssertionError: expected { warmAdmissions: +0, …(46) } to match object { warmEntries: 1, warmBuilds: +0 }
+(61 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "warmBuilds": 0,
+-   "warmEntries": 1,
++   "warmEntries": 0,
+  }
+
+ ❯ tests/prepared-wall-projection.test.ts:353:89
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > changed presentation metadata with the same source token cannot reuse warm geometry
+AssertionError: expected { warmAdmissions: +0, …(46) } to match object { warmCompactEntries: 1, …(1) }
+(61 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "warmBuilds": 0,
+-   "warmCompactEntries": 1,
++   "warmCompactEntries": 0,
+  }
+
+ ❯ tests/prepared-wall-projection.test.ts:374:88
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > an unfinished warm replay cannot certify complete presentation from a matching revision
+AssertionError: expected { warmAdmissions: +0, …(46) } to match object { warmCompactEntries: 1, …(1) }
+(61 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "warmBuilds": 0,
+-   "warmCompactEntries": 1,
++   "warmCompactEntries": 0,
+  }
+
+ ❯ tests/prepared-wall-projection.test.ts:387:88
+    385|  let release!:()=>void;const gate=new Promise<void>(r=>release=r),orig…
+    386|  try{
+    387|   service.subscribe('seed',request);await vi.waitFor(()=>expect(servic…
+       |                                                                                        ^
+    388|   spy=vi.spyOn(compactCodec,'replayCompactWallPresentation').mockImple…
+    389|   service.subscribe('warm',request);await vi.waitFor(()=>expect(events…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > a late shared join cannot turn unavailable prepared coverage into validated cached history
+AssertionError: expected { warmAdmissions: +0, …(46) } to match object { warmEntries: 1, warmBuilds: +0 }
+(61 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "warmBuilds": 0,
+-   "warmEntries": 1,
++   "warmEntries": 0,
+  }
+
+ ❯ tests/prepared-wall-projection.test.ts:401:88
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/23]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > eligible prepared history preserves exact rows and requested bounds across future whitespace
+ReferenceError: init is not defined
+ ❯ Object.<anonymous> tests/prepared-wall-projection.test.ts:48:164
+
+ ❯ fetcher tests/prepared-wall-projection.test.ts:414:12
+ ❯ horizonFetcher src/feed/order-walls-archive.ts:373:134
+ ❯ Object.run src/feed/prepared-wall-admission.ts:56:25
+ ❯ src/feed/history-scheduler.ts:20:37
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/23]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  23 failed | 50 passed (73)
+   Start at  10:43:16
+   Duration  16.45s (tests 84%, transform 13%, import 2%)
+

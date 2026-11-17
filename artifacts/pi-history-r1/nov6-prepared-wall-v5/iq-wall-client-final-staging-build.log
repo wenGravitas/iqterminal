@@ -1,0 +1,34 @@
+
+> terminal-t0@0.1.0 build:staging:diagnostics /home/daz/workarea/iqterminal-perf-history
+> VITE_BUILD_COMMIT="$(git rev-parse HEAD)" VITE_DATA_MODE=staging VITE_HISTORY_TILES=1 VITE_DIAGNOSTICS=1 pnpm build --mode staging
+
+
+> terminal-t0@0.1.0 build /home/daz/workarea/iqterminal-perf-history
+> tsc --noEmit && vite build --mode staging
+
+vite v8.3.4 building client environment for staging...
+transforming...
+✓ 196 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    13.00 kB │ gzip:   3.91 kB
+dist/assets/worker-BKSmN_Bs.js    319.80 kB
+dist/assets/worker-DaWyXJKB.js    362.17 kB
+dist/assets/worker-5AOJNbMj.js    454.46 kB
+dist/assets/main-DuadqPLo.css     288.39 kB │ gzip:  37.65 kB
+dist/assets/editor-CKzT8I1x.js     16.16 kB │ gzip:   4.65 kB
+dist/assets/index-CAShX-FK.js      49.83 kB │ gzip:  14.60 kB
+dist/assets/main-Du60Pxlg.js    2,339.98 kB │ gzip: 639.29 kB
+
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 3.46s
+[33m[PLUGIN_TIMINGS] [0mJavaScript callbacks ran for 2.2s of this 3.4s build (63%).
+2 callbacks are listed without a time. Their calls overlapped, so the time inside one call includes work from other calls. To find their cost, profile the build with `node --cpu-prof`:
+  - plugin vite:css transform (4 calls)
+  - plugin vite:worker-import-meta-url transform (3 calls)
+See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
+

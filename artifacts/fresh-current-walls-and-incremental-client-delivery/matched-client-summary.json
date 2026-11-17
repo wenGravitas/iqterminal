@@ -1,0 +1,340 @@
+[
+  {
+    "label": "matched-baseline",
+    "phases": {
+      "parent": {
+        "completedPaintMs": 17893.232418,
+        "controlToPaintMs": 17893.232418,
+        "cache": null,
+        "workerFinalization": {
+          "checkpointOrderElapsedMs": 54.100000001490116,
+          "validationElapsedMs": 585.3999999985099,
+          "validationYieldMs": 79.69999998062849,
+          "presentationOrderElapsedMs": 187.70000000298023,
+          "mutableProjectorRestored": false
+        },
+        "mainApply": {
+          "messages": 122,
+          "snapshots": 9,
+          "segments": 32,
+          "patches": 46241,
+          "runs": 178096,
+          "ms": 1966.3000000193715,
+          "maxMs": 85.59999999776483
+        },
+        "chartPreparation": {
+          "slices": 717,
+          "steps": 205052,
+          "cancelled": 1,
+          "activeMs": 4925.100000005215,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 65.30000000074506,
+          "backgroundMs": 4696.000000011176,
+          "maxBackgroundMs": 65.40000000223517,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      "extension-1": {
+        "completedPaintMs": 44167.948755,
+        "controlToPaintMs": 24522.295250999996,
+        "cache": null,
+        "workerFinalization": {
+          "checkpointOrderElapsedMs": 71.89999999850988,
+          "validationElapsedMs": 475.5999999977648,
+          "validationYieldMs": 57.899999998509884,
+          "presentationOrderElapsedMs": 117.80000000074506,
+          "mutableProjectorRestored": false
+        },
+        "mainApply": {
+          "messages": 257,
+          "snapshots": 10,
+          "segments": 46341,
+          "patches": 46323,
+          "runs": 356612,
+          "ms": 4040.400000013411,
+          "maxMs": 1933.6000000014901
+        },
+        "chartPreparation": {
+          "slices": 1449,
+          "steps": 385470,
+          "cancelled": 3,
+          "activeMs": 9691.200000043958,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 65.30000000074506,
+          "backgroundMs": 9380.500000044703,
+          "maxBackgroundMs": 65.40000000223517,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      "extension-2": {
+        "completedPaintMs": 68979.07363299999,
+        "controlToPaintMs": 24123.92413999999,
+        "cache": null,
+        "workerFinalization": {
+          "checkpointOrderElapsedMs": 47,
+          "validationElapsedMs": 515.7999999970198,
+          "validationYieldMs": 88.8999999947846,
+          "presentationOrderElapsedMs": 128,
+          "mutableProjectorRestored": false
+        },
+        "mainApply": {
+          "messages": 409,
+          "snapshots": 12,
+          "segments": 92727,
+          "patches": 61805,
+          "runs": 586090,
+          "ms": 8150.500000011176,
+          "maxMs": 3161.10000000149
+        },
+        "chartPreparation": {
+          "slices": 2149,
+          "steps": 564221,
+          "cancelled": 5,
+          "activeMs": 14458.800000082701,
+          "lastProjectionElapsedMs": 0.09999999776482582,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0.09999999776482582,
+          "maxSliceMs": 97.80000000074506,
+          "backgroundMs": 14040.700000070035,
+          "maxBackgroundMs": 97.89999999850988,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      }
+    },
+    "networkByProjection": {
+      "364cfa71b4eeb61ca5de439730372fa1f7bd47a08eeb7aff44261b8bf781a4a7": {
+        "requests": 8,
+        "encodedBytes": 3014349,
+        "transportDecodedBytes": 39296217,
+        "parts": 86,
+        "encodingCacheHits": 0
+      },
+      "4c1f3235cae18ac754770292c6f1e4d96880e173d22f105e13dd4b2b3fb87d19": {
+        "requests": 8,
+        "encodedBytes": 3020791,
+        "transportDecodedBytes": 39367286,
+        "parts": 86,
+        "encodingCacheHits": 0
+      },
+      "ed997b67e6c3b04bee11ccadfa06fadf328ca21110d1bc9159f0d3c28cd3e2a3": {
+        "requests": 8,
+        "encodedBytes": 3024394,
+        "transportDecodedBytes": 39405782,
+        "parts": 86,
+        "encodingCacheHits": 0
+      },
+      "d7ae72f87ac2f2dd162a9d7f2cacf5f62e93e8053c33d84a9341089b2b6acbd9": {
+        "requests": 3,
+        "encodedBytes": 1033538,
+        "transportDecodedBytes": 12926006,
+        "parts": 27,
+        "encodingCacheHits": 0
+      }
+    },
+    "errors": []
+  },
+  {
+    "label": "matched-candidate",
+    "phases": {
+      "parent": {
+        "completedPaintMs": 21016.275227,
+        "controlToPaintMs": 21016.275227,
+        "cache": {
+          "hits": 0,
+          "misses": 86,
+          "reusedCanonicalBytes": 0,
+          "admissions": 86,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 86,
+          "accountedBytes": 120930774,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "workerFinalization": {
+          "importedParts": 86,
+          "fetchedParts": 86,
+          "reusedParts": 0,
+          "reusedCanonicalBytes": 0,
+          "assemblyRecords": 46225,
+          "checkpointOrderElapsedMs": 205,
+          "validationElapsedMs": 619.3000000007451,
+          "validationYieldMs": 62.099999986588955,
+          "presentationOrderElapsedMs": 249.60000000149012,
+          "mutableProjectorRestored": false,
+          "manifestFingerprintMs": 15.5
+        },
+        "mainApply": {
+          "messages": 124,
+          "snapshots": 9,
+          "segments": 32,
+          "patches": 46259,
+          "runs": 178112,
+          "ms": 1540.7999999932945,
+          "maxMs": 86
+        },
+        "chartPreparation": {
+          "slices": 606,
+          "steps": 219008,
+          "cancelled": 0,
+          "activeMs": 3774.2999999672174,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 49.5,
+          "backgroundMs": 3374.3999999910593,
+          "maxBackgroundMs": 49.599999997764826,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      "extension-1": {
+        "completedPaintMs": 31565.822252,
+        "controlToPaintMs": 9650.579093000004,
+        "cache": {
+          "hits": 85,
+          "misses": 87,
+          "reusedCanonicalBytes": 60136586,
+          "admissions": 87,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 87,
+          "accountedBytes": 121617480,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "workerFinalization": {
+          "importedParts": 86,
+          "fetchedParts": 1,
+          "reusedParts": 85,
+          "reusedCanonicalBytes": 60136586,
+          "assemblyRecords": 46309,
+          "checkpointOrderElapsedMs": 111.80000000074506,
+          "validationElapsedMs": 794.1000000014901,
+          "validationYieldMs": 85.79999999329448,
+          "presentationOrderElapsedMs": 70.59999999776483,
+          "mutableProjectorRestored": false,
+          "manifestFingerprintMs": 17.200000002980232
+        },
+        "mainApply": {
+          "messages": 231,
+          "snapshots": 10,
+          "segments": 46341,
+          "patches": 46291,
+          "runs": 356580,
+          "ms": 3374.4000000096858,
+          "maxMs": 1716
+        },
+        "chartPreparation": {
+          "slices": 1022,
+          "steps": 401602,
+          "cancelled": 2,
+          "activeMs": 6235.099999982864,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 49.5,
+          "backgroundMs": 5826.500000003725,
+          "maxBackgroundMs": 49.599999997764826,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      "extension-2": {
+        "completedPaintMs": 41460.350882000006,
+        "controlToPaintMs": 9604.161093000006,
+        "cache": {
+          "hits": 170,
+          "misses": 88,
+          "reusedCanonicalBytes": 120273172,
+          "admissions": 88,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 88,
+          "accountedBytes": 122426124,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "workerFinalization": {
+          "importedParts": 86,
+          "fetchedParts": 1,
+          "reusedParts": 85,
+          "reusedCanonicalBytes": 60136586,
+          "assemblyRecords": 46354,
+          "checkpointOrderElapsedMs": 77.10000000149012,
+          "validationElapsedMs": 339.5,
+          "validationYieldMs": 21.899999994784594,
+          "presentationOrderElapsedMs": 138.09999999776483,
+          "mutableProjectorRestored": false,
+          "manifestFingerprintMs": 11.900000002235174
+        },
+        "mainApply": {
+          "messages": 342,
+          "snapshots": 11,
+          "segments": 92695,
+          "patches": 46323,
+          "runs": 535385,
+          "ms": 4897.900000002235,
+          "maxMs": 1716
+        },
+        "chartPreparation": {
+          "slices": 1505,
+          "steps": 582675,
+          "cancelled": 4,
+          "activeMs": 9323.999999981374,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0.10000000149011612,
+          "maxSliceMs": 49.5,
+          "backgroundMs": 8883.799999967217,
+          "maxBackgroundMs": 49.599999997764826,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      }
+    },
+    "networkByProjection": {
+      "364cfa71b4eeb61ca5de439730372fa1f7bd47a08eeb7aff44261b8bf781a4a7": {
+        "requests": 8,
+        "encodedBytes": 3014349,
+        "transportDecodedBytes": 39296217,
+        "parts": 86,
+        "encodingCacheHits": 0
+      },
+      "4c1f3235cae18ac754770292c6f1e4d96880e173d22f105e13dd4b2b3fb87d19": {
+        "requests": 1,
+        "encodedBytes": 19282,
+        "transportDecodedBytes": 213536,
+        "parts": 1,
+        "encodingCacheHits": 0
+      },
+      "ed997b67e6c3b04bee11ccadfa06fadf328ca21110d1bc9159f0d3c28cd3e2a3": {
+        "requests": 1,
+        "encodedBytes": 22727,
+        "transportDecodedBytes": 252032,
+        "parts": 1,
+        "encodingCacheHits": 0
+      }
+    },
+    "errors": []
+  }
+]

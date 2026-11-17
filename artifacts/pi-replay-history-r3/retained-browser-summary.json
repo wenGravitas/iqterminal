@@ -1,0 +1,478 @@
+[
+  {
+    "phase": "first",
+    "samples": 16,
+    "measurement": {
+      "start": 1871.2000000001863,
+      "firstHistory": 3038.199999999255,
+      "complete": 8452.199999999255,
+      "events": 69
+    },
+    "status": {
+      "state": "gap",
+      "message": "Depth continuity gaps are present in the requested range",
+      "coverage": {
+        "from": 1794355200000,
+        "to": 1794464342278,
+        "complete": false,
+        "partial": true,
+        "reason": "Depth continuity gaps are present in the requested range"
+      },
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "partial",
+        "from": 1794355200000,
+        "to": 1794464342278,
+        "rangeComplete": false,
+        "market": "perpetual",
+        "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+        "aggregation": "native",
+        "availableFrom": 1793506604584,
+        "confirmedTo": 1794464342278,
+        "gaps": [
+          {
+            "from": 1794391948671,
+            "to": 1794391948671,
+            "reason": "Depth disconnected"
+          },
+          {
+            "from": 1794400167687,
+            "to": 1794400167687,
+            "reason": "Shared disk watermark"
+          }
+        ],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "reason": "Depth continuity gaps are present in the requested range",
+        "requestComplete": true,
+        "loadedThrough": 1794464342278,
+        "profileVersion": 1,
+        "algorithmVersion": 1,
+        "schemaVersion": 1,
+        "midpoint": "73638.75",
+        "eligibleTo": 1794464342278,
+        "horizonAt": 1794544060129
+      },
+      "currentSubscribed": false
+    },
+    "render": {
+      "draws": 53,
+      "rebuilds": 1,
+      "patchProjects": 20695,
+      "segments": 20695,
+      "visible": 41049,
+      "visibleHistorical": 41049,
+      "visibleCurrent": 0,
+      "bytes": 6565080,
+      "renderMs": 282.60000000242144,
+      "maxRenderMs": 33.5,
+      "strokes": 8,
+      "lastProjectMs": 0,
+      "lastReferenceMs": 0,
+      "lastPaintMs": 0.09999999962747097,
+      "referenceRebuilds": 1,
+      "referenceSegments": 0,
+      "referenceValueScans": 0,
+      "paintCacheHits": 38,
+      "paintCacheBuilds": 15,
+      "paintStyleVisits": 80920,
+      "closedPaintCacheHits": 7,
+      "closedPaintCacheBuilds": 8,
+      "closedPaintCacheAppends": 7,
+      "closedPaintStyleVisits": 80095,
+      "settingsNoops": 0,
+      "mappingChecks": 53,
+      "mappingFallbacks": 0,
+      "paintedViewport": {
+        "fromMs": 1794355200000,
+        "toMs": 1794464342278,
+        "minPrice": 72985.9125,
+        "maxPrice": 74969.78749999999,
+        "plotWidth": 1756,
+        "plotHeight": 944
+      },
+      "inputRevision": 71,
+      "paintedRevision": 71,
+      "pendingProjectionSegments": 0,
+      "pendingPaintWork": false,
+      "queuedPreparation": false,
+      "preparation": {
+        "slices": 214,
+        "steps": 51199,
+        "cancelled": 0,
+        "activeMs": 1447.0999999959022,
+        "lastProjectionElapsedMs": 0,
+        "lastReferenceElapsedMs": 0,
+        "lastSliceMs": 0,
+        "maxSliceMs": 33.10000000055879,
+        "backgroundMs": 1244.5999999940395,
+        "maxBackgroundMs": 32.799999999813735,
+        "yieldMode": "user-visible-post-task",
+        "phase": "idle"
+      },
+      "retainedPaintPaths": 8,
+      "retainedClosedPaintPaths": 8,
+      "retainedClosedPaintSegments": 16954,
+      "pendingClosedPaintSegments": 0,
+      "retainedSegments": 20695,
+      "openSegments": 16,
+      "retainedReferenceSegments": 16956,
+      "referenceExtentValues": 13147,
+      "pendingReferenceSegments": 0,
+      "referenceMinimum": 547299.984,
+      "referenceMaximum": 52733863.8,
+      "retainedDrawables": 41049,
+      "p95RenderMs": 8.299999999813735,
+      "mounted": true,
+      "archiveSegments": 20695,
+      "directSegments": 0,
+      "valueRuns": 64791,
+      "archiveValueRuns": 64791,
+      "directValueRuns": 0,
+      "valueHistoryLimited": false,
+      "episodeHistoryLimited": false
+    },
+    "staging": {
+      "historyLoadAttempts": [],
+      "nativePresentation": {
+        "hits": 2,
+        "admissions": 2,
+        "capacityMisses": 0,
+        "entries": 2,
+        "rows": 369,
+        "accountedBytes": 202288,
+        "activeLeases": 1,
+        "retainedKeys": 1,
+        "limits": {
+          "entries": 2,
+          "rows": 1000,
+          "accountedBytes": 1048576,
+          "ttlMs": 60000,
+          "activeLeases": 128
+        }
+      },
+      "scheduler": {
+        "submitted": 5,
+        "coalesced": 0,
+        "cancelled": 0,
+        "completed": 4,
+        "failed": 0,
+        "peakActive": 2,
+        "queueMs": 0.599999999627471,
+        "runMs": 6653.89999999851,
+        "active": 1,
+        "queued": 0
+      },
+      "requests": [],
+      "config": {
+        "historyTaskYield": "user-visible-post-task",
+        "historyBackgroundYield": "background-post-task",
+        "dataMode": "staging",
+        "historyTiles": true,
+        "build": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb"
+      },
+      "views": [],
+      "source": "staging",
+      "transport": "websocket",
+      "streams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:15m",
+          "connected": true,
+          "lastHeartbeat": 1794544073889,
+          "native": {
+            "historyReady": true,
+            "historyLoading": false,
+            "historyRetryAt": 0,
+            "lastCandleReceivedAt": 1794544073889,
+            "retainedStreamVersions": 2,
+            "viewportHistory": {
+              "requests": 0,
+              "receivedBars": 0,
+              "presentedBars": 0,
+              "applyMs": 0,
+              "retainedOHLC": 0,
+              "views": 1,
+              "busy": 0,
+              "retainedTimes": 122
+            }
+          }
+        },
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "cursor": 3519195470,
+          "executionProof": {
+            "generation": 2,
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 9,
+            "appliedExecutions": 277,
+            "acksSent": 9,
+            "confirmedAckBatches": 8,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 10.799999999813735,
+            "maxReceiptGapMs": 1118.4000000003725,
+            "lastReceiptMonoMs": 9333.599999999627,
+            "lastAfter": 3519195452,
+            "lastAppliedCursor": 3519195470,
+            "lastConfirmedAckCursor": 3519195452
+          },
+          "connected": true,
+          "deliveryMs": 86,
+          "lastHeartbeat": 1794544073499
+        }
+      ],
+      "groups": 2,
+      "subscriptions": 2,
+      "retainedLiveBars": 1,
+      "preparedClosedBars": 0,
+      "retainedBars": 1001
+    },
+    "viewport": {
+      "from": 1794355200,
+      "to": 1794464342.278
+    },
+    "heap": 69922726
+  },
+  {
+    "phase": "reopen",
+    "samples": 9,
+    "measurement": {
+      "start": 11037.299999999814,
+      "firstHistory": 1732.7000000001863,
+      "complete": 5086.700000000186,
+      "events": 69
+    },
+    "status": {
+      "state": "gap",
+      "message": "Depth continuity gaps are present in the requested range",
+      "coverage": {
+        "from": 1794355200000,
+        "to": 1794464342278,
+        "complete": false,
+        "partial": true,
+        "reason": "Depth continuity gaps are present in the requested range"
+      },
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "partial",
+        "from": 1794355200000,
+        "to": 1794464342278,
+        "rangeComplete": false,
+        "market": "perpetual",
+        "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+        "aggregation": "native",
+        "availableFrom": 1793506604584,
+        "confirmedTo": 1794464342278,
+        "gaps": [
+          {
+            "from": 1794391948671,
+            "to": 1794391948671,
+            "reason": "Depth disconnected"
+          },
+          {
+            "from": 1794400167687,
+            "to": 1794400167687,
+            "reason": "Shared disk watermark"
+          }
+        ],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "reason": "Depth continuity gaps are present in the requested range",
+        "requestComplete": true,
+        "loadedThrough": 1794464342278,
+        "profileVersion": 1,
+        "algorithmVersion": 1,
+        "schemaVersion": 1,
+        "midpoint": "73638.75",
+        "eligibleTo": 1794464342278,
+        "horizonAt": 1794544068391
+      },
+      "currentSubscribed": false
+    },
+    "render": {
+      "draws": 90,
+      "rebuilds": 2,
+      "patchProjects": 41390,
+      "segments": 20695,
+      "visible": 41049,
+      "visibleHistorical": 41049,
+      "visibleCurrent": 0,
+      "bytes": 6565080,
+      "renderMs": 492.80000000540167,
+      "maxRenderMs": 55.799999999813735,
+      "strokes": 8,
+      "lastProjectMs": 0,
+      "lastReferenceMs": 0,
+      "lastPaintMs": 0.20000000018626451,
+      "referenceRebuilds": 2,
+      "referenceSegments": 0,
+      "referenceValueScans": 0,
+      "paintCacheHits": 65,
+      "paintCacheBuilds": 25,
+      "paintStyleVisits": 155770,
+      "closedPaintCacheHits": 9,
+      "closedPaintCacheBuilds": 16,
+      "closedPaintCacheAppends": 9,
+      "closedPaintStyleVisits": 154395,
+      "settingsNoops": 0,
+      "mappingChecks": 90,
+      "mappingFallbacks": 0,
+      "paintedViewport": {
+        "fromMs": 1794355200000,
+        "toMs": 1794464342278,
+        "minPrice": 72985.9125,
+        "maxPrice": 74969.78749999999,
+        "plotWidth": 1756,
+        "plotHeight": 944
+      },
+      "inputRevision": 141,
+      "paintedRevision": 141,
+      "pendingProjectionSegments": 0,
+      "pendingPaintWork": false,
+      "queuedPreparation": false,
+      "preparation": {
+        "slices": 357,
+        "steps": 102816,
+        "cancelled": 0,
+        "activeMs": 2341.099999993108,
+        "lastProjectionElapsedMs": 0,
+        "lastReferenceElapsedMs": 0,
+        "lastSliceMs": 0,
+        "maxSliceMs": 55.59999999962747,
+        "backgroundMs": 1965.6999999945983,
+        "maxBackgroundMs": 32.799999999813735,
+        "yieldMode": "user-visible-post-task",
+        "phase": "idle"
+      },
+      "retainedPaintPaths": 8,
+      "retainedClosedPaintPaths": 8,
+      "retainedClosedPaintSegments": 16954,
+      "pendingClosedPaintSegments": 0,
+      "retainedSegments": 20695,
+      "openSegments": 16,
+      "retainedReferenceSegments": 16956,
+      "referenceExtentValues": 13147,
+      "pendingReferenceSegments": 0,
+      "referenceMinimum": 547299.984,
+      "referenceMaximum": 52733863.8,
+      "retainedDrawables": 41049,
+      "p95RenderMs": 8.299999999813735,
+      "mounted": true,
+      "archiveSegments": 20695,
+      "directSegments": 0,
+      "valueRuns": 64791,
+      "archiveValueRuns": 64791,
+      "directValueRuns": 0,
+      "valueHistoryLimited": false,
+      "episodeHistoryLimited": false
+    },
+    "staging": {
+      "historyLoadAttempts": [],
+      "nativePresentation": {
+        "hits": 2,
+        "admissions": 2,
+        "capacityMisses": 0,
+        "entries": 2,
+        "rows": 369,
+        "accountedBytes": 202288,
+        "activeLeases": 1,
+        "retainedKeys": 1,
+        "limits": {
+          "entries": 2,
+          "rows": 1000,
+          "accountedBytes": 1048576,
+          "ttlMs": 60000,
+          "activeLeases": 128
+        }
+      },
+      "scheduler": {
+        "submitted": 10,
+        "coalesced": 0,
+        "cancelled": 0,
+        "completed": 9,
+        "failed": 0,
+        "peakActive": 2,
+        "queueMs": 1.0000000009313226,
+        "runMs": 11212.299999998882,
+        "active": 1,
+        "queued": 0
+      },
+      "requests": [],
+      "config": {
+        "historyTaskYield": "user-visible-post-task",
+        "historyBackgroundYield": "background-post-task",
+        "dataMode": "staging",
+        "historyTiles": true,
+        "build": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb"
+      },
+      "views": [],
+      "source": "staging",
+      "transport": "websocket",
+      "streams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:15m",
+          "connected": true,
+          "lastHeartbeat": 1794544079328,
+          "native": {
+            "historyReady": true,
+            "historyLoading": false,
+            "historyRetryAt": 0,
+            "lastCandleReceivedAt": 1794544079328,
+            "retainedStreamVersions": 2,
+            "viewportHistory": {
+              "requests": 0,
+              "receivedBars": 0,
+              "presentedBars": 0,
+              "applyMs": 0,
+              "retainedOHLC": 0,
+              "views": 1,
+              "busy": 0,
+              "retainedTimes": 122
+            }
+          }
+        },
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "cursor": 3519196156,
+          "executionProof": {
+            "generation": 2,
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 18,
+            "appliedExecutions": 963,
+            "acksSent": 18,
+            "confirmedAckBatches": 17,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 10.799999999813735,
+            "maxReceiptGapMs": 1118.4000000003725,
+            "lastReceiptMonoMs": 15101.900000000373,
+            "lastAfter": 3519196115,
+            "lastAppliedCursor": 3519196156,
+            "lastConfirmedAckCursor": 3519196115
+          },
+          "connected": true,
+          "deliveryMs": 112,
+          "lastHeartbeat": 1794544079268
+        }
+      ],
+      "groups": 2,
+      "subscriptions": 2,
+      "retainedLiveBars": 1,
+      "preparedClosedBars": 0,
+      "retainedBars": 1001
+    },
+    "viewport": {
+      "from": 1794355200,
+      "to": 1794464342.278
+    },
+    "heap": 66820118
+  }
+]

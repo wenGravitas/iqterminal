@@ -1,0 +1,98 @@
+[
+  {
+    "cohort": "reference",
+    "market": "spot",
+    "phase": "before",
+    "status": 200,
+    "elapsedMs": 675.7951453328133,
+    "queries": "3",
+    "readRows": "375798",
+    "readBytes": "268436300",
+    "serverTiming": "admission;dur=0, db;dur=673.35, sqlqueue;dur=394.34, dbdecode;dur=0.57, project;dur=0.00, serialize;dur=0.01, total;dur=674.99",
+    "scope": "Request-wide source proof metadata; nested timings are not added as exclusive phases"
+  },
+  {
+    "cohort": "reference",
+    "market": "perpetual",
+    "phase": "before",
+    "status": 200,
+    "elapsedMs": 726.6840115189552,
+    "queries": "3",
+    "readRows": "693775",
+    "readBytes": "448141947",
+    "serverTiming": "admission;dur=0, db;dur=724.46, sqlqueue;dur=290.91, dbdecode;dur=0.54, project;dur=0.00, serialize;dur=0.02, total;dur=725.96",
+    "scope": "Request-wide source proof metadata; nested timings are not added as exclusive phases"
+  },
+  {
+    "cohort": "reference",
+    "market": "spot",
+    "phase": "after",
+    "status": 200,
+    "elapsedMs": 324.03276953846216,
+    "queries": "3",
+    "readRows": "375801",
+    "readBytes": "268437756",
+    "serverTiming": "admission;dur=0, db;dur=320.86, sqlqueue;dur=39.49, dbdecode;dur=0.99, project;dur=0.00, serialize;dur=0.02, total;dur=322.95",
+    "scope": "Request-wide source proof metadata; nested timings are not added as exclusive phases"
+  },
+  {
+    "cohort": "reference",
+    "market": "perpetual",
+    "phase": "after",
+    "status": 200,
+    "elapsedMs": 708.2527130842209,
+    "queries": "3",
+    "readRows": "693773",
+    "readBytes": "448140895",
+    "serverTiming": "admission;dur=0, db;dur=706.07, sqlqueue;dur=275.63, dbdecode;dur=0.28, project;dur=0.00, serialize;dur=0.01, total;dur=707.51",
+    "scope": "Request-wide source proof metadata; nested timings are not added as exclusive phases"
+  },
+  {
+    "cohort": "rollover-reference",
+    "market": "spot",
+    "phase": "before",
+    "status": 200,
+    "elapsedMs": 490.9708686172962,
+    "queries": "3",
+    "readRows": "375857",
+    "readBytes": "268494139",
+    "serverTiming": "admission;dur=0, db;dur=488.36, sqlqueue;dur=229.35, dbdecode;dur=0.53, project;dur=0.00, serialize;dur=0.08, total;dur=489.96",
+    "scope": "Request-wide source proof metadata; nested timings are not added as exclusive phases"
+  },
+  {
+    "cohort": "rollover-reference",
+    "market": "perpetual",
+    "phase": "before",
+    "status": 200,
+    "elapsedMs": 500.3188019618392,
+    "queries": "3",
+    "readRows": "693833",
+    "readBytes": "448128661",
+    "serverTiming": "admission;dur=0, db;dur=498.52, sqlqueue;dur=35.12, dbdecode;dur=0.29, project;dur=0.00, serialize;dur=0.01, total;dur=499.59",
+    "scope": "Request-wide source proof metadata; nested timings are not added as exclusive phases"
+  },
+  {
+    "cohort": "rollover-reference",
+    "market": "spot",
+    "phase": "after",
+    "status": 200,
+    "elapsedMs": 428.214724175632,
+    "queries": "3",
+    "readRows": "375860",
+    "readBytes": "268495351",
+    "serverTiming": "admission;dur=0, db;dur=425.56, sqlqueue;dur=158.48, dbdecode;dur=0.86, project;dur=0.00, serialize;dur=0.01, total;dur=427.26",
+    "scope": "Request-wide source proof metadata; nested timings are not added as exclusive phases"
+  },
+  {
+    "cohort": "rollover-reference",
+    "market": "perpetual",
+    "phase": "after",
+    "status": 200,
+    "elapsedMs": 451.4064323157072,
+    "queries": "3",
+    "readRows": "693834",
+    "readBytes": "448128894",
+    "serverTiming": "admission;dur=0, db;dur=449.17, sqlqueue;dur=36.35, dbdecode;dur=0.29, project;dur=0.00, serialize;dur=0.01, total;dur=450.64",
+    "scope": "Request-wide source proof metadata; nested timings are not added as exclusive phases"
+  }
+]

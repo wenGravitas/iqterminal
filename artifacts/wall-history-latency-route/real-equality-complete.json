@@ -1,0 +1,11 @@
+{
+  "phases": [
+    "parent",
+    "extension-1",
+    "extension-2",
+    "reopen-complete"
+  ],
+  "producer": "Unchanged canonical/financial producer from prior capacity proof; only HTTP encoding changes",
+  "reference": "Unchanged task-baseline0ff6b61 financial importer",
+  "scope": "All prepared financial rows exact; every closed prepared segment exact in real chart. Current active overlays assessed independently."
+}

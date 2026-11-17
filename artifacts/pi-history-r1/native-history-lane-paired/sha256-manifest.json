@@ -1,0 +1,497 @@
+[
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/README.md",
+    "bytes": 3076,
+    "sha256": "4d79903b9dd2cad2da9fb7e9bb39a42896feddebbc5ee880fbc9caf5af7162f4"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/aggregate-proxy-capacity.json",
+    "bytes": 14046,
+    "sha256": "5c4cc826ff387acf8283c06512ae8099b6dc01e2fd8489ae0cdde37a7949b626"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/aggregate-proxy-capacity.log",
+    "bytes": 517,
+    "sha256": "7c31e3ae2be6060bbe061b5cd6c19aad356ea4ec347a358834772dcda85613d6"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/aggregate-proxy-typecheck.log",
+    "bytes": 90,
+    "sha256": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/candidate-vite.config.ts",
+    "bytes": 5343,
+    "sha256": "1b9c97376f31fe5b00aa40522e90b507b111791704cf5ce8420edfd3f3d71181"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/chromium-process-argv.json",
+    "bytes": 2,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/cohort.log",
+    "bytes": 3012,
+    "sha256": "455eae88ac3bbf52fdea8cf502325039e72ee5f1f803a04b733f6a6b017ed039"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/control-vite.config.ts",
+    "bytes": 4722,
+    "sha256": "69fd3efd5cfbe4179ebe586158201e1da49fa34829db9df818649717ee18c49e"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/final-validation-build.json",
+    "bytes": 4036,
+    "sha256": "3dfcbb7bae0c4dda342ef06b37e6555f3405d1119ae67b3d762d84235d06ca23"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/i3-test-windows-after.json",
+    "bytes": 20,
+    "sha256": "e3979a8864def81ac4f0c4e60895fdaaa99c8a0227c3288f73202344b250e548"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/iq-native-lane-health.json",
+    "bytes": 1951,
+    "sha256": "5c1c2113b9a4c3a5cdf5d9e8448d05fae9f9fe6f3761a502f0a015a1f64b6cdb"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/iq-native-lane-identities-before.txt",
+    "bytes": 355,
+    "sha256": "fd69153d0006c91c7d69525ed93873dc071d815e30c447acb4519d9975076f3f"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/iq-native-lane-identities-resources-after.txt",
+    "bytes": 757,
+    "sha256": "440d1377f9949140b4c41edc0476804976bcea64ca5f35619fb1aed6b623f085"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/iq-native-lane-proxy-test.log",
+    "bytes": 517,
+    "sha256": "3c91f9fe80487e22da4760e9e7dda7beabb17961597d1b39247db8fc6ba14af1"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/iq-native-lane-typecheck.log",
+    "bytes": 90,
+    "sha256": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/iq-open-guides-browser.log",
+    "bytes": 3812,
+    "sha256": "b1273950fd51ce8100c49ce4025121e65cbe5fdf206bb4472b77004e148099a5"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/iq-open-guides-identified-browser.log",
+    "bytes": 3824,
+    "sha256": "4801ee404290892d07f294dc3b1385488c30403adaa2940c7cc3dbe792487754"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/iq-open-guides-identified-build.log",
+    "bytes": 1314,
+    "sha256": "79450bdbc6243d1ae429e64c44078b5109918355ade3eb3488f73e1313e4c2bf"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/iq-open-guides-staging-build.log",
+    "bytes": 1078,
+    "sha256": "a1ae528ff6cc4443f25a0d8150e2d0345bd4e6ff7d1165e11d46a7b837780991"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/iq-wall-open-guides-test.log",
+    "bytes": 204,
+    "sha256": "bc0e4e4fee76bc3c452974fa14e5f7eb3427950c1275b487b45a16e815746161"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/iq-wall-open-guides-typecheck.log",
+    "bytes": 90,
+    "sha256": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/iq-warm-loopback-controls.txt",
+    "bytes": 339,
+    "sha256": "464b7ead881c8790901bbfc3517467f640c1312e7128e7530f86b41603d987f3"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/iq-warm-pi-controls.txt",
+    "bytes": 362,
+    "sha256": "f6ad818cb77f58d59bdb7e9957d5b95aca53f9e5a1cacaf485af655ea08c8e03"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/listeners-after.txt",
+    "bytes": 368,
+    "sha256": "e37f0fdb35f23068cc67e03afafe2d81ae1214d9cc1a8d836b63a766b5c2a6a8"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/manifest.json",
+    "bytes": 1123,
+    "sha256": "691a0da7b559ac59b118574b8e9b93bd6978904a3f0838e3c23aba291bf0586c"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/results.json",
+    "bytes": 11555,
+    "sha256": "49ba39f75576d04d27bbb02c4ae54be26e2a245098df0c9cca0275404040139b"
+  },
+  {
+    "path": "artifacts/pi-history-r1/native-history-lane-paired/tunnel-shutdown.json",
+    "bytes": 455,
+    "sha256": "8dc96053948426d13f5bf1faad68a4e88d53ee45a87a425b60d82687183aaebb"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-pilot/executed.mjs",
+    "bytes": 11196,
+    "sha256": "0ecaa0aa2e77de9882b82af98d9916b590b102b867493e2fa8cd91a57152b265"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-pilot/observations.jsonl",
+    "bytes": 3439951,
+    "sha256": "a4366ef1dc0f4a0729d7507f0e35c721ecd3c782f2c40e136f38482a40df6bd5"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-pilot/run-1-cold.png",
+    "bytes": 35835,
+    "sha256": "12559639f23a14f9d397a7e43c79d56c7d67d9d6b71b8aeffc874bfc6e140fbb"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-pilot/run-1.json",
+    "bytes": 39888,
+    "sha256": "dbe9a800f7606aa1236ae78f6ad9b8b6b68c351b7a4d362d94b457e22bdcbf6c"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-native-lane-pilot/executed.mjs",
+    "bytes": 11230,
+    "sha256": "e73c3f42a0a9ddbe4832938339d800e6f075f75a6e36e23a6582939bbf9f16df"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-native-lane-pilot/observations.jsonl",
+    "bytes": 873824,
+    "sha256": "7e0cfe4cc103c1e40d15a146a892b992f4fd36ef2bd10bae4994a29500b858b9"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-native-lane-pilot/run-1-cold.png",
+    "bytes": 96208,
+    "sha256": "e5d64e502b7ebf9af64b00728ffb9a67885934ae7502b4049d45df051cc1172b"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-native-lane-pilot/run-1-warm.png",
+    "bytes": 96159,
+    "sha256": "539be12bcd60e3e7d241d2550f8733b48cd73b31013a7b558590f63cfe2dca41"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-native-lane-pilot/run-1.json",
+    "bytes": 112547,
+    "sha256": "9514c110311774a90e909e5d28a84de838c4a38958897407d2addba366673ad0"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-main-thread-profile/executed.mjs",
+    "bytes": 12000,
+    "sha256": "553aa5b28b9ba232c276405bf53b0cb254efff8de05d6931e86fa4a43df0c036"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-main-thread-profile/failure.log",
+    "bytes": 336,
+    "sha256": "e333ef9eff6465549b6143b0d1368a30ac8e578622734acf9b4381d0f5b5c156"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-main-thread-profile-r2/cold-self-time.json",
+    "bytes": 3089,
+    "sha256": "fe9ce3c4a1ca33e81d04394a2aeee33c24b5b10d129976da908266da6a095579"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-main-thread-profile-r2/compiled-assets/index-BqLCZs-Z.js",
+    "bytes": 50317,
+    "sha256": "7b0412d7697fa943e109ad550b217023cb5726f9533fa499ae6df16e2577d5df"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-main-thread-profile-r2/compiled-assets/main-Di8rGM_k.js",
+    "bytes": 2345544,
+    "sha256": "247330ab33e6e175c053d718f657bc97259fd645510205e10c6f117715bf920e"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-main-thread-profile-r2/executed.mjs",
+    "bytes": 12108,
+    "sha256": "c5c22a645a61c6140eae95ff06447461cf36dec89b31b7501304515d801e45f4"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-main-thread-profile-r2/observations.jsonl",
+    "bytes": 2233257,
+    "sha256": "69fa88b6ba6a5bb483891b074c937201d8ea0b833466913742e86b9be4077cd5"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-main-thread-profile-r2/run-1-cold.cpuprofile",
+    "bytes": 399486,
+    "sha256": "21da03793006365806e85820497543a64f485a5cb0c37593a7ea5c4978d51bdf"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-main-thread-profile-r2/run-1-cold.png",
+    "bytes": 96555,
+    "sha256": "a85210b1dab554844c8a263bf8abf0212cbdbd8127f3103f666e18406bed7c6c"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-main-thread-profile-r2/run-1-warm.cpuprofile",
+    "bytes": 165476,
+    "sha256": "4a7f8e988579930a11450c868fd72d5bb87d0629f21926d93bc362b5f34d5863"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-main-thread-profile-r2/run-1-warm.png",
+    "bytes": 96641,
+    "sha256": "4b005b52e5a2e60efd871046f70c63f47648075bae841846a27c7879e777380e"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-main-thread-profile-r2/run-1.json",
+    "bytes": 122763,
+    "sha256": "643613eb9575434850ad526f4eb968145d5c21313c1d9e947f5746511b2f790a"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-6ed-spot-main-thread-profile-r2/warm-self-time.json",
+    "bytes": 3072,
+    "sha256": "5d0b0c8ad6521b7875166fec6662b65d6e765076d47f18e22bf197dd7d1f4f5c"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-1-candidate/executed.mjs",
+    "bytes": 11230,
+    "sha256": "e73c3f42a0a9ddbe4832938339d800e6f075f75a6e36e23a6582939bbf9f16df"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-1-candidate/observations.jsonl",
+    "bytes": 1452629,
+    "sha256": "e0f9e902bde8aebee9b1b859ad8d4ca5a198ab9f49def404a53c81b960b3410d"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-1-candidate/run-1-cold.png",
+    "bytes": 95941,
+    "sha256": "ee38adae858d9e6e7ffe2c52763a5e5b6f9d5c71c2b6a21fac6d4c4ba195820c"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-1-candidate/run-1-warm.png",
+    "bytes": 95856,
+    "sha256": "237e3cf4a1c5345a37795f7a84891341fcbf1ae21a440e5f657c80e47a7ec9e7"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-1-candidate/run-1.json",
+    "bytes": 115981,
+    "sha256": "96ce03932e8dc0b90a5a723d3b6fd91f6e3142eedb583be5ebe51c82d7e358a8"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-1-control/executed.mjs",
+    "bytes": 11230,
+    "sha256": "e73c3f42a0a9ddbe4832938339d800e6f075f75a6e36e23a6582939bbf9f16df"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-1-control/observations.jsonl",
+    "bytes": 1328924,
+    "sha256": "f4d6f6e8da3b5ef4578c3717861cf5091796c1bfe44b574e1c6e9e7a0133447c"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-1-control/run-1-cold.png",
+    "bytes": 96167,
+    "sha256": "31eb97fa59187c2486c933da17bfe2bab93e041eb2fbfceefe7b842de9c6e5d5"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-1-control/run-1-warm.png",
+    "bytes": 96154,
+    "sha256": "6215bb16ce1bbf715b4d4ef1917df089d2e844b6815f5d937b7a49ac06d67521"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-1-control/run-1.json",
+    "bytes": 113444,
+    "sha256": "9f8a9904301b886a73d5666534f4ecef22e90f129b36165343aec2cdfb21ed67"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-2-candidate/executed.mjs",
+    "bytes": 11230,
+    "sha256": "e73c3f42a0a9ddbe4832938339d800e6f075f75a6e36e23a6582939bbf9f16df"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-2-candidate/observations.jsonl",
+    "bytes": 1879731,
+    "sha256": "39874a2cba05fd61ab61bc68eecb1c822e754ad7311a32c42595502796bbbf5b"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-2-candidate/run-1-cold.png",
+    "bytes": 95817,
+    "sha256": "2b9230448b19e1276dc344e76cf9b8ee924ab2bed132cab085a663d771b75afa"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-2-candidate/run-1-warm.png",
+    "bytes": 95957,
+    "sha256": "2293c3c58182b5d655d6069329c77a04055e1f3cec6b4e5ffb2d131e55d2524a"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-2-candidate/run-1.json",
+    "bytes": 112112,
+    "sha256": "6914a2615ed813ea2f2ee1d36628fa74a83249937afb0b00a70cc00a0561c05d"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-2-control/executed.mjs",
+    "bytes": 11230,
+    "sha256": "e73c3f42a0a9ddbe4832938339d800e6f075f75a6e36e23a6582939bbf9f16df"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-2-control/observations.jsonl",
+    "bytes": 2937597,
+    "sha256": "f15a356d1b7380c49d817e39698f0b8ca9623eb1ab5c252aa3d2a5e9f793f788"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-2-control/run-1-cold.png",
+    "bytes": 95114,
+    "sha256": "0f6341939f832106175c4b66682ddf142945417baaf053f419ef793017739313"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-2-control/run-1-warm.png",
+    "bytes": 92952,
+    "sha256": "ce476df718382f2897a31d1246bc95dcc09a6c117aa557d12b660fec872f4ec0"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-2-control/run-1.json",
+    "bytes": 113713,
+    "sha256": "963b001c503bf21c9d58416d6eaa569e665c79c75ea726b567e33472a277005f"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-3-candidate/executed.mjs",
+    "bytes": 11230,
+    "sha256": "e73c3f42a0a9ddbe4832938339d800e6f075f75a6e36e23a6582939bbf9f16df"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-3-candidate/observations.jsonl",
+    "bytes": 1423497,
+    "sha256": "c915d90b4257a80cf3a1945b2ad6d583a24434f1169b057d9de1fdb09e6a58b1"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-3-candidate/run-1-cold.png",
+    "bytes": 95216,
+    "sha256": "896afaf139881e66a275b7bf896d2726a8c46318f5c8fa43278d61d1ddce72a7"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-3-candidate/run-1-warm.png",
+    "bytes": 95860,
+    "sha256": "d84f029d4520720cd28c06113ec26d9d4de5c7063f14ef13922e46874775557f"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-3-candidate/run-1.json",
+    "bytes": 111679,
+    "sha256": "3b97d3a76105b6ea1254402422c35789b99d8bc1042619b37d218b501cc578b2"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-3-control/executed.mjs",
+    "bytes": 11230,
+    "sha256": "e73c3f42a0a9ddbe4832938339d800e6f075f75a6e36e23a6582939bbf9f16df"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-3-control/observations.jsonl",
+    "bytes": 2832059,
+    "sha256": "cfa9461828bce357552767f05c0a382bbce507302808c390cbba4bd6a27544e3"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-3-control/run-1-cold.png",
+    "bytes": 95383,
+    "sha256": "7b0b6a97fc525f7e55eec82386f76b64407a1425e141dbcf2b043340c19f8f3a"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-3-control/run-1-warm.png",
+    "bytes": 95307,
+    "sha256": "f57e28e1a05251fb35f58b5cdabf70c3371802cfc5e2bb8b0171bd0ccdc77a6a"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-3-control/run-1.json",
+    "bytes": 112023,
+    "sha256": "da5c4895b47ff93070bff26ed30cc6387489695d7575fc5f7d0f69a435845021"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-4-candidate/executed.mjs",
+    "bytes": 11230,
+    "sha256": "e73c3f42a0a9ddbe4832938339d800e6f075f75a6e36e23a6582939bbf9f16df"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-4-candidate/observations.jsonl",
+    "bytes": 1544230,
+    "sha256": "19a2b9ca1cf50a07466047b3ed6a667557e8a05207f88f19b4adf5d3699add59"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-4-candidate/run-1-cold.png",
+    "bytes": 95658,
+    "sha256": "8232510e7dc5cec7767cf9a0d65d7d75672271b8e6355402a5856e841d2df926"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-4-candidate/run-1-warm.png",
+    "bytes": 95769,
+    "sha256": "bc3e1d1ccc6cab1922e7189f76da3f44f578d223491e31589ba9fad56afcc1ab"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-4-candidate/run-1.json",
+    "bytes": 110581,
+    "sha256": "ad979f673ad4f1aa948d71ed3dfdc972263f55a1db936158ddbf4a7fdc3f1c1a"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-4-control/executed.mjs",
+    "bytes": 11230,
+    "sha256": "e73c3f42a0a9ddbe4832938339d800e6f075f75a6e36e23a6582939bbf9f16df"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-4-control/observations.jsonl",
+    "bytes": 715681,
+    "sha256": "06b6f695cd3f807fc3514f31d31669e1d37fb34b37176ee376a72556f09500b2"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-4-control/run-1-cold.png",
+    "bytes": 96675,
+    "sha256": "2e4ded545d7bc3824984e4e31f65192be899017977b91555597e91b95461d043"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-4-control/run-1-warm.png",
+    "bytes": 96674,
+    "sha256": "2767b240d6b41cdec8d93bc53cc636bca908c69fc8d4466748578dcc5a022f8a"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-4-control/run-1.json",
+    "bytes": 110158,
+    "sha256": "aae63a588829df8ca7ba3d9720ee68868970df1f4976eb960d8b0e88eea9f0ef"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-5-candidate/executed.mjs",
+    "bytes": 11230,
+    "sha256": "e73c3f42a0a9ddbe4832938339d800e6f075f75a6e36e23a6582939bbf9f16df"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-5-candidate/observations.jsonl",
+    "bytes": 695021,
+    "sha256": "1145269d8ab36c426ba0117370b9d2e051ca2555aafed33f53f8fc12137e73f8"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-5-candidate/run-1-cold.png",
+    "bytes": 96667,
+    "sha256": "6373a316cd7d35aae4a092735b9276fefeae4ee83fbbf64ef675abf542b42565"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-5-candidate/run-1-warm.png",
+    "bytes": 96652,
+    "sha256": "001ed278b71430d48f99ffd15590ab5f3facc4d30cf8f380bb5244607ddb9c19"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-5-candidate/run-1.json",
+    "bytes": 108814,
+    "sha256": "6287e1bf98dcd713c6e32a71ec60f83b2290f4482a9c03ff5cd40aa84ff03edf"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-5-control/executed.mjs",
+    "bytes": 11230,
+    "sha256": "e73c3f42a0a9ddbe4832938339d800e6f075f75a6e36e23a6582939bbf9f16df"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-5-control/observations.jsonl",
+    "bytes": 980899,
+    "sha256": "14ab167b4c7ea52362de2ee886440fb830ad99b125fc1fa5a7f6ce994b7666c6"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-5-control/run-1-cold.png",
+    "bytes": 96570,
+    "sha256": "ed02057f67eb09532d513071d6ef4d5ece014ec14c96b0bfa1874b5cf7e5d85e"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-5-control/run-1-warm.png",
+    "bytes": 96560,
+    "sha256": "68c091704cd89003ffe76c5eade84166062b8468b1180512acaf9ae294e44508"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-paired-native-lane-5-control/run-1.json",
+    "bytes": 112464,
+    "sha256": "6bd6f95895d9547470c7462d2f338a03e84e6e7bdf5fa52c98bc80081866b5e0"
+  }
+]

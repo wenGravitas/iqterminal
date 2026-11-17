@@ -1,0 +1,358 @@
+TAP version 13
+# Subtest: startup quarantine, ready retirement and queue capacity reuse preserve unrelated source files
+ok 1 - startup quarantine, ready retirement and queue capacity reuse preserve unrelated source files
+  ---
+  duration_ms: 270.211237
+  type: 'test'
+  ...
+# Subtest: exact overlap tails and projection extension checkpoints retire within the existing file/byte bounds
+ok 2 - exact overlap tails and projection extension checkpoints retire within the existing file/byte bounds
+  ---
+  duration_ms: 192.43602
+  type: 'test'
+  ...
+# Subtest: retirement refuses wrong-namespace before removing any good cache files
+ok 3 - retirement refuses wrong-namespace before removing any good cache files
+  ---
+  duration_ms: 65.928479
+  type: 'test'
+  ...
+# Subtest: retirement refuses wrong-namespace-tail before removing any good cache files
+ok 4 - retirement refuses wrong-namespace-tail before removing any good cache files
+  ---
+  duration_ms: 75.293259
+  type: 'test'
+  ...
+# Subtest: retirement refuses unknown-name before removing any good cache files
+ok 5 - retirement refuses unknown-name before removing any good cache files
+  ---
+  duration_ms: 88.430699
+  type: 'test'
+  ...
+# Subtest: retirement refuses oversized-prefix before removing any good cache files
+ok 6 - retirement refuses oversized-prefix before removing any good cache files
+  ---
+  duration_ms: 87.422164
+  type: 'test'
+  ...
+# Subtest: retirement refuses oversized-tail before removing any good cache files
+ok 7 - retirement refuses oversized-tail before removing any good cache files
+  ---
+  duration_ms: 94.989577
+  type: 'test'
+  ...
+# Subtest: retirement refuses symlink-prefix before removing any good cache files
+ok 8 - retirement refuses symlink-prefix before removing any good cache files
+  ---
+  duration_ms: 117.480723
+  type: 'test'
+  ...
+# Subtest: retirement refuses symlink-tail before removing any good cache files
+ok 9 - retirement refuses symlink-tail before removing any good cache files
+  ---
+  duration_ms: 77.689847
+  type: 'test'
+  ...
+# Subtest: retirement refuses wrong-index-namespace before removing any good cache files
+ok 10 - retirement refuses wrong-index-namespace before removing any good cache files
+  ---
+  duration_ms: 72.553912
+  type: 'test'
+  ...
+# Subtest: retirement refuses oversized-index before removing any good cache files
+ok 11 - retirement refuses oversized-index before removing any good cache files
+  ---
+  duration_ms: 80.832824
+  type: 'test'
+  ...
+# Subtest: retirement refuses oversized-index-data before removing any good cache files
+ok 12 - retirement refuses oversized-index-data before removing any good cache files
+  ---
+  duration_ms: 75.146685
+  type: 'test'
+  ...
+# Subtest: retirement refuses symlink-index before removing any good cache files
+ok 13 - retirement refuses symlink-index before removing any good cache files
+  ---
+  duration_ms: 62.045671
+  type: 'test'
+  ...
+# Subtest: a live reader, pending validation and request pin each prevent retirement; peer sharing survives cancellation
+ok 14 - a live reader, pending validation and request pin each prevent retirement; peer sharing survives cancellation
+  ---
+  duration_ms: 100.588401
+  type: 'test'
+  ...
+# Subtest: recent completions and latest two defaults per market survive pressure; promoted defaults retain ownership
+ok 15 - recent completions and latest two defaults per market survive pressure; promoted defaults retain ownership
+  ---
+  duration_ms: 294.616067
+  type: 'test'
+  ...
+# Subtest: the latest two ready rolling windows survive pressure after automatic ownership advances
+ok 16 - the latest two ready rolling windows survive pressure after automatic ownership advances
+  ---
+  duration_ms: 207.423143
+  type: 'test'
+  ...
+# Subtest: active builds are never retired; abandoned paused builds expire from last progress
+ok 17 - active builds are never retired; abandoned paused builds expire from last progress
+  ---
+  duration_ms: 68.98103
+  type: 'test'
+  ...
+# Subtest: released automatic builds retire after a minute under pressure while their live consumer still protects them
+ok 18 - released automatic builds retire after a minute under pressure while their live consumer still protects them
+  ---
+  duration_ms: 73.792558
+  type: 'test'
+  ...
+# Subtest: an external producer lock defers only that job and keeps its exact owner
+ok 19 - an external producer lock defers only that job and keeps its exact owner
+  ---
+  duration_ms: 186.390642
+  type: 'test'
+  ...
+# Subtest: a durable parked retirement resumes after restart without treating trash as public data
+ok 20 - a durable parked retirement resumes after restart without treating trash as public data
+  ---
+  duration_ms: 102.113787
+  type: 'test'
+  ...
+# Subtest: unsafe symlink contents are retained and a corrupt journal cannot reach another namespace
+ok 21 - unsafe symlink contents are retained and a corrupt journal cannot reach another namespace
+  ---
+  duration_ms: 75.097167
+  type: 'test'
+  ...
+# Subtest: orphan revisions retire without removing a newer lookup or job checkpoint
+ok 22 - orphan revisions retire without removing a newer lookup or job checkpoint
+  ---
+  duration_ms: 88.576162
+  type: 'test'
+  ...
+# Subtest: startup discards only unpublished journal temporaries and refuses hot activation with live readers
+ok 23 - startup discards only unpublished journal temporaries and refuses hot activation with live readers
+  ---
+  duration_ms: 12.419164
+  type: 'test'
+  ...
+# Subtest: visible preparation shares consumers, pauses on last release and resumes the pinned checkpoint after restart
+ok 24 - visible preparation shares consumers, pauses on last release and resumes the pinned checkpoint after restart
+  ---
+  duration_ms: 132.59503
+  type: 'test'
+  ...
+# Subtest: capacity pause is reported over control without resetting checkpoints, hiding ready data or replacing failures
+ok 25 - capacity pause is reported over control without resetting checkpoints, hiding ready data or replacing failures
+  ---
+  duration_ms: 239.242346
+  type: 'test'
+  ...
+# Subtest: expired view leases yield processing capacity without pausing manual default work
+ok 26 - expired view leases yield processing capacity without pausing manual default work
+  ---
+  duration_ms: 44.754682
+  type: 'test'
+  ...
+# Subtest: paused artifacts do not occupy active slots; resume at full capacity preserves progress and lease bounds
+ok 27 - paused artifacts do not occupy active slots; resume at full capacity preserves progress and lease bounds
+  ---
+  duration_ms: 217.136477
+  type: 'test'
+  ...
+# Subtest: control admission bounds consumers and cannot reset failed builds through ordinary polling
+ok 28 - control admission bounds consumers and cannot reset failed builds through ordinary polling
+  ---
+  duration_ms: 111.442567
+  type: 'test'
+  ...
+# Subtest: internal admission uses loopback, bounded commands and no source queries on enqueue/release
+ok 29 - internal admission uses loopback, bounded commands and no source queries on enqueue/release
+  ---
+  duration_ms: 35.968049
+  type: 'test'
+  ...
+# Subtest: worker health is bounded metadata and never admits, resumes, or reads financial source
+ok 30 - worker health is bounded metadata and never admits, resumes, or reads financial source
+  ---
+  duration_ms: 91.906397
+  type: 'test'
+  ...
+# Subtest: worker summary separates failed, prepared, paused and building jobs without exporting source proofs
+ok 31 - worker summary separates failed, prepared, paused and building jobs without exporting source proofs
+  ---
+  duration_ms: 201.520134
+  type: 'test'
+  ...
+# Subtest: readers protect both immutable roots through renewal, sharing, release and monotonic expiry
+ok 32 - readers protect both immutable roots through renewal, sharing, release and monotonic expiry
+  ---
+  duration_ms: 3.24918
+  type: 'test'
+  ...
+# Subtest: pending manifest validation is protected and late completion cannot resurrect a released reader
+ok 33 - pending manifest validation is protected and late completion cannot resurrect a released reader
+  ---
+  duration_ms: 2.864069
+  type: 'test'
+  ...
+# Subtest: read and build interests share the 128-consumer bound; invalid or failed metadata does not leak protection
+ok 34 - read and build interests share the 128-consumer bound; invalid or failed metadata does not leak protection
+  ---
+  duration_ms: 26.955027
+  type: 'test'
+  ...
+# Subtest: loopback read lease commands do not admit jobs and match reserved current/health routes
+ok 35 - loopback read lease commands do not admit jobs and match reserved current/health routes
+  ---
+  duration_ms: 9.242947
+  type: 'test'
+  ...
+# Subtest: last-consumer release during the final bounded step leaves reusable ready data, even with full pending capacity
+ok 36 - last-consumer release during the final bounded step leaves reusable ready data, even with full pending capacity
+  ---
+  duration_ms: 295.751657
+  type: 'test'
+  ...
+# Subtest: all requested views advance fairly in bounded steps across restart, without source repinning
+ok 37 - all requested views advance fairly in bounded steps across restart, without source repinning
+  ---
+  duration_ms: 300.579315
+  type: 'test'
+  ...
+# Subtest: ordinary admission retains failure and progress; explicit Retry resumes the exact step
+ok 38 - ordinary admission retains failure and progress; explicit Retry resumes the exact step
+  ---
+  duration_ms: 62.717763
+  type: 'test'
+  ...
+# Subtest: existing CLI ownership defers a job, retains its lock and lets other views progress
+ok 39 - existing CLI ownership defers a job, retains its lock and lets other views progress
+  ---
+  duration_ms: 53.966684
+  type: 'test'
+  ...
+# Subtest: pending capacity is explicit and duplicate polling cannot allocate more work
+ok 40 - pending capacity is explicit and duplicate polling cannot allocate more work
+  ---
+  duration_ms: 185.383218
+  type: 'test'
+  ...
+# Subtest: a healthy build cannot be reset; explicit failed-job revision preserves old files and repins
+ok 41 - a healthy build cannot be reset; explicit failed-job revision preserves old files and repins
+  ---
+  duration_ms: 46.526346
+  type: 'test'
+  ...
+# Subtest: persisted Retry commands execute once even when the same admission file is replayed after restart
+ok 42 - persisted Retry commands execute once even when the same admission file is replayed after restart
+  ---
+  duration_ms: 64.241167
+  type: 'test'
+  ...
+# Subtest: a repeated explicit revision command cannot reset a healthy newly pinned build
+ok 43 - a repeated explicit revision command cannot reset a healthy newly pinned build
+  ---
+  duration_ms: 57.36192
+  type: 'test'
+  ...
+# Subtest: validated canonical cache reuse keeps its original horizon and skips full replay
+ok 44 - validated canonical cache reuse keeps its original horizon and skips full replay
+  ---
+  duration_ms: 63.028188
+  type: 'test'
+  ...
+# Subtest: specific failures remain separate from successful build/coverage state
+ok 45 - specific failures remain separate from successful build/coverage state
+  ---
+  duration_ms: 116.38017
+  type: 'test'
+  ...
+# Subtest: a concurrent tick cannot acquire a second build, while admission remains durable
+ok 46 - a concurrent tick cannot acquire a second build, while admission remains durable
+  ---
+  duration_ms: 21.799833
+  type: 'test'
+  ...
+# Subtest: completed immutable projection reuse validates source again without folding closed history
+ok 47 - completed immutable projection reuse validates source again without folding closed history
+  ---
+  duration_ms: 64.40276
+  type: 'test'
+  ...
+# Subtest: ready-job Retry revalidates a public-only canonical manifest without replay or repinning
+ok 48 - ready-job Retry revalidates a public-only canonical manifest without replay or repinning
+  ---
+  duration_ms: 85.788075
+  type: 'test'
+  ...
+# Subtest: Retry cannot move a ready view past pending capacity or damage its saved cache state
+ok 49 - Retry cannot move a ready view past pending capacity or damage its saved cache state
+  ---
+  duration_ms: 260.212274
+  type: 'test'
+  ...
+# Subtest: request pins require a same-key live reader, bound capacity and expire independently of reader release
+ok 50 - request pins require a same-key live reader, bound capacity and expire independently of reader release
+  ---
+  duration_ms: 3.345161
+  type: 'test'
+  ...
+# Subtest: cancellation before pin acknowledgement prevents late resurrection with bounded tombstones
+ok 51 - cancellation before pin acknowledgement prevents late resurrection with bounded tombstones
+  ---
+  duration_ms: 3.18579
+  type: 'test'
+  ...
+# Subtest: ordinary admission cannot consume the health and cleanup control reserve
+ok 52 - ordinary admission cannot consume the health and cleanup control reserve
+  ---
+  duration_ms: 28.922357
+  type: 'test'
+  ...
+# Subtest: overlapping canonical reuse is freshly validated, persisted and protected through canonical completion (changed=false)
+ok 53 - overlapping canonical reuse is freshly validated, persisted and protected through canonical completion (changed=false)
+  ---
+  duration_ms: 109.232386
+  type: 'test'
+  ...
+# Subtest: overlapping canonical reuse is freshly validated, persisted and protected through canonical completion (changed=true)
+ok 54 - overlapping canonical reuse is freshly validated, persisted and protected through canonical completion (changed=true)
+  ---
+  duration_ms: 141.275405
+  type: 'test'
+  ...
+# Subtest: projection-prefix dependencies survive failure/retry/restart and release only after bounded installation finishes
+ok 55 - projection-prefix dependencies survive failure/retry/restart and release only after bounded installation finishes
+  ---
+  duration_ms: 218.884161
+  type: 'test'
+  ...
+# Subtest: prepared canonical discovery still selects and pins an exact same-start projection prefix
+ok 56 - prepared canonical discovery still selects and pins an exact same-start projection prefix
+  ---
+  duration_ms: 89.691272
+  type: 'test'
+  ...
+# Subtest: private V3 barrier is durable before a projection writer starts and survives its failure
+ok 57 - private V3 barrier is durable before a projection writer starts and survives its failure
+  ---
+  duration_ms: 71.609469
+  type: 'test'
+  ...
+# Subtest: failed barrier and finally saves cannot let a different projection enter with queue V2 on disk
+ok 58 - failed barrier and finally saves cannot let a different projection enter with queue V2 on disk
+  ---
+  duration_ms: 101.331955
+  type: 'test'
+  ...
+1..58
+# tests 58
+# suites 0
+# pass 58
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4173.610103

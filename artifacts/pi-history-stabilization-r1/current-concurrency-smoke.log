@@ -1,0 +1,2 @@
+{"scenario":"current-only","run":1,"bootstrapMs":2723,"updates":28,"maxReceiveGapMs":1802.6000000014901}
+{"scenario":"concurrent-history","run":1,"bootstrapMs":null,"updates":0,"maxReceiveGapMs":12011,"error":"TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."}

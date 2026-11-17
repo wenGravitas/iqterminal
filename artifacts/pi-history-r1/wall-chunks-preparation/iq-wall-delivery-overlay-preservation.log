@@ -1,0 +1,15 @@
+Updating 536f25d..072cc1d
+Fast-forward
+ docs/PI-HISTORY-OPEN-CORRECTNESS.md |  5 +--
+ docs/PI-HISTORY-PERFORMANCE-R1.md   | 67 +++++++++++++++++++++++++++++++
+ ops/pi-wall-chunk-reference.mjs     | 80 ++++++++++++++++++++++++++++---------
+ src/history-gateway.ts              |  8 +++-
+ src/wall-chunk-delivery.ts          | 37 +++++++++++++++++
+ src/wall-history-chunks.ts          | 17 ++++----
+ tests/wall-chunk-delivery.test.ts   | 25 ++++++++++++
+ 7 files changed, 209 insertions(+), 30 deletions(-)
+ create mode 100644 src/wall-chunk-delivery.ts
+ create mode 100644 tests/wall-chunk-delivery.test.ts
+{"target": "072cc1d55e931ea82ee8edd623ef22543f454fa7", "preserved": "/home/daz/iqterminal-perf-history/artifacts/pi-history-r1/pre-rollout-072cc1d-overlays/pi-wall-chunk-reference-tested.mjs"}
+From https://github.com/wenGravitas/iqterminal-server
+ * branch            perf/pi-history-r1 -> FETCH_HEAD

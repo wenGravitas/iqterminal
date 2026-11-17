@@ -1,0 +1,5 @@
+{
+  "phase": "setup",
+  "samples": 0,
+  "error": "Legacy workspace verifier required an X11 test window although launch was headless. Browser closed by finally; removed irrelevant headed routing call before retry. No timing sample was produced."
+}

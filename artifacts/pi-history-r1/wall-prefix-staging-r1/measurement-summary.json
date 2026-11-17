@@ -1,0 +1,161 @@
+{
+  "scope": "One same-start extension per market, original attempt plus explicit resume. Source-validation transport failure retained. Not browser loading or five-run performance acceptance.",
+  "completed": [
+    {
+      "kind": "exact-projection-prefix-extension",
+      "market": "spot",
+      "from": 1794097200000,
+      "to": 1794206100000,
+      "baseTo": 1794205800000,
+      "baseSourceKey": "84b9d7e2cd75fb507f061a3718859b499e0b99cfaf48f7922d317d3d0c87b283",
+      "baseProjectionKey": "3da59c8e0b2b7ea48ec03521f9afb22ac4e6908e095310dca31ad291e39fcbbf",
+      "sourceKey": "94fe99033a39cf071924fc3174082befc14efc952a8b53119486c2e50aac89cd",
+      "projectionKey": "6a342f60f92c38d1354e8d777f21bcb452c2c2a3181371f046bbfa23f5f9b296",
+      "sourceToken": "bbd120a0de2b8505db93190b21981208619c5aaa7212dc504d848485cb0d963b",
+      "baseWatermark": 20045540,
+      "targetWatermark": 20045540,
+      "baseEpoch": 1794239089384,
+      "targetEpoch": 1794239089384,
+      "canonicalPages": 17,
+      "reusedPrefixPages": 16,
+      "financialHash": "305aae26fa636c35dc3483436c8686a4bb7ae3d2043b3aa5f5584d57df220079",
+      "selectedHash": "2171997de3dd4ff45ca6932cfc969adbd3a8bde4d7d8802bedb6549f576771ba",
+      "segments": 3202,
+      "valueRuns": 24556,
+      "coverage": {
+        "availableFrom": 1793521565645,
+        "requestedFrom": 1794097200000,
+        "requestedTo": 1794206100000,
+        "confirmedTo": 1794206100000,
+        "gaps": [
+          {
+            "cursor": 18753165,
+            "epoch": 1794058509223,
+            "at": 1794112010851,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "cursor": 19228189,
+            "epoch": 1794112042493,
+            "at": 1794159681152,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "cursor": 19379648,
+            "epoch": 1794159682961,
+            "at": 1794174883949,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19384515,
+            "epoch": 1794174885753,
+            "at": 1794175373442,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19425673,
+            "epoch": 1794175375577,
+            "at": 1794179481442,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19451023,
+            "epoch": 1794179483104,
+            "at": 1794182010954,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19492652,
+            "epoch": 1794182013063,
+            "at": 1794186164248,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19546455,
+            "epoch": 1794186166116,
+            "at": 1794191532448,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19638026,
+            "epoch": 1794191534598,
+            "at": 1794200696134,
+            "reason": "Observed book capacity: epoch invalidated"
+          }
+        ],
+        "gapsTruncated": false,
+        "partial": true,
+        "status": "partial",
+        "reason": "Depth continuity gaps are present in the requested range",
+        "bookScope": null,
+        "midpoint": null
+      },
+      "scope": "One actual default same-start/end-extended window per market. Canonical input matches independent DB pages; prefix output matches full fresh fold byte/identity/value/queue and selected state. No live cursor seeding, browser latency or five-run acceptance."
+    }
+  ],
+  "builds": [
+    {
+      "kind": "build-complete",
+      "label": "spot-canonical-base",
+      "steps": 17,
+      "elapsedMs": 7486.215653,
+      "sourceKey": "84b9d7e2cd75fb507f061a3718859b499e0b99cfaf48f7922d317d3d0c87b283"
+    },
+    {
+      "kind": "build-complete",
+      "label": "spot-projection-base",
+      "steps": 17,
+      "elapsedMs": 2908.317449,
+      "sourceKey": "84b9d7e2cd75fb507f061a3718859b499e0b99cfaf48f7922d317d3d0c87b283",
+      "projectionKey": "3da59c8e0b2b7ea48ec03521f9afb22ac4e6908e095310dca31ad291e39fcbbf"
+    },
+    {
+      "kind": "build-complete",
+      "label": "spot-canonical-target",
+      "steps": 17,
+      "elapsedMs": 6621.513846000002,
+      "sourceKey": "94fe99033a39cf071924fc3174082befc14efc952a8b53119486c2e50aac89cd"
+    },
+    {
+      "kind": "build-complete",
+      "label": "spot-canonical-reference",
+      "steps": 17,
+      "elapsedMs": 10175.409252000001,
+      "sourceKey": "94fe99033a39cf071924fc3174082befc14efc952a8b53119486c2e50aac89cd"
+    },
+    {
+      "kind": "build-complete",
+      "label": "spot-projection-reference",
+      "steps": 17,
+      "elapsedMs": 2618.073028999999,
+      "sourceKey": "94fe99033a39cf071924fc3174082befc14efc952a8b53119486c2e50aac89cd",
+      "projectionKey": "6a342f60f92c38d1354e8d777f21bcb452c2c2a3181371f046bbfa23f5f9b296"
+    },
+    {
+      "kind": "build-complete",
+      "label": "spot-projection-reuse",
+      "steps": 17,
+      "elapsedMs": 2496.4010009999947,
+      "reusedPrefixPages": 16,
+      "sourceKey": "94fe99033a39cf071924fc3174082befc14efc952a8b53119486c2e50aac89cd",
+      "projectionKey": "6a342f60f92c38d1354e8d777f21bcb452c2c2a3181371f046bbfa23f5f9b296"
+    },
+    {
+      "kind": "build-complete",
+      "label": "perpetual-canonical-base",
+      "steps": 39,
+      "elapsedMs": 16848.926058999998,
+      "sourceKey": "5a1dd18374ca394934a93c6fa6ba7eea320374b3914a6bf0da822b320d0297c6"
+    }
+  ],
+  "resources": {
+    "samples": 60,
+    "errors": [],
+    "end": {
+      "kind": "end",
+      "label": "wall-prefix-staging-r1",
+      "elapsedMs": 300036.523714,
+      "stopping": false
+    }
+  }
+}

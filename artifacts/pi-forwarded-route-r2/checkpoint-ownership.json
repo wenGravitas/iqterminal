@@ -1,0 +1,20 @@
+{
+  "capturedUtc": 1794494294.2973046,
+  "listeners": "State  Recv-Q Send-Q Local Address:Port  Peer Address:PortProcess                         \nLISTEN 0      128        127.0.0.1:18880      0.0.0.0:*    users:((\"ssh\",pid=132348,fd=4))\nLISTEN 0      128        127.0.0.1:18881      0.0.0.0:*    users:((\"ssh\",pid=197582,fd=4))\nLISTEN 0      511        127.0.0.1:4202       0.0.0.0:*    users:((\"node\",pid=192320,fd=21))\n",
+  "privateRoute": [
+    {
+      "dst": "65.21.65.212",
+      "gateway": "10.227.118.10",
+      "dev": "wlan0",
+      "prefsrc": "10.227.118.134",
+      "flags": [],
+      "uid": 1000,
+      "cache": []
+    }
+  ],
+  "frontendMain": "d2b519e3b5714ae4955647e80a8190c10f2511d9",
+  "control": "bf1d8425525306848cd9bc741c647fc3f1ba5054",
+  "frozenClient": "7eb4a00b60daf344188eebc0659a8a82862113e8",
+  "financialKernelSha256": "1a86cb47e20943c9c71f4614e267abe22ae507c84834cd184559ff97df041c73",
+  "oldActiveTunnelLog": "Preexisting runtime append remains unstaged; no archived committed capture was overwritten."
+}

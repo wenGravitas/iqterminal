@@ -1,0 +1,21 @@
+{
+  "candidate": "3dfd2507bbc52362d25d8ebc8e88588368b23011",
+  "control": "a15c9ae61cba875bd5c0712868717b27d9e73de1",
+  "harnessSha256": "275303156e2d17797bdca04b1835e6c9df80caf2c3a241300d024fe36819a4cf",
+  "route": {
+    "candidate": "http://127.0.0.1:4185",
+    "control": "http://127.0.0.1:4186"
+  },
+  "rendering": "headless system Chromium; actual GPU captured per result; not foreground acceptance",
+  "historicalSockets": {
+    "native": 2,
+    "bulk": 2,
+    "aggregate": 4
+  },
+  "currentSockets": 4,
+  "sshTransports": 2,
+  "coldBrowserCache": true,
+  "serverHistory": "already prepared pinned window in scripts/pi-wall-reference.json",
+  "pilot": "perpetual candidate only; separate from primary five-pair cohort",
+  "plan": "Five pairs per market, alternating variant order, sequential heavy processes; preserve every sample, no substitution."
+}

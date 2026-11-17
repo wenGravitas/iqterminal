@@ -1,0 +1,102 @@
+[
+  {
+    "run": 1,
+    "mode": "raw",
+    "elapsedMs": 113.69999999552965,
+    "parseMs": 91.29999995976686,
+    "validationMs": 20.10000003129244,
+    "yieldMs": 0,
+    "maxPartMs": 5.5,
+    "validatedParts": 34
+  },
+  {
+    "run": 1,
+    "mode": "compact",
+    "elapsedMs": 292.6000000014901,
+    "parseMs": 69,
+    "validationMs": 222.99999999254942,
+    "yieldMs": 0.4000000059604645,
+    "maxPartMs": 17.5,
+    "validatedParts": 34
+  },
+  {
+    "run": 2,
+    "mode": "compact",
+    "elapsedMs": 244.70000000298023,
+    "parseMs": 58.30000000447035,
+    "validationMs": 186.19999999552965,
+    "yieldMs": 0,
+    "maxPartMs": 11.5,
+    "validatedParts": 34
+  },
+  {
+    "run": 2,
+    "mode": "raw",
+    "elapsedMs": 96.60000000149012,
+    "parseMs": 75.89999998360872,
+    "validationMs": 20.50000001490116,
+    "yieldMs": 0,
+    "maxPartMs": 4.899999998509884,
+    "validatedParts": 34
+  },
+  {
+    "run": 3,
+    "mode": "raw",
+    "elapsedMs": 94.5,
+    "parseMs": 74.69999999552965,
+    "validationMs": 19.700000002980232,
+    "yieldMs": 0,
+    "maxPartMs": 4.299999997019768,
+    "validatedParts": 34
+  },
+  {
+    "run": 3,
+    "mode": "compact",
+    "elapsedMs": 258.20000000298023,
+    "parseMs": 61.60000002384186,
+    "validationMs": 195.49999998509884,
+    "yieldMs": 0,
+    "maxPartMs": 14.399999998509884,
+    "validatedParts": 34
+  },
+  {
+    "run": 4,
+    "mode": "compact",
+    "elapsedMs": 611.6999999955297,
+    "parseMs": 141.2000000104308,
+    "validationMs": 470,
+    "yieldMs": 4.300000004470348,
+    "maxPartMs": 98.90000000596046,
+    "validatedParts": 34
+  },
+  {
+    "run": 4,
+    "mode": "raw",
+    "elapsedMs": 136.20000000298023,
+    "parseMs": 107.29999999701977,
+    "validationMs": 28.700000002980232,
+    "yieldMs": 0,
+    "maxPartMs": 7.699999995529652,
+    "validatedParts": 34
+  },
+  {
+    "run": 5,
+    "mode": "raw",
+    "elapsedMs": 169.5,
+    "parseMs": 129.59999998658895,
+    "validationMs": 39.50000001490116,
+    "yieldMs": 0,
+    "maxPartMs": 11.199999995529652,
+    "validatedParts": 34
+  },
+  {
+    "run": 5,
+    "mode": "compact",
+    "elapsedMs": 319.29999999701977,
+    "parseMs": 74.99999995529652,
+    "validationMs": 243.70000004023314,
+    "yieldMs": 0,
+    "maxPartMs": 18.200000002980232,
+    "validatedParts": 34
+  }
+]

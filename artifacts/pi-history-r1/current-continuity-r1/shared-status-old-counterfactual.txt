@@ -1,0 +1,33 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/staging-service.test.ts (44 tests | 1 failed | 43 skipped) 112ms
+   × a new historical viewer cannot downgrade a healthy shared live execution feed 108ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/staging-service.test.ts > a new historical viewer cannot downgrade a healthy shared live execution feed
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/staging-service.test.ts:133:100
+    131|   service.command({type:'footprint-subscribe',id:'second-chart',series…
+    132|   const statuses=events.slice(start).filter((e:any)=>e.status).map((e:…
+    133|   expect(statuses.length).toBeGreaterThan(0);expect(statuses.every(sta…
+       |                                                                                                    ^
+    134|   expect(service.diagnostics().streams[0]!.executionProof).toEqual(pro…
+    135|   sockets[0]!.receive(packet(11,[12]));ack();expect(service.diagnostic…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 43 skipped (44)
+   Start at  15:25:32
+   Duration  1.23s (transform 79%, tests 12%, import 8%, worker 1%)
+

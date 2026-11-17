@@ -1,0 +1,6 @@
+{
+  "scope": "Explicit mocked discovery503 over actual staging native candles; headless UI/status check only, not latency, financial-wall coverage or current ACK acceptance",
+  "expectedBuild": "e12965d38f9dc584c8fdfe46b8817a249166259a",
+  "pass": false,
+  "error": "TimeoutError: page.waitForFunction: Timeout 15000ms exceeded."
+}

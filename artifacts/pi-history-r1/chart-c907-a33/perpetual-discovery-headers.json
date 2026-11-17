@@ -1,0 +1,18 @@
+{
+  "status": 200,
+  "elapsedMs": 2492.0673920023546,
+  "headers": {
+    "X-IQ-Request-Id": "7fe6d550-5ef3-4ec6-8df1-06faad1f383e",
+    "Content-Type": "application/json",
+    "Cache-Control": "no-store",
+    "Content-Length": "428228",
+    "X-IQ-Decoded-Bytes": "428228",
+    "X-IQ-Db-Queries": "3",
+    "X-IQ-Db-Read-Rows": "614571",
+    "X-IQ-Db-Read-Bytes": "349175465",
+    "Server-Timing": "admission;dur=0, db;dur=491.96, sqlqueue;dur=115.20, dbdecode;dur=0.26, project;dur=0.00, serialize;dur=2.09, total;dur=503.64",
+    "Date": "Sat, 07 Nov 2026 15:08:10 GMT",
+    "Connection": "close"
+  },
+  "path": "/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1793695500000&to=1793805300000"
+}

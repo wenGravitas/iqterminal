@@ -1,0 +1,11 @@
+{
+  "commit": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+  "exitCode": 0,
+  "flags": {
+    "VITE_BUILD_COMMIT": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+    "VITE_DATA_MODE": "staging",
+    "VITE_HISTORY_TILES": "1",
+    "VITE_DIAGNOSTICS": "1"
+  },
+  "outDir": "artifacts/pi-history-integration-startup-r1/dist-diagnostic"
+}

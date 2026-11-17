@@ -1,0 +1,60 @@
+{
+  "spot": {
+    "samplesMs": [
+      724.0223372355103,
+      305.54244201630354,
+      746.3739523664117,
+      663.7286162003875,
+      299.83745235949755
+    ],
+    "statuses": [
+      200,
+      200,
+      200,
+      200,
+      200
+    ],
+    "decodedBytes": [
+      154112,
+      154112,
+      154112,
+      154112,
+      154112
+    ],
+    "sourceTokens": [
+      "aaddfcbf86e76510d462d491b820100d54c1257e90d0e190b0eb4ea1fe7fc9c8"
+    ],
+    "medianMs": 663.7286162003875,
+    "maximumMs": 746.3739523664117,
+    "scope": "Five loopback source-discovery diagnostics; no chart/current/latency acceptance"
+  },
+  "perpetual": {
+    "samplesMs": [
+      885.9315169975162,
+      1111.7386352270842,
+      621.8163911253214,
+      428.23756113648415,
+      698.420675471425
+    ],
+    "statuses": [
+      200,
+      200,
+      200,
+      200,
+      200
+    ],
+    "decodedBytes": [
+      1154528,
+      1154528,
+      1154528,
+      1154528,
+      1154528
+    ],
+    "sourceTokens": [
+      "09e5611063306489c8a99ab60cbbc013356116794b6e752a1f2d2859b45fc1bd"
+    ],
+    "medianMs": 698.420675471425,
+    "maximumMs": 1111.7386352270842,
+    "scope": "Five loopback source-discovery diagnostics; no chart/current/latency acceptance"
+  }
+}

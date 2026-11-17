@@ -1,0 +1,4 @@
+/iqterminal-server 65471260a0cf64311ed57f9b17f1e1daf6de26f073192e292cd07bfb1e193ece 2026-10-25T10:58:27.590796454Z
+/iqterminal-spot-server a4be8d3c68a52de305fd9e2eaa101f50b592b8b108aaf850ddfbc1b2f53428bb 2026-10-25T10:58:53.322433531Z
+/iqterminal-history-api a078bf91b4cd7bbed1182ac91733991cf52c876175cd90ce91a5598c0a6264af 2026-11-06T16:54:08.538780843Z
+{'build': '18579d938364e5fd5a9c7631bb19681a043f1b66', 'enabled': True, 'metrics': {'requests': 593, 'rejected': 0, 'bytes': 51563749, 'serializeMs': 154.73825400730175, 'legacyHeatmap': 0, 'legacyFootprint': 0, 'closedTileReads': 0, 'manifests': 0, 'orderWallPages': 115, 'peakRss': 130547712, 'active': 1, 'history': 0, 'reservedCurrent': 1, 'limit': 4, 'rss': 127320064}}

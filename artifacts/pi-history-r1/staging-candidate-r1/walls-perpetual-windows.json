@@ -1,0 +1,1 @@
+{"end": 1794380400000, "preparedRequest": {"market": "perpetual", "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1", "from": 1794271500000, "to": 1794381300000}, "scope": "Exact pinned native30h past view with one context candle on each edge; current-ending view is a separate unresolved case."}

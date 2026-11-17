@@ -1,0 +1,1 @@
+{"end": 1794381000000, "preparedRequest": {"market": "spot", "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1", "from": 1794272700000, "to": 1794381300000}, "scope": "Exact pinned native30h past view with one context candle on each edge; current-ending view is a separate unresolved case."}

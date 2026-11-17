@@ -1,0 +1,14 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+page.evaluate: Error: TypeError: Failed to execute 'fetch' on 'WorkerGlobalScope': Failed to parse URL from /yield-input
+TypeError: Failed to parse URL from /yield-input
+    at onmessage (blob:http://127.0.0.1/ba2db603-0fcf-4172-8a22-a28e6e3ef853:155:28)
+    at onmessage (blob:http://127.0.0.1/ba2db603-0fcf-4172-8a22-a28e6e3ef853:155:28)
+    at worker.onmessage (eval at evaluate (:370:30), <anonymous>:34:384)
+    at /home/daz/workarea/iqterminal-perf-history/scripts/wall-worker-yield-bench.mjs:17:29 {
+  log: []
+}
+
+Node.js v22.19.0

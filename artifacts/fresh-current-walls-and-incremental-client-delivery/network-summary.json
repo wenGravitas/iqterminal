@@ -1,0 +1,100 @@
+[
+  {
+    "label": "strict-baseline",
+    "projections": {
+      "364cfa71b4eeb61ca5de439730372fa1f7bd47a08eeb7aff44261b8bf781a4a7": {
+        "requests": 8,
+        "parts": 86,
+        "encodedBytes": 3014349,
+        "decodedTransportBytes": 39296217,
+        "canonicalBytes": 60371383,
+        "requestIds": [
+          "56d03d26-fa4f-48bc-824a-74fd5bc4ae05",
+          "7193ecac-4860-461c-8345-ca1a4ae156b1",
+          "728e4af1-3d1b-42a9-90bf-292637453694",
+          "a7cc2414-5cca-46f4-8797-8e09d0a2f9d2",
+          "c03ab800-de86-43df-bb1d-3691196ebb02",
+          "3295397b-48ee-4039-aa47-ec2524d1d88c",
+          "d7584336-11e2-4f3b-9dd8-450054dd9339",
+          "cb005a83-102d-481e-b5e4-cd932be0ad40"
+        ]
+      },
+      "4c1f3235cae18ac754770292c6f1e4d96880e173d22f105e13dd4b2b3fb87d19": {
+        "requests": 8,
+        "parts": 86,
+        "encodedBytes": 3020791,
+        "decodedTransportBytes": 39367286,
+        "canonicalBytes": 60478931,
+        "requestIds": [
+          "6072623a-1f77-4d2d-ae3f-111801f56a04",
+          "d569193c-075d-40b5-bf10-a906deeae8aa",
+          "c6ec3df1-4723-47e9-8ae3-cf62791c8358",
+          "f2bf4ee1-8cf7-40d8-a253-931ac61cc392",
+          "a8dfba4d-4135-42f8-8f53-00556fd2f483",
+          "79e669a8-d987-4142-a5c5-4081ad9efbea",
+          "6278bcdc-9b90-43e7-be4d-6184fb4dfaf9",
+          "f727d90d-7bf2-45bf-8e0f-411ad43a8e4f"
+        ]
+      },
+      "ed997b67e6c3b04bee11ccadfa06fadf328ca21110d1bc9159f0d3c28cd3e2a3": {
+        "requests": 8,
+        "parts": 86,
+        "encodedBytes": 3024394,
+        "decodedTransportBytes": 39405782,
+        "canonicalBytes": 60539900,
+        "requestIds": [
+          "6954b99d-f3ce-49f3-acd0-4e4bf21ce2be",
+          "613b990d-99c8-4232-a79d-8fca251d304b",
+          "57c02119-d86b-456a-b7a7-981cb922fae0",
+          "21203e49-8705-415b-ba26-35b85020afdd",
+          "1be73fa7-ce89-4dd8-92b8-c0db82140191",
+          "bda800d4-6900-4073-9c4b-f79ffc3c2c9b",
+          "4b80b675-7e9a-49b6-a8b7-4fb098176427",
+          "73905a87-f731-4982-9c4b-d60284f3b3c8"
+        ]
+      }
+    }
+  },
+  {
+    "label": "strict-candidate",
+    "projections": {
+      "364cfa71b4eeb61ca5de439730372fa1f7bd47a08eeb7aff44261b8bf781a4a7": {
+        "requests": 8,
+        "parts": 86,
+        "encodedBytes": 3014349,
+        "decodedTransportBytes": 39296217,
+        "canonicalBytes": 60371383,
+        "requestIds": [
+          "dc1919ac-39b3-429d-ad23-321dfc99b841",
+          "ab7f2b3a-3c0d-4010-937a-5877c5820bae",
+          "a9bde748-e66d-4da4-800e-d1158663b109",
+          "c924926f-7cde-45da-bd3f-065aa69e8c35",
+          "ce34521f-1915-4de3-8ef2-eb4443ca63b6",
+          "3a1929db-f51c-4cc4-a30c-07d622efe56b",
+          "f75db0d8-7be8-40ed-9519-3e381b7817e7",
+          "947cf35f-a2de-4ba3-b3f2-6f551d92993f"
+        ]
+      },
+      "4c1f3235cae18ac754770292c6f1e4d96880e173d22f105e13dd4b2b3fb87d19": {
+        "requests": 1,
+        "parts": 1,
+        "encodedBytes": 19282,
+        "decodedTransportBytes": 213536,
+        "canonicalBytes": 342260,
+        "requestIds": [
+          "4169b5d1-77ed-4011-803a-125dc55cb2cf"
+        ]
+      },
+      "ed997b67e6c3b04bee11ccadfa06fadf328ca21110d1bc9159f0d3c28cd3e2a3": {
+        "requests": 1,
+        "parts": 1,
+        "encodedBytes": 22727,
+        "decodedTransportBytes": 252032,
+        "canonicalBytes": 403229,
+        "requestIds": [
+          "debdfc50-4b87-4a07-a461-8c83938c2f8c"
+        ]
+      }
+    }
+  }
+]

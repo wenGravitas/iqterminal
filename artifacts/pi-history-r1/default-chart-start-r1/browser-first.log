@@ -1,0 +1,29 @@
+
+Running 1 test using 1 worker
+
+(node:241285) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/wall-default-range-contract.spec.ts:5:1 › compiled chart requested ranges match automatic preparation across rollover and source lag (720ms)
+
+
+  1) tests/browser/wall-default-range-contract.spec.ts:5:1 › compiled chart requested ranges match automatic preparation across rollover and source lag 
+
+    Error: expect(received).toHaveLength(expected)
+
+    Expected length: 96
+    Received length: 48
+    Received array:  [{"closed": {"from": 1794290100000, "to": 1794398400000}, "eligibleTo": 1794398400000, "interval": "5m", "market": "spot", "now": 1794398400000, "requested": {"from": 1794290100000, "to": 1794398400000}, "sourceAt": 1794398400000, "step": 300000, "visible": {"from": 1794290400000, "to": 1794398400000}}, {"closed": {"from": 1794290100000, "to": 1794398100000}, "eligibleTo": 1794398400000, "interval": "5m", "market": "spot", "now": 1794398400000, "requested": {"from": 1794290100000, "to": 1794398400000}, "sourceAt": 1794398399999, "step": 300000, "visible": {"from": 1794290400000, "to": 1794398400000}}, {"closed": {"from": 1794290100000, "to": 1794397800000}, "eligibleTo": 1794398100000, "interval": "5m", "market": "spot", "now": 1794398400000, "requested": {"from": 1794290100000, "to": 1794398400000}, "sourceAt": 1794398099999, "step": 300000, "visible": {"from": 1794290400000, "to": 1794398400000}}, {"closed": {"from": 1794290100000, "to": 1794394800000}, "eligibleTo": 1794394800001, "interval": "5m", "market": "spot", "now": 1794398400000, "requested": {"from": 1794290100000, "to": 1794398400000}, "sourceAt": 1794394800000, "step": 300000, "visible": {"from": 1794290400000, "to": 1794398400000}}, {"closed": {"from": 1794290100000, "to": 1794398400000}, "eligibleTo": 1794398400001, "interval": "5m", "market": "spot", "now": 1794398400001, "requested": {"from": 1794290100000, "to": 1794398400001}, "sourceAt": 1794398400001, "step": 300000, "visible": {"from": 1794290400001, "to": 1794398400001}}, {"closed": {"from": 1794290100000, "to": 1794398400000}, "eligibleTo": 1794398400001, "interval": "5m", "market": "spot", "now": 1794398400001, "requested": {"from": 1794290100000, "to": 1794398400001}, "sourceAt": 1794398400000, "step": 300000, "visible": {"from": 1794290400001, "to": 1794398400001}}, {"closed": {"from": 1794290100000, "to": 1794398100000}, "eligibleTo": 1794398100001, "interval": "5m", "market": "spot", "now": 1794398400001, "requested": {"from": 1794290100000, "to": 1794398400001}, "sourceAt": 1794398100000, "step": 300000, "visible": {"from": 1794290400001, "to": 1794398400001}}, {"closed": {"from": 1794290100000, "to": 1794394800000}, "eligibleTo": 1794394800002, "interval": "5m", "market": "spot", "now": 1794398400001, "requested": {"from": 1794290100000, "to": 1794398400001}, "sourceAt": 1794394800001, "step": 300000, "visible": {"from": 1794290400001, "to": 1794398400001}}, {"closed": {"from": 1794290100000, "to": 1794398400000}, "eligibleTo": 1794398460000, "interval": "5m", "market": "spot", "now": 1794398460000, "requested": {"from": 1794290100000, "to": 1794398460000}, "sourceAt": 1794398460000, "step": 300000, "visible": {"from": 1794290460000, "to": 1794398460000}}, {"closed": {"from": 1794290100000, "to": 1794398400000}, "eligibleTo": 1794398460000, "interval": "5m", "market": "spot", "now": 1794398460000, "requested": {"from": 1794290100000, "to": 1794398460000}, "sourceAt": 1794398459999, "step": 300000, "visible": {"from": 1794290460000, "to": 1794398460000}}, …]
+
+       5 | test('compiled chart requested ranges match automatic preparation across rollover and source lag',async({page,context},testInfo)=>{
+       6 |  const contract=JSON.parse(readFileSync('tests/fixtures/wall-default-ranges.json','utf8'));
+    >  7 |  expect(contract.version).toBe(1);expect(contract.cases).toHaveLength(96);
+         |                                                          ^
+       8 |  await installHealthyStagingWorker(context);
+       9 |  await context.addInitScript(()=>{
+      10 |   const id='chart-wall-range-contract',layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:[id],activeView:id,id:'1'},size:1600}],size:1000},width:1600,height:1000,orientation:'HORIZONTAL'},panels:{[id]:{id,contentComponent:'candle',tabComponent:'compact-chart',title:'Range contract',params:{venue:'binance',market:'perpetual',interval:'15m',type:'candle',studies:[]},minimumHeight:140,minimumWidth:220}},activeGroup:'1'};
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/wall-default-range-contract.spec.ts:7:58
+
+    Error Context: test-results/wall-default-range-contrac-515f3-oss-rollover-and-source-lag/error-context.md
+
+  1 failed
+    tests/browser/wall-default-range-contract.spec.ts:5:1 › compiled chart requested ranges match automatic preparation across rollover and source lag 

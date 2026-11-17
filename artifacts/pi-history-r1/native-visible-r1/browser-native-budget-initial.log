@@ -1,0 +1,37 @@
+
+Running 2 tests using 1 worker
+
+(node:44979) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/native-candle-history.spec.ts:12:1 › native30hpricecontext paints before bootstrap and retains current volume and newer historical reads (2.8s)
+  ✘  2 tests/browser/native-candle-history.spec.ts:41:1 › nativepricepan preserves the requested past and current bars within the5000barbudget (8.3s)
+
+
+  1) tests/browser/native-candle-history.spec.ts:41:1 › nativepricepan preserves the requested past and current bars within the5000barbudget 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "count": 5000,
+    -   "versions": 5000,
+    +   "versions": 4999,
+        "visible": 4998,
+      }
+
+      54 |  await expect.poll(()=>page.evaluate(id=>(window as any).__terminal?.panels.get(id)?.status.nativeHistory?.viewport?.loadedSlots??0,id),{timeout:30000}).toBe(4998);
+      55 |  const old=await page.evaluate(({id,from,to})=>{const p=(window as any).__terminal.panels.get(id);return {count:p.candles.length,visible:p.candles.filter((c:any)=>c.t>=from&&c.t<to).length,versions:p.nativeCandleVersions.size()};},{id,from,to});
+    > 56 |  expect(old).toEqual({count:5000,visible:4998,versions:5000});
+         |              ^
+      57 |  const nextFrom=from-10*86400000,nextTo=nextFrom+6*HOUR;
+      58 |  await page.evaluate(({id,from,to})=>{const p=(window as any).__terminal.panels.get(id),d=p.engine.chart.dataLayer;p.engine.setRange({from:d.timeToIndexFloat(from/1000),to:d.timeToIndexFloat(to/1000)});},{id,from:nextFrom,to:nextTo});
+      59 |  await expect.poll(()=>page.evaluate(({id,from,to})=>{const p=(window as any).__terminal.panels.get(id);return p.candles.filter((c:any)=>c.t>=from&&c.t<to).length;},{id,from:nextFrom,to:nextTo}),{timeout:15000}).toBe(360);
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/native-candle-history.spec.ts:56:14
+
+    Error Context: test-results/native-candle-history-nati-f0702-ars-within-the5000barbudget/error-context.md
+
+  1 failed
+    tests/browser/native-candle-history.spec.ts:41:1 › nativepricepan preserves the requested past and current bars within the5000barbudget 
+  1 passed (15.6s)

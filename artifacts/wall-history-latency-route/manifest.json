@@ -1,0 +1,19 @@
+{
+  "task": "wall-history-latency-route",
+  "startUtc": "2026-11-16T13:39:14Z",
+  "experimentCutoffUtc": "2026-11-16T16:09:14Z",
+  "deadlineUtc": "2026-11-16T16:39:14Z",
+  "routeWindowMaximumSeconds": 600,
+  "routeOutcomes": {
+    "failure": "identify first failing boundary; smallest supported fix",
+    "none": "finite non-recurrence only",
+    "incomplete": "correct capture once before any claim"
+  },
+  "baselineFrontendApplication": "601ebad362cd478e617dc54e53fcc3480c4ecf72",
+  "candidateFrontendApplication": "9ee61b3644836b2d9e159f9fe90b4174c8ab5d3d",
+  "backendApplication": "480d6dc8c181c5ff948f4af97854d2a670ba733f",
+  "unchangedResourceAllocation": "../iqterminal-server-integration-startup-r1/ops/wall-history-staging-capacity.json",
+  "baselineBackendApplication": "e2618286f4e5a0bc553338e06eefac9a5a7ecaa3",
+  "experimentsEndedUtc": "2026-11-16T14:47:50Z",
+  "outcome": "Measured wire/work reduction; no demonstrated broad end-to-end latency win. Final current workflow complete; route attribution and failures preserved."
+}

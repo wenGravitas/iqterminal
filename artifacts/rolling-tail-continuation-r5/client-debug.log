@@ -1,0 +1,28 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-integration-startup-r1
+
+ ❯ tests/wall-repeated-continuation.test.ts (1 test | 1 failed) 1030ms
+   × ordinary viewport commands keep the validated prefix through two pending same-start projection extensions and advance only after validation 1028ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/wall-repeated-continuation.test.ts > ordinary viewport commands keep the validated prefix through two pending same-start projection extensions and advance only after validation
+AssertionError: {"state":"gap","message":"Order Walls history request failed: Unexpected fixture route (no canonical fallback allowed): /market-data/v2/history/walls/horizon","coverage":{"from":1800000000000,"to":1800108000000,"complete":false,"partial":true,"reason":"Unexpected fixture route (no canonical fallback allowed): /market-data/v2/history/walls/horizon"},"archive":{"profileId":"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1","state":"partial","requestComplete":false,"rangeComplete":false,"from":1800000000000,"to":1800108000000,"market":"perpetual","aggregation":"native","gaps":[],"requestedBandPercent":10,"profileBandPercent":10,"requestedTopN":8,"exact":true,"reason":"Unexpected fixture route (no canonical fallback allowed): /market-data/v2/history/walls/horizon","retryable":true},"currentSubscribed":false}: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/wall-repeated-continuation.test.ts:19:194
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  09:37:05
+   Duration  1.98s (tests 58%, transform 36%, import 5%)
+

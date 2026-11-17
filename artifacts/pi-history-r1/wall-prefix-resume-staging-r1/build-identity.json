@@ -1,0 +1,9 @@
+{
+  "backendBuild": "2ff39ccadf90605bd18a8e17d4e5da146b17a57c",
+  "bundleSha256": "81a95382e692105c095488e612b8f0f93aeff6896466125438f5533ad7f1c99b",
+  "servingBuild": "dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51",
+  "existingRoot": "/home/daz/iqterminal-wall-rolling-defaults-r1",
+  "isolatedOutput": "/home/daz/iqterminal-wall-prefix-verify-r1",
+  "resumesBuild": "b0f0209795e22e64961b27d0a6e38ef13d21fa49",
+  "scope": "Explicit resume after verified terminal SQL socket failure, same isolated output root. Completed Spot evidence retained; USD-M base horizon/checkpoint retained; its unstarted target may pin a new horizon."
+}

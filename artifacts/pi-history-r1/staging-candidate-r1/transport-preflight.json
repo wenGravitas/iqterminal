@@ -1,0 +1,31 @@
+{
+  "state": "missing",
+  "eligibility": {
+    "version": 1,
+    "kind": "wall-eligible-discovery-v1",
+    "requested": {
+      "market": "perpetual",
+      "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+      "from": 1794271500000,
+      "to": 1794381300000
+    },
+    "request": {
+      "market": "perpetual",
+      "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+      "from": 1794271500000,
+      "to": 1794381300000
+    },
+    "horizon": {
+      "version": 1,
+      "kind": "wall-source-horizon-v1",
+      "market": "perpetual",
+      "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+      "head": {
+        "cursor": 25436196,
+        "epoch": 1794309145901,
+        "at": 1794387954731
+      },
+      "availableFrom": 1793506604584
+    }
+  }
+}

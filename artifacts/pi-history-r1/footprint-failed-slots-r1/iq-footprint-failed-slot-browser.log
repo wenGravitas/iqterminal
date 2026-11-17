@@ -1,0 +1,12 @@
+
+Running 5 tests using 1 worker
+
+(node:71330) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/footprint-history-lifecycle.spec.ts:28:58 › prepared footprint history paints while the authoritative live bootstrap is delayed (8.1s)
+  ✓  2 tests/browser/footprint-history-lifecycle.spec.ts:28:58 › prepared candle-totals history paints while the authoritative live bootstrap is delayed (6.4s)
+  ✓  3 tests/browser/footprint-history-lifecycle.spec.ts:64:52 › a late native candle snapshot cannot move a restored 24h footprint range (legacy) (3.9s)
+  ✓  4 tests/browser/footprint-history-lifecycle.spec.ts:64:52 › a late native candle snapshot cannot move a restored 24h footprint range (batch) (3.6s)
+  ✓  5 tests/browser/footprint-history-lifecycle.spec.ts:134:1 › failed live Totals exposes scoped Retry while healthy native candles and closed history remain (6.5s)
+
+  5 passed (31.9s)

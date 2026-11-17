@@ -1,0 +1,8 @@
+
+Running 1 test using 1 worker
+
+(node:43249) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/wall-repeated-continuation.spec.ts:3:1 › normal USD-M panel retains history through two same-start continuation validations, reopen and an explicit shifted-start fallback (6.4s)
+
+  1 passed (9.7s)

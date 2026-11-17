@@ -1,0 +1,33 @@
+{
+  "applicationBuild": "806aac92a7d22b999fe17c11d71c13db4bbd05d3",
+  "baselineRenderer": "083a8d33894eaafb632171911cd58e78beed280f",
+  "implementationCommits": [
+    "9f8cba3",
+    "806aac9"
+  ],
+  "backendServingBuild": "e122f9d8d3995d5b6b907a1519cd6b2f639fa751",
+  "backendBranchHead": "9bc29cde32f6c94e5f3f87be54315b582c54ad5f",
+  "tests": "1213 passed,2 skipped;37 chart tests;4 browser guard checks",
+  "build": "Staging diagnostics production build/typecheck passed; build.log retained",
+  "nativeComparison": "170 paired stage checks, five per stage/market; identical financial geometry/pixels and unchanged original input hashes. Synthetic tail/correction inputs labelled. Not venue replay or loading/frame/heap acceptance.",
+  "actualApplication": {
+    "samples": 1,
+    "coldUsefulMs": 6238.5,
+    "coldCompleteMs": 17556.89999999851,
+    "warmUsefulMs": 231.20000000298023,
+    "warmValidatedCompleteMs": 5390.39999999851,
+    "financialHash": {
+      "segments": 8293,
+      "runs": 49154,
+      "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e",
+      "fingerprintMs": 182.40000000596046,
+      "encodedBytes": 12512234
+    },
+    "sourceGaps": 35,
+    "scope": "Nov8 fixed historical view; no current wall group. Cold loading targets failed. Not five-run loading or live-wall concurrency acceptance."
+  },
+  "protectedIdentitiesMatch": true,
+  "testWindows": 0,
+  "runtimeRefreshNov9": "Remote API and seven protected identities reverified. Local preview/tunnel listeners absent; failed refresh retained separately. Nov8 evidence is not relabelled as a running Nov9 client.",
+  "remaining": "Loading acceptance incomplete; full reproject/correction costs, rolling wall preparation, current concurrency/cursor proof, repeated app heap plateau and foreground UX remain. No production deploy/main merge, serving/collector change."
+}

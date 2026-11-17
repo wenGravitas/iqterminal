@@ -1,0 +1,574 @@
+{
+  "phase": "parent",
+  "utc": "2026-11-15T11:06:58.979Z",
+  "elapsedMs": 33289.609264,
+  "current": {
+    "history": {
+      "views": 0,
+      "ready": true,
+      "validated": true,
+      "ranges": [],
+      "capacityLimited": false
+    },
+    "state": "live",
+    "message": "Staging · durable execution stream · delivery 83ms",
+    "lastUpdate": 1794740818339,
+    "tickSize": 0.1,
+    "rowSize": 25,
+    "collectionStartedAt": 1794135995741,
+    "firstTradeAt": 1794740700000,
+    "lastTradeAt": 1794740817685,
+    "eventTime": null,
+    "outages": 0,
+    "capacityDrops": 0,
+    "unknownSideRecords": 0,
+    "unknownSideVolume": 0,
+    "lateRecords": 0,
+    "retentionStart": 1794740700,
+    "coverage": "partial",
+    "transport": {
+      "cursor": 3525759190,
+      "backendSentAtMs": 1794740818351,
+      "workerReceivedAtMs": 1794740818433,
+      "workerAppliedAtMs": 1794740818434
+    }
+  },
+  "currentWalls": {
+    "state": "live",
+    "message": "Current selected-profile walls are updating while archive history loads.",
+    "coverage": {
+      "from": 1794712500000,
+      "to": 1794740788937,
+      "complete": false,
+      "partial": true,
+      "reason": "This view is beyond the observed archive horizon; no past interval is eligible yet."
+    },
+    "archive": {
+      "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+      "state": "partial",
+      "from": 1794712500000,
+      "to": 1794740788937,
+      "rangeComplete": false,
+      "market": "perpetual",
+      "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+      "aggregation": "native",
+      "gaps": [],
+      "requestedBandPercent": 10,
+      "profileBandPercent": 10,
+      "requestedTopN": 8,
+      "exact": true,
+      "requestComplete": true,
+      "eligibleTo": 1794712500000,
+      "horizonAt": 1794692373693,
+      "reason": "This view is beyond the observed archive horizon; no past interval is eligible yet.",
+      "profileStatus": "backfilling",
+      "midpoint": "65442.65"
+    },
+    "lastConfirmedAt": 1794740811532,
+    "bookScope": {
+      "maxLevelsPerSide": 1000,
+      "bidComplete": false,
+      "askComplete": false,
+      "bidFloor": 65316.6,
+      "askCeiling": 65611.3
+    },
+    "currentSubscribed": true
+  },
+  "currentWallsRender": {
+    "draws": 59,
+    "rebuilds": 2,
+    "patchProjects": 96,
+    "segments": 16,
+    "visible": 6,
+    "visibleHistorical": 0,
+    "visibleCurrent": 6,
+    "bytes": 3712,
+    "renderMs": 40.600000005215406,
+    "maxRenderMs": 7.899999998509884,
+    "strokes": 6,
+    "lastProjectMs": 0,
+    "lastReferenceMs": 0,
+    "lastPaintMs": 0,
+    "referenceRebuilds": 2,
+    "referenceSegments": 0,
+    "referenceValueScans": 0,
+    "paintCacheHits": 53,
+    "paintCacheBuilds": 5,
+    "paintStyleVisits": 30,
+    "closedPaintCacheHits": 3,
+    "closedPaintCacheBuilds": 2,
+    "closedPaintCacheAppends": 0,
+    "closedPaintStyleVisits": 0,
+    "settingsNoops": 6,
+    "mappingChecks": 59,
+    "mappingFallbacks": 0,
+    "paintedViewport": {
+      "fromMs": 1794713914285.7144,
+      "toMs": 1794744000000,
+      "minPrice": 63444.6125,
+      "maxPrice": 66387.4875,
+      "plotWidth": 234,
+      "plotHeight": 792
+    },
+    "inputRevision": 37,
+    "paintedRevision": 37,
+    "pendingProjectionSegments": 0,
+    "pendingPaintWork": false,
+    "queuedPreparation": false,
+    "preparation": {
+      "slices": 59,
+      "steps": 226,
+      "cancelled": 1,
+      "activeMs": 18.5,
+      "lastProjectionElapsedMs": 0,
+      "lastReferenceElapsedMs": 0.09999999776482582,
+      "lastSliceMs": 0.09999999776482582,
+      "maxSliceMs": 7.199999999254942,
+      "backgroundMs": 0,
+      "maxBackgroundMs": 0,
+      "yieldMode": "user-visible-post-task",
+      "phase": "idle"
+    },
+    "retainedPaintPaths": 6,
+    "retainedClosedPaintPaths": 0,
+    "retainedClosedPaintSegments": 0,
+    "pendingClosedPaintSegments": 0,
+    "retainedSegments": 16,
+    "openSegments": 16,
+    "retainedReferenceSegments": 6,
+    "referenceExtentValues": 6,
+    "pendingReferenceSegments": 0,
+    "referenceMinimum": 5153114.7066,
+    "referenceMaximum": 14072042.4,
+    "retainedDrawables": 6,
+    "p95RenderMs": 5,
+    "mounted": true,
+    "archiveSegments": 0,
+    "directSegments": 16,
+    "valueRuns": 16,
+    "archiveValueRuns": 0,
+    "directValueRuns": 16,
+    "valueHistoryLimited": false,
+    "episodeHistoryLimited": false
+  },
+  "status": {
+    "state": "gap",
+    "message": "Depth continuity gaps are present in the requested range",
+    "coverage": {
+      "from": 1794541500000,
+      "to": 1794651300000,
+      "complete": false,
+      "partial": true,
+      "reason": "Depth continuity gaps are present in the requested range"
+    },
+    "archive": {
+      "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+      "state": "partial",
+      "from": 1794541500000,
+      "to": 1794651300000,
+      "rangeComplete": false,
+      "market": "perpetual",
+      "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+      "aggregation": "native",
+      "availableFrom": 1793506604584,
+      "confirmedTo": 1794651300000,
+      "gaps": [
+        {
+          "from": 1794545328626,
+          "to": 1794545328626,
+          "reason": "Observed book capacity: epoch invalidated"
+        },
+        {
+          "from": 1794583867958,
+          "to": 1794583867958,
+          "reason": "Observed book capacity: epoch invalidated"
+        },
+        {
+          "from": 1794597874175,
+          "to": 1794597874175,
+          "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+        },
+        {
+          "from": 1794614640485,
+          "to": 1794614640485,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.28 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "from": 1794646205549,
+          "to": 1794646205549,
+          "reason": "Shared disk watermark"
+        },
+        {
+          "from": 1794648909582,
+          "to": 1794648909582,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.56 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "from": 1794649562919,
+          "to": 1794649562919,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.58 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "from": 1794650185461,
+          "to": 1794650185461,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.61 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        }
+      ],
+      "requestedBandPercent": 10,
+      "profileBandPercent": 10,
+      "requestedTopN": 8,
+      "exact": true,
+      "reason": "Depth continuity gaps are present in the requested range",
+      "requestComplete": true,
+      "loadedThrough": 1794651300000,
+      "profileVersion": 1,
+      "algorithmVersion": 1,
+      "schemaVersion": 1,
+      "midpoint": "67223.65",
+      "eligibleTo": 1794651300000,
+      "horizonAt": 1794692347684
+    },
+    "currentSubscribed": false
+  },
+  "view": {
+    "from": 1794542850,
+    "to": 1794649950
+  },
+  "render": {
+    "draws": 150,
+    "rebuilds": 2,
+    "patchProjects": 92450,
+    "segments": 46225,
+    "visible": 99483,
+    "visibleHistorical": 99483,
+    "visibleCurrent": 0,
+    "bytes": 15997120,
+    "renderMs": 728.8000000007451,
+    "maxRenderMs": 38.399999998509884,
+    "strokes": 7,
+    "lastProjectMs": 0,
+    "lastReferenceMs": 0,
+    "lastPaintMs": 0.09999999776482582,
+    "referenceRebuilds": 2,
+    "referenceSegments": 0,
+    "referenceValueScans": 0,
+    "paintCacheHits": 96,
+    "paintCacheBuilds": 47,
+    "paintStyleVisits": 515231,
+    "closedPaintCacheHits": 32,
+    "closedPaintCacheBuilds": 15,
+    "closedPaintCacheAppends": 32,
+    "closedPaintStyleVisits": 515231,
+    "settingsNoops": 7,
+    "mappingChecks": 150,
+    "mappingFallbacks": 0,
+    "paintedViewport": {
+      "fromMs": 1794542850000,
+      "toMs": 1794649950000,
+      "minPrice": 65957.4375,
+      "maxPrice": 70658.0625,
+      "plotWidth": 1034,
+      "plotHeight": 828
+    },
+    "inputRevision": 93,
+    "paintedRevision": 93,
+    "pendingProjectionSegments": 0,
+    "pendingPaintWork": false,
+    "queuedPreparation": false,
+    "preparation": {
+      "slices": 780,
+      "steps": 212313,
+      "cancelled": 0,
+      "activeMs": 5583.399999991059,
+      "lastProjectionElapsedMs": 0,
+      "lastReferenceElapsedMs": 0,
+      "lastSliceMs": 0,
+      "maxSliceMs": 133.59999999776483,
+      "backgroundMs": 5142.600000042468,
+      "maxBackgroundMs": 133.69999999925494,
+      "yieldMode": "user-visible-post-task",
+      "phase": "idle"
+    },
+    "retainedPaintPaths": 7,
+    "retainedClosedPaintPaths": 7,
+    "retainedClosedPaintSegments": 35382,
+    "pendingClosedPaintSegments": 0,
+    "retainedSegments": 46225,
+    "openSegments": 16,
+    "retainedReferenceSegments": 35382,
+    "referenceExtentValues": 26793,
+    "pendingReferenceSegments": 0,
+    "referenceMinimum": 434133.63,
+    "referenceMaximum": 65692764.8575,
+    "retainedDrawables": 99483,
+    "p95RenderMs": 10.899999998509884,
+    "mounted": true,
+    "archiveSegments": 46225,
+    "directSegments": 0,
+    "valueRuns": 178048,
+    "archiveValueRuns": 178048,
+    "directValueRuns": 0,
+    "valueHistoryLimited": false,
+    "episodeHistoryLimited": false
+  },
+  "staging": {
+    "historyLoadAttempts": [],
+    "nativePresentation": {
+      "hits": 1,
+      "admissions": 4,
+      "capacityMisses": 0,
+      "entries": 2,
+      "rows": 150,
+      "accountedBytes": 82756,
+      "activeLeases": 2,
+      "retainedKeys": 2,
+      "limits": {
+        "entries": 2,
+        "rows": 1000,
+        "accountedBytes": 1048576,
+        "ttlMs": 60000,
+        "activeLeases": 128
+      }
+    },
+    "scheduler": {
+      "submitted": 12,
+      "coalesced": 1,
+      "cancelled": 0,
+      "completed": 12,
+      "failed": 0,
+      "peakActive": 2,
+      "queueMs": 1.5999999977648258,
+      "runMs": 47743.29999999702,
+      "active": 0,
+      "queued": 0
+    },
+    "requests": [
+      {
+        "id": "view-c23b9256-e709-4fef-95a3-52b84c855187-1",
+        "url": "/market-data/v1/native-candles?interval=15m&from=1794542400000",
+        "eligibleAt": 120.40000000223517,
+        "wireAt": 136.69999999925494,
+        "queueMs": 16.299999997019768,
+        "headersAt": 1072.9000000022352,
+        "headerMs": 936.2000000029802,
+        "requestId": "9ee79991-3910-4486-8135-2b7194dbfa18",
+        "serverTiming": "admission;dur=0, db;dur=0.00, dbdecode;dur=0.00, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=0.28, total;dur=274.95, legacy;dur=279.38, proxyqueue;dur=1.37, proxyheader;dur=901.99",
+        "encodedBytes": 8358,
+        "proxyQueueMs": 1.37,
+        "proxyHeaderMs": 901.99,
+        "receivedAt": 1074.699999999255,
+        "transferMs": 1.7999999970197678,
+        "decodedBytes": 32461,
+        "decodedAt": 1075.199999999255,
+        "decodeMs": 0.5,
+        "receivedBars": 221,
+        "receivedFrom": 1794542400000,
+        "receivedLast": 1794740400000
+      }
+    ],
+    "config": {
+      "historyTaskYield": "user-visible-post-task",
+      "historyBackgroundYield": "background-post-task",
+      "dataMode": "staging",
+      "historyTiles": true,
+      "build": "5a09b80039af79051c21310a48d9fe4715f4674e"
+    },
+    "views": [],
+    "source": "staging",
+    "transport": "websocket",
+    "streams": [
+      {
+        "key": "binance:perpetual:BTCUSDT:15m",
+        "connected": true,
+        "lastHeartbeat": 1794740817865,
+        "native": {
+          "historyReady": true,
+          "historyLoading": false,
+          "historyRetryAt": 0,
+          "lastCandleReceivedAt": 1794740817865,
+          "retainedStreamVersions": 2,
+          "viewportHistory": {
+            "requests": 1,
+            "receivedBars": 240,
+            "presentedBars": 0,
+            "applyMs": 3.399999998509884,
+            "retainedOHLC": 0,
+            "views": 2,
+            "busy": 0,
+            "retainedTimes": 150
+          }
+        }
+      },
+      {
+        "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+        "cursor": 3525759138,
+        "executionProof": {
+          "generation": 2,
+          "socketStarts": 1,
+          "disconnects": 0,
+          "errors": 0,
+          "resets": 0,
+          "appliedBatches": 42,
+          "appliedExecutions": 295,
+          "acksSent": 42,
+          "confirmedAckBatches": 41,
+          "sourceCursorJumps": 0,
+          "maxApplyMs": 44.099999997764826,
+          "maxReceiptGapMs": 1646.800000000745,
+          "lastReceiptMonoMs": 30595.900000002235,
+          "lastAfter": 3525759137,
+          "lastAppliedCursor": 3525759138,
+          "lastConfirmedAckCursor": 3525759137
+        },
+        "connected": true,
+        "deliveryMs": 60,
+        "lastHeartbeat": 1794740817702
+      }
+    ],
+    "groups": 2,
+    "subscriptions": 3,
+    "retainedLiveBars": 1,
+    "preparedClosedBars": 0,
+    "retainedBars": 1001
+  },
+  "trace": {
+    "seq": 260,
+    "events": [
+      {
+        "seq": 255,
+        "event": "message",
+        "mono": 31119.5,
+        "id": 0,
+        "bytes": 292,
+        "type": "native-candle"
+      },
+      {
+        "seq": 256,
+        "event": "ack-accepted",
+        "mono": 31326.800000000745,
+        "id": 2,
+        "cursor": 3525759138
+      },
+      {
+        "seq": 257,
+        "event": "message",
+        "mono": 31326.900000002235,
+        "id": 2,
+        "bytes": 26700,
+        "type": "executions",
+        "after": 3525759138,
+        "cursor": 3525759190,
+        "watermark": 3525759190
+      },
+      {
+        "seq": 258,
+        "event": "send",
+        "mono": 31327.699999999255,
+        "id": 2,
+        "readyState": 1,
+        "command": {
+          "type": "ack",
+          "cursor": 3525759190
+        }
+      },
+      {
+        "seq": 259,
+        "event": "message",
+        "mono": 31535.900000002235,
+        "id": 4,
+        "bytes": 2895,
+        "type": "level-watch"
+      },
+      {
+        "seq": 260,
+        "event": "send",
+        "mono": 31536.699999999255,
+        "id": 4,
+        "readyState": 1,
+        "command": {
+          "type": "ack",
+          "cursor": 4936
+        }
+      }
+    ],
+    "sockets": [
+      {
+        "id": 0,
+        "url": "ws://127.0.0.1:4204/market-data/v1/stream",
+        "readyState": 1,
+        "subscription": {
+          "type": "subscribe",
+          "after": 0,
+          "from": 1794739887954,
+          "interval": "15m"
+        },
+        "openMono": 847.6000000014901,
+        "lastCompleteMono": 31119.400000002235
+      },
+      {
+        "id": 1,
+        "url": "ws://127.0.0.1:4204/market-data/v1/level-watches/stream",
+        "readyState": 3,
+        "subscription": {
+          "type": "subscribe",
+          "after": 4936
+        },
+        "openMono": 3289.900000002235,
+        "lastCompleteMono": 3719.400000002235,
+        "pendingAck": 4936,
+        "appliedViaAck": 4936,
+        "close": {
+          "code": 1008,
+          "reason": "Invalid command",
+          "mono": 4556.400000002235
+        }
+      },
+      {
+        "id": 2,
+        "url": "ws://127.0.0.1:4204/market-data/v1/stream",
+        "readyState": 1,
+        "subscription": {
+          "type": "subscribe",
+          "after": 3525758843,
+          "from": 1794740700000
+        },
+        "openMono": 3956,
+        "lastCompleteMono": 31326.800000000745,
+        "pendingAck": 3525759190,
+        "confirmedAck": 3525759138,
+        "appliedViaAck": 3525759190
+      },
+      {
+        "id": 3,
+        "url": "ws://127.0.0.1:4204/market-data/v1/level-watches/stream",
+        "readyState": 3,
+        "subscription": {
+          "type": "subscribe",
+          "after": 4936
+        },
+        "openMono": 6410.900000002235,
+        "lastCompleteMono": 6606.300000000745,
+        "pendingAck": 4936,
+        "appliedViaAck": 4936,
+        "close": {
+          "code": 1008,
+          "reason": "Invalid command",
+          "mono": 7358.900000002235
+        }
+      },
+      {
+        "id": 4,
+        "url": "ws://127.0.0.1:4204/market-data/v1/level-watches/stream",
+        "readyState": 1,
+        "subscription": {
+          "type": "subscribe",
+          "after": 4936
+        },
+        "openMono": 9210.900000002235,
+        "lastCompleteMono": 31535.900000002235,
+        "pendingAck": 4936,
+        "appliedViaAck": 4936
+      }
+    ]
+  }
+}

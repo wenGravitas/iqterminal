@@ -1,0 +1,24 @@
+ M artifacts/pi-history-integration-startup-r1/tunnel.log
+?? artifacts/pi-forwarded-route-r2/baseline-client.jsonl
+?? artifacts/pi-forwarded-route-r2/baseline-server-review-summary.json
+?? artifacts/pi-forwarded-route-r2/baseline-server.jsonl
+?? artifacts/pi-forwarded-route-r2/control-events.jsonl
+?? artifacts/pi-forwarded-route-r2/control-stderr.txt
+?? artifacts/pi-forwarded-route-r2/fresh-now-usdm/samples.jsonl
+?? artifacts/pi-forwarded-route-r2/remote-preflight-error.txt
+?? artifacts/pi-forwarded-route-r2/startups-five/samples.jsonl
+?? artifacts/pi-forwarded-route-r2/verification-client.jsonl
+?? artifacts/pi-forwarded-route-r2/verification-local-channel-queues.txt
+?? artifacts/pi-forwarded-route-r2/verification-server.jsonl
+?? artifacts/pi-forwarded-route-r2/workload.jsonl
+?? artifacts/pi-history-integration-startup-r1/browser-test-output/
+?? artifacts/pi-history-integration-startup-r1/dist-diagnostic/
+?? artifacts/pi-history-r1/candle-totals-delayed-live.png
+?? artifacts/pi-history-r1/candle-totals-five-closed-hours.png
+?? artifacts/pi-history-r1/footprint-delayed-live.png
+?? artifacts/pi-history-r1/footprint-five-closed-hours.png
+?? artifacts/pi-history-r1/late-current-future-whitespace-footprint.png
+?? artifacts/pi-replay-history-r3/
+?? node_modules
+?? scripts/__pycache__/
+?? scripts/pi-route-r2-recovery.mjs

@@ -1,0 +1,100 @@
+{"label": "footprint-materializer", "ms": 1.9248202443122864, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410193416}, "timeUtcMs": 1794410194540}
+{"label": "collector", "ms": 2.347836270928383, "state": "live", "status": null, "timeUtcMs": 1794410194542}
+{"label": "footprint-materializer", "ms": 2.026773989200592, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410195660}, "timeUtcMs": 1794410196544}
+{"label": "collector", "ms": 3.3417372032999992, "state": "live", "status": null, "timeUtcMs": 1794410196548}
+{"label": "footprint-materializer", "ms": 0.9174877777695656, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410197548}, "timeUtcMs": 1794410198549}
+{"label": "collector", "ms": 2.3243017494678497, "state": "live", "status": null, "timeUtcMs": 1794410198551}
+{"label": "footprint-materializer", "ms": 1.1706668883562088, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410198695}, "timeUtcMs": 1794410200553}
+{"label": "collector", "ms": 2.243335358798504, "state": "live", "status": null, "timeUtcMs": 1794410200555}
+{"label": "footprint-materializer", "ms": 0.78529492020607, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410201542}, "timeUtcMs": 1794410202556}
+{"label": "collector", "ms": 2.278432250022888, "state": "live", "status": null, "timeUtcMs": 1794410202558}
+{"label": "footprint-materializer", "ms": 1.8840041011571884, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410203482}, "timeUtcMs": 1794410204560}
+{"label": "collector", "ms": 3.7470879033207893, "state": "live", "status": null, "timeUtcMs": 1794410204564}
+{"label": "footprint-materializer", "ms": 2.844488248229027, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410205710}, "timeUtcMs": 1794410206567}
+{"label": "collector", "ms": 7.866689935326576, "state": "live", "status": null, "timeUtcMs": 1794410206575}
+{"label": "footprint-materializer", "ms": 4.256779327988625, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410207607}, "timeUtcMs": 1794410208579}
+{"label": "collector", "ms": 9.419052861630917, "state": "live", "status": null, "timeUtcMs": 1794410208589}
+{"label": "footprint-materializer", "ms": 2.912747673690319, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410209354}, "timeUtcMs": 1794410210592}
+{"label": "collector", "ms": 8.803509175777435, "state": "live", "status": null, "timeUtcMs": 1794410210601}
+{"label": "footprint-materializer", "ms": 1.3307780027389526, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410211397}, "timeUtcMs": 1794410212602}
+{"label": "collector", "ms": 3.667145036160946, "state": "live", "status": null, "timeUtcMs": 1794410212606}
+{"label": "footprint-materializer", "ms": 1.0025976225733757, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410213643}, "timeUtcMs": 1794410214607}
+{"label": "collector", "ms": 2.306712791323662, "state": "live", "status": null, "timeUtcMs": 1794410214610}
+{"label": "footprint-materializer", "ms": 1.2741899117827415, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410214884}, "timeUtcMs": 1794410216611}
+{"label": "collector", "ms": 2.209516242146492, "state": "live", "status": null, "timeUtcMs": 1794410216613}
+{"label": "footprint-materializer", "ms": 0.9388476610183716, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410217583}, "timeUtcMs": 1794410218614}
+{"label": "collector", "ms": 2.519090659916401, "state": "live", "status": null, "timeUtcMs": 1794410218617}
+{"label": "footprint-materializer", "ms": 0.9041605517268181, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410219351}, "timeUtcMs": 1794410220618}
+{"label": "collector", "ms": 2.5827568024396896, "state": "live", "status": null, "timeUtcMs": 1794410220620}
+{"label": "footprint-materializer", "ms": 3.0541345477104187, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410220886}, "timeUtcMs": 1794410222624}
+{"label": "collector", "ms": 8.951018564403057, "state": "live", "status": null, "timeUtcMs": 1794410222633}
+{"label": "footprint-materializer", "ms": 1.2918822467327118, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410223966}, "timeUtcMs": 1794410224634}
+{"label": "collector", "ms": 2.6230020448565483, "state": "live", "status": null, "timeUtcMs": 1794410224637}
+{"label": "footprint-materializer", "ms": 1.1667516082525253, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410225508}, "timeUtcMs": 1794410226638}
+{"label": "collector", "ms": 3.118532709777355, "state": "live", "status": null, "timeUtcMs": 1794410226641}
+{"label": "footprint-materializer", "ms": 3.501884639263153, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410227608}, "timeUtcMs": 1794410228645}
+{"label": "collector", "ms": 6.3039325177669525, "state": "live", "status": null, "timeUtcMs": 1794410228651}
+{"label": "footprint-materializer", "ms": 1.417604275047779, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410229305}, "timeUtcMs": 1794410230653}
+{"label": "collector", "ms": 3.968873992562294, "state": "live", "status": null, "timeUtcMs": 1794410230657}
+{"label": "footprint-materializer", "ms": 3.7154024466872215, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410231621}, "timeUtcMs": 1794410232661}
+{"label": "collector", "ms": 7.958818227052689, "state": "live", "status": null, "timeUtcMs": 1794410232669}
+{"label": "footprint-materializer", "ms": 3.3384691923856735, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410233068}, "timeUtcMs": 1794410234673}
+{"label": "collector", "ms": 7.5583625584840775, "state": "live", "status": null, "timeUtcMs": 1794410234680}
+{"label": "footprint-materializer", "ms": 2.8075817972421646, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410235969}, "timeUtcMs": 1794410236683}
+{"label": "collector", "ms": 7.301046513020992, "state": "live", "status": null, "timeUtcMs": 1794410236691}
+{"label": "footprint-materializer", "ms": 1.4997255057096481, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410237592}, "timeUtcMs": 1794410238692}
+{"label": "collector", "ms": 5.2764564752578735, "state": "live", "status": null, "timeUtcMs": 1794410238698}
+{"label": "footprint-materializer", "ms": 4.095013253390789, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410239632}, "timeUtcMs": 1794410240702}
+{"label": "collector", "ms": 5.089147016406059, "state": "live", "status": null, "timeUtcMs": 1794410240707}
+{"label": "footprint-materializer", "ms": 2.4520130828022957, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410241868}, "timeUtcMs": 1794410242710}
+{"label": "collector", "ms": 6.053377874195576, "state": "live", "status": null, "timeUtcMs": 1794410242716}
+{"label": "footprint-materializer", "ms": 1.1194134131073952, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410243480}, "timeUtcMs": 1794410244717}
+{"label": "collector", "ms": 2.529516816139221, "state": "live", "status": null, "timeUtcMs": 1794410244720}
+{"label": "footprint-materializer", "ms": 2.0381445065140724, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410245848}, "timeUtcMs": 1794410246722}
+{"label": "collector", "ms": 5.051508545875549, "state": "live", "status": null, "timeUtcMs": 1794410246727}
+{"label": "footprint-materializer", "ms": 0.8868295699357986, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410247214}, "timeUtcMs": 1794410248728}
+{"label": "collector", "ms": 1.9464818760752678, "state": "live", "status": null, "timeUtcMs": 1794410248730}
+{"label": "footprint-materializer", "ms": 0.9152377024292946, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410249468}, "timeUtcMs": 1794410250731}
+{"label": "collector", "ms": 2.783689647912979, "state": "live", "status": null, "timeUtcMs": 1794410250734}
+{"label": "footprint-materializer", "ms": 0.7724324241280556, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410251293}, "timeUtcMs": 1794410252735}
+{"label": "collector", "ms": 2.400226891040802, "state": "live", "status": null, "timeUtcMs": 1794410252737}
+{"label": "footprint-materializer", "ms": 2.689402550458908, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410254033}, "timeUtcMs": 1794410254740}
+{"label": "collector", "ms": 7.589922286570072, "state": "live", "status": null, "timeUtcMs": 1794410254748}
+{"label": "footprint-materializer", "ms": 0.8913148194551468, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410255507}, "timeUtcMs": 1794410256749}
+{"label": "collector", "ms": 2.8059715405106544, "state": "live", "status": null, "timeUtcMs": 1794410256752}
+{"label": "footprint-materializer", "ms": 3.3844076097011566, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410257797}, "timeUtcMs": 1794410258755}
+{"label": "collector", "ms": 8.535336703062057, "state": "live", "status": null, "timeUtcMs": 1794410258764}
+{"label": "footprint-materializer", "ms": 1.1296961456537247, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410259809}, "timeUtcMs": 1794410260765}
+{"label": "collector", "ms": 2.3785047233104706, "state": "live", "status": null, "timeUtcMs": 1794410260768}
+{"label": "footprint-materializer", "ms": 1.170814037322998, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410261382}, "timeUtcMs": 1794410262769}
+{"label": "collector", "ms": 2.2772392258048058, "state": "live", "status": null, "timeUtcMs": 1794410262771}
+{"label": "footprint-materializer", "ms": 2.9701804742217064, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410263829}, "timeUtcMs": 1794410264774}
+{"label": "collector", "ms": 8.172772824764252, "state": "live", "status": null, "timeUtcMs": 1794410264783}
+{"label": "footprint-materializer", "ms": 1.0841777548193932, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410265200}, "timeUtcMs": 1794410266784}
+{"label": "collector", "ms": 2.437903545796871, "state": "live", "status": null, "timeUtcMs": 1794410266786}
+{"label": "footprint-materializer", "ms": 3.509482368826866, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410267505}, "timeUtcMs": 1794410268790}
+{"label": "collector", "ms": 9.362677112221718, "state": "live", "status": null, "timeUtcMs": 1794410268799}
+{"label": "footprint-materializer", "ms": 3.2299449667334557, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410269557}, "timeUtcMs": 1794410270803}
+{"label": "collector", "ms": 8.27677734196186, "state": "live", "status": null, "timeUtcMs": 1794410270811}
+{"label": "footprint-materializer", "ms": 2.6039183139801025, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410271729}, "timeUtcMs": 1794410272814}
+{"label": "collector", "ms": 7.852079346776009, "state": "live", "status": null, "timeUtcMs": 1794410272822}
+{"label": "footprint-materializer", "ms": 1.383211463689804, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410273102}, "timeUtcMs": 1794410274824}
+{"label": "collector", "ms": 2.881408669054508, "state": "live", "status": null, "timeUtcMs": 1794410274827}
+{"label": "footprint-materializer", "ms": 0.9580850601196289, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410275703}, "timeUtcMs": 1794410276828}
+{"label": "collector", "ms": 2.390088513493538, "state": "live", "status": null, "timeUtcMs": 1794410276830}
+{"label": "footprint-materializer", "ms": 1.2383190914988518, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410277556}, "timeUtcMs": 1794410278832}
+{"label": "collector", "ms": 2.6338761672377586, "state": "live", "status": null, "timeUtcMs": 1794410278834}
+{"label": "footprint-materializer", "ms": 1.9626179710030556, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410278722}, "timeUtcMs": 1794410280836}
+{"label": "collector", "ms": 6.182529032230377, "state": "live", "status": null, "timeUtcMs": 1794410280843}
+{"label": "footprint-materializer", "ms": 1.0047433897852898, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410281744}, "timeUtcMs": 1794410282844}
+{"label": "collector", "ms": 2.7085086330771446, "state": "live", "status": null, "timeUtcMs": 1794410282846}
+{"label": "footprint-materializer", "ms": 1.077350229024887, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410283795}, "timeUtcMs": 1794410284848}
+{"label": "collector", "ms": 2.7052611112594604, "state": "live", "status": null, "timeUtcMs": 1794410284850}
+{"label": "footprint-materializer", "ms": 3.3530816435813904, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410285788}, "timeUtcMs": 1794410286854}
+{"label": "collector", "ms": 8.765006437897682, "state": "live", "status": null, "timeUtcMs": 1794410286863}
+{"label": "footprint-materializer", "ms": 1.0447176173329353, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410287217}, "timeUtcMs": 1794410288864}
+{"label": "collector", "ms": 2.6478199288249016, "state": "live", "status": null, "timeUtcMs": 1794410288867}
+{"label": "footprint-materializer", "ms": 3.525111824274063, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410289717}, "timeUtcMs": 1794410290870}
+{"label": "collector", "ms": 7.702416740357876, "state": "live", "status": null, "timeUtcMs": 1794410290878}
+{"label": "footprint-materializer", "ms": 0.8912170305848122, "state": "ready", "status": {"state": "live", "lastUpdate": 1794410291537}, "timeUtcMs": 1794410292879}
+{"label": "collector", "ms": 2.3635467514395714, "state": "live", "status": null, "timeUtcMs": 1794410292882}

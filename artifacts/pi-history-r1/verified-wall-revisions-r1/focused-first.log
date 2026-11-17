@@ -1,0 +1,135 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/order-walls-archive.test.ts (49 tests | 5 failed) 5084ms
+   ❯ OrderWallsArchiveCurrentPoller (3)
+     × does not join current state across a historical request that ends before the fixed head 25ms
+   ❯ OrderWallsArchiveService fixed-watermark identity bridge (19)
+     × maps a checkpoint ID to the latest same-price archive reentry only at an exact verified fence 11ms
+     × keeps archive and current episodes separate when same-price checkpoint values disagree 9ms
+     × censors the archive span and starts a fresh identity after a current gap/replacement epoch 8ms
+     × keeps bounded current gap markers in archive coverage after the verified history fence 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/order-walls-archive.test.ts > OrderWallsArchiveCurrentPoller > does not join current state across a historical request that ends before the fixed head
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/order-walls-archive.test.ts:672:122
+    670|       await flush();
+    671|       const published = events.filter(event => event.type === 'order-w…
+    672|       expect(published.some((patch: any) => patch.segment?.start === h…
+       |                                                                                                                          ^
+    673|       expect(published.some((patch: any) => patch.segment?.start === f…
+    674|     } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/order-walls-archive.test.ts > OrderWallsArchiveService fixed-watermark identity bridge > maps a checkpoint ID to the latest same-price archive reentry only at an exact verified fence
+AssertionError: expected [ { …(21) }, { …(21) }, { …(22) } ] to have a length of 2 but got 3
+
+- Expected
++ Received
+
+- 2
++ 3
+
+ ❯ tests/order-walls-archive.test.ts:1297:22
+    1295|   it('maps a checkpoint ID to the latest same-price archive reentry on…
+    1296|     const { segments } = await runScenario(false);
+    1297|     expect(segments).toHaveLength(2);
+       |                      ^
+    1298|     expect(segments.find(segment => segment.archiveEntryId === 'archiv…
+    1299|     expect(segments.find(segment => segment.archiveEntryId === 'archiv…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/order-walls-archive.test.ts > OrderWallsArchiveService fixed-watermark identity bridge > keeps archive and current episodes separate when same-price checkpoint values disagree
+AssertionError: expected { …(21) } to match object { end: 1800000015000, …(2) }
+(18 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "end": 1800000015000,
++   "end": null,
+    "endKnown": false,
+-   "endReason": "censored",
++   "endReason": null,
+  }
+
+ ❯ tests/order-walls-archive.test.ts:1311:91
+    1309|     const { segments } = await runScenario(true);
+    1310|     expect(segments).toHaveLength(3);
+    1311|     expect(segments.find(segment => segment.archiveEntryId === 'archiv…
+       |                                                                                           ^
+    1312|       end: from + 15_000, endReason: 'censored', endKnown: false,
+    1313|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tests/order-walls-archive.test.ts > OrderWallsArchiveService fixed-watermark identity bridge > censors the archive span and starts a fresh identity after a current gap/replacement epoch
+AssertionError: expected { …(21) } to match object { end: 1800000015000, …(2) }
+(18 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "end": 1800000015000,
++   "end": null,
+    "endKnown": false,
+-   "endReason": "censored",
++   "endReason": null,
+  }
+
+ ❯ tests/order-walls-archive.test.ts:1322:91
+    1320|     const { segments } = await runScenario(false, true);
+    1321|     expect(segments).toHaveLength(3);
+    1322|     expect(segments.find(segment => segment.archiveEntryId === 'archiv…
+       |                                                                                           ^
+    1323|       end: from + 15_000, endReason: 'censored', endKnown: false,
+    1324|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  tests/order-walls-archive.test.ts > OrderWallsArchiveService fixed-watermark identity bridge > keeps bounded current gap markers in archive coverage after the verified history fence
+AssertionError: expected [] to deep equally contain { from: 1800000016000, …(2) }
+
+- Expected:
+{
+  "from": 1800000016000,
+  "reason": "Depth replacement epoch",
+  "to": 1800000016000,
+}
+
++ Received:
+[]
+
+ ❯ tests/order-walls-archive.test.ts:1333:33
+    1331|   it('keeps bounded current gap markers in archive coverage after the …
+    1332|     const { status } = await runScenario(false, true);
+    1333|     expect(status.archive.gaps).toContainEqual({ from: from + 16_000, …
+       |                                 ^
+    1334|     expect(status.archive.gapsTruncated).toBeUndefined();
+    1335|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  5 failed | 86 passed (91)
+   Start at  08:14:59
+   Duration  7.15s (tests 67%, transform 27%, import 6%)
+
+  Transform  transforming modules took 4.11s · 27% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+

@@ -1,0 +1,953 @@
+{
+  "task": "pi-replay-history-r3",
+  "retained": {
+    "jobId": "940778ce7b1f9265ca019fe787266caddc07da81ad0552d3b0d31e5178e64baa",
+    "request": {
+      "market": "perpetual",
+      "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+      "from": 1794355200000,
+      "to": 1794464342278
+    },
+    "before": null,
+    "rebuiltNotResumed": true,
+    "retriedNewRevision": false,
+    "phaseFirstObservations": [
+      {
+        "phase": "source",
+        "elapsedMs": 34.91574618965387,
+        "pages": 0,
+        "projectionPages": 0,
+        "state": "building"
+      },
+      {
+        "phase": "canonical",
+        "elapsedMs": 2037.2651042416692,
+        "pages": 0,
+        "projectionPages": 0,
+        "state": "building"
+      },
+      {
+        "phase": "projection",
+        "elapsedMs": 66271.5018633753,
+        "pages": 65,
+        "projectionPages": 2,
+        "state": "building"
+      },
+      {
+        "phase": null,
+        "elapsedMs": 115882.01708905399,
+        "pages": null,
+        "projectionPages": null,
+        "state": null
+      }
+    ],
+    "ready": true,
+    "verification": {
+      "result": "all prepared selected part hashes/record counts match",
+      "totals": {
+        "compressedBytes": 1890054,
+        "decodedBytes": 23858640,
+        "parts": 65,
+        "records": 20679
+      },
+      "parts": [
+        {
+          "hash": "26f02a36c027b9298075635a372b09306dae82d3e0c9118b3e7c9e03ed9886e6",
+          "records": 82
+        },
+        {
+          "hash": "ba0d0b7afc2f2664b4b83519cbab952817e2f5bb64c83ab2105a7f1d8c938726",
+          "records": 471
+        },
+        {
+          "hash": "898db9eb5605516ea2d5e9fb2927dd72175d39c18d586024dc5060e9e9065f56",
+          "records": 426
+        },
+        {
+          "hash": "78609f01508b7b5b78ea11e5d92b3d4886303d35ba6da5bbae4d38704fb640c5",
+          "records": 301
+        },
+        {
+          "hash": "dcb109b17fa96ba1ee83c74376f59c587b1027b84d12a30424f3338d2600112f",
+          "records": 476
+        },
+        {
+          "hash": "70b3f87ce594509dc9da2e38b80e4cda17e37f77ac1bd9932efc83f564aeb923",
+          "records": 387
+        },
+        {
+          "hash": "2a276041b04829f706ee424adb3b3075a57752733507aec1ff5f46e24c2750d8",
+          "records": 239
+        },
+        {
+          "hash": "eaff018ad5d54eeb37a2b1d3b7e93d67f34d4a69b443db6ad2801ba4958004a0",
+          "records": 344
+        },
+        {
+          "hash": "7098a1258527456590e6a2477160a31e0480160c8b3896e16a44e2a783b1d4cc",
+          "records": 502
+        },
+        {
+          "hash": "e1f54b1575ad740b6e83f12dd7b3e19b7ecc916f11397a00820e0d9d86884f1f",
+          "records": 283
+        },
+        {
+          "hash": "0a1a97de58e6f7e74172a7c96e5f4d624860fb1b66be5855d9712776be24dbbd",
+          "records": 644
+        },
+        {
+          "hash": "97418ddfc204470868fd9cb1dac93102aae387296bd9abcf28a4fde0744edf82",
+          "records": 232
+        },
+        {
+          "hash": "812242fda141beaa87570a8fc331225fbdbeaf931d4904ebb99406cd7d313bce",
+          "records": 150
+        },
+        {
+          "hash": "145d98f206e6dc13fa66b2f7921844526ac6d1da7481513383bec20287602752",
+          "records": 173
+        },
+        {
+          "hash": "21141d99d61704002f5616af8be49ef7240eb94a527940e24bb67031ccebf1be",
+          "records": 179
+        },
+        {
+          "hash": "155b1d9344246d60591b9a7a95d57f3120953799903634f925fed238d80d9597",
+          "records": 365
+        },
+        {
+          "hash": "ff0ffedd7f253350a0791399e1537413299dda7dd01ecab3acc756b036850265",
+          "records": 145
+        },
+        {
+          "hash": "02b9a2e300fab947a4d4b2e3a58613292ff5bd40c9b0122eee48f37424730291",
+          "records": 276
+        },
+        {
+          "hash": "3515d50f7562eb51329c4db5da1db5d45838da7b6fa4624ecd55ae8b55da4f01",
+          "records": 142
+        },
+        {
+          "hash": "edaf4ba8707de1a2ceee78530f23b1a3da143cc5a9e24b5735ccdbd81b658ae1",
+          "records": 247
+        },
+        {
+          "hash": "42f73af1de28d6ca56708840021ca418a2697381afc577ebe52d33220b568a92",
+          "records": 320
+        },
+        {
+          "hash": "7f1bd488b5d590ab840000053be58355000f2eff0a9544fcda7fc0ebd07df8fb",
+          "records": 369
+        },
+        {
+          "hash": "91e97eff358b9ddcc43841e5580cbfafd6c7d90e50e7d2d4cea6bccb0d0d431c",
+          "records": 270
+        },
+        {
+          "hash": "c0748000cf76517d21ec612d4f82ddd6a3d85d9cf22aede3259b99049a55dfba",
+          "records": 544
+        },
+        {
+          "hash": "b7f021410b885153db05131265f81f6ae1e171faf6a043d78b6af1c485b08435",
+          "records": 415
+        },
+        {
+          "hash": "4dbd4cf8690e2a2c5774f1599fa3d3c8a397fd244d6fe6231f57425a98a16e1a",
+          "records": 203
+        },
+        {
+          "hash": "111c2a1cacc908dabc7921288c99009de801fa9df0d87535e5ab7f5277b62517",
+          "records": 268
+        },
+        {
+          "hash": "30048302e86bc33092abf212e63fd02a52a7be31cac5322e2c07fe816eddb40f",
+          "records": 532
+        },
+        {
+          "hash": "d9210c8fde9726cdcb99991c96801c8fd897cdf1bf30a83b48e9e73dca091326",
+          "records": 756
+        },
+        {
+          "hash": "46b59957359fbbfb962301ded39dd5a6185a6b1e141510c62c6e73b3ca0cf7a4",
+          "records": 859
+        },
+        {
+          "hash": "09108c6beae30d2b4bc6596373a5ede0e2bcf8fd616d1925351edba8d1276abe",
+          "records": 644
+        },
+        {
+          "hash": "1ac3ec64cdfba7de1c570254ae53ccdce05c1055949ad86ba6f6f6e5f70622f2",
+          "records": 397
+        },
+        {
+          "hash": "31b9dd0f4a6903e200c44057653b729c0f0a4a7c688f97ec076560a0695a5db3",
+          "records": 167
+        },
+        {
+          "hash": "dacd9a6b21a4c03c49b1f46c7aa2b9a5e8e29b9c01475d927dbc20ffa43fec79",
+          "records": 660
+        },
+        {
+          "hash": "859c9957936f439ae422b8eed2ecb5a7cb0f244a4084a872a85e81324d8010ee",
+          "records": 548
+        },
+        {
+          "hash": "43bf784c5a119a81ecbbbcbfc8e2a0c13805b6fd9fc4ca217d89ce733bacf6c1",
+          "records": 77
+        },
+        {
+          "hash": "59e1644dbedf0018952f2cea2ad9a01eecc1623a2c9e5892791fce21bda7355c",
+          "records": 204
+        },
+        {
+          "hash": "7207b6c9341835b8d340d8bb200efa408b6635595aa7f55cabf7e9235fba3a56",
+          "records": 275
+        },
+        {
+          "hash": "1e2f83d646a2031b807d0b9b26bdd7bb4fee1303b3d6ee438354380a5b376aff",
+          "records": 216
+        },
+        {
+          "hash": "e6e641a5d00eb001b9edbdef4e652b1c61fa6a96d42e322d8046c032a73a7231",
+          "records": 176
+        },
+        {
+          "hash": "c02abcedc3a63850207fd4f3e701e6f8a21d90d80ccbf0510d8d0ae91ad5b660",
+          "records": 399
+        },
+        {
+          "hash": "3147c2b71653eb4d1312eb8be7036175368a3210221230443c1ad25eb4aebb68",
+          "records": 271
+        },
+        {
+          "hash": "d43b6229c989d6f28110546b936c997e27833f2d2f1fe392b07ac921bcc1c6a8",
+          "records": 254
+        },
+        {
+          "hash": "ce7182bc4409d35bd5be265e0dc9005f20e6810b2af6e10d81dd77c0e06a715a",
+          "records": 462
+        },
+        {
+          "hash": "e26eed32c55c1af51c85d37195522ef5a39499692ffac63bb9bd52a103db3710",
+          "records": 813
+        },
+        {
+          "hash": "4930270221e8300bc2e9820a6d489e0412fe3ff64347be336a6dbcf7c8c0db37",
+          "records": 621
+        },
+        {
+          "hash": "c4dd18d0c3b52e39a6800ebc35330d5bac4964951b7a0d7225b64b9612bef59e",
+          "records": 501
+        },
+        {
+          "hash": "39fe803f3749c28065f1aaf9ed755432858bb891e07764e8698e80f73da0908d",
+          "records": 649
+        },
+        {
+          "hash": "d421149d06e85d1e71eed33770811fd94b9ce0955539f97f2a1c708106edef13",
+          "records": 609
+        },
+        {
+          "hash": "26f3cc7d4a34c40946b1bff5ac6e107f1faa53f15385f11b55c02958c4421141",
+          "records": 327
+        },
+        {
+          "hash": "fc7bc75e8e973dc19673898ff56b586354e688fda0d4cc7a10631c16fc951298",
+          "records": 48
+        },
+        {
+          "hash": "c4bfa4ff08728d2bd4d4be4bb6c6606d6790649fca0250942ff89abc002e4fdd",
+          "records": 182
+        },
+        {
+          "hash": "f0868b6fcee5899b1c17737d4899435f438988082495ba0a10a56ccd721978f6",
+          "records": 143
+        },
+        {
+          "hash": "27254686f1207400e8bd35aa223584852958f37380874370ef38f3d47b1fcf43",
+          "records": 91
+        },
+        {
+          "hash": "9be862bd5e856a8b2df6ca4b9547167fbd189a0748f21e32cad4427248eb7da1",
+          "records": 110
+        },
+        {
+          "hash": "de87e87fd4f2d1a1df0610b9b4882e3a270721e182aa294998136ea05d1f7800",
+          "records": 55
+        },
+        {
+          "hash": "91b56699438ceb65f091f3fa9a66ce4c5281fbb7dd7a16fdd15cbedc75eda6f4",
+          "records": 38
+        },
+        {
+          "hash": "381c12aa4bb0e1b78aa7bcfca4d81630f4dcd4bc9178bf6db58a320c343deaa8",
+          "records": 36
+        },
+        {
+          "hash": "7564a8ba30ac968e13dfc2e3aac05d9f6fcffd7d7b8f4a55a656afadb2a9ae34",
+          "records": 62
+        },
+        {
+          "hash": "7ed1f2c3bc66c2d1256dad8829203411cea89de8cd4dd17674abc65c9c156348",
+          "records": 472
+        },
+        {
+          "hash": "e5d56a0b4a24854e00b91dc8c214628d6b29e92a4faf2c88063610ef224ce173",
+          "records": 294
+        },
+        {
+          "hash": "40f08997187c4e362cb26cc9f9faa529d9d8fa210a21f5da4e990fe179aa06f7",
+          "records": 45
+        },
+        {
+          "hash": "e4160acb8c90c0380fdeafab5f6891fbbb58b6ce7825104c76cd6b8afdf156e0",
+          "records": 20
+        },
+        {
+          "hash": "95122f0a3b005bb090bf52477b2f59d64c10c6e4c26909ef7e1597721f90b09b",
+          "records": 153
+        },
+        {
+          "hash": "85edd010ef1ab192df266be2e9971d1febae1f3cce53eeda9e324d9b120cb989",
+          "records": 60
+        }
+      ],
+      "sourceSnapshot": {
+        "version": 1,
+        "kind": "wall-projection-source-v1",
+        "key": "f1dfcb6216f53b99f7b94117ce3197e7be57b664931f08f67b48c11cab5a5280",
+        "request": {
+          "market": "perpetual",
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794355200000,
+          "to": 1794464342278
+        },
+        "sourceProof": {
+          "market": "perpetual",
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794355200000,
+          "to": 1794464342278,
+          "version": 1,
+          "kind": "wall-source-sha256-xor-v1",
+          "watermark": 26969252,
+          "head": {
+            "cursor": 26969252,
+            "epoch": 1794529843005,
+            "at": 1794543871733
+          },
+          "availableFrom": 1793506604584,
+          "anchor": {
+            "cursor": 25112612,
+            "epoch": 1794309145901,
+            "at": 1794355051254,
+            "hash": "894625e61a601d71299ac250e00b616b9ce1e958a9ce9fe5522335aa4132e6ea"
+          },
+          "records": 83345,
+          "maxCursor": 26186944,
+          "hash": "62738156819622165623993638969337142236543413356832187054950343990588191297489",
+          "token": "1479665eb12e0212c4b8c0a5c2dbc8f920205996382f8b9e29741a704f446bae",
+          "eligible": true
+        },
+        "watermark": 26969252,
+        "head": {
+          "cursor": 26969252,
+          "epoch": 1794529843005,
+          "at": 1794543871733
+        }
+      },
+      "source": {
+        "market": "perpetual",
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794355200000,
+        "to": 1794464342278,
+        "version": 1,
+        "kind": "wall-source-sha256-xor-v1",
+        "watermark": 26970301,
+        "head": {
+          "cursor": 26970301,
+          "epoch": 1794529843005,
+          "at": 1794543978326
+        },
+        "availableFrom": 1793506604584,
+        "anchor": {
+          "cursor": 25112612,
+          "epoch": 1794309145901,
+          "at": 1794355051254,
+          "hash": "894625e61a601d71299ac250e00b616b9ce1e958a9ce9fe5522335aa4132e6ea"
+        },
+        "records": 83345,
+        "maxCursor": 26186944,
+        "hash": "62738156819622165623993638969337142236543413356832187054950343990588191297489",
+        "token": "1479665eb12e0212c4b8c0a5c2dbc8f920205996382f8b9e29741a704f446bae",
+        "eligible": true
+      },
+      "projection": {
+        "version": 2,
+        "key": "b8e1a5a740b6bc4ab1e19901cdce31f3082ae197bb5a28e32f744cb25b186d74",
+        "sourceKey": "f1dfcb6216f53b99f7b94117ce3197e7be57b664931f08f67b48c11cab5a5280",
+        "sourceToken": "1479665eb12e0212c4b8c0a5c2dbc8f920205996382f8b9e29741a704f446bae",
+        "core": "c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c",
+        "complete": true,
+        "settings": {
+          "topLevels": 8,
+          "minimumNotionalEnabled": false,
+          "minimumNotionalUsd": 0,
+          "minDurationMs": 0
+        },
+        "coverage": {
+          "availableFrom": 1793506604584,
+          "requestedFrom": 1794355200000,
+          "requestedTo": 1794464342278,
+          "confirmedTo": 1794464342278,
+          "gaps": [
+            {
+              "cursor": 25475471,
+              "epoch": 1794309145901,
+              "at": 1794391948671,
+              "reason": "Depth disconnected"
+            },
+            {
+              "cursor": 25556260,
+              "epoch": 1794391950295,
+              "at": 1794400167687,
+              "reason": "Shared disk watermark"
+            }
+          ],
+          "gapsTruncated": false,
+          "partial": true,
+          "status": "partial",
+          "reason": "Depth continuity gaps are present in the requested range",
+          "bookScope": null,
+          "midpoint": null
+        },
+        "profile": {
+          "id": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "version": 1,
+          "market": "perpetual",
+          "venue": "binance",
+          "instrument": "binance:perpetual:BTCUSDT",
+          "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+          "aggregation": "native",
+          "bandPercent": 10,
+          "selectionTopN": 10,
+          "minimumNotionalUsd": null,
+          "confirmationMs": 0,
+          "midpointBasis": "best-observed-bid-ask",
+          "topN": 10,
+          "algorithmVersion": 1,
+          "schemaVersion": 1,
+          "exactDerivations": {
+            "bandPercent": [
+              10
+            ],
+            "topNMax": 10,
+            "minimumNotional": true,
+            "confirmation": true,
+            "confirmationCrossings": true
+          }
+        },
+        "activeOrder": [
+          7143,
+          7315,
+          7323,
+          7331,
+          12992,
+          13490,
+          14146,
+          16782,
+          18552,
+          18599,
+          20454,
+          20622,
+          20623,
+          20637,
+          20690,
+          20694
+        ]
+      },
+      "closedReferences": 20679,
+      "requestEvidence": {
+        "market": "perpetual",
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794355200000,
+        "to": 1794464342278
+      },
+      "scope": "Exact retained requested range/source snapshot, manifest and all selected-part integrity. Not a new independent financial replay or Pi paint timing."
+    },
+    "after": {
+      "id": "940778ce7b1f9265ca019fe787266caddc07da81ad0552d3b0d31e5178e64baa",
+      "request": {
+        "market": "perpetual",
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794355200000,
+        "to": 1794464342278
+      },
+      "lane": "visible",
+      "requestedAt": 1794543874758,
+      "updatedAt": 1794543986937,
+      "lastTurn": 84373,
+      "phase": "ready",
+      "pages": 65,
+      "projectionPages": 65,
+      "parts": 65,
+      "projectionDecodedBytes": 23858640,
+      "projectionCompressedBytes": 1890054,
+      "after": 26969252,
+      "decodedBytes": 125932097,
+      "compressedBytes": 5754763,
+      "leased": true,
+      "paused": false,
+      "canonicalManifestReused": false,
+      "sourceKey": "f1dfcb6216f53b99f7b94117ce3197e7be57b664931f08f67b48c11cab5a5280",
+      "coverage": {
+        "status": "partial",
+        "partial": true,
+        "availableFrom": 1793506604584,
+        "confirmedTo": 1794464342278,
+        "gapCount": 2,
+        "gapsTruncated": false,
+        "reason": "Depth continuity gaps are present in the requested range"
+      },
+      "canonicalAvailable": true,
+      "projectionManifestReused": false,
+      "projectionKey": "b8e1a5a740b6bc4ab1e19901cdce31f3082ae197bb5a28e32f744cb25b186d74",
+      "doneAt": 1794543989596,
+      "sourceProof": {
+        "token": "1479665eb12e0212c4b8c0a5c2dbc8f920205996382f8b9e29741a704f446bae",
+        "watermark": 26969252,
+        "from": 1794355200000,
+        "to": 1794464342278,
+        "head": {
+          "cursor": 26969252,
+          "epoch": 1794529843005,
+          "at": 1794543871733
+        },
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1"
+      }
+    },
+    "released": {
+      "result": {
+        "version": 1,
+        "released": true
+      },
+      "http": {
+        "status": 200,
+        "ms": 1.7677824944257736
+      }
+    },
+    "error": null,
+    "firstReadyResponseMs": 115882.01708905399
+  },
+  "freshNow": {
+    "requested": {
+      "from": 1794436106111,
+      "to": 1794544106111
+    },
+    "elapsedMs": 60367.42471099999,
+    "firstCurrentMs": 4115.699999999255,
+    "firstHistoryMs": null,
+    "completeMs": null,
+    "archive": {
+      "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+      "state": "building",
+      "from": 1794434400000,
+      "to": 1794544109722,
+      "rangeComplete": false,
+      "market": "perpetual",
+      "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+      "aggregation": "native",
+      "gaps": [],
+      "requestedBandPercent": 10,
+      "profileBandPercent": 10,
+      "requestedTopN": 8,
+      "exact": true,
+      "requestComplete": false,
+      "eligibleTo": 1794544103582,
+      "horizonAt": 1794544103581,
+      "loadedThrough": 1794434400000,
+      "preparation": {
+        "id": "5ca093cdff0774b0cf1b40ab9d43aac7b5beb5444caf8cda3b908b435c9b1972",
+        "phase": "canonical",
+        "state": "building",
+        "pages": 29,
+        "projectionPages": 0,
+        "sourceCoverage": {
+          "availableFrom": 1793506604584,
+          "confirmedTo": 1794544103581,
+          "gapCount": 2,
+          "gapsTruncated": false
+        }
+      },
+      "reason": "Preparing wall history: canonical; 29 canonical / 0 selected parts.",
+      "profileStatus": "backfilling",
+      "midpoint": "68875.35"
+    },
+    "jobId": "5ca093cdff0774b0cf1b40ab9d43aac7b5beb5444caf8cda3b908b435c9b1972",
+    "firstQueueObservation": {
+      "id": "5ca093cdff0774b0cf1b40ab9d43aac7b5beb5444caf8cda3b908b435c9b1972",
+      "request": {
+        "market": "perpetual",
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794434400000,
+        "to": 1794544103582
+      },
+      "lane": "visible",
+      "phase": "source",
+      "pages": 0,
+      "projectionPages": 0,
+      "parts": 0,
+      "paused": false,
+      "failed": null,
+      "category": null,
+      "error": null,
+      "waitReason": null,
+      "canonicalManifestReused": null,
+      "projectionManifestReused": null,
+      "reuseSourceKey": null,
+      "reuseProjectionKey": null,
+      "reuseProjectionSourceKey": null,
+      "reusedPrefixPages": null,
+      "extensionRejected": null,
+      "sourceKey": null,
+      "projectionKey": null,
+      "defaultOwned": null,
+      "rollingDefault": null,
+      "requestedAt": 1794544110612,
+      "updatedAt": 1794544110612,
+      "doneAt": null
+    },
+    "lastQueueObservation": {
+      "id": "5ca093cdff0774b0cf1b40ab9d43aac7b5beb5444caf8cda3b908b435c9b1972",
+      "request": {
+        "market": "perpetual",
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794434400000,
+        "to": 1794544103582
+      },
+      "lane": "visible",
+      "phase": "canonical",
+      "pages": 31,
+      "projectionPages": 0,
+      "parts": 0,
+      "paused": true,
+      "failed": null,
+      "category": null,
+      "error": null,
+      "waitReason": null,
+      "canonicalManifestReused": false,
+      "projectionManifestReused": null,
+      "reuseSourceKey": "694975f375f645862077031e673973b78ccfed78a178c97ec812e7e4f5b7d40b",
+      "reuseProjectionKey": "ae445ef0d1346ffca0b562ce575d0c68dc723bb8ea20d5f6455e7f4e195462c0",
+      "reuseProjectionSourceKey": "694975f375f645862077031e673973b78ccfed78a178c97ec812e7e4f5b7d40b",
+      "reusedPrefixPages": null,
+      "extensionRejected": null,
+      "sourceKey": "6f2399af1c7ac62d929355cfe41d239359b8418908711be0a74ce9fe1de4b5c2",
+      "projectionKey": null,
+      "defaultOwned": null,
+      "rollingDefault": null,
+      "requestedAt": 1794544110612,
+      "updatedAt": 1794544168583,
+      "doneAt": null
+    },
+    "preparedCandidatesAtStart": [
+      {
+        "id": "996fb91d065e348e29788cf943f3e70d3df189d40ca00ebd9b079ddd5b7ec95b",
+        "request": {
+          "market": "perpetual",
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794431700000,
+          "to": 1794539700000
+        },
+        "lane": "default",
+        "phase": "ready",
+        "pages": 76,
+        "projectionPages": 76,
+        "parts": 76,
+        "paused": false,
+        "failed": null,
+        "category": null,
+        "error": null,
+        "waitReason": null,
+        "canonicalManifestReused": false,
+        "projectionManifestReused": false,
+        "reuseSourceKey": null,
+        "reuseProjectionKey": null,
+        "reuseProjectionSourceKey": null,
+        "reusedPrefixPages": null,
+        "extensionRejected": null,
+        "sourceKey": "9b50b865fd08dc620af2462daf72f7e6fe2664ccf1e152c153f29b8f94f02087",
+        "projectionKey": "e146606c7f3b8aad615a54ada6c1c3a3e9cecf619bf087f877298da3ad7fb043",
+        "defaultOwned": false,
+        "rollingDefault": true,
+        "requestedAt": 1794540604115,
+        "updatedAt": 1794541007112,
+        "doneAt": 1794541010176
+      },
+      {
+        "id": "a4eba115b78a6264f950a31a5387229f734a7b6995bb9b97195d08389d7833d3",
+        "request": {
+          "market": "perpetual",
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794431700000,
+          "to": 1794540600000
+        },
+        "lane": "default",
+        "phase": "ready",
+        "pages": 81,
+        "projectionPages": 81,
+        "parts": 81,
+        "paused": false,
+        "failed": null,
+        "category": null,
+        "error": null,
+        "waitReason": null,
+        "canonicalManifestReused": false,
+        "projectionManifestReused": false,
+        "reuseSourceKey": null,
+        "reuseProjectionKey": null,
+        "reuseProjectionSourceKey": null,
+        "reusedPrefixPages": null,
+        "extensionRejected": null,
+        "sourceKey": "870e37b680c11edd24228fe063a54dd38e848606b5224f4fefabc4925bb2b2a8",
+        "projectionKey": "119e918ad0a0eaa5380cf1a675f97da67b4db2c74fb9c93264b8b75d0ba2a865",
+        "defaultOwned": false,
+        "rollingDefault": true,
+        "requestedAt": 1794540620057,
+        "updatedAt": 1794541020978,
+        "doneAt": 1794541023648
+      },
+      {
+        "id": "073d8cc07d34b5451a6f7771b8f7327e807d1b176cbb5bdc2b71cd729b394544",
+        "request": {
+          "market": "perpetual",
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794432600000,
+          "to": 1794540600000
+        },
+        "lane": "default",
+        "phase": "ready",
+        "pages": 81,
+        "projectionPages": 81,
+        "parts": 81,
+        "paused": false,
+        "failed": null,
+        "category": null,
+        "error": null,
+        "waitReason": null,
+        "canonicalManifestReused": false,
+        "projectionManifestReused": false,
+        "reuseSourceKey": null,
+        "reuseProjectionKey": null,
+        "reuseProjectionSourceKey": null,
+        "reusedPrefixPages": null,
+        "extensionRejected": null,
+        "sourceKey": "48019a2a4c9d494095afe58a1a1d9915212fb5ffdeb1f97c9e20708e0dc87a42",
+        "projectionKey": "293e176a94c1c8b2dd9c88e11d13f0cd9f1a3221a6d3ed711c8c1b2cd4991595",
+        "defaultOwned": false,
+        "rollingDefault": true,
+        "requestedAt": 1794541504284,
+        "updatedAt": 1794541917121,
+        "doneAt": 1794541919621
+      },
+      {
+        "id": "bd553f694365d31582a34934bc38801326f5a45786c9f07360bc6f1047b7e5f6",
+        "request": {
+          "market": "perpetual",
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794432600000,
+          "to": 1794541500000
+        },
+        "lane": "default",
+        "phase": "ready",
+        "pages": 83,
+        "projectionPages": 83,
+        "parts": 83,
+        "paused": false,
+        "failed": null,
+        "category": null,
+        "error": null,
+        "waitReason": null,
+        "canonicalManifestReused": false,
+        "projectionManifestReused": false,
+        "reuseSourceKey": null,
+        "reuseProjectionKey": null,
+        "reuseProjectionSourceKey": null,
+        "reusedPrefixPages": null,
+        "extensionRejected": null,
+        "sourceKey": "1a29028348815ec87dd5891d59db2ac1b3161f9ba2f6a85d20b216a85dc1ee15",
+        "projectionKey": "4e089fb2852659d659db4e98eea14a06c228b5c4d4e866b3e6a2fdbe2f2dd009",
+        "defaultOwned": false,
+        "rollingDefault": true,
+        "requestedAt": 1794541518879,
+        "updatedAt": 1794541925974,
+        "doneAt": 1794541929056
+      },
+      {
+        "id": "cef4a0727f04ecdb982819831dcdce7fe8e0f0ad3f0dd8ea2c05fbd05f6ebcad",
+        "request": {
+          "market": "perpetual",
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794433500000,
+          "to": 1794541500000
+        },
+        "lane": "default",
+        "phase": "ready",
+        "pages": 83,
+        "projectionPages": 83,
+        "parts": 83,
+        "paused": false,
+        "failed": null,
+        "category": null,
+        "error": null,
+        "waitReason": null,
+        "canonicalManifestReused": false,
+        "projectionManifestReused": false,
+        "reuseSourceKey": null,
+        "reuseProjectionKey": null,
+        "reuseProjectionSourceKey": null,
+        "reusedPrefixPages": null,
+        "extensionRejected": null,
+        "sourceKey": "b8d63cd91602ecd7f699f873fb560d63f73eec12b37c78f8c9e5289280c68b5d",
+        "projectionKey": "d104a1209d67bc0eff7587e87d90419dfe5667a7234df4adfc6003ba967ba967",
+        "defaultOwned": false,
+        "rollingDefault": true,
+        "requestedAt": 1794542403838,
+        "updatedAt": 1794542844634,
+        "doneAt": 1794542847971
+      },
+      {
+        "id": "895210fabdbd7008ae9c577d113305f439f3be9e4e7a216d6e8e9132c56fc3a5",
+        "request": {
+          "market": "perpetual",
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794433500000,
+          "to": 1794542400000
+        },
+        "lane": "default",
+        "phase": "ready",
+        "pages": 86,
+        "projectionPages": 86,
+        "parts": 86,
+        "paused": false,
+        "failed": null,
+        "category": null,
+        "error": null,
+        "waitReason": null,
+        "canonicalManifestReused": false,
+        "projectionManifestReused": false,
+        "reuseSourceKey": null,
+        "reuseProjectionKey": null,
+        "reuseProjectionSourceKey": null,
+        "reusedPrefixPages": null,
+        "extensionRejected": null,
+        "sourceKey": "1638342accfe8c58a0c0a29610bef562a0fef21eb8f1090d3d3f18ebea33a0a5",
+        "projectionKey": "4c40226fc81dfc9f3eb555d15c0e7554e33787bd4a6f82c412931f6166215dfb",
+        "defaultOwned": false,
+        "rollingDefault": true,
+        "requestedAt": 1794542419778,
+        "updatedAt": 1794542855858,
+        "doneAt": 1794542858502
+      },
+      {
+        "id": "a5aef50627a3e3369a86aec75c107bc0e0323e5ba4507c0deadc8a15809faa09",
+        "request": {
+          "market": "perpetual",
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794434400000,
+          "to": 1794542400000
+        },
+        "lane": "default",
+        "phase": "ready",
+        "pages": 86,
+        "projectionPages": 86,
+        "parts": 86,
+        "paused": false,
+        "failed": null,
+        "category": null,
+        "error": null,
+        "waitReason": null,
+        "canonicalManifestReused": false,
+        "projectionManifestReused": false,
+        "reuseSourceKey": null,
+        "reuseProjectionKey": null,
+        "reuseProjectionSourceKey": null,
+        "reusedPrefixPages": null,
+        "extensionRejected": null,
+        "sourceKey": "0ef4465bfc45e2833892a2e69340c6ac3ae29e7e0e28fe7745205ff6c2f248be",
+        "projectionKey": "a2a60d352e2cec581baf4a1f69fcf13ec9cccc907184cd58957faaeb63880124",
+        "defaultOwned": false,
+        "rollingDefault": true,
+        "requestedAt": 1794543306473,
+        "updatedAt": 1794543776556,
+        "doneAt": 1794543779725
+      },
+      {
+        "id": "2ca565b6c21ca5396de1dad39b05ec0fd73891cdaae1c2ce19fc5ec63b6bb3d1",
+        "request": {
+          "market": "perpetual",
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794434400000,
+          "to": 1794543300000
+        },
+        "lane": "default",
+        "phase": "ready",
+        "pages": 89,
+        "projectionPages": 89,
+        "parts": 89,
+        "paused": false,
+        "failed": null,
+        "category": null,
+        "error": null,
+        "waitReason": null,
+        "canonicalManifestReused": false,
+        "projectionManifestReused": false,
+        "reuseSourceKey": null,
+        "reuseProjectionKey": null,
+        "reuseProjectionSourceKey": null,
+        "reusedPrefixPages": null,
+        "extensionRejected": null,
+        "sourceKey": "694975f375f645862077031e673973b78ccfed78a178c97ec812e7e4f5b7d40b",
+        "projectionKey": "ae445ef0d1346ffca0b562ce575d0c68dc723bb8ea20d5f6455e7f4e195462c0",
+        "defaultOwned": true,
+        "rollingDefault": true,
+        "requestedAt": 1794543321238,
+        "updatedAt": 1794543787642,
+        "doneAt": 1794543791493
+      },
+      {
+        "id": "940778ce7b1f9265ca019fe787266caddc07da81ad0552d3b0d31e5178e64baa",
+        "request": {
+          "market": "perpetual",
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794355200000,
+          "to": 1794464342278
+        },
+        "lane": "visible",
+        "phase": "ready",
+        "pages": 65,
+        "projectionPages": 65,
+        "parts": 65,
+        "paused": false,
+        "failed": null,
+        "category": null,
+        "error": null,
+        "waitReason": null,
+        "canonicalManifestReused": false,
+        "projectionManifestReused": false,
+        "reuseSourceKey": null,
+        "reuseProjectionKey": null,
+        "reuseProjectionSourceKey": null,
+        "reusedPrefixPages": null,
+        "extensionRejected": null,
+        "sourceKey": "f1dfcb6216f53b99f7b94117ce3197e7be57b664931f08f67b48c11cab5a5280",
+        "projectionKey": "b8e1a5a740b6bc4ab1e19901cdce31f3082ae197bb5a28e32f744cb25b186d74",
+        "defaultOwned": null,
+        "rollingDefault": null,
+        "requestedAt": 1794543874758,
+        "updatedAt": 1794543986937,
+        "doneAt": 1794543989596
+      }
+    ],
+    "scope": "One ordinary headless current-ending30h view;60s cap, no retries; queued dependency selection is not completed prepared delivery"
+  }
+}

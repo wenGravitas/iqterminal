@@ -1,0 +1,5 @@
+{"case":"footprint-24h-1h","run":1,"firstCurrentMs":null,"firstHistoryMs":null,"completeMs":null,"exception":"TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."}
+{"case":"footprint-24h-1h","run":2,"firstCurrentMs":null,"firstHistoryMs":null,"completeMs":null,"exception":"TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."}
+{"case":"footprint-24h-1h","run":3,"firstCurrentMs":null,"firstHistoryMs":null,"completeMs":null,"exception":"TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."}
+{"case":"footprint-24h-1h","run":4,"firstCurrentMs":null,"firstHistoryMs":null,"completeMs":null,"exception":"TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."}
+{"case":"footprint-24h-1h","run":5,"firstCurrentMs":null,"firstHistoryMs":null,"completeMs":null,"exception":"TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."}

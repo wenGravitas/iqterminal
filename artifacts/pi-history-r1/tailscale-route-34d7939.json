@@ -1,0 +1,8 @@
+{
+  "route": "existing SSH target through Tailscale; read-only path probe",
+  "exit": 0,
+  "stdout": "pong from sd-fn-01 (<address>) via <address> in 524ms\npong from sd-fn-01 (<address>) via <address> in 578ms\npong from sd-fn-01 (<address>) via <address> in 510ms\npong from sd-fn-01 (<address>) via <address> in 440ms\npong from sd-fn-01 (<address>) via <address> in 324ms\n",
+  "stderr": "",
+  "sshCompression": "compression no",
+  "localNtp": "NTPSynchronized=yes\n"
+}

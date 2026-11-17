@@ -1,0 +1,14 @@
+{
+  "build": "8aaab36a2e4c305633877de7438f6b0883f5b4c1",
+  "indexSha256": "b5ec4d597eb35375e7de30d30d3030c62d147028911847d6fbd901271dd34762",
+  "assets": {
+    "worker-BKSmN_Bs.js": "a4a6ce6a89338368aae66ca167f53ee803f95d70c7d89c555eaae9c5aa2f9b6e",
+    "worker-DeRcF3Zy.js": "179b3a9e1ffeb873351c52531d4edbff630ccf73818e22ad1b5dc39cd1374f0b",
+    "editor-DaIX-Xg0.js": "9d79a57f3ddc98331d50a8faa126090a608a958a3014fe7c499dccdce48dcd4f",
+    "worker-DaWyXJKB.js": "fe771eaf11363d6e8085639c9d4cd9172c5a0475016d73c3f595aeb2667f56b9",
+    "index-DjQwljGp.js": "2a08c54c5586524f3eb77e896bb123cbfa59fdfa25c3df29185062905824f91f",
+    "main-B8_wiROY.js": "62c38efabe20fd9ab28960accabd64d41c588a80b587cd9e80f88e4e1ddb7011"
+  },
+  "previewPID": 263125,
+  "cwd": "/home/daz/workarea/iqterminal-perf-history"
+}

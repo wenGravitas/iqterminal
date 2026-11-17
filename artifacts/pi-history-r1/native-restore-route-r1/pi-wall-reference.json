@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "cases": {
+    "walls-30h-spot-5m": {
+      "from": 1793696400000, "to": 1793804400000,
+      "sourceFrom": 1793696100000, "sourceTo": 1793804700000,
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "segments": 8293, "valueRuns": 49154, "gaps": 35,
+      "evidence": "backend 9bb4d7b wall-admission-staging original-projector exact reference"
+    },
+    "walls-30h-perp-15m": {
+      "from": 1793696400000, "to": 1793804400000,
+      "sourceFrom": 1793695500000, "sourceTo": 1793805300000,
+      "sourceToken": "96b070b7571b23df67826ad0c2d0364f8e891205f5d1115ee79932b96333a70e",
+      "segments": 23850, "valueRuns": 104112, "gaps": 47,
+      "evidence": "backend 5dd8b93 wall-preparation-coordinator original-projector exact reference"
+    }
+  }
+}

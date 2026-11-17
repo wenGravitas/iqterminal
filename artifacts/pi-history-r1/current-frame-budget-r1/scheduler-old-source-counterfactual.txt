@@ -1,0 +1,57 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/scheduler.test.ts (5 tests | 2 failed | 3 skipped) 62ms
+   ❯ visible chart scheduler (5)
+     × yields an expensive burst between charts and does not starve queued charts when one invalidates itself 40ms
+     × releases removed deferred work and preserves explicit single-chart flush 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/scheduler.test.ts > visible chart scheduler > yields an expensive burst between charts and does not starve queued charts when one invalidates itself
+AssertionError: expected [ 'first', 'second', 'third' ] to deeply equal [ 'first' ]
+
+- Expected
++ Received
+
+  [
+    "first",
++   "second",
++   "third",
+  ]
+
+ ❯ tests/scheduler.test.ts:116:30
+    114|     const third:Drawable={visible:true,draw(){calls.push('third');work…
+    115|     scheduler.invalidate(first);scheduler.invalidate(second);scheduler…
+    116|     runFrame();expect(calls).toEqual(['first']);expect(pending.size).t…
+       |                              ^
+    117|     runFrame();expect(calls).toEqual(['first','second']);
+    118|     runFrame();expect(calls).toEqual(['first','second','third']);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/scheduler.test.ts > visible chart scheduler > releases removed deferred work and preserves explicit single-chart flush
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/scheduler.test.ts:127:75
+    125|     const first=chart('first'),removed=chart('removed'),flushed=chart(…
+    126|     for(const c of [first,removed,flushed,last])scheduler.invalidate(c…
+    127|     runFrame();scheduler.remove(removed);expect(scheduler.flush(flushe…
+       |                                                                           ^
+    128|     expect(calls).toEqual(['first','flushed','last']);expect(pending.s…
+    129|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 3 skipped (5)
+   Start at  16:20:25
+   Duration  769ms (transform 60%, tests 18%, import 18%, worker 3%)
+

@@ -1,0 +1,88 @@
+TAP version 13
+# Subtest: Retry after a transport failure reads ready history without starting a new materialization
+ok 1 - Retry after a transport failure reads ready history without starting a new materialization
+  ---
+  duration_ms: 28.532345
+  type: 'test'
+  ...
+# Subtest: a completed resumed job re-reads tiles and recomputes missing slots before returning ready
+ok 2 - a completed resumed job re-reads tiles and recomputes missing slots before returning ready
+  ---
+  duration_ms: 65.930489
+  type: 'test'
+  ...
+# Subtest: explicit retry resumes the failed job range rather than re-enqueuing the whole viewport
+ok 3 - explicit retry resumes the failed job range rather than re-enqueuing the whole viewport
+  ---
+  duration_ms: 6.879569
+  type: 'test'
+  ...
+# Subtest: ordinary polling neither resets a healthy build nor retries absent source
+ok 4 - ordinary polling neither resets a healthy build nor retries absent source
+  ---
+  duration_ms: 5.391223
+  type: 'test'
+  ...
+# Subtest: an independently maintained current cursor never suppresses missing historical preparation
+ok 5 - an independently maintained current cursor never suppresses missing historical preparation
+  ---
+  duration_ms: 7.51865
+  type: 'test'
+  ...
+# Subtest: a queued closed-candle revision keeps good tiles visible without claiming ready
+ok 6 - a queued closed-candle revision keeps good tiles visible without claiming ready
+  ---
+  duration_ms: 1.61417
+  type: 'test'
+  ...
+# Subtest: a correction committing around a tile read forces a bounded revision re-read
+ok 7 - a correction committing around a tile read forces a bounded revision re-read
+  ---
+  duration_ms: 1.265934
+  type: 'test'
+  ...
+# Subtest: a completed correction observed through worker health also re-reads stale tiles
+ok 8 - a completed correction observed through worker health also re-reads stale tiles
+  ---
+  duration_ms: 4.399332
+  type: 'test'
+  ...
+# Subtest: failed revision recovery retains good tiles when its worker is unreachable
+ok 9 - failed revision recovery retains good tiles when its worker is unreachable
+  ---
+  duration_ms: 2.1353
+  type: 'test'
+  ...
+# Subtest: an inactive unusual configuration discovers a same-count canonical correction and reuses its healthy repair
+ok 10 - an inactive unusual configuration discovers a same-count canonical correction and reuses its healthy repair
+  ---
+  duration_ms: 5.915726
+  type: 'test'
+  ...
+# Subtest: a legacy tile remains visible but cannot claim current canonical validation
+ok 11 - a legacy tile remains visible but cannot claim current canonical validation
+  ---
+  duration_ms: 6.971677
+  type: 'test'
+  ...
+# Subtest: absent retained source keeps old tiles explicitly unavailable without launching a futile rebuild
+ok 12 - absent retained source keeps old tiles explicitly unavailable without launching a futile rebuild
+  ---
+  duration_ms: 2.395245
+  type: 'test'
+  ...
+# Subtest: an unconfirmed closed boundary stays building independently of a healthy live source
+ok 13 - an unconfirmed closed boundary stays building independently of a healthy live source
+  ---
+  duration_ms: 4.716353
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 967.75601

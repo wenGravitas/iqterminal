@@ -1,0 +1,30 @@
+{
+  "kind": "supplemental-functional-not-acceptance",
+  "frontendBuild": "a1dc934f23a82987c2912de0a4578af8488ca3f9",
+  "backendBuild": "072cc1d55e931ea82ee8edd623ef22543f454fa7",
+  "route": "http://127.0.0.1:4181",
+  "rendering": "headed-normal-chromium-gles",
+  "fitWalls": true,
+  "samples": 1,
+  "observationMs": 30000,
+  "paintMarksNavigationRelativeMs": {
+    "firstHistoryAt": 19531.1,
+    "completeAt": null,
+    "firstCurrentAt": 6763.7
+  },
+  "retainedSegments": 669,
+  "steadySampledDraws": 16,
+  "steadyReferenceSegmentsMax": 16,
+  "steadyReferenceValueScansMax": 25,
+  "referenceRebuildsAtEnd": 4,
+  "longTasks": 22,
+  "maximumLongTaskMs": 1160,
+  "maximumFrameIntervalMs": 1433.4,
+  "pageErrors": [],
+  "limitations": [
+    "Fit Walls and one extended observation do not certify a loading gate.",
+    "Earlier firstHistoryMs is a counter observation; use paintMarks.firstHistoryAt for actual historical paint.",
+    "No causal before/after timing comparison or complete 30h coverage claim.",
+    "Custom 3pct wall profile backfill remained active; no matched current-only baseline."
+  ]
+}

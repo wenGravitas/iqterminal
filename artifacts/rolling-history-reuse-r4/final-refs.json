@@ -1,0 +1,16 @@
+{
+  "utc": 1794561431.326108,
+  "refs": [
+    "refs/heads/integration/pi-history-startup-r1 577de5f71008d97d60d286c777ee96c686532a07",
+    "refs/heads/main d2b519e3b5714ae4955647e80a8190c10f2511d9",
+    "refs/heads/perf/native-price-cache-control bf1d8425525306848cd9bc741c647fc3f1ba5054",
+    "refs/heads/rc/pi-history-stabilization-r1 72f74cab783351865f7bcaf8d76da67eb380b40f",
+    "refs/tags/pi-history-stabilization-r1-client c4a2855b12d91dc828279a663ab4591da4fa092d"
+  ],
+  "scope": "Local refs only; no additional upstream fetch or merge.",
+  "frozenApplicationTags": {
+    "pi-history-stabilization-r1-client": "7eb4a00b60daf344188eebc0659a8a82862113e8"
+  },
+  "observedGithubMainTrackingRef": "7aedc1896805be507382b8f5feb0e00775a4aa00",
+  "localMainNote": "Local main is the original staging clone ref, unchanged since2026-10-20; GitHub main tracking ref is recorded separately."
+}

@@ -1,0 +1,70 @@
+{
+  "reference.py": {
+    "bytes": 3033,
+    "sha256": "2ef5d479b5235a4dbc8264a96841063979b4a292f3f5ef96025a7a1be4f455fe"
+  },
+  "reference.jsonl": {
+    "bytes": 7083,
+    "sha256": "bd4661f43e0083f76fc8cf2014d837b4e4fbe7907fcce18ef43181f3e02d006f"
+  },
+  "reference-executed-recovered.mjs": {
+    "bytes": 123828,
+    "sha256": "00330c3b60e0a5595a7d3314908a72bdab1020fd5ae528eba90a61d3710b87a6"
+  },
+  "terminal-continuation-counterexample.ts": {
+    "bytes": 3259,
+    "sha256": "809dccf5e91154cc7aa6553f7466946d9c8264ad40ea4b98f86d3949cd8533ea"
+  },
+  "terminal-continuation-counterexample.jsonl": {
+    "bytes": 1830,
+    "sha256": "0d0a27fc212da1a00767c9f085d08e212c8857c43a33f48a7c2457c93a23408e"
+  },
+  "eligible-request-withheld.patch": {
+    "bytes": 14187,
+    "sha256": "16f27ecb3c62c19b40573bed581aae8371b4b84c01ddefb83ba609672ee0d3af"
+  },
+  "browser-entry.ts": {
+    "bytes": 4272,
+    "sha256": "a23aa6c898f9c077b15f3748230cd23fea09eb296688d4e0a15dba4772763639"
+  },
+  "browser-fresh.mjs": {
+    "bytes": 1552,
+    "sha256": "0019c07db088c1b98ba70fe1c157a1d1c51da8b94c1c52f67ceca3855af6abed"
+  },
+  "browser-build-fresh.sh": {
+    "bytes": 448,
+    "sha256": "c7b83fa3b99688ab9b70d55ad7b719b921a0599448ef2354dc8a3d053bae1197"
+  },
+  "browser-client-fresh.mjs": {
+    "bytes": 140741,
+    "sha256": "efabf0828fd8f2407935f235f722be8307e8dfd0eed0ad0fe37750a4b1516ec6"
+  },
+  "browser-result-fresh.json": {
+    "bytes": 2020,
+    "sha256": "952d4cc42b231dc65368a54fcff1ba52ff4e1e9d70f99c198c14c283636ef296"
+  },
+  "browser-fresh.stdout": {
+    "bytes": 60,
+    "sha256": "4dfb2d57ede6ccc5afc0e3c35ed292dceb61cb96fa8ca1bda3ebf1c8c090e1d9"
+  },
+  "browser-fresh.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "frontend-focused-fresh.log": {
+    "bytes": 195,
+    "sha256": "d4e5ceb7add537682c9ddfbe193de1a0d9e5fe0a8c370e7f0df2b908c08c21d1"
+  },
+  "frontend-typecheck-fresh.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "frontend-build-fresh.log": {
+    "bytes": 1078,
+    "sha256": "7845c9a4d8578b40f47989f20bb2eca45cec0c51cd4cf8ba229a53b7545e4419"
+  },
+  "browser-build-fresh.log": {
+    "bytes": 96,
+    "sha256": "7ca4fb5e86b6e1d2c340e899f574aacf80f15d390c12bbd8913f4bf69443b006"
+  }
+}

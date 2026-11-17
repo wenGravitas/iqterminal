@@ -1,0 +1,33 @@
+
+Running 2 tests using 1 worker
+
+(node:46861) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/native-candle-history.spec.ts:12:1 › native30hpricecontext paints before bootstrap and retains current volume and newer historical reads (3.3s)
+  ✘  2 tests/browser/native-candle-history.spec.ts:41:1 › nativepricepan preserves the requested past and current bars within the5000barbudget (24.4s)
+
+
+  1) tests/browser/native-candle-history.spec.ts:41:1 › nativepricepan preserves the requested past and current bars within the5000barbudget 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 360
+    Received: 0
+
+    Call Log:
+    - Timeout 15000ms exceeded while waiting on the predicate
+
+      57 |  const nextFrom=from-10*86400000,nextTo=nextFrom+6*HOUR;
+      58 |  await page.evaluate(({id,from,to})=>{const p=(window as any).__terminal.panels.get(id),d=p.engine.chart.dataLayer;p.engine.setRange({from:d.timeToIndexFloat(from/1000),to:d.timeToIndexFloat(to/1000)});},{id,from:nextFrom,to:nextTo});
+    > 59 |  await expect.poll(()=>page.evaluate(({id,from,to})=>{const p=(window as any).__terminal.panels.get(id);return p.candles.filter((c:any)=>c.t>=from&&c.t<to).length;},{id,from:nextFrom,to:nextTo}),{timeout:15000}).toBe(360);
+         |                                                                                                                                                                                                                     ^
+      60 |  const next=await page.evaluate(({id,from,to})=>{const p=(window as any).__terminal.panels.get(id);return {count:p.candles.length,latest:p.candles.at(-1),versions:p.nativeCandleVersions.size(),visible:p.engine.visibleTimeRange(),history:p.status.nativeHistory.viewport};},{id,from:nextFrom,to:nextTo});
+      61 |  expect(next.count).toBe(5000);expect(next.versions).toBeLessThanOrEqual(5000);expect(next.latest.t).toBeGreaterThanOrEqual(current);expect(next.history).toMatchObject({state:'ready',loadedSlots:360,requestedSlots:360,capacityLimited:false});
+      62 |  expect(next.visible).toEqual({from:nextFrom/1000,to:nextTo/1000});
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/native-candle-history.spec.ts:59:213
+
+    Error Context: test-results/native-candle-history-nati-f0702-ars-within-the5000barbudget/error-context.md
+
+  1 failed
+    tests/browser/native-candle-history.spec.ts:41:1 › nativepricepan preserves the requested past and current bars within the5000barbudget 
+  1 passed (32.1s)

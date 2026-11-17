@@ -1,0 +1,2 @@
+{"scenario":"current-only","run":1,"bootstrapMs":2029.7999999970198,"updates":27,"maxReceiveGapMs":1853.9000000059605}
+{"scenario":"concurrent-history","run":1,"bootstrapMs":1497.6000000014901,"updates":30,"maxReceiveGapMs":2102.60000000149}

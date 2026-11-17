@@ -1,0 +1,11 @@
+{
+  "phases": [
+    "parent",
+    "extension-1",
+    "extension-2",
+    "reopen-complete"
+  ],
+  "producer": "Unchanged canonical/financial producer from prior capacity proof; only HTTP encoding changes",
+  "reference": "Unchanged task-baseline0ff6b61 financial importer",
+  "scope": "All four final prepared outputs exact against unchanged baseline importer. Final saved reopen closed chart rows also checked; chart data dump taken only after its completed paint, outside timed workflow. Producer/importer/value algorithms unchanged; compact replay separately exact on fixed real inputs."
+}

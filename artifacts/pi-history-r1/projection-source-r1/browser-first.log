@@ -1,0 +1,142 @@
+
+Running 7 tests using 1 worker
+
+(node:252795) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/native-candle-history.spec.ts:12:36 › saved 5m wall view one candle back survives separate latest-closed and forming arrivals (3.6s)
+  ✓  2 tests/browser/native-candle-history.spec.ts:12:36 › saved 15m wall view one candle back survives separate latest-closed and forming arrivals (3.5s)
+  ✓  3 tests/browser/native-candle-history.spec.ts:40:1 › native30hpricecontext paints before bootstrap and retains current volume and newer historical reads (3.3s)
+  ✓  4 tests/browser/native-candle-history.spec.ts:79:1 › nativepricepan preserves the requested past and current bars within the5000barbudget (3.7s)
+  ✓  5 tests/browser/native-candle-history.spec.ts:104:1 › warm native prices paint independently while their revision validation waits and later corrects exact quote volume (4.2s)
+  ✓  6 tests/browser/native-candle-history.spec.ts:135:1 › bootstrap-owned history seeds warm prices even when independent native history pages fail (3.9s)
+  ✘  7 tests/browser/wall-projection-source.spec.ts:5:1 › a negotiated projection paints exact historical walls before independent source validation completes (5.0s)
+
+
+  1) tests/browser/wall-projection-source.spec.ts:5:1 › a negotiated projection paints exact historical walls before independent source validation completes 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 30
+    + Received  + 30
+
+      Array [
+        Object {
+    -     "archiveEntryId": "A",
+    -     "censoredReason": "Observed disconnect",
+    +     "archiveEntryId": "B",
+          "detectionMode": "top-levels",
+    -     "durationMs": 2000,
+    -     "end": 1794285901000,
+    +     "durationMs": 108596000,
+    +     "end": null,
+          "endKnown": false,
+    -     "endReason": "censored",
+    -     "epoch": 1,
+    -     "id": "A:view-8:off:0:q1",
+    -     "meanUsd": 200.0000000001,
+    -     "peakUsd": 300.0000000003,
+    +     "endReason": null,
+    +     "epoch": 2,
+    +     "id": "B:view-8:off:0:q4",
+    +     "meanUsd": 200.00000000009996,
+    +     "peakUsd": 200.0000000001,
+          "percentile": null,
+          "price": 100.00000001,
+          "priceExact": "100.00000001",
+          "rank": 1,
+          "scopePartial": true,
+          "side": "bid",
+    -     "start": 1794285899000,
+    +     "start": 1794285904000,
+          "startKnown": true,
+          "valueRuns": Array [
+            Object {
+    -         "at": 1794285899000,
+    +         "at": 1794285904000,
+              "notionalExact": "200.0000000001",
+              "percentile": null,
+              "quantity": 2.000000000001,
+              "quantityExact": "2.000000000001",
+              "rank": 1,
+              "usd": 200.0000000001,
+    -       },
+    -       Object {
+    -         "at": 1794285901000,
+    -         "notionalExact": "300.0000000003",
+    -         "percentile": null,
+    -         "quantity": 3.000000000003,
+    -         "quantityExact": "3.000000000003",
+    -         "rank": 1,
+    -         "usd": 300.0000000003,
+            },
+          ],
+          "valueRunsTruncated": false,
+        },
+        Object {
+    -     "archiveEntryId": "B",
+    +     "archiveEntryId": "A",
+    +     "censoredReason": "Observed disconnect",
+          "detectionMode": "top-levels",
+    -     "durationMs": 108596000,
+    -     "end": null,
+    +     "durationMs": 2000,
+    +     "end": 1794285901000,
+          "endKnown": false,
+    -     "endReason": null,
+    -     "epoch": 2,
+    -     "id": "B:view-8:off:0:q4",
+    -     "meanUsd": 200.00000000009996,
+    -     "peakUsd": 200.0000000001,
+    +     "endReason": "censored",
+    +     "epoch": 1,
+    +     "id": "A:view-8:off:0:q1",
+    +     "meanUsd": 200.0000000001,
+    +     "peakUsd": 300.0000000003,
+          "percentile": null,
+          "price": 100.00000001,
+          "priceExact": "100.00000001",
+          "rank": 1,
+          "scopePartial": true,
+          "side": "bid",
+    -     "start": 1794285904000,
+    +     "start": 1794285899000,
+          "startKnown": true,
+          "valueRuns": Array [
+            Object {
+    -         "at": 1794285904000,
+    +         "at": 1794285899000,
+              "notionalExact": "200.0000000001",
+              "percentile": null,
+              "quantity": 2.000000000001,
+              "quantityExact": "2.000000000001",
+              "rank": 1,
+              "usd": 200.0000000001,
+    +       },
+    +       Object {
+    +         "at": 1794285901000,
+    +         "notionalExact": "300.0000000003",
+    +         "percentile": null,
+    +         "quantity": 3.000000000003,
+    +         "quantityExact": "3.000000000003",
+    +         "rank": 1,
+    +         "usd": 300.0000000003,
+            },
+          ],
+          "valueRunsTruncated": false,
+        },
+      ]
+
+      41 |   release();await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).orderWallsStatus?.archive?.requestComplete,id)).toBe(true);
+      42 |   const actual=await page.evaluate(id=>{const p=(window as any).__terminal.panels.get(id);return {segments:[...p.engine.orderWallSegments.values()].map(({currentSelection:_selection,presentationKind:_kind,...row}:any)=>row),status:p.orderWallsStatus,live:p.status.state,view:p.engine.visibleTimeRange(),render:p.engine.orderWallsDiagnostics()};},id);
+    > 43 |   expect(actual.segments).toEqual(f.full.segments);expect(actual.status.archive).toMatchObject({from:f.context.from,to:f.context.to,loadedThrough:f.context.to,exact:true});
+         |                           ^
+      44 |   expect(actual.live).toBe('live');expect(actual.view).toEqual({from:start/1000,to:end/1000});
+      45 |   expect(requests.some(r=>r.path.endsWith('/part')||r.path.endsWith('/batch'))).toBe(false);
+      46 |   await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/wall-projection-source.spec.ts:43:27
+
+    Error Context: test-results/wall-projection-source-a-n-5bfd2-source-validation-completes/error-context.md
+
+  1 failed
+    tests/browser/wall-projection-source.spec.ts:5:1 › a negotiated projection paints exact historical walls before independent source validation completes 
+  6 passed (32.2s)

@@ -1,0 +1,34 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/order-walls-archive.test.ts (45 tests | 1 failed | 44 skipped) 203ms
+   ❯ OrderWallsArchiveService fixed-watermark identity bridge (16)
+     × retains active wall presentation across long-open peers and expires only after final idle release 199ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/order-walls-archive.test.ts > OrderWallsArchiveService fixed-watermark identity bridge > retains active wall presentation across long-open peers and expires only after final idle release
+AssertionError: expected undefined to be 'idle-wall' // Object.is equality
+
+- Expected:
+"idle-wall"
+
++ Received:
+undefined
+
+ ❯ tests/order-walls-archive.test.ts:903:50
+    901|       await vi.advanceTimersByTimeAsync(59999);service.subscribe('idle…
+    902|       const cached=events.filter(event=>event.type==='order-wall-batch…
+    903|       expect(cached?.segments[0].archiveEntryId).toBe('idle-wall');exp…
+       |                                                  ^
+    904|       service.unsubscribe('idle-c');await vi.advanceTimersByTimeAsync(…
+    905|       await vi.advanceTimersByTimeAsync(1);expect(service.diagnostics(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 44 skipped (45)
+   Start at  14:36:53
+   Duration  1.96s (transform 73%, import 13%, tests 13%, worker 1%)
+

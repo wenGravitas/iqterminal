@@ -1,0 +1,381 @@
+{
+  "applicationBuild": "1fcacc9e00ade0c3ff9d33e06c75fe0762a1f97a",
+  "apiBuild": "f82abdfae06c61f8bccff9fea0778bbaac491b5e",
+  "files": [
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-f1a9c21-r1/compile.log",
+      "bytes": 26,
+      "sha256": "2ec609998ce235304f1ad6349751ff172d6b042da39e0da338fa78eeabe57004"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-f1a9c21-r1/console.log",
+      "bytes": 4598,
+      "sha256": "0110f396a37e23f425126e59e455432cfebe79f7490360c0042131df78392665"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-f1a9c21-r1/environment.json",
+      "bytes": 9190,
+      "sha256": "b01d2b2495d226b8b99d8f16d994d8bbf1ba9345a2e9753410ed74a8c150d922"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-f1a9c21-r1/executed.mjs",
+      "bytes": 15668,
+      "sha256": "c03051bf89f0feb4fe8748ea3fb65b3e736fd7941445741b064ce850972c5263"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-f1a9c21-r1/intentional-stop.json",
+      "bytes": 2892,
+      "sha256": "a51ad67309c21eae843c6f696fb56430e376661d09b986e74239c529cd28ee83"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-f1a9c21-r1/perpetual-input.json.gz",
+      "bytes": 2590748,
+      "sha256": "009e99df830eee28cad58b12646d9fc50e16afb99c6b42b40e0993c3e450b31c"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-f1a9c21-r1/primitive.js",
+      "bytes": 601187,
+      "sha256": "eb21b50978f2b4fcd469e5fbe70175d4ddcb45210eead5557ccd4367f39f8dbf"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-f1a9c21-r1/primitive.js.map",
+      "bytes": 1308384,
+      "sha256": "cb507c8972906c039b551c1c1290d2298dfa2f3b16b8a42c27d271c4ec967f4e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-f1a9c21-r1/scope.json",
+      "bytes": 399,
+      "sha256": "bec46b2f316d2857e754bd6aa2a01d6cbcca05d96742bdfba091fbd95fc03641"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-f1a9c21-r1/spot-input.json.gz",
+      "bytes": 1261870,
+      "sha256": "0e0068f67b9ef8921b856095b515d2b5efac244490dfff5392730a5665cf1ac3"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-f1a9c21-r1/spot-samples.json",
+      "bytes": 426102,
+      "sha256": "5d4e70c1aaa8265ebd6e9551c9d40311bdc0f08731f0cb764bc5751ec74e49bd"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r2/compile.log",
+      "bytes": 26,
+      "sha256": "2ec609998ce235304f1ad6349751ff172d6b042da39e0da338fa78eeabe57004"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r2/console.log",
+      "bytes": 934,
+      "sha256": "677f87e5d82bbec5b74d7a72917426323e9438022d0d37276daf789a1416a13b"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r2/environment.json",
+      "bytes": 9190,
+      "sha256": "394260219926ed4fa53233acd89003ab2f6fbb85ad54ee0ceca8a1be16527bdb"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r2/executed.mjs",
+      "bytes": 17176,
+      "sha256": "d75335002a62c32dafa5ad54ff240285e8f913e9b81e87e503baf53637852eec"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r2/primitive.js",
+      "bytes": 604295,
+      "sha256": "d6ed3fac1dd6ebfd86815747376d3def3cf6f5599850da8c8a63b0ac2551310f"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r2/primitive.js.map",
+      "bytes": 1313371,
+      "sha256": "9f1815c4e511e7314bf7a3dfdc5bc35aa5a5da0f48301282462e5ea08b3e1510"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r2/progress.jsonl",
+      "bytes": 84,
+      "sha256": "0623109e32cf5cf305690905d46dc69aa41e4007eaef6ded2f8b342ab4d170e1"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r2/scope.json",
+      "bytes": 331,
+      "sha256": "5418da4a40ecf543a30c945c8090e36c6d3e0b86a44de5f58a37c9bf18aba22b"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r2/spot-input.json.gz",
+      "bytes": 1261870,
+      "sha256": "0e0068f67b9ef8921b856095b515d2b5efac244490dfff5392730a5665cf1ac3"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r3/compile.log",
+      "bytes": 26,
+      "sha256": "2ec609998ce235304f1ad6349751ff172d6b042da39e0da338fa78eeabe57004"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r3/console.log",
+      "bytes": 151,
+      "sha256": "8508f8a80871af24dc0b26ca2af2ca902cfdf14e460ac960b77686a4c324aae7"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r3/environment.json",
+      "bytes": 9189,
+      "sha256": "b6e58195205fbd358825f60c154ccb449a6a0f69637a35a24218f1954039565a"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r3/executed.mjs",
+      "bytes": 17268,
+      "sha256": "ee0dbc2685de58b7974bd247f35ad45b51b4444b7ad5be1799a823310ed2304a"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r3/perpetual-input.json.gz",
+      "bytes": 2590748,
+      "sha256": "009e99df830eee28cad58b12646d9fc50e16afb99c6b42b40e0993c3e450b31c"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r3/perpetual-samples.json",
+      "bytes": 473605,
+      "sha256": "0a56b8bfdfb95f7bab5bec115e40e3d12ed7626a61166f16d861c20fda622322"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r3/primitive.js",
+      "bytes": 604295,
+      "sha256": "a0dc82b0ee8411f9a7874ceac0a39596273097504f86a182664c59e7cf80849e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r3/primitive.js.map",
+      "bytes": 1313371,
+      "sha256": "9f1815c4e511e7314bf7a3dfdc5bc35aa5a5da0f48301282462e5ea08b3e1510"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r3/progress.jsonl",
+      "bytes": 14736,
+      "sha256": "ea7a591e8c4f4d58796b95be4c4525a80ee4271ac2a10fc58c2917d289989415"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r3/resources.jsonl",
+      "bytes": 958063,
+      "sha256": "57af6bcff5ada722779ced09b4fbb13df203dd20c9f67c522e0d1e3c0c976dc8"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r3/results.json",
+      "bytes": 1063165,
+      "sha256": "f6a5467de5225eeff8f23470aade7eba881d2b18d1026fcae367f79ac49f2162"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r3/spot-input.json.gz",
+      "bytes": 1261870,
+      "sha256": "0e0068f67b9ef8921b856095b515d2b5efac244490dfff5392730a5665cf1ac3"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r3/spot-samples.json",
+      "bytes": 473564,
+      "sha256": "7c352e4f888c73965c791597f24f40755d7545abad2638e600dc3a6f73559b37"
+    },
+    {
+      "path": "artifacts/pi-history-r1/budget-paint-tasks-r3/summary.json",
+      "bytes": 131848,
+      "sha256": "ed581883f099e5fce4e00e16771dd62404fd141872bea30517fa788456ce332c"
+    },
+    {
+      "path": "artifacts/pi-history-r1/notional-wire-probe-r1/executed.mjs",
+      "bytes": 3767,
+      "sha256": "11c9a5ea0a2cc0000382340732fe60a1720f7001069f5568ebf95806b4e3ed3f"
+    },
+    {
+      "path": "artifacts/pi-history-r1/notional-wire-probe-r1/results.json",
+      "bytes": 7878,
+      "sha256": "03f526d47e2b79872d1772c218e1f018581dfd54f5e5354e0530c08c7d2b3bf6"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-budget-route-r3/gate-test-path-error.log",
+      "bytes": 210,
+      "sha256": "cc3333c503b7f8ff9c912afa292a737cb12cc3854065f55e1548e3d16078e6b7"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-budget-route-r3/gate-tests.log",
+      "bytes": 1843,
+      "sha256": "7e9063405314ecb9d156190d814f14cee07d9fd90172101a181e9a620fa252e3"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-budget-route-r3/iq-wall-budget-app-build.log",
+      "bytes": 1314,
+      "sha256": "1d39b3b3dc4479e414d14c9a5c739aacfa950aa9e9ad32c22d378570c520300d"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-budget-route-r3/iq-wall-budget-full-unit.log",
+      "bytes": 441,
+      "sha256": "4e21fbf53fdf8e149ccdce3893ba3731a68c26ed4c636ef774299ef312c07735"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-budget-route-r3/iq-wall-budget-task-final-types.log",
+      "bytes": 90,
+      "sha256": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-budget-route-r3/iq-wall-budget-task-lifecycle-final.log",
+      "bytes": 204,
+      "sha256": "38eac53d0daf62650f1de1040e12d9f5fabceec5335c9ff8432fbb904be90fbc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-budget-route-r3/local-runtime-before.json",
+      "bytes": 1112,
+      "sha256": "bffc2db6d5a7b64e42d13aece41f3e69ca3c29cbc8ba578070a426f5677c5f62"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-budget-route-r3/perp-console.log",
+      "bytes": 31711,
+      "sha256": "57a99d49c3ca254962d2dda6ca78117974785e1e08f56bdd5fc5fc034044a282"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-budget-route-r3/proxy-current-health.json",
+      "bytes": 1612,
+      "sha256": "29c8d6b54b6a3a5c11b714afd17c499d27ebe3506ba7656e713c4d036bfc5310"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-budget-route-r3/proxy-history-health.json",
+      "bytes": 2607,
+      "sha256": "868dc1cbdc0e1a73921f23aa12960bc3fb6a5fc9e7db820ae799fb7f93bab265"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-budget-route-r3/remote-postcheck.txt",
+      "bytes": 3531,
+      "sha256": "6054eed9896c6266d92f99ea16d06e07ec6eb10d4cfd91e76d46d8500d02eccd"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-budget-route-r3/remote-preflight.json",
+      "bytes": 28977,
+      "sha256": "c52a89c6f8a86974c697fdd9fd497e0ad0bd462ddeeb717c8cb68fd0964c76ad"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-budget-route-r3/server-perp-resources.jsonl",
+      "bytes": 388441,
+      "sha256": "72f91e98f2c4ce6fba7c2feb752487c9251e422162d6f390436d394d153d7b52"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-budget-route-r3/server-resources.jsonl",
+      "bytes": 388566,
+      "sha256": "a3b2eaaca43611174b9cf5428a94367dc2b13e77d1f0d8bbc65dac0e547e3d3b"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-budget-route-r3/spot-console.log",
+      "bytes": 37692,
+      "sha256": "71feed2771ee8aa6cd150d0e82c33337d2fcdfdf9b2f37101ed1e52d1e7bedb6"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-budget-route-r3/transport-during-perp.json",
+      "bytes": 2094,
+      "sha256": "ca8b08eccab459e70fa04c1d0d811375d3a958ed3200aef5b38437bdf090760c"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-budget-wire-r3/results.json",
+      "bytes": 10571,
+      "sha256": "fa46bb77529ac8d79035ddd1367bf4543f97a512a6398df15cf01089c9aabc4c"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-perp-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "a33b918ad5f4c8d742bccb9a4325cf1c6c897e50ad860035be299e11e2902264"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-perp-r1-executed.mjs",
+      "bytes": 20967,
+      "sha256": "92fc99f9e66829cd6e2532d273366097901d826ffea730bcf4039adbcf1b0db9"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-perp-r1-observations.jsonl",
+      "bytes": 229232,
+      "sha256": "b49512c672d33d581240c8037072ff124298562378a0d4b7e5be2e285657c4bd"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-perp-r1-samples.jsonl",
+      "bytes": 304496,
+      "sha256": "25edf017e3d4fdece1171e0f838b97548c2a217455aa7b6f3351ddd853e95614"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-perp-r1-summary.json",
+      "bytes": 2837,
+      "sha256": "ec5db9302dd426a042709263e16cdaa24e162e57e551f7b019bae895727a79bf"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-perp-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-perp-r1-walls-30h-perp-15m-1.png",
+      "bytes": 127272,
+      "sha256": "82b4365d6935a24918b36575685b7d1bb5e61b7f6fcfe0ad962acb58da46e4fb"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-perp-r1-walls-30h-perp-15m-2.png",
+      "bytes": 127354,
+      "sha256": "94109b1357f6c150341c212c2c7f2a304c27562980f3173f83000944bbd3e444"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-perp-r1-walls-30h-perp-15m-3.png",
+      "bytes": 127296,
+      "sha256": "d2094cdc3b917fbfd437b64002fb69b1fc048ae3362a036bd1686b2e5aae9a6e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-perp-r1-walls-30h-perp-15m-4.png",
+      "bytes": 67040,
+      "sha256": "e8b1a63526937c20528e8fd9681f44b7649639e7c23da2a8fcc5a1e98602c8bf"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-perp-r1-walls-30h-perp-15m-5.png",
+      "bytes": 127327,
+      "sha256": "73448ad578892fb6ebfa147d19c635d81617b5df396c1096b55849f353aec9c6"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-spot-r1-browser-environment.json",
+      "bytes": 9262,
+      "sha256": "6469a85ee27c28b72f5c1e9d11efa4bb93d9e275c426ab00b849d9240928fe73"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-spot-r1-executed.mjs",
+      "bytes": 20967,
+      "sha256": "92fc99f9e66829cd6e2532d273366097901d826ffea730bcf4039adbcf1b0db9"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-spot-r1-observations.jsonl",
+      "bytes": 288909,
+      "sha256": "97b3f0cd26f3f1774d824817db6212c81236a66aa4116894a09992aedd73bcd6"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-spot-r1-samples.jsonl",
+      "bytes": 364478,
+      "sha256": "82ccfb99d617fbc437b438e117593dd95e71e3e9697ff7eefe394c1959854649"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-spot-r1-summary.json",
+      "bytes": 2670,
+      "sha256": "3b8e241bf683e474d4ebb386cfdb9730d5896597f16360b2e475508565cabd59"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-spot-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-spot-r1-walls-30h-spot-5m-1.png",
+      "bytes": 93602,
+      "sha256": "b8fc8e22fe2fdf2b5f14d3e605774103c9289d177643dea02994ad4f3bdc0af7"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-spot-r1-walls-30h-spot-5m-2.png",
+      "bytes": 93682,
+      "sha256": "4006897bf9325b5bf079291034baba79f0f50af08acc0cd73ef9e77768499e08"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-spot-r1-walls-30h-spot-5m-3.png",
+      "bytes": 93703,
+      "sha256": "be5aa17e13b2b5f098d854674eb4e22cc612fd112b9622ad2ed995bd4f324b36"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-spot-r1-walls-30h-spot-5m-4.png",
+      "bytes": 93578,
+      "sha256": "1f28bf9cfa980ac6513b229cabf9b22458ade36e3feb91afbcb797094fced7dc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall1fc-f82-spot-r1-walls-30h-spot-5m-5.png",
+      "bytes": 93626,
+      "sha256": "a261c34d539bbc89c6726584fbaa96bfbc14ae92f2019053190a3161a021ae60"
+    }
+  ]
+}

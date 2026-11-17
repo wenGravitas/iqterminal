@@ -1,0 +1,21 @@
+{
+  "id": "startup-r1-preflight-preview",
+  "ms": 859.0030880004633,
+  "headers": {
+    "Vary": "Origin",
+    "x-iq-request-id": "startup-r1-preflight-preview",
+    "content-type": "application/json",
+    "cache-control": "no-store",
+    "content-length": "2231",
+    "x-iq-decoded-bytes": "2231",
+    "x-iq-db-queries": "0",
+    "x-iq-db-read-rows": "0",
+    "x-iq-db-read-bytes": "0",
+    "server-timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.24, total;dur=6.38, proxyqueue;dur=12.34, proxyheader;dur=823.47",
+    "date": "Thu, 12 Nov 2026 06:09:57 GMT",
+    "connection": "close",
+    "x-iq-proxy-queue-ms": "12.34",
+    "x-iq-proxy-header-ms": "823.47"
+  },
+  "build": "83c8cf2709dba91f01d5a24421ae5bc875c96db5"
+}

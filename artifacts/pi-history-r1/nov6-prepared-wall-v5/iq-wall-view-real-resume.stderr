@@ -1,0 +1,13 @@
+(node:739529) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+/home/daz/iqterminal-wall-source-probe/src/wall-history-chunks.ts:137
+ if(complete){const current=await source(proof);if(!current.eligible||current.token!==proof.token)throw Error('Prepared wall source changed; request a new revision');}
+                                                                                                        ^
+
+Error: Prepared wall source changed; request a new revision
+    at advancePreparedWallView (/home/daz/iqterminal-wall-source-probe/src/wall-history-chunks.ts:137:105)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async file:///home/daz/iqterminal-wall-source-probe/ops/pi-prepare-wall-view.mjs:39:10
+    at async file:///home/daz/iqterminal-wall-source-probe/ops/pi-prepare-wall-view.mjs:27:2
+
+Node.js v22.23.4

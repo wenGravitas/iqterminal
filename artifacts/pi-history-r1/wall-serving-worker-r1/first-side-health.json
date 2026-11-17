@@ -1,0 +1,519 @@
+{
+  "oldApi": {
+    "enabled": true,
+    "build": "dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51",
+    "metrics": {
+      "requests": 2341,
+      "rejected": 0,
+      "bytes": 181507206,
+      "serializeMs": 1212.1103129772746,
+      "legacyHeatmap": 0,
+      "legacyFootprint": 0,
+      "closedTileReads": 0,
+      "manifests": 0,
+      "orderWallPages": 14,
+      "peakRss": 225505280,
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4,
+      "rss": 225505280
+    },
+    "wallProjectionEncoding": {
+      "active": 0,
+      "limit": 3,
+      "cacheEntries": 19,
+      "cacheBytes": 8322580
+    },
+    "materializer": {
+      "version": 1,
+      "head": {
+        "cursor": 24455074,
+        "at": 1794288188283,
+        "epoch": 1794264774789
+      },
+      "live": {
+        "cursor": 24455074,
+        "at": 1794288188283,
+        "from": 1794288000000,
+        "widths": [
+          10,
+          25,
+          50,
+          100,
+          250,
+          1000
+        ]
+      },
+      "archive": {
+        "pinned": {
+          "pages": 1,
+          "processed": 51,
+          "cursor": 24455037,
+          "lag": 0,
+          "caughtUp": true
+        },
+        "current": [
+          {
+            "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+            "lane": "pinned",
+            "pages": 1,
+            "processed": 51,
+            "cursor": 24455037,
+            "lag": 0,
+            "caughtUp": true
+          },
+          {
+            "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+            "lane": "pinned",
+            "pages": 1,
+            "processed": 45,
+            "cursor": 20513145,
+            "lag": 0,
+            "caughtUp": true
+          },
+          {
+            "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+            "lane": "custom",
+            "pages": 1,
+            "processed": 51,
+            "cursor": 24455037,
+            "lag": 0,
+            "caughtUp": true
+          }
+        ],
+        "custom": [
+          {
+            "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+            "state": "ready",
+            "progressCursor": 24455037,
+            "sourceHeadCursor": 24455037,
+            "lagCursors": 0,
+            "currentCursor": 24455037,
+            "currentAt": 1794288184509,
+            "currentValid": true
+          }
+        ],
+        "customWork": {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "pages": 1,
+          "processed": 51,
+          "cursor": 24455037,
+          "lag": 0,
+          "caughtUp": true
+        },
+        "customWorker": "perpetual-materializer"
+      },
+      "metrics": {
+        "startedAt": 1793984035129,
+        "lastPoll": 1794288188973,
+        "lastPersist": 1794288004774,
+        "records": 2981099,
+        "closedBuckets": 6084,
+        "liveLagMs": 0,
+        "derivedBytes": 1145210861,
+        "freeBytes": 191891316736,
+        "paused": false,
+        "error": "",
+        "pages": 129953,
+        "pageMs": 4301154.5762736285,
+        "accumulateMs": 2884136.2076557293,
+        "persistMs": 417844.9380083721,
+        "peakRss": 615284736,
+        "sourceHeadAgeMs": 2594,
+        "liveAgeMs": 2594,
+        "rss": 429150208
+      },
+      "backlog": []
+    },
+    "sqlAdmission": {
+      "enabled": true,
+      "version": 1,
+      "build": "18579d938364e5fd5a9c7631bb19681a043f1b66",
+      "completed": 6496182,
+      "cancelled": 34,
+      "rejected": 0,
+      "peakActive": 2,
+      "peakQueued": 5,
+      "waitMs": 188142969.06188053,
+      "maxWaitMs": 830.0502929985523,
+      "active": 1,
+      "history": 1,
+      "queued": 0,
+      "waiting": {
+        "current": 0,
+        "visible": 0,
+        "background": 0
+      },
+      "limit": 2,
+      "reservedCurrent": 1,
+      "oldestWaitMs": 0,
+      "rss": 98189312
+    }
+  },
+  "sideApi": {
+    "enabled": true,
+    "build": "71f62d2efceb8a4ac0fadb9c8a1495bcf1eb4efa",
+    "metrics": {
+      "requests": 1,
+      "rejected": 0,
+      "bytes": 0,
+      "serializeMs": 0,
+      "legacyHeatmap": 0,
+      "legacyFootprint": 0,
+      "closedTileReads": 0,
+      "manifests": 0,
+      "orderWallPages": 0,
+      "peakRss": 0,
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4,
+      "rss": 55902208
+    },
+    "wallProjectionEncoding": {
+      "active": 0,
+      "limit": 3,
+      "cacheEntries": 0,
+      "cacheBytes": 0
+    },
+    "materializer": {
+      "version": 1,
+      "head": {
+        "cursor": 24455074,
+        "at": 1794288188283,
+        "epoch": 1794264774789
+      },
+      "live": {
+        "cursor": 24455074,
+        "at": 1794288188283,
+        "from": 1794288000000,
+        "widths": [
+          10,
+          25,
+          50,
+          100,
+          250,
+          1000
+        ]
+      },
+      "archive": {
+        "pinned": {
+          "pages": 1,
+          "processed": 51,
+          "cursor": 24455037,
+          "lag": 0,
+          "caughtUp": true
+        },
+        "current": [
+          {
+            "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+            "lane": "pinned",
+            "pages": 1,
+            "processed": 51,
+            "cursor": 24455037,
+            "lag": 0,
+            "caughtUp": true
+          },
+          {
+            "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+            "lane": "pinned",
+            "pages": 1,
+            "processed": 45,
+            "cursor": 20513145,
+            "lag": 0,
+            "caughtUp": true
+          },
+          {
+            "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+            "lane": "custom",
+            "pages": 1,
+            "processed": 51,
+            "cursor": 24455037,
+            "lag": 0,
+            "caughtUp": true
+          }
+        ],
+        "custom": [
+          {
+            "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+            "state": "ready",
+            "progressCursor": 24455037,
+            "sourceHeadCursor": 24455037,
+            "lagCursors": 0,
+            "currentCursor": 24455037,
+            "currentAt": 1794288184509,
+            "currentValid": true
+          }
+        ],
+        "customWork": {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "pages": 1,
+          "processed": 51,
+          "cursor": 24455037,
+          "lag": 0,
+          "caughtUp": true
+        },
+        "customWorker": "perpetual-materializer"
+      },
+      "metrics": {
+        "startedAt": 1793984035129,
+        "lastPoll": 1794288188973,
+        "lastPersist": 1794288004774,
+        "records": 2981099,
+        "closedBuckets": 6084,
+        "liveLagMs": 0,
+        "derivedBytes": 1145210861,
+        "freeBytes": 191891316736,
+        "paused": false,
+        "error": "",
+        "pages": 129953,
+        "pageMs": 4301154.5762736285,
+        "accumulateMs": 2884136.2076557293,
+        "persistMs": 417844.9380083721,
+        "peakRss": 615284736,
+        "sourceHeadAgeMs": 2603,
+        "liveAgeMs": 2603,
+        "rss": 429150208
+      },
+      "backlog": []
+    },
+    "sqlAdmission": {
+      "enabled": false
+    }
+  },
+  "worker": {
+    "version": 1,
+    "turn": 255,
+    "busy": false,
+    "limits": {
+      "pending": 32,
+      "tracked": 128,
+      "metadataBytes": 1048576
+    },
+    "jobs": [
+      {
+        "id": "32b5931b75c579c5fe13bb17b7db07b0982ce6deffad56951f7cdebd681d7692",
+        "request": {
+          "market": "spot",
+          "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794179100000,
+          "to": 1794287700000
+        },
+        "lane": "default",
+        "requestedAt": 1794287948420,
+        "updatedAt": 1794288034733,
+        "defaultOwned": false,
+        "rollingDefault": true,
+        "lastTurn": 113,
+        "phase": "ready",
+        "pages": 25,
+        "projectionPages": 25,
+        "parts": 25,
+        "projectionDecodedBytes": 9325513,
+        "projectionCompressedBytes": 1034108,
+        "after": 20510765,
+        "decodedBytes": 47191418,
+        "compressedBytes": 2087463,
+        "leased": true,
+        "paused": false,
+        "canonicalManifestReused": false,
+        "sourceKey": "fe5869c72d22f1d3125d3655fc132943e63dbc0f9c0dd43cf7b93a5c590fbb43",
+        "coverage": {
+          "status": "partial",
+          "partial": true,
+          "availableFrom": 1793521565645,
+          "confirmedTo": 1794287700000,
+          "gapCount": 16,
+          "gapsTruncated": false,
+          "reason": "Depth continuity gaps are present in the requested range"
+        },
+        "projectionManifestReused": false,
+        "projectionKey": "e03acad9c809577b38d1075e8488b5c9badc3f296f5d0beeb67ff5e450864979",
+        "doneAt": 1794288035339,
+        "watermark": 20510765,
+        "sourceToken": "659496016f7d31ba523cb9cd41bf3444ddfecaf11e95f32859e8784273db5239",
+        "state": "ready"
+      },
+      {
+        "id": "ff9dcf5c68f98cff41f7555a6981f89625e7305fb43854d9148b0c1d405c07b7",
+        "request": {
+          "market": "perpetual",
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794177900000,
+          "to": 1794287700000
+        },
+        "lane": "default",
+        "requestedAt": 1794287948448,
+        "updatedAt": 1794288121429,
+        "defaultOwned": true,
+        "rollingDefault": true,
+        "lastTurn": 255,
+        "phase": "ready",
+        "pages": 76,
+        "projectionPages": 76,
+        "parts": 76,
+        "projectionDecodedBytes": 42909453,
+        "projectionCompressedBytes": 3354545,
+        "after": 24452677,
+        "decodedBytes": 148703071,
+        "compressedBytes": 6555585,
+        "leased": true,
+        "paused": false,
+        "canonicalManifestReused": false,
+        "sourceKey": "c3cbdbe0c0fab22511e6de909fe9d7fb7eae2003539b6d2b4c1a982e31b6922c",
+        "coverage": {
+          "status": "partial",
+          "partial": true,
+          "availableFrom": 1793506604584,
+          "confirmedTo": 1794287700000,
+          "gapCount": 4,
+          "gapsTruncated": false,
+          "reason": "Depth continuity gaps are present in the requested range"
+        },
+        "projectionManifestReused": false,
+        "projectionKey": "8e3854512dcb74202a600afd244df8978eed2a1f0522042b99b093042e13db55",
+        "doneAt": 1794288123027,
+        "watermark": 24452677,
+        "sourceToken": "fb113109b277ebcb709698cd81603478ce0cdb18c0929323240713c8a3906405",
+        "state": "ready"
+      },
+      {
+        "id": "b43702eeb86036ec760433f556d8759f0ed13326f966a4a486b3a52b8ad35c66",
+        "request": {
+          "market": "spot",
+          "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794179400000,
+          "to": 1794288000000
+        },
+        "lane": "default",
+        "requestedAt": 1794288010330,
+        "updatedAt": 1794288082098,
+        "defaultOwned": true,
+        "rollingDefault": true,
+        "lastTurn": 191,
+        "phase": "ready",
+        "pages": 25,
+        "projectionPages": 25,
+        "parts": 25,
+        "projectionDecodedBytes": 9320095,
+        "projectionCompressedBytes": 1032617,
+        "after": 20511391,
+        "decodedBytes": 47200585,
+        "compressedBytes": 2086285,
+        "leased": true,
+        "paused": false,
+        "canonicalManifestReused": false,
+        "sourceKey": "acebfd1d83ab979e0682d417f1df46bad2d306a3614e99263491776f2bab8ef2",
+        "coverage": {
+          "status": "partial",
+          "partial": true,
+          "availableFrom": 1793521565645,
+          "confirmedTo": 1794288000000,
+          "gapCount": 16,
+          "gapsTruncated": false,
+          "reason": "Depth continuity gaps are present in the requested range"
+        },
+        "projectionManifestReused": false,
+        "projectionKey": "ca0864388df24be67be74ed1fc8c8a03a86e91ab12c8c92f37dfa8873330980c",
+        "doneAt": 1794288082660,
+        "watermark": 20511391,
+        "sourceToken": "ca0c5d2f8e44b9663b904fdcc9a303b97f9b1935da4f5c658eb4184385818743",
+        "state": "ready"
+      }
+    ],
+    "retention": {
+      "retired": 0,
+      "blocked": 0,
+      "scanned": 42,
+      "lastError": "",
+      "lastRetired": "",
+      "pending": 0,
+      "quarantine": false
+    },
+    "defaults": {
+      "enabled": true,
+      "pollMs": 15000,
+      "retryMs": 60000,
+      "configurations": [
+        {
+          "market": "spot",
+          "interval": "5m",
+          "step": 300000,
+          "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+          "requestedClosedTo": 1794288000000,
+          "topLevels": 8,
+          "bandPercent": 10,
+          "aggregation": "native",
+          "sourceHead": {
+            "cursor": 20513077,
+            "at": 1794288178449,
+            "availableFrom": 1793521565645
+          },
+          "eligibleClosedTo": 1794288000000,
+          "behindSlots": 0,
+          "request": {
+            "market": "spot",
+            "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+            "from": 1794179400000,
+            "to": 1794288000000
+          },
+          "state": "ready",
+          "job": "b43702eeb86036ec760433f556d8759f0ed13326f966a4a486b3a52b8ad35c66",
+          "phase": "ready",
+          "coverage": {
+            "status": "partial",
+            "partial": true,
+            "availableFrom": 1793521565645,
+            "confirmedTo": 1794288000000,
+            "gapCount": 16,
+            "gapsTruncated": false,
+            "reason": "Depth continuity gaps are present in the requested range"
+          },
+          "pages": 25,
+          "projectionPages": 25
+        },
+        {
+          "market": "perpetual",
+          "interval": "15m",
+          "step": 900000,
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "requestedClosedTo": 1794287700000,
+          "topLevels": 8,
+          "bandPercent": 10,
+          "aggregation": "native",
+          "sourceHead": {
+            "cursor": 24454920,
+            "at": 1794288172577,
+            "availableFrom": 1793506604584
+          },
+          "eligibleClosedTo": 1794287700000,
+          "behindSlots": 0,
+          "request": {
+            "market": "perpetual",
+            "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+            "from": 1794177900000,
+            "to": 1794287700000
+          },
+          "state": "ready",
+          "job": "ff9dcf5c68f98cff41f7555a6981f89625e7305fb43854d9148b0c1d405c07b7",
+          "phase": "ready",
+          "coverage": {
+            "status": "partial",
+            "partial": true,
+            "availableFrom": 1793506604584,
+            "confirmedTo": 1794287700000,
+            "gapCount": 4,
+            "gapsTruncated": false,
+            "reason": "Depth continuity gaps are present in the requested range"
+          },
+          "pages": 76,
+          "projectionPages": 76
+        }
+      ],
+      "scope": "Closed default source-window preparation; overlapping-window composition and live-tail bridging remain independent requirements"
+    },
+    "paused": false,
+    "build": "71f62d2efceb8a4ac0fadb9c8a1495bcf1eb4efa"
+  }
+}

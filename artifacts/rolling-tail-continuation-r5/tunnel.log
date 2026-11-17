@@ -1,0 +1,3 @@
+IQTerminal tunnels: history 18980, live stream 18981 -> staging 18880; Ctrl-C closes both.
+IQTerminal live tunnel exited (0); retry in 1s. Other lane retained.
+IQTerminal history tunnel exited (0); retry in 1s. Other lane retained.

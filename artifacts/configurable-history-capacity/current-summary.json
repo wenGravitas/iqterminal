@@ -1,0 +1,574 @@
+[
+  {
+    "label": "fresh-current",
+    "observedMs": 112209.16923099999,
+    "advancingExactACKAcceptances": 142,
+    "first": {
+      "socket": 2,
+      "mono": 8744.600000000559,
+      "cursor": 3527437902
+    },
+    "last": {
+      "socket": 2,
+      "mono": 103037.10000000056,
+      "cursor": 3527439277
+    },
+    "longestConfirmedGapMs": 9859.400000000373,
+    "executionResetEvents": [],
+    "closes": [
+      {
+        "seq": 20,
+        "event": "close",
+        "mono": 7137.100000000559,
+        "id": 1,
+        "code": 1008,
+        "reason": "Invalid command"
+      }
+    ],
+    "currentWallsFirst": {
+      "state": "live",
+      "message": "Waiting for the current selected-profile archive.",
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "loading",
+        "requestComplete": false,
+        "rangeComplete": false,
+        "from": 1794823767970,
+        "to": 1794825567970,
+        "market": "perpetual",
+        "aggregation": "native",
+        "gaps": [],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "profileStatus": "backfilling",
+        "midpoint": "64560.15"
+      },
+      "lastConfirmedAt": 1794825567784,
+      "bookScope": {
+        "maxLevelsPerSide": 1000,
+        "bidComplete": false,
+        "askComplete": false,
+        "bidFloor": 65610.1,
+        "askCeiling": 65896.9
+      },
+      "currentSubscribed": true
+    },
+    "currentWallsLast": {
+      "state": "live",
+      "message": "Waiting for the current selected-profile archive.",
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "loading",
+        "requestComplete": false,
+        "rangeComplete": false,
+        "from": 1794823767970,
+        "to": 1794825567970,
+        "market": "perpetual",
+        "aggregation": "native",
+        "gaps": [],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "profileStatus": "backfilling",
+        "midpoint": "64569.95"
+      },
+      "lastConfirmedAt": 1794825659078,
+      "bookScope": {
+        "maxLevelsPerSide": 1000,
+        "bidComplete": false,
+        "askComplete": false,
+        "bidFloor": 65610.1,
+        "askCeiling": 65896.9
+      },
+      "currentSubscribed": true
+    },
+    "health": [
+      {
+        "status": 200,
+        "elapsedMs": 3142.828445000001,
+        "requestId": "34bde964-8449-468e-bb38-6287b40de5df"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 380.2092960000009,
+        "requestId": "1204ec84-0ae1-4f55-be2c-eb50d78b8359"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 1408.6394419999997,
+        "requestId": "1b177ae5-a540-4f5e-8fbb-4e7bc8c4e863"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 711.2796539999981,
+        "requestId": "2cd2a869-334c-46b0-800a-e045c9cb35b7"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 987.616231,
+        "requestId": "1eaff43e-bade-489c-8030-7aa04ab3f74d"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 443.71342300000106,
+        "requestId": "6803257c-b41b-48bd-9a48-7fa296882088"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 375.9621150000021,
+        "requestId": "f650abff-f4f2-475a-8266-ab24ad97c89e"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 501.27102300000115,
+        "requestId": "9a4e1e95-2f7d-4b59-90a3-e4462b89e48f"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 352.37405299999955,
+        "requestId": "6e2039c2-5a06-433b-b094-7f0d9269861b"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 1396.7482919999966,
+        "requestId": "aa570d65-0499-4a0e-9c98-43aa75e9b857"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 334.66613200000575,
+        "requestId": "3a82fe5c-ae62-4f89-bd91-a4e9a48d4861"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 367.771385,
+        "requestId": "ce746d7b-086e-4a50-8b66-ac4adedd9838"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 527.4967170000018,
+        "requestId": "8e73f262-7616-48e7-b49b-f50b02dbec53"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 568.4112370000075,
+        "requestId": "751941dc-3eb1-41cf-9c1c-30f21273c05e"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 510.44300999998813,
+        "requestId": "6003297a-a5fe-4319-9e23-f7807b93e69f"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 298.83990400000766,
+        "requestId": "858844d0-2456-409e-a73e-d7cc05fc7f7b"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 467.23903000001155,
+        "requestId": "7b024127-2aa8-45c3-952e-59445f3f38a3"
+      },
+      {
+        "error": "TimeoutError: apiRequestContext.get: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - \u2192 GET http://127.0.0.1:4204/market-data/v2/history/health\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n",
+        "elapsedMs": 12006.384256000005
+      }
+    ]
+  },
+  {
+    "label": "fresh-current-verified-start",
+    "observedMs": 148587.46000599998,
+    "advancingExactACKAcceptances": 226,
+    "first": {
+      "socket": 1,
+      "mono": 5098,
+      "cursor": 3527443934
+    },
+    "last": {
+      "socket": 1,
+      "mono": 144562.2999999998,
+      "cursor": 3527445472
+    },
+    "longestConfirmedGapMs": 2792.4000000003725,
+    "executionResetEvents": [],
+    "closes": [
+      {
+        "seq": 27,
+        "event": "close",
+        "mono": 6066.0999999996275,
+        "id": 2,
+        "code": 1008,
+        "reason": "Invalid command"
+      },
+      {
+        "seq": 54,
+        "event": "close",
+        "mono": 9145.599999999627,
+        "id": 3,
+        "code": 1008,
+        "reason": "Invalid command"
+      },
+      {
+        "seq": 1073,
+        "event": "close",
+        "mono": 118105.29999999981,
+        "id": 0,
+        "code": 1005,
+        "reason": ""
+      }
+    ],
+    "currentWallsFirst": {
+      "state": "loading",
+      "message": "Waiting for the current selected-profile archive.",
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "loading",
+        "requestComplete": false,
+        "rangeComplete": false,
+        "from": 1794824198477,
+        "to": 1794825998477,
+        "market": "perpetual",
+        "aggregation": "native",
+        "gaps": [],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true
+      },
+      "currentSubscribed": true
+    },
+    "currentWallsLast": {
+      "state": "live",
+      "message": "Waiting for the current selected-profile archive.",
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "loading",
+        "requestComplete": false,
+        "rangeComplete": false,
+        "from": 1794824198477,
+        "to": 1794825998477,
+        "market": "perpetual",
+        "aggregation": "native",
+        "gaps": [],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "profileStatus": "backfilling",
+        "midpoint": "64492.65"
+      },
+      "lastConfirmedAt": 1794826136779,
+      "bookScope": {
+        "maxLevelsPerSide": 1000,
+        "bidComplete": false,
+        "askComplete": false,
+        "bidFloor": 65610.1,
+        "askCeiling": 65896.9
+      },
+      "currentSubscribed": true
+    },
+    "health": [
+      {
+        "status": 200,
+        "elapsedMs": 1072.2668720000001,
+        "requestId": "d3267f12-ee41-45d5-aad5-2a1f6e6bc465"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 549.4870410000003,
+        "requestId": "b6b5d6d8-0609-4c15-80c3-50258f3bacd3"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 491.3150119999991,
+        "requestId": "25abaf48-d648-4973-90a1-f382021c61a1"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 432.4771039999978,
+        "requestId": "1607af3b-04cf-44a4-828e-a93f68b2d774"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 2306.518207000001,
+        "requestId": "b230c8d9-aaa5-42a4-a93a-fcce133dcfea"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 384.9097030000048,
+        "requestId": "31d4c214-7237-4ecf-baf5-832832af73ac"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 878.5288499999951,
+        "requestId": "0c4ad494-1b6b-4c49-8c96-58da8bc09b81"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 352.4274310000037,
+        "requestId": "71d39c8e-57d5-47e1-81d4-8f73fc046f8f"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 2287.4119640000063,
+        "requestId": "30e064c6-c6aa-4e6a-b6ea-d7d355d54779"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 1508.8664809999973,
+        "requestId": "2ec3e2b3-17a2-4a9d-a3ed-0d1ae551c4b6"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 298.74294100000407,
+        "requestId": "a5fb0cd0-043b-4867-a33a-e5be8c06970d"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 541.7695339999918,
+        "requestId": "0cbc7fb4-6f2b-4684-b660-05e0bc6bd7a6"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 610.0210420000076,
+        "requestId": "ab0df198-12c4-4359-8b9d-0781f9c98527"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 305.63451999999234,
+        "requestId": "c8d8665e-cc75-47ca-978e-1815fac9c4f8"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 435.77506800000265,
+        "requestId": "c23099a6-e0c0-45ea-b344-bce4a6af59f3"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 473.4481089999899,
+        "requestId": "a11355ab-3f90-407a-bb2d-ef1fe319357a"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 312.73844099999405,
+        "requestId": "40d08680-cfae-4a28-b82d-e389a4c1f895"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 296.3581980000017,
+        "requestId": "d5cda883-84d8-481f-8972-fe56ddea404a"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 834.382190999997,
+        "requestId": "3fe0b35e-6219-4a61-832a-e5bc7a288fca"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 729.7280680000113,
+        "requestId": "a538aa4a-9161-4c11-b33c-87933684ad05"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 521.9420439999958,
+        "requestId": "6f12ee11-0168-4b51-b767-a01484682321"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 321.3194070000027,
+        "requestId": "ca05fbe8-8458-4ce6-a09e-52e516c79a4a"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 285.08630299998913,
+        "requestId": "d901cee3-f34c-4a48-a771-695e33b15b42"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 324.62902999998187,
+        "requestId": "62b2c0e9-1744-409a-8d9f-a3369b89e56c"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 471.2351760000165,
+        "requestId": "efa7d870-47af-4c9f-9e0b-382af1687db0"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 514.6222450000059,
+        "requestId": "9ac8c0d7-ea97-4d3a-8110-9a9a113deecb"
+      }
+    ]
+  },
+  {
+    "label": "fresh-current-final",
+    "observedMs": 88930.910897,
+    "advancingExactACKAcceptances": 129,
+    "first": {
+      "socket": 2,
+      "mono": 5578.4000000003725,
+      "cursor": 3527449219
+    },
+    "last": {
+      "socket": 2,
+      "mono": 86803.20000000019,
+      "cursor": 3527450192
+    },
+    "longestConfirmedGapMs": 1805.1000000005588,
+    "executionResetEvents": [],
+    "closes": [
+      {
+        "seq": 587,
+        "event": "close",
+        "mono": 68494,
+        "id": 0,
+        "code": 1005,
+        "reason": ""
+      }
+    ],
+    "currentWallsFirst": {
+      "state": "live",
+      "message": "Waiting for the current selected-profile archive.",
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "loading",
+        "requestComplete": false,
+        "rangeComplete": false,
+        "from": 1794824586254,
+        "to": 1794826386254,
+        "market": "perpetual",
+        "aggregation": "native",
+        "gaps": [],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "profileStatus": "backfilling",
+        "midpoint": "64434.85"
+      },
+      "lastConfirmedAt": 1794826385255,
+      "bookScope": {
+        "maxLevelsPerSide": 1000,
+        "bidComplete": false,
+        "askComplete": false,
+        "bidFloor": 65610.1,
+        "askCeiling": 65896.9
+      },
+      "currentSubscribed": true
+    },
+    "currentWallsLast": {
+      "state": "live",
+      "message": "Waiting for the current selected-profile archive.",
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "loading",
+        "requestComplete": false,
+        "rangeComplete": false,
+        "from": 1794824586254,
+        "to": 1794826386254,
+        "market": "perpetual",
+        "aggregation": "native",
+        "gaps": [],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "profileStatus": "backfilling",
+        "midpoint": "64460.45"
+      },
+      "lastConfirmedAt": 1794826466561,
+      "bookScope": {
+        "maxLevelsPerSide": 1000,
+        "bidComplete": false,
+        "askComplete": false,
+        "bidFloor": 65610.1,
+        "askCeiling": 65896.9
+      },
+      "currentSubscribed": true
+    },
+    "health": [
+      {
+        "status": 200,
+        "elapsedMs": 838.8805629999997,
+        "requestId": "553bc3d3-616b-42ed-8b23-d77e1294e048"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 301.27196099999856,
+        "requestId": "a7cf3360-b88c-4d46-b23d-e16b889bfc62"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 456.3521290000026,
+        "requestId": "b13d8f00-1675-41c0-957d-0e1616850894"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 433.8412529999987,
+        "requestId": "f97b1964-c527-4d59-b03a-7030126f69d5"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 1504.2775450000008,
+        "requestId": "b07acef3-8e5b-404d-98ae-8102a4a95f19"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 779.328379999999,
+        "requestId": "cb49b17b-25ec-4944-971c-a920825e30e8"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 459.9372590000057,
+        "requestId": "39505c5a-d3da-4518-a6fe-3fc874644d14"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 499.2950750000018,
+        "requestId": "6e740042-95b6-4487-8aae-20f5c308fcb1"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 539.815499999997,
+        "requestId": "a89c25cd-7f40-43e5-9d09-b9070279d965"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 390.4240959999952,
+        "requestId": "5136e748-c8b6-4c53-89b7-fa6219364169"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 2178.279113000004,
+        "requestId": "186f18fa-b795-4190-9c6d-1685daf81265"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 419.79129699998884,
+        "requestId": "387d8487-6f9e-4c78-8a7d-fb29aa6d02b8"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 671.1789080000017,
+        "requestId": "3c4fd0b8-5a7d-4eae-93f1-a30aa98aca5d"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 567.3597509999963,
+        "requestId": "7e5727b4-0b80-4e98-aa5d-50942c38dd4a"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 877.7549969999964,
+        "requestId": "9cd0bfe6-63b3-4ab1-8f8d-33c59642808d"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 1406.7344379999995,
+        "requestId": "a620e393-e2ca-4f73-8a07-8382eb7d92e6"
+      }
+    ]
+  }
+]

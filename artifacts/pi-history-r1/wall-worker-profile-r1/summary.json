@@ -1,0 +1,198 @@
+{
+  "scope": "Owned-browser dedicated-worker CPU sampling. No pause or source substitution. Observer clocks and worker profile clocks are separate; samples add overhead and are not loading acceptance. Initial attachment may miss early startup.",
+  "sourceBuild": "87e46367e28bec68c4d310b8bb5e42f22b640767",
+  "acceptance": false,
+  "profiles": [
+    {
+      "target": {
+        "targetId": "DBAEEF650ABCCF0E06983DB70869829C",
+        "type": "worker",
+        "title": "",
+        "url": "",
+        "attached": false,
+        "parentId": "F14395AA6B2756924D2201DC4F6BAB5A",
+        "canAccessOpener": false,
+        "parentFrameId": "F14395AA6B2756924D2201DC4F6BAB5A",
+        "browserContextId": "FB83821DAC70B1AE03362993A7DE35D2"
+      },
+      "durationMs": 21717.468,
+      "largestSelfSamples": [
+        {
+          "function": "(idle)",
+          "asset": "",
+          "line0": -1,
+          "column0": -1,
+          "sampledSelfMs": 10588.219
+        },
+        {
+          "function": "",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 279275,
+          "sampledSelfMs": 1905.682
+        },
+        {
+          "function": "da",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 283573,
+          "sampledSelfMs": 1435.899
+        },
+        {
+          "function": "(garbage collector)",
+          "asset": "",
+          "line0": -1,
+          "column0": -1,
+          "sampledSelfMs": 1242.402
+        },
+        {
+          "function": "(program)",
+          "asset": "",
+          "line0": -1,
+          "column0": -1,
+          "sampledSelfMs": 928.702
+        },
+        {
+          "function": "",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 1,
+          "column0": 47045,
+          "sampledSelfMs": 735.042
+        },
+        {
+          "function": "Fi",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 268516,
+          "sampledSelfMs": 611.714
+        },
+        {
+          "function": "Br",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 206333,
+          "sampledSelfMs": 547.795
+        },
+        {
+          "function": "Ni",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 267630,
+          "sampledSelfMs": 454.752
+        },
+        {
+          "function": "Zi",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 277071,
+          "sampledSelfMs": 424.725
+        },
+        {
+          "function": "",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 276449,
+          "sampledSelfMs": 376.938
+        },
+        {
+          "function": "restoreCheckpoint",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 191746,
+          "sampledSelfMs": 318.896
+        },
+        {
+          "function": "Ji",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 276759,
+          "sampledSelfMs": 153.87
+        },
+        {
+          "function": "Rr",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 206064,
+          "sampledSelfMs": 128.313
+        },
+        {
+          "function": "publish",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 365483,
+          "sampledSelfMs": 110.485
+        },
+        {
+          "function": "Ki",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 276342,
+          "sampledSelfMs": 109.095
+        },
+        {
+          "function": "na",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 278655,
+          "sampledSelfMs": 106.228
+        },
+        {
+          "function": "Pi",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 268219,
+          "sampledSelfMs": 105.712
+        },
+        {
+          "function": "s",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 268789,
+          "sampledSelfMs": 101.651
+        },
+        {
+          "function": "",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 206106,
+          "sampledSelfMs": 98.953
+        },
+        {
+          "function": "RegExp: ^(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+          "asset": "",
+          "line0": -1,
+          "column0": -1,
+          "sampledSelfMs": 97.116
+        },
+        {
+          "function": "Lr",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 205954,
+          "sampledSelfMs": 88.378
+        },
+        {
+          "function": "postMessage",
+          "asset": "",
+          "line0": -1,
+          "column0": -1,
+          "sampledSelfMs": 74.739
+        },
+        {
+          "function": "zr",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 206268,
+          "sampledSelfMs": 60.487
+        },
+        {
+          "function": "ji",
+          "asset": "worker-BDrBSiaT.js",
+          "line0": 0,
+          "column0": 267449,
+          "sampledSelfMs": 59.459
+        }
+      ]
+    }
+  ]
+}

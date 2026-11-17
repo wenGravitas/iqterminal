@@ -1,0 +1,11 @@
+{
+  "task": "rolling-history-reuse-r4",
+  "startUtc": "2026-11-13T08:02:52+00:00",
+  "experimentCutoffUtc": "2026-11-13T09:42:52+00:00",
+  "deadlineUtc": "2026-11-13T10:02:52+00:00",
+  "experimentCutoffEpoch": 1794562972.0,
+  "deadlineEpoch": 1794564172.0,
+  "initialFrontendHead": "577de5f71008d97d60d286c777ee96c686532a07",
+  "initialBackendHead": "5358c1c35aab936156a5ff961db8ab8032553772",
+  "priorR4Found": false
+}

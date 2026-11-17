@@ -1,0 +1,8 @@
+{
+  "verifiedScreenshots": 11,
+  "restoredAfterFinalBrowserCohort": [
+    "artifacts/pi-history-r1/native-presentation-r1/bootstrap-seeded-before-validation.png",
+    "artifacts/pi-history-r1/native-presentation-r1/cached-before-validation.png",
+    "artifacts/pi-history-r1/native-visible-r1/native30h-before-bootstrap.png"
+  ]
+}

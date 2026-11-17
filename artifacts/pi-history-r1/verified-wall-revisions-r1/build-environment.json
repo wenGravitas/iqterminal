@@ -1,0 +1,15 @@
+{
+  "sourceCommit": "4615dcf62533690654dc094529b4c3956356d74a",
+  "sourceDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "VITE_BUILD_COMMIT": "4615dcf62533690654dc094529b4c3956356d74a",
+  "VITE_DATA_MODE": "direct",
+  "VITE_HISTORY_TILES": "0",
+  "VITE_DIAGNOSTICS": "1",
+  "node": "v22.19.0",
+  "chromium": "Chromium 155.0.8059.79 built on Debian GNU/Linux 12 (bookworm)",
+  "headless": true,
+  "rendering": "Chromium SwiftShader software",
+  "host": "Raspberry Pi5 aarch64",
+  "baseURL": "http://127.0.0.1:4192",
+  "scope": "Explicit diagnostic fixture native-chart retention, snapshot tooltip, value patches and Fit Walls; not live source, staging history, foreground Pi or latency acceptance"
+}

@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: a canceled response with an unresolved trace cannot prevent sample finalization
+ok 1 - a canceled response with an unresolved trace cannot prevent sample finalization
+  ---
+  duration_ms: 22.522681
+  type: 'test'
+  ...
+# Subtest: completed and failed traces finish without retaining a cleanup timer
+ok 2 - completed and failed traces finish without retaining a cleanup timer
+  ---
+  duration_ms: 5.464665
+  type: 'test'
+  ...
+# Subtest: ready closed history cannot end a current-display observation before healthy current paint
+ok 3 - ready closed history cannot end a current-display observation before healthy current paint
+  ---
+  duration_ms: 0.588576
+  type: 'test'
+  ...
+# Subtest: extended current observation remains active after both current and history paint
+ok 4 - extended current observation remains active after both current and history paint
+  ---
+  duration_ms: 0.363927
+  type: 'test'
+  ...
+# Subtest: wall history observation stays open until native closed coverage is inspected
+ok 5 - wall history observation stays open until native closed coverage is inspected
+  ---
+  duration_ms: 3.991456
+  type: 'test'
+  ...
+# Subtest: native coverage cannot hide a missing interior candle behind endpoints, extra bars or a forming bar
+ok 6 - native coverage cannot hide a missing interior candle behind endpoints, extra bars or a forming bar
+  ---
+  duration_ms: 2.738657
+  type: 'test'
+  ...
+# Subtest: future whitespace leaves five eligible closed slots and requires independent forming paint
+ok 7 - future whitespace leaves five eligible closed slots and requires independent forming paint
+  ---
+  duration_ms: 1.026725
+  type: 'test'
+  ...
+# Subtest: canonical experiment removes only optional transport capabilities
+ok 8 - canonical experiment removes only optional transport capabilities
+  ---
+  duration_ms: 4.738941
+  type: 'test'
+  ...
+# Subtest: building work is unchanged and unsupported experiment fails explicitly
+ok 9 - building work is unchanged and unsupported experiment fails explicitly
+  ---
+  duration_ms: 1.748264
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 261.741747

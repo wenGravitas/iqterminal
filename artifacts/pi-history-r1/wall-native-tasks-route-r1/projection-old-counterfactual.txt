@@ -1,0 +1,26 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/order-walls-work-budget.test.ts (12 tests | 1 failed) 438ms
+   × projection evaluates price once per segment and skips time conversion for offscreen value histories 36ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/order-walls-work-budget.test.ts > projection evaluates price once per segment and skips time conversion for offscreen value histories
+AssertionError: expected "priceToY" to be called 20 times, but got 160 times
+ ❯ tests/order-walls-work-budget.test.ts:96:16
+     94|  const price=vi.spyOn(rc.priceScale,'priceToY'),time=vi.spyOn(rc.dataL…
+     95|  const p=new OrderWallsPrimitive(settings,60000,true,0);p.setSnapshot(…
+     96|  expect(price).toHaveBeenCalledTimes(walls.length);
+       |                ^
+     97|  expect(time).toHaveBeenCalledTimes(10*8*2);
+     98|  expect(p.diagnostics()).toMatchObject({retainedSegments:20,retainedDr…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed (12)
+   Start at  17:33:43
+   Duration  1.78s (transform 59%, tests 32%, import 9%, worker 1%)
+

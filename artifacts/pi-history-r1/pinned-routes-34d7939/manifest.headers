@@ -1,0 +1,17 @@
+HTTP/1.1 200 OK
+x-iq-request-id: fc5088bb-de8a-406b-ba6e-e5f4d685ccb9
+X-IQ-View-Id: manifest
+content-type: application/json
+cache-control: no-store
+content-length: 30888
+x-iq-db-queries: 9
+x-iq-db-read-rows: 2025614
+x-iq-db-read-bytes: 232165894
+x-iq-decoded-bytes: 571304
+server-timing: db;dur=809.42, sqlqueue;dur=524.50, dbdecode;dur=4.20, materializer;dur=837.99, legacy;dur=1486.35
+content-encoding: gzip
+vary: Accept-Encoding
+date: Thu, 05 Nov 2026 12:54:27 GMT
+connection: keep-alive
+keep-alive: timeout=5
+

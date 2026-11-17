@@ -1,0 +1,18 @@
+{"cycle":0,"firstMs":6612.300000000745,"completeMs":14210,"projectors":0,"workerHeap":[26123904],"paintFailure":null}
+file:///home/daz/workarea/iqterminal-perf-history/scripts/pi-wall-lifecycle-bench.mjs:51
+  const heap=await browserWorkerHeaps(browser,cycle===snapshotCycle?{snapshotChunk:(_target,chunk)=>{snapshotBytes+=Buffer.byteLength(chunk);if(snapshotBytes>160*1024*1024)throw Error('Owned-worker snapshot capacity');appendFileSync(`${dir}/${label}-worker.heapsnapshot`,chunk);}}:{});await main.send('HeapProfiler.collectGarbage');const mainHeap=await main.send('Runtime.getHeapUsage');
+                                                                                                                                                                                  ^
+
+Error: Owned-worker snapshot capacity
+    at Object.snapshotChunk (file:///home/daz/workarea/iqterminal-perf-history/scripts/pi-wall-lifecycle-bench.mjs:51:179)
+    at file:///home/daz/workarea/iqterminal-perf-history/scripts/browser-worker-heaps.mjs:24:128
+    at CDPSession2.receive (file:///home/daz/workarea/iqterminal-perf-history/scripts/browser-worker-heaps.mjs:11:83)
+    at CDPSession2._callHandler (/home/daz/workarea/iqterminal/node_modules/.pnpm/playwright-core@1.64.0/node_modules/playwright-core/lib/coreBundle.js:11647:33)
+    at CDPSession2.emit (/home/daz/workarea/iqterminal/node_modules/.pnpm/playwright-core@1.64.0/node_modules/playwright-core/lib/coreBundle.js:11637:16)
+    at Proxy.<anonymous> (/home/daz/workarea/iqterminal/node_modules/.pnpm/playwright-core@1.64.0/node_modules/playwright-core/lib/coreBundle.js:59009:16)
+    at Proxy._callHandler (/home/daz/workarea/iqterminal/node_modules/.pnpm/playwright-core@1.64.0/node_modules/playwright-core/lib/coreBundle.js:11647:33)
+    at Proxy.emit (/home/daz/workarea/iqterminal/node_modules/.pnpm/playwright-core@1.64.0/node_modules/playwright-core/lib/coreBundle.js:11637:16)
+    at Connection.dispatch (/home/daz/workarea/iqterminal/node_modules/.pnpm/playwright-core@1.64.0/node_modules/playwright-core/lib/coreBundle.js:65476:25)
+    at Immediate.<anonymous> (/home/daz/workarea/iqterminal/node_modules/.pnpm/playwright-core@1.64.0/node_modules/playwright-core/lib/coreBundle.js:65537:85)
+
+Node.js v22.19.0

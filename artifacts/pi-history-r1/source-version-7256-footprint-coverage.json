@@ -1,0 +1,129 @@
+[
+  {
+    "scenario": "five-closed-plus-forming",
+    "build": "8a28a6081fdf13d297ca50e0e9680dd6802627d1",
+    "backend": "7256fd44af9728619a93d6191639d5e39e8d74ee",
+    "requested": {
+      "from": 1793930400000,
+      "to": 1793959200000
+    },
+    "eligible": {
+      "from": 1793930400000,
+      "to": 1793948400000
+    },
+    "expectedClosed": 5,
+    "expectedForming": 1793948400000,
+    "measured": {
+      "status": {
+        "history": {
+          "views": 1,
+          "ready": true,
+          "validated": true,
+          "ranges": [
+            {
+              "from": 1793930400000,
+              "to": 1793948400000,
+              "progress": {
+                "viewId": "view-bafe71ea-33c4-47a9-be44-46716a5ecc72-1",
+                "firstUsefulMs": 810.9000000003725,
+                "completeMs": 834.3000000002794,
+                "from": 1793930400000,
+                "to": 1793948400000,
+                "requestedSlots": 5,
+                "loadedSlots": 5,
+                "validatedSlots": 5,
+                "slots": [
+                  {
+                    "from": 1793930400000,
+                    "to": 1793934000000,
+                    "validated": true,
+                    "state": "ready"
+                  },
+                  {
+                    "from": 1793934000000,
+                    "to": 1793937600000,
+                    "validated": true,
+                    "state": "ready"
+                  },
+                  {
+                    "from": 1793937600000,
+                    "to": 1793941200000,
+                    "validated": true,
+                    "state": "ready"
+                  },
+                  {
+                    "from": 1793941200000,
+                    "to": 1793944800000,
+                    "validated": true,
+                    "state": "ready"
+                  },
+                  {
+                    "from": 1793944800000,
+                    "to": 1793948400000,
+                    "validated": true,
+                    "state": "ready"
+                  }
+                ],
+                "capacityLimited": false
+              }
+            }
+          ],
+          "capacityLimited": false
+        },
+        "state": "live",
+        "message": "Staging · retained aggTrades · 1 bars · 1 coverage gap(s)",
+        "lastUpdate": 1793949509603,
+        "tickSize": 0.1,
+        "rowSize": 25,
+        "collectionStartedAt": 1793344697357,
+        "firstTradeAt": 1793930400000,
+        "lastTradeAt": 1793949509603,
+        "eventTime": null,
+        "outages": 0,
+        "capacityDrops": 0,
+        "unknownSideRecords": 0,
+        "unknownSideVolume": 0,
+        "lateRecords": 0,
+        "retentionStart": 1793930400,
+        "coverage": "partial"
+      },
+      "paint": {
+        "at": 4879.600000000093,
+        "draws": 7,
+        "ms": 35.5,
+        "times": [
+          1793930400,
+          1793934000,
+          1793937600,
+          1793941200,
+          1793944800,
+          1793948400
+        ],
+        "cells": 95
+      },
+      "viewport": {
+        "from": 1793930400,
+        "to": 1793959200
+      },
+      "renderer": {
+        "draws": 8,
+        "backend": "canvas2d"
+      }
+    },
+    "requests": [
+      {
+        "url": "http://127.0.0.1:4181/market-data/v2/history/footprint-current?interval=1h&rowPrice=25",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:4181/market-data/v2/history/footprints?from=1793944800000&to=1793948400000&interval=1h&rowPrice=25&known=",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:4181/market-data/v2/history/footprints?from=1793930400000&to=1793944800000&interval=1h&rowPrice=25&known=",
+        "status": 200
+      }
+    ],
+    "scope": "real source coverage; 30s observation is not interactive latency acceptance"
+  }
+]

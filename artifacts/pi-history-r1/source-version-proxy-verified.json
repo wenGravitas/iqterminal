@@ -1,0 +1,20 @@
+[
+  {
+    "path": "/market-data/v1/health",
+    "status": 200,
+    "contentType": "application/json",
+    "bytes": 1612,
+    "elapsedMs": 1232.8482550001354,
+    "collector": "live",
+    "build": null
+  },
+  {
+    "path": "/market-data/v2/history/health",
+    "status": 200,
+    "contentType": "application/json",
+    "bytes": 2952,
+    "elapsedMs": 2112.7046249998784,
+    "collector": null,
+    "build": "7256fd44af9728619a93d6191639d5e39e8d74ee"
+  }
+]

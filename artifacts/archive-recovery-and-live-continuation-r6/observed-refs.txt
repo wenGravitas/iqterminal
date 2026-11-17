@@ -1,0 +1,5 @@
+f32aa408e1a2519fbb052c9d0d14c902c93c89f4		branch 'integration/pi-history-startup-r1' of https://github.com/wenGravitas/iqterminal
+d2b519e3b5714ae4955647e80a8190c10f2511d9		branch 'main' of https://github.com/wenGravitas/iqterminal
+refs/heads/main d2b519e3b5714ae4955647e80a8190c10f2511d9
+refs/heads/perf/native-price-cache-control bf1d8425525306848cd9bc741c647fc3f1ba5054
+refs/tags/pi-history-stabilization-r1-client c4a2855b12d91dc828279a663ab4591da4fa092d

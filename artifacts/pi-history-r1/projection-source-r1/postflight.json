@@ -1,0 +1,161 @@
+{
+  "atUtc": "2026-11-11T13:00:11Z",
+  "readOnly": true,
+  "candidateDeployed": false,
+  "identitiesUnchanged": true,
+  "states": [
+    {
+      "id": "246c527d7ce8aa1827445b229cab03ca97329989f295c5e9fcf15fb0d144dca6",
+      "name": "/iqterminal-wall-serving-33c7e3a-r1",
+      "running": true,
+      "startedAt": "2026-11-11T07:18:21.947879398Z",
+      "image": "sha256:3a67ff312a4924289717685b2c7aa53328e80f0dfd3af8e896bd347a3b848d43"
+    },
+    {
+      "id": "0f5250279212a08a3867eeed0b571d59c4722c624db174d8ebbcfa444ef655c1",
+      "name": "/iqterminal-wall-gateway-112bf11-r1",
+      "running": true,
+      "startedAt": "2026-11-11T07:54:45.904957895Z",
+      "image": "sha256:3a67ff312a4924289717685b2c7aa53328e80f0dfd3af8e896bd347a3b848d43"
+    },
+    {
+      "id": "65471260a0cf64311ed57f9b17f1e1daf6de26f073192e292cd07bfb1e193ece",
+      "name": "/iqterminal-server",
+      "running": true,
+      "startedAt": "2026-10-25T10:58:27.590796454Z",
+      "image": "sha256:326ebdb8f50e61f1f87a43134d8dca8803aa84ab5b824a50920e471d407c6f6a"
+    },
+    {
+      "id": "a4be8d3c68a52de305fd9e2eaa101f50b592b8b108aaf850ddfbc1b2f53428bb",
+      "name": "/iqterminal-spot-server",
+      "running": true,
+      "startedAt": "2026-10-25T10:58:53.322433531Z",
+      "image": "sha256:474e135196dcb68166e3d7cf6573f35fc57aa285f3483663fc5a1918e501f819"
+    },
+    {
+      "id": "8b087d255b7262ff5b1543475c8c26610758ca8b37f0f99af8b54f3e0848336d",
+      "name": "/iqterminal-history-api",
+      "running": true,
+      "startedAt": "2026-11-09T10:14:21.244270641Z",
+      "image": "sha256:3a67ff312a4924289717685b2c7aa53328e80f0dfd3af8e896bd347a3b848d43"
+    },
+    {
+      "id": "d7f786d6c833ee776fc620b8f02209a1e1b1ed5fc3235968272631f3c4cc6a34",
+      "name": "/iqterminal-history-materializer",
+      "running": true,
+      "startedAt": "2026-11-06T16:53:52.644213859Z",
+      "image": "sha256:326af2b760862d84f03e50f1a55a5829d64630307c499e5cf1a4f939c55ec6ec"
+    },
+    {
+      "id": "12489deea96a7d5918661f792e91bd819238696bc62b912308becbaa1bcb1763",
+      "name": "/iqterminal-spot-history-materializer",
+      "running": true,
+      "startedAt": "2026-11-06T16:53:52.682114009Z",
+      "image": "sha256:326af2b760862d84f03e50f1a55a5829d64630307c499e5cf1a4f939c55ec6ec"
+    },
+    {
+      "id": "1df92fdc2ce05c4113df9ecd8cb99fbabcf101b3fa04447561116ba929d93698",
+      "name": "/iqterminal-footprint-materializer",
+      "running": true,
+      "startedAt": "2026-11-06T16:53:52.623715016Z",
+      "image": "sha256:326af2b760862d84f03e50f1a55a5829d64630307c499e5cf1a4f939c55ec6ec"
+    },
+    {
+      "id": "8257c2c80dbcae7add967cb4571983e7639c8f96695e3d5d6302ec9b87ef6447",
+      "name": "/iqterminal-spot-footprint-materializer",
+      "running": true,
+      "startedAt": "2026-11-06T16:53:52.693763579Z",
+      "image": "sha256:326af2b760862d84f03e50f1a55a5829d64630307c499e5cf1a4f939c55ec6ec"
+    },
+    {
+      "id": "625825aa977bcf8e18264ed69e3ed4ca1a9290c5c14416db797a8bf11999032b",
+      "name": "/iqterminal-sql-admission",
+      "running": true,
+      "startedAt": "2026-11-06T16:53:48.880958761Z",
+      "image": "sha256:326af2b760862d84f03e50f1a55a5829d64630307c499e5cf1a4f939c55ec6ec"
+    }
+  ],
+  "workerBuild": "33c7e3a25105fdb15e28ab029765418aac08b2e8",
+  "defaults": {
+    "enabled": true,
+    "pollMs": 15000,
+    "retryMs": 60000,
+    "configurations": [
+      {
+        "market": "spot",
+        "interval": "5m",
+        "step": 300000,
+        "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+        "requestedClosedTo": 1794402000000,
+        "topLevels": 8,
+        "bandPercent": 10,
+        "aggregation": "native",
+        "sourceHead": {
+          "cursor": 21651650,
+          "at": 1794401999954,
+          "availableFrom": 1793521565645
+        },
+        "eligibleClosedTo": 1794401700000,
+        "behindSlots": 1,
+        "request": {
+          "market": "spot",
+          "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794293100000,
+          "to": 1794401700000
+        },
+        "state": "ready",
+        "job": "10d56767b7169b84fa5e08e5d1f29f40f00b9f9be174ba49025a1341178b71bd",
+        "phase": "ready",
+        "coverage": {
+          "status": "partial",
+          "partial": true,
+          "availableFrom": 1793521565645,
+          "confirmedTo": 1794401700000,
+          "gapCount": 12,
+          "gapsTruncated": false,
+          "reason": "Depth continuity gaps are present in the requested range"
+        },
+        "pages": 21,
+        "projectionPages": 21
+      },
+      {
+        "market": "perpetual",
+        "interval": "15m",
+        "step": 900000,
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "requestedClosedTo": 1794402000000,
+        "topLevels": 8,
+        "bandPercent": 10,
+        "aggregation": "native",
+        "sourceHead": {
+          "cursor": 25573905,
+          "at": 1794401997661,
+          "availableFrom": 1793506604584
+        },
+        "eligibleClosedTo": 1794401100000,
+        "behindSlots": 1,
+        "request": {
+          "market": "perpetual",
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794291300000,
+          "to": 1794401100000
+        },
+        "state": "ready",
+        "job": "a6829f8fa5f289e56ffaa9f737a13784c34868a2b9d85c4412b42c31e508bfda",
+        "phase": "ready",
+        "coverage": {
+          "status": "partial",
+          "partial": true,
+          "availableFrom": 1793506604584,
+          "confirmedTo": 1794401100000,
+          "gapCount": 3,
+          "gapsTruncated": false,
+          "reason": "Depth continuity gaps are present in the requested range"
+        },
+        "pages": 60,
+        "projectionPages": 60
+      }
+    ],
+    "scope": "Closed default source-window preparation; overlapping-window composition and live-tail bridging remain independent requirements"
+  }
+}

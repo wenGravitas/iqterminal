@@ -1,0 +1,70 @@
+{
+  "scope": "One fixed Spot hour, transport/decode only; no browser paint, full 30h or concurrency gate claim",
+  "backendBuild": "072cc1d55e931ea82ee8edd623ef22543f454fa7",
+  "toolSha256": "83f6041d6d3c8ff2a525648817f3fb8d3c23a46e7d08f78ce0299e4d2fa65d07",
+  "routes": [
+    {
+      "route": "staging-loopback-x64",
+      "completeMs": [
+        59.18856699999999,
+        49.54012800000001,
+        48.40293700000001,
+        36.823396,
+        38.16767899999999
+      ],
+      "receivedPartsOfFive": [
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "medianMs": 48.40293700000001,
+      "maximumMs": 59.18856699999999,
+      "completedSamples": 5,
+      "samples": 5
+    },
+    {
+      "route": "pi-ssh",
+      "completeMs": [
+        21070.759965,
+        null,
+        null,
+        null,
+        null
+      ],
+      "receivedPartsOfFive": [
+        5,
+        0,
+        2,
+        4,
+        0
+      ],
+      "medianMs": null,
+      "maximumMs": null,
+      "completedSamples": 1,
+      "samples": 5
+    },
+    {
+      "route": "vite",
+      "completeMs": [
+        7436.762898999999,
+        9319.397385,
+        5482.0745050000005,
+        7121.338250999997,
+        null
+      ],
+      "receivedPartsOfFive": [
+        5,
+        5,
+        5,
+        5,
+        4
+      ],
+      "medianMs": null,
+      "maximumMs": null,
+      "completedSamples": 4,
+      "samples": 5
+    }
+  ]
+}

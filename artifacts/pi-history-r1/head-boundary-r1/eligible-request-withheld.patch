@@ -1,0 +1,178 @@
+diff --git a/src/feed/order-walls-archive-service.ts b/src/feed/order-walls-archive-service.ts
+index 16241ee..ef0251f 100644
+--- a/src/feed/order-walls-archive-service.ts
++++ b/src/feed/order-walls-archive-service.ts
+@@ -467,9 +467,16 @@ export class OrderWallsArchiveService {
+     sub.historyFence = fence ? { cursor: fence.cursor, at: fence.at, epoch: fence.epoch } : undefined;
+     const fenceState = fence ? sub.group?.projector?.selectedState() : undefined;
+     sub.historyFenceState = fence && fenceState && sameProjectorHead(fenceState, fence) ? copySelectedState(fenceState) : undefined;
+-    const request: OrderWallsArchiveRequest = requestOverride ?? { market: sub.request.market, from: sub.request.from, to: sub.request.to,
++    const request: OrderWallsArchiveRequest = requestOverride ?? { market: sub.request.market, from: sub.request.from,
++      to: fence&&fence.valid!==false ? Math.min(sub.request.to, fence.at + 1) : sub.request.to,
+       settings: sub.settings, ...(sub.request.profileId ? { profileId: sub.request.profileId } : {}),
+       ...(fence ? { watermark: fence.cursor, head: { cursor: fence.cursor, at: fence.at, epoch: fence.epoch } } : {}) };
++    if(request.to<=request.from){
++      const reason='Requested history is after the confirmed source head.';
++      sub.historyStatus={state:'gap',message:reason,coverage:{from:sub.request.from,to:sub.request.to,complete:false,partial:true,reason},
++        archive:{...emptyArchiveStatus(sub.request,'partial',reason),requestComplete:true,rangeComplete:false,eligibleTo:request.from,...(fence?{confirmedTo:fence.at}:{})}};
++      this.publish(sub,'patch',[],this.status(sub));return;
++    }
+     if (carryHistory) {
+       sub.historyArchiveCarry = mergeHistoryArchive(sub.historyArchiveCarry,
+         sub.historyStatus?.archive ?? emptyArchiveStatus(request, 'partial'));
+@@ -616,7 +623,11 @@ export class OrderWallsArchiveService {
+   }
+ 
+   private showWarmHistory(sub:Subscription){
+-    const key=warmHistoryKey(sub.request),entry=this.warmHistory.get(key);if(!entry||entry.expired)return;
++    let key=warmHistoryKey(sub.request),entry=this.warmHistory.get(key);
++    if(!entry)for(const [candidateKey,candidate] of this.warmHistory){
++      if(!candidate.expired&&warmEntryMatches(candidateKey,candidate,sub.request)&&(!entry||candidate.status.archive!.to>entry.status.archive!.to)){key=candidateKey;entry=candidate;}
++    }
++    if(!entry||entry.expired)return;
+     let replay=entry.replay,started=false;
+     if(!replay&&entry.compact&&this.warmReplays.size>=2){this.stats.warmCapacityMisses++;return;}
+     if(!replay){replay={key,entry,abort:new AbortController(),presentation:new Map(entry.presentation),subscribers:new Set(),settled:!entry.compact,runs:entry.compact?0:entry.runs};entry.replay=replay;started=true;}
+@@ -651,13 +662,13 @@ export class OrderWallsArchiveService {
+   /** Only bounded subscription metadata is inspected; no closed segments,
+    * value runs or mutable accumulators participate in cache interest. */
+   private hasWarmConsumers(key:string){
+-    for(const sub of this.subscriptions.values())if(!sub.request.currentOnly&&(warmHistoryKey(sub.request)===key||sub.historyJob&&warmHistoryKey(sub.historyJob.request)===key))return true;
++    const entry=this.warmHistory.get(key);if(!entry)return false;
++    for(const sub of this.subscriptions.values())if(!sub.request.currentOnly&&(warmEntryMatches(key,entry,sub.request)||sub.historyJob&&warmHistoryKey(sub.historyJob.request)===key))return true;
+     return false;
+   }
+ 
+   private releaseWarmInterests(...requests:Array<OrderWallsArchiveRequest|undefined>){
+-    const keys=new Set(requests.filter((request):request is OrderWallsArchiveRequest=>Boolean(request)).map(warmHistoryKey));
+-    for(const key of keys){const entry=this.warmHistory.get(key);if(!entry||entry.expired||this.hasWarmConsumers(key))continue;
++    for(const [key,entry] of this.warmHistory){if(!requests.some(request=>request&&warmEntryMatches(key,entry,request))||entry.expired||this.hasWarmConsumers(key))continue;
+       clearTimeout(entry.timer);entry.timer=setTimeout(()=>this.expireWarm(key,entry),60000);
+     }
+   }
+@@ -879,6 +890,13 @@ export class OrderWallsArchiveService {
+       gaps: orderedGaps.slice(-MAX_SUBSCRIPTION_ARCHIVE_GAPS), ...(gapsTruncated ? { gapsTruncated: true } : {}),
+       ...(!priorArchive.profileStatus && sub.group?.profileStatus ? { profileStatus: sub.group.profileStatus } : {}),
+       ...(sub.currentMidpoint !== undefined ? { midpoint: sub.currentMidpoint } : {}) };
++    const eligibleTo=priorArchive.eligibleTo??priorArchive.to;
++    const awaitingTail=eligibleTo<sub.request.to;
++    if(awaitingTail){
++      archive={...archive,eligibleTo,rangeComplete:false,
++        ...(archive.state==='complete'?{state:'partial' as const}:{}),
++        reason:archive.reason??'Later requested time is beyond the fixed historical source head.'};
++    }
+     if (this.pendingViewportNeedsExtension(sub)) {
+       archive = { ...archive, state: 'loading', requestComplete: false, from: Math.min(sub.request.from, sub.pendingViewport!.from),
+         to: sub.pendingViewport!.to, reason: 'Continuing fixed-watermark history through the advancing chart range.' };
+@@ -888,8 +906,8 @@ export class OrderWallsArchiveService {
+       : sub.currentState === 'stale' ? 'gap' : 'loading';
+     const message = sub.currentMessage ?? (priorArchive.requestComplete === false ? status.message : sub.group && priorArchive.state !== 'complete'
+       ? 'Current selected-profile walls are updating while archive history loads.' : status.message);
+-    return { ...status, ...(mergeHistoryCoverage(sub.historyCoverageCarry, status.coverage)
+-      ? { coverage: mergeHistoryCoverage(sub.historyCoverageCarry, status.coverage) } : {}),
++    const coverage=mergeHistoryCoverage(sub.historyCoverageCarry,status.coverage);
++    return { ...status, ...(coverage?{coverage:awaitingTail?{...coverage,from:sub.request.from,to:sub.request.to,complete:false,partial:true,reason:coverage.reason??archive.reason}:coverage}:{}),
+       state, ...(message ? { message } : {}), ...(sub.currentAt !== undefined ? { lastConfirmedAt: sub.currentAt } : {}),
+       ...(sub.currentScope ? { bookScope: sub.currentScope } : {}), archive };
+   }
+@@ -949,6 +967,13 @@ function mergeHistoryCoverage(previous: OrderWallStatus['coverage'], next: Order
+ type SelectedArchiveState = ReturnType<OrderWallsArchiveProjector['selectedState']>;
+ 
+ function warmHistoryKey(request:OrderWallsArchiveRequest){return historyJobKey({...request,after:0,watermark:undefined,head:undefined});}
++/** At most two retained entries. A shorter right bound is only a cached
++ * presentation prefix: the same left bound/profile preserves its integration
++ * basis, and the fresh fixed-head job still validates before completion. */
++function warmEntryMatches(key:string,entry:WarmEntry,request:OrderWallsArchiveRequest){
++ const to=entry.status.archive?.to;
++ return to!==undefined&&to<=request.to&&warmHistoryKey({...request,to})===key;
++}
+ function historyJobKey(request: OrderWallsArchiveRequest) {
+   const settings = orderWallsSettings(request.settings);
+   return JSON.stringify([request.market, orderWallsArchiveIdentity(request) ?? settings,
+diff --git a/src/feed/order-walls.ts b/src/feed/order-walls.ts
+index 7ffaedf..5d0d97b 100644
+--- a/src/feed/order-walls.ts
++++ b/src/feed/order-walls.ts
+@@ -166,6 +166,9 @@ export interface OrderWallArchiveStatus {
+   profileStatus?: 'building' | 'backfilling' | 'ready' | 'unavailable';
+   from: number;
+   to: number;
++  /** Exclusive historical request bound at its fixed source head, when the
++   * requested viewport extends beyond it. Equal to from for an empty past. */
++  eligibleTo?: number;
+   market?: 'spot' | 'perpetual';
+   feed?: string;
+   aggregation?: string;
+diff --git a/tests/order-walls-archive.test.ts b/tests/order-walls-archive.test.ts
+index 8acd51e..6b17599 100644
+--- a/tests/order-walls-archive.test.ts
++++ b/tests/order-walls-archive.test.ts
+@@ -1250,7 +1250,9 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
+         currentPolls++;
+         return new Response(JSON.stringify(currentPolls === 1 ? bootstrap : currentDelta), { status: 200 });
+       }
+-      return new Response(JSON.stringify(historical), { status: 200 });
++      const requestedTo=Number(parsed.searchParams.get('to'));
++      expect(requestedTo).toBe(headAt+1);
++      return new Response(JSON.stringify({...historical,to:requestedTo,coverage:{...historical.coverage,requestedTo}}), { status: 200 });
+     });
+     const events: any[] = [];
+     const service = new OrderWallsArchiveService(event => events.push(event), fetcher as unknown as typeof fetch, () => requestTo);
+--- a/tests/prepared-wall-history.test.ts
++++ b/tests/prepared-wall-history.test.ts
+@@ -146,6 +146,55 @@
+  f.discovery.source={...f.discovery.source,head};
+  await expect(preparedWallReader(request,transport(f).fetcher,new AbortController().signal)).rejects.toThrow(/source validation/);
+ });
++test('a live viewport requests only its fixed-head past, preserves requested coverage and reuses a warm prefix before independent validation',async()=>{
++ vi.stubEnv('VITE_HISTORY_TILES','1');const f=headBoundaryFixture(),t=transport(f),head=f.manifest.head,events:any[]=[],requests:URL[]=[];
++ const currentWall={...candidate,entryId:'2:bid:100',startedAt:from+3*3600000+1,startCursor:22,startEpoch:2,quantity:'30',notional:'3000'};
++ const bootstrap={version:1,profile,market:'spot',instrument:profile.instrument,feed:profile.feed,watermark:head.cursor,
++  head:{...head,midpoint:'100.00',valid:true},state:{bids:[currentWall],asks:[]},
++  page:{after:0,nextAfter:head.cursor,hasMore:false,lastAt:head.at,limit:256,sameMillisecondClosed:true},patches:[],profileStatus:'ready',
++  coverage:{availableFrom:from-3600000,confirmedTo:head.at,status:'complete',gaps:[]}};
++ let revisit=false,sourceChecks=0,release!:()=>void;const gate=new Promise<void>(resolve=>release=resolve);
++ const fetcher:typeof fetch=async(input,init)=>{
++  const url=new URL(String(input),'http://test');
++  if(url.pathname.endsWith('/current'))return new Response(JSON.stringify(bootstrap));
++  if(url.pathname.endsWith('/discover'))requests.push(url);
++  if(url.pathname.endsWith('/source')){sourceChecks++;if(revisit)await gate;return new Response(JSON.stringify(f.discovery.source));}
++  return t.fetcher(input,init);
++ };
++ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to+60_000),subscription={market:'binance-spot' as const,from,to:to+60_000,settings,followLive:true};
++ try{
++  service.subscribe('future-space',subscription);
++  await vi.waitFor(()=>expect(events.at(-1)?.status.archive.requestComplete).toBe(true));
++  expect(requests).toHaveLength(1);expect(Number(requests[0]!.searchParams.get('from'))).toBe(from);expect(Number(requests[0]!.searchParams.get('to'))).toBe(to);
++  expect(events.at(-1).status).toMatchObject({state:'live',coverage:{from,to:subscription.to,complete:false,partial:true},
++   archive:{from,to:subscription.to,eligibleTo:to,confirmedTo:head.at,requestComplete:true,rangeComplete:false}});
++  expect(service.diagnostics()).toMatchObject({groups:1,warmEntries:1});
++  service.unsubscribe('future-space');revisit=true;service.subscribe('warm-future-space',subscription);
++  const cached=events.filter(event=>event.ids?.includes('warm-future-space')&&event.kind==='snapshot'&&event.segments?.length);
++  expect(cached).toHaveLength(1);expect(cached[0].status.archive).toMatchObject({requestComplete:false,rangeComplete:false,eligibleTo:to});
++  await vi.waitFor(()=>expect(sourceChecks).toBe(2));
++  expect(events.at(-1).status.archive.requestComplete).toBe(false);release();
++  await vi.waitFor(()=>expect(events.at(-1).status.archive.requestComplete).toBe(true));
++  expect(service.diagnostics()).toMatchObject({groups:1,warmEntries:1});
++  service.unsubscribe('warm-future-space');service.subscribe('different-left',{...subscription,from:from-1});
++  expect(events.filter(event=>event.ids?.includes('different-left')&&event.kind==='snapshot').at(-1).segments).toEqual([]);
++ }finally{release();service.dispose();}
++ expect(service.diagnostics()).toMatchObject({subscriptions:0,groups:0,historyJobs:0,warmEntries:0});
++});
++test('a wholly future viewport does not admit an impossible historical job or interrupt healthy current state',async()=>{
++ vi.stubEnv('VITE_HISTORY_TILES','1');const head={cursor:30,epoch:2,at:to-1},calls:string[]=[],events:any[]=[];
++ const bootstrap={version:1,profile,market:'spot',instrument:profile.instrument,feed:profile.feed,watermark:30,head:{...head,midpoint:'100',valid:true},
++  state:{bids:[],asks:[]},page:{after:0,nextAfter:30,hasMore:false,lastAt:head.at,limit:256,sameMillisecondClosed:true},patches:[],profileStatus:'ready',
++  coverage:{availableFrom:from,confirmedTo:head.at,status:'complete',gaps:[]}};
++ const fetcher:typeof fetch=async input=>{const path=new URL(String(input),'http://test').pathname;calls.push(path);if(!path.endsWith('/current'))throw Error('Future-only range must not request history');return new Response(JSON.stringify(bootstrap));};
++ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to),future={from:to+1000,to:to+60_000};
++ try{
++  service.subscribe('only-future',{market:'binance-spot',...future,settings,followLive:true});
++  await vi.waitFor(()=>expect(events.at(-1).status.archive.requestComplete).toBe(true));
++  expect(events.at(-1).status).toMatchObject({state:'live',archive:{...future,eligibleTo:future.from,confirmedTo:head.at,rangeComplete:false}});
++  expect(service.diagnostics()).toMatchObject({groups:1,historyJobs:0});expect(calls).toHaveLength(1);
++ }finally{service.dispose();}
++});
+ test('30h prepared parts preserve the independent canonical projector through timestamp regression, gaps and head progress',async()=>{
+  vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),t=transport(f),updates:any[]=[];
+  const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:t.fetcher,onUpdate:u=>updates.push(u)});

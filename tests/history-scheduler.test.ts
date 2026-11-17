@@ -5,3 +5,11 @@ describe('shared viewport history scheduling',()=>{
  it('prioritizes visible work and alternates layers without leaking cancelled slots',async()=>{const s=new HistoryScheduler(1),controller=new AbortController(),order:string[]=[];let release!:()=>void;const blocker=s.read('block','heatmap',controller.signal,()=>new Promise<void>(r=>release=r));await tick();const add=(key:string,layer:'heatmap'|'footprint',priority=0)=>s.read(key,layer,controller.signal,async()=>{order.push(key);},priority);const pending=[add('optional','footprint',1),add('heat','heatmap'),add('foot','footprint')];release();await blocker;await Promise.all(pending);expect(order).toEqual(['foot','heat','optional']);expect(s.diagnostics().peakActive).toBe(1);});
  it('a fresh generation does not inherit an already-aborted shared request',async()=>{const s=new HistoryScheduler(2),old=new AbortController(),fresh=new AbortController();const p=s.read('same','heatmap',old.signal,signal=>new Promise((_r,reject)=>signal.addEventListener('abort',()=>reject(Error('old'))))).catch(()=>{});await tick();old.abort();expect(await s.read('same','heatmap',fresh.signal,async()=>42)).toBe(42);await p;});
 });
+
+it('an immediately repeated request cannot attach to already completed work',async()=>{
+ const scheduler=new HistoryScheduler(1),signal=new AbortController().signal;let runs=0;
+ const read=()=>scheduler.read('same','order-walls',signal,async()=>++runs);
+ expect(await read()).toBe(1);expect(await read()).toBe(2);expect(runs).toBe(2);
+ await expect(scheduler.read('retry','order-walls',signal,async()=>{throw Error('Transient');})).rejects.toThrow('Transient');
+ expect(await scheduler.read('retry','order-walls',signal,async()=>42)).toBe(42);
+});

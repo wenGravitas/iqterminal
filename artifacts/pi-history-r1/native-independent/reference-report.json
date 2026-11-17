@@ -1,0 +1,59 @@
+{
+  "source": "artifacts/pi-history-r1/native-independent-reference-samples.jsonl",
+  "method": "normal Chromium on Pi; navigation-relative main-thread painted content; null is not complete; every sample retained; no p95 from five runs",
+  "scenarios": [
+    {
+      "case": "current-walls-15m",
+      "samplesMs": [
+        6763.7
+      ],
+      "medianMs": 6763.7,
+      "maximumMs": 6763.7,
+      "sampleCount": 1,
+      "environmentVerified": true,
+      "environments": [
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "a1dc934f23a82987c2912de0a4578af8488ca3f9"
+        }
+      ],
+      "gate": "SUPPLEMENTAL",
+      "limitsMs": {
+        "median": 2000,
+        "maximum": 3000
+      },
+      "firstHistoricalPaintMs": [
+        19531.1
+      ],
+      "firstHistory3sGate": null,
+      "builds": [
+        "a1dc934f23a82987c2912de0a4578af8488ca3f9"
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "requested": {
+            "from": 1793961000000,
+            "to": 1793964600000
+          },
+          "viewport": {
+            "from": 1793959661.25,
+            "to": 1793964600
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "partial",
+            "from": 1793958300000,
+            "to": 1793964319629,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1793964316677
+          },
+          "exception": null
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,381 @@
+{
+  "source": "artifacts/pi-history-r1/wall-coop-c60-r1-samples.jsonl",
+  "method": "Pi client observations; navigation-relative main-thread painted content; null is not complete; every sample retained; no p95 from five runs. Recorded rendering labels require their browser-environment receipts; this report does not independently certify foreground execution.",
+  "renderingModes": [
+    "headless-gles"
+  ],
+  "scenarios": [
+    {
+      "case": "walls-30h-spot-5m",
+      "samplesMs": [
+        10128,
+        11727.19999999553,
+        9575.20000000298,
+        10314.80000000447,
+        7981
+      ],
+      "medianMs": 10128,
+      "maximumMs": 11727.19999999553,
+      "sampleCount": 5,
+      "environmentVerified": true,
+      "wallReferenceVerified": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "environments": [
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "c60fd1382fe010633b9bc59e34070dd5a46ca07a"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "c60fd1382fe010633b9bc59e34070dd5a46ca07a"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "c60fd1382fe010633b9bc59e34070dd5a46ca07a"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "c60fd1382fe010633b9bc59e34070dd5a46ca07a"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "c60fd1382fe010633b9bc59e34070dd5a46ca07a"
+        }
+      ],
+      "gate": "SUPPLEMENTAL",
+      "limitsMs": {
+        "median": 5000,
+        "maximum": 10000
+      },
+      "firstHistoricalPaintMs": [
+        3039.5,
+        5931.10000000149,
+        7204.89999999851,
+        5084,
+        6923.39999999851
+      ],
+      "firstHistory3sGate": "SUPPLEMENTAL",
+      "builds": [
+        "c60fd1382fe010633b9bc59e34070dd5a46ca07a"
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "partial",
+            "from": 1793696100000,
+            "to": 1793804700000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1793804700000
+          },
+          "exception": null
+        },
+        {
+          "run": 2,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "partial",
+            "from": 1793696100000,
+            "to": 1793804700000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1793804700000
+          },
+          "exception": null
+        },
+        {
+          "run": 3,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "partial",
+            "from": 1793696100000,
+            "to": 1793804700000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1793804700000
+          },
+          "exception": null
+        },
+        {
+          "run": 4,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "partial",
+            "from": 1793696100000,
+            "to": 1793804700000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1793804700000
+          },
+          "exception": null
+        },
+        {
+          "run": 5,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "partial",
+            "from": 1793696100000,
+            "to": 1793804700000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1793804700000
+          },
+          "exception": null
+        }
+      ]
+    },
+    {
+      "case": "walls-30h-perp-15m",
+      "samplesMs": [
+        11628.5,
+        14936.60000000149,
+        15187.39999999851,
+        12778.60000000149,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null,
+      "sampleCount": 5,
+      "environmentVerified": true,
+      "wallReferenceVerified": [
+        true,
+        true,
+        true,
+        true,
+        false
+      ],
+      "environments": [
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "c60fd1382fe010633b9bc59e34070dd5a46ca07a"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "c60fd1382fe010633b9bc59e34070dd5a46ca07a"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "c60fd1382fe010633b9bc59e34070dd5a46ca07a"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "c60fd1382fe010633b9bc59e34070dd5a46ca07a"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "c60fd1382fe010633b9bc59e34070dd5a46ca07a"
+        }
+      ],
+      "gate": "SUPPLEMENTAL",
+      "limitsMs": {
+        "median": 5000,
+        "maximum": 10000
+      },
+      "firstHistoricalPaintMs": [
+        3695.10000000149,
+        4427.5,
+        3313.0999999940395,
+        4011.7999999970198,
+        5473.5
+      ],
+      "firstHistory3sGate": "SUPPLEMENTAL",
+      "builds": [
+        "c60fd1382fe010633b9bc59e34070dd5a46ca07a"
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "partial",
+            "from": 1793695500000,
+            "to": 1793805300000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1793805300000
+          },
+          "exception": null
+        },
+        {
+          "run": 2,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "partial",
+            "from": 1793695500000,
+            "to": 1793805300000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1793805300000
+          },
+          "exception": null
+        },
+        {
+          "run": 3,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "partial",
+            "from": 1793695500000,
+            "to": 1793805300000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1793805300000
+          },
+          "exception": null
+        },
+        {
+          "run": 4,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "partial",
+            "from": 1793695500000,
+            "to": 1793805300000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1793805300000
+          },
+          "exception": null
+        },
+        {
+          "run": 5,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "partial",
+            "from": 1793695500000,
+            "to": 1793805300000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1793805300000
+          },
+          "exception": null
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "request": {
+    "market": "perpetual",
+    "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+    "from": 1794280500000,
+    "to": 1794390300000
+  },
+  "projectionKey": "6b2cac0fc50bac6f90ac672b9fec5bdff5ae66507d06ca9319ffdec47ef8bf47",
+  "manifestFileBytes": 1355550,
+  "manifestFileSha256": "cbae3c42d298a183f41ac231db7acaec09a08808b3104ea82ae757989651ca66",
+  "manifestGzipBytes": 200368,
+  "activeSegments": 16,
+  "activeValueRuns": 7741,
+  "closedSegments": 21245,
+  "parts": 62,
+  "canonicalPartDecodedBytes": 27308409,
+  "scope": "Read-only descriptor sizing. No claims about exclusive load phases or production changes."
+}

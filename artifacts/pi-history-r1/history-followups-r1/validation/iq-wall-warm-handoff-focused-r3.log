@@ -1,0 +1,63 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-projection.test.ts (21 tests | 2 failed) 2693ms
+   × identical complete prepared manifest validates warm rows without a second presentation snapshot 14ms
+   × an unfinished warm replay cannot certify complete presentation from a matching revision 126ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > identical complete prepared manifest validates warm rows without a second presentation snapshot
+Error: Invalid compact wall threshold
+ ❯ new OrderWallsArchiveService src/feed/order-walls-archive-service.ts:146:349
+
+ ❯ tests/prepared-wall-projection.test.ts:292:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > an unfinished warm replay cannot certify complete presentation from a matching revision
+AssertionError: expected [ …(2) ] to deeply equal [ …(2) ]
+
+- Expected
++ Received
+
+@@ -1,10 +1,9 @@
+  [
+    {
+      "archiveEntryId": "A",
+      "censoredReason": "Observed disconnect",
+-     "currentSelection": false,
+      "detectionMode": "top-levels",
+      "durationMs": 2000,
+      "end": 1800000001000,
+      "endKnown": false,
+      "endReason": "censored",
+@@ -42,11 +41,10 @@
+      ],
+      "valueRunsTruncated": false,
+    },
+    {
+      "archiveEntryId": "B",
+-     "currentSelection": false,
+      "detectionMode": "top-levels",
+      "durationMs": 107996000,
+      "end": null,
+      "endKnown": false,
+      "endReason": null,
+
+ ❯ tests/prepared-wall-projection.test.ts:332:93
+    330|   service.subscribe('warm',request);await vi.waitFor(()=>expect(events…
+    331|   expect(service.diagnostics().warmValidatedReuses).toBe(0);const refe…
+    332|   expect([...displayedWalls(events,'warm').values()].sort((a,b)=>a.id.…
+       |                                                                                             ^
+    333|   const before=events.length;release();await vi.waitFor(()=>expect(ser…
+    334|   expect(events.slice(before).some(e=>e.patches?.some((p:any)=>p.segme…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 67 passed (69)
+   Start at  18:12:35
+   Duration  6.87s (tests 72%, transform 24%, import 4%)
+

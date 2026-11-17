@@ -1,0 +1,39 @@
+
+Running 6 tests using 1 worker
+
+(node:198962) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/native-candle-history.spec.ts:12:36 › saved 5m wall view one candle back survives closed bootstrap then first forming candle (3.6s)
+  ✓  2 tests/browser/native-candle-history.spec.ts:12:36 › saved 15m wall view one candle back survives closed bootstrap then first forming candle (4.1s)
+  ✓  3 tests/browser/native-candle-history.spec.ts:35:1 › native30hpricecontext paints before bootstrap and retains current volume and newer historical reads (4.4s)
+  ✓  4 tests/browser/native-candle-history.spec.ts:74:1 › nativepricepan preserves the requested past and current bars within the5000barbudget (4.9s)
+  ✘  5 tests/browser/native-candle-history.spec.ts:99:1 › warm native prices paint independently while their revision validation waits and later corrects exact quote volume (5.7s)
+(node:199712) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  6 tests/browser/native-candle-history.spec.ts:129:1 › bootstrap-owned history seeds warm prices even when independent native history pages fail (4.4s)
+
+
+  1) tests/browser/native-candle-history.spec.ts:99:1 › warm native prices paint independently while their revision validation waits and later corrects exact quote volume 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "ready"
+    Received: "loading"
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      111 |  });
+      112 |  try{
+    > 113 |   await page.goto('/',{waitUntil:'domcontentloaded'});await expect.poll(()=>page.evaluate(id=>(window as any).__terminal?.panels.get(id)?.status.nativeHistory?.viewport?.state,id)).toBe('ready');
+          |                                                                                                                                                                                      ^
+      114 |   const params=await page.evaluate(({id,from,to})=>{const t=(window as any).__terminal,p=t.panels.get(id),params={...p.selection,historyViewport:{from,to}};t.dock.removePanel(t.dock.getPanel(id));return params;},{id,from,to});
+      115 |   await page.waitForFunction(id=>!(window as any).__terminal.panels.has(id),id);
+      116 |   await page.evaluate(({id,params})=>(window as any).__terminal.dock.addPanel({id,component:'candle',title:'Warm native prices',params}),{id,params});
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/native-candle-history.spec.ts:113:182
+
+    Error Context: test-results/native-candle-history-warm-0ae10-corrects-exact-quote-volume/error-context.md
+
+  1 failed
+    tests/browser/native-candle-history.spec.ts:99:1 › warm native prices paint independently while their revision validation waits and later corrects exact quote volume 
+  5 passed (34.2s)

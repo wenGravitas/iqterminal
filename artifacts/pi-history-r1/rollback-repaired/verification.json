@@ -1,0 +1,18 @@
+{
+  "kind": "rollback-plan-repair",
+  "target": "7256fd44af9728619a93d6191639d5e39e8d74ee",
+  "previous": "34d7939b75e3505726b2f5279c8db27335567a33",
+  "sourceId": "sha256:4bb4f09a12ba0732068750331b8ad9d26e774df824d3d828414354a2a1e70a4f",
+  "services": [
+    "app",
+    "materializer",
+    "spot-materializer",
+    "footprint-materializer",
+    "spot-footprint-materializer",
+    "sql-admission"
+  ],
+  "planSha256": "a7d05783519303115333ce4e4955c8fbe89683186d9daf6baa14476cdec67673",
+  "collectorIdentities": "/iqterminal-server 65471260a0cf64311ed57f9b17f1e1daf6de26f073192e292cd07bfb1e193ece 2026-10-25T10:58:27.590796454Z\n/iqterminal-spot-server a4be8d3c68a52de305fd9e2eaa101f50b592b8b108aaf850ddfbc1b2f53428bb 2026-10-25T10:58:53.322433531Z",
+  "executedRollback": false,
+  "verified": "Previous six-service image proof, original core-image IDs, generated bash syntax; no service start/stop/restart."
+}

@@ -1,0 +1,14 @@
+{
+  "vary": "Accept-Encoding",
+  "x-iq-request-id": "7f153a8c-ab52-46e2-b15c-1e823afad97b",
+  "content-type": "application/x-ndjson; charset=utf-8",
+  "cache-control": "no-store",
+  "x-iq-footprint-batch": "1",
+  "x-iq-batch-chunks": "1",
+  "date": "Wed, 11 Nov 2026 10:46:45 GMT",
+  "connection": "close",
+  "x-iq-proxy-queue-ms": "0.61",
+  "x-iq-proxy-header-ms": "2800.32",
+  "server-timing": "proxyqueue;dur=0.61, proxyheader;dur=2800.32",
+  "Transfer-Encoding": "chunked"
+}

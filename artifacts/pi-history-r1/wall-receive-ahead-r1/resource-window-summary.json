@@ -1,0 +1,24 @@
+[
+  {
+    "file": "server-perp-resources.jsonl",
+    "samples": 19,
+    "errors": [],
+    "end": {
+      "kind": "end",
+      "label": "receive87e-perp-r1",
+      "elapsedMs": 94038.448279,
+      "stopping": true
+    }
+  },
+  {
+    "file": "server-spot-resources.jsonl",
+    "samples": 17,
+    "errors": [],
+    "end": {
+      "kind": "end",
+      "label": "receive87e-spot-r1",
+      "elapsedMs": 82082.898628,
+      "stopping": true
+    }
+  }
+]

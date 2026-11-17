@@ -1,0 +1,14 @@
+{
+  "control": {
+    "url": "http://127.0.0.1:4188",
+    "build": "5039ea853ee5253131145accf7969d4334361d8a",
+    "dist": "/tmp/iqterminal-wall-native-tasks-dist",
+    "servedMainSha256": "77fdf188b89c1fb466558483683d08e230420d8082be3afb8e9d33d7ac746432"
+  },
+  "early": {
+    "url": "http://127.0.0.1:4189",
+    "build": "e2fa254b818f7129b9b63ade93325d1ad0ea1cdd",
+    "dist": "/tmp/iqterminal-native-restore-dist",
+    "servedMainSha256": "17446563d7095ee2b26d6e00b3b1d690fee3a704b575fba9ef1c3796cb65dc09"
+  }
+}

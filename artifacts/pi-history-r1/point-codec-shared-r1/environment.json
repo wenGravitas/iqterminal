@@ -1,0 +1,291 @@
+{
+  "scope": "Offline real Spot prepared records in headless Pi Chromium page; actual shared codec and canonical SHA256 checks. Inputs fetched locally before timing. Not worker/chart/route/cold-build/foreground acceptance. validationMs includes cooperative yield; do not add yieldMs as an exclusive phase.",
+  "key": "efa5629adec8fcb0e7ffc93297bd273d178fae996fad4bae79b30862872863b0",
+  "parts": 34,
+  "codecSha256": "84a92177c0dadc093d49cd7828942672b66985b15ac72d7b1074d87b10b02b5c",
+  "scriptSha256": "28ec33e721fbce570f94fdf91a53f7f38921d0ae448ea9c3f7dffecf8a81144a",
+  "browser": "155.0.8059.79",
+  "node": "v22.23.4",
+  "system": {
+    "gpu": {
+      "devices": [
+        {
+          "vendorId": 0,
+          "deviceId": 0,
+          "vendorString": "Google Inc. (Broadcom)",
+          "deviceString": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1 Mesa 24.2.8-1~bpo12+rpt5)",
+          "driverVendor": "Mesa",
+          "driverVersion": "24.2.8"
+        }
+      ],
+      "auxAttributes": {
+        "amdSwitchable": false,
+        "canSupportThreadedTextureMailbox": false,
+        "directRenderingVersion": "",
+        "displayType": "ANGLE_OPENGLES",
+        "glExtensions": "GL_AMD_performance_monitor GL_ANGLE_blob_cache GL_ANGLE_client_arrays GL_ANGLE_compressed_texture_etc GL_ANGLE_depth_texture GL_ANGLE_framebuffer_blit GL_ANGLE_framebuffer_multisample GL_ANGLE_get_serialized_context_string GL_ANGLE_get_tex_level_parameter GL_ANGLE_instanced_arrays GL_ANGLE_memory_size GL_ANGLE_program_binary_readiness_query GL_ANGLE_program_cache_control GL_ANGLE_renderability_validation GL_ANGLE_request_extension GL_ANGLE_robust_client_memory GL_ANGLE_shader_pixel_local_storage GL_ANGLE_stencil_texturing GL_ANGLE_texture_compression_dxt3 GL_ANGLE_texture_compression_dxt5 GL_ANGLE_texture_multisample GL_ANGLE_translated_shader_source GL_ARM_rgba8 GL_CHROMIUM_bind_generates_resource GL_CHROMIUM_bind_uniform_location GL_CHROMIUM_copy_texture GL_CHROMIUM_lose_context GL_EXT_blend_minmax GL_EXT_clear_texture GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_compressed_ETC1_RGB8_sub_texture GL_EXT_debug_label GL_EXT_debug_marker GL_EXT_depth_clamp GL_EXT_discard_framebuffer GL_EXT_draw_buffers GL_EXT_draw_buffers_indexed GL_EXT_float_blend GL_EXT_frag_depth GL_EXT_instanced_arrays GL_EXT_map_buffer_range GL_EXT_occlusion_query_boolean GL_EXT_polygon_offset_clamp GL_EXT_read_format_bgra GL_EXT_sRGB GL_EXT_sRGB_write_control GL_EXT_shadow_samplers GL_EXT_texture_border_clamp GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_rgtc GL_EXT_texture_compression_s3tc_srgb GL_EXT_texture_filter_anisotropic GL_EXT_texture_format_BGRA8888 GL_EXT_texture_mirror_clamp_to_edge GL_EXT_texture_rg GL_EXT_texture_sRGB_decode GL_EXT_texture_storage GL_EXT_texture_type_2_10_10_10_REV GL_EXT_unpack_subimage GL_KHR_debug GL_KHR_parallel_shader_compile GL_KHR_texture_compression_astc_ldr GL_KHR_texture_compression_astc_sliced_3d GL_MESA_framebuffer_flip_y GL_NV_fence GL_NV_framebuffer_blit GL_NV_pack_subimage GL_NV_pixel_buffer_object GL_NV_read_depth GL_NV_read_stencil GL_NV_shader_noperspective_interpolation GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_EGL_image_external_essl3 GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth24 GL_OES_draw_buffers_indexed GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_get_program_binary GL_OES_mapbuffer GL_OES_packed_depth_stencil GL_OES_required_internalformat GL_OES_rgb8_rgba8 GL_OES_standard_derivatives GL_OES_surfaceless_context GL_OES_texture_3D GL_OES_texture_border_clamp GL_OES_texture_float GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_texture_stencil8 GL_OES_texture_storage_multisample_2d_array GL_OES_vertex_array_object ",
+        "glImplementationParts": "(gl=egl-angle,angle=opengles)",
+        "glRenderer": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1 Mesa 24.2.8-1~bpo12+rpt5)",
+        "glResetNotificationStrategy": 0,
+        "glVendor": "Google Inc. (Broadcom)",
+        "glVersion": "OpenGL ES 3.0 (ANGLE 2.1 git hash: unknown hash)",
+        "glWsExtensions": "EGL_KHR_create_context EGL_KHR_get_all_proc_addresses EGL_ANGLE_create_context_webgl_compatibility EGL_CHROMIUM_create_context_bind_generates_resource EGL_CHROMIUM_sync_control EGL_ANGLE_sync_control_rate EGL_EXT_pixel_format_float EGL_KHR_surfaceless_context EGL_ANGLE_display_texture_share_group EGL_ANGLE_display_semaphore_share_group EGL_ANGLE_create_context_client_arrays EGL_ANGLE_program_cache_control EGL_ANGLE_robust_resource_initialization EGL_ANGLE_create_context_extensions_enabled EGL_ANDROID_blob_cache EGL_ANDROID_recordable EGL_ANGLE_create_context_backwards_compatible EGL_KHR_create_context_no_error EGL_NOK_texture_from_pixmap EGL_KHR_reusable_sync EGL_ANGLE_context_virtualization EGL_ANGLE_memory_usage_report EGL_ANGLE_create_context_passthrough_shaders ",
+        "glWsVendor": "Google Inc. (Broadcom)",
+        "glWsVersion": "1.5 (ANGLE 2.1 git hash: unknown hash)",
+        "hardwareSupportsVulkan": false,
+        "inProcessGpu": false,
+        "initializationTime": 0.091073,
+        "isAsan": false,
+        "isClangCoverage": false,
+        "jpegDecodeAcceleratorSupported": false,
+        "maxMsaaSamples": "4",
+        "optimus": false,
+        "passthroughCmdDecoder": true,
+        "pixelShaderVersion": "3.00",
+        "processCrashCount": 0,
+        "sandboxed": false,
+        "skiaBackendType": "GaneshGL",
+        "subpixelFontRendering": true,
+        "targetCpuBits": 64,
+        "vertexShaderVersion": "3.00",
+        "visibilityCallbackCallCount": 0
+      },
+      "featureStatus": {
+        "2d_canvas": "enabled",
+        "direct_rendering_display_compositor": "disabled_off_ok",
+        "gpu_compositing": "enabled",
+        "multiple_raster_threads": "enabled_force_on",
+        "opengl": "enabled_on",
+        "rasterization": "enabled_force",
+        "raw_draw": "disabled_off_ok",
+        "skia_graphite": "disabled_off",
+        "trees_in_viz": "disabled_off",
+        "video_decode": "enabled",
+        "video_encode": "disabled_software",
+        "vulkan": "disabled_off",
+        "webgl": "enabled",
+        "webgpu": "disabled_off",
+        "webgpu_on_vk_via_gl_interop": "disabled_off",
+        "webnn": "disabled_off"
+      },
+      "driverBugWorkarounds": [
+        "enable_webgl_timer_query_extensions",
+        "exit_on_context_lost",
+        "rely_on_implicit_sync_for_swap_buffers",
+        "disabled_extension_GL_KHR_blend_equation_advanced",
+        "disabled_extension_GL_KHR_blend_equation_advanced_coherent"
+      ],
+      "videoDecoding": [],
+      "videoEncoding": []
+    },
+    "modelName": "",
+    "modelVersion": "",
+    "commandLine": "/usr/lib/chromium/chromium --force-renderer-accessibility --enable-remote-extensions --force-dark-mode --show-component-extension-options --enable-gpu-rasterization --no-default-browser-check --disable-pings --media-router=0 --enable-remote-extensions --load-extension --ignore-gpu-blocklist --enable-checker-imaging --cc-scroll-animation-duration-in-seconds=0.6 --disable-quic --enable-tcp-fast-open --enable-experimental-canvas-features --enable-scroll-prediction --enable-simple-cache-backend --max-tiles-for-interest-area=512 --num-raster-threads=4 --default-tile-height=512 --enable-accelerated-video-decode --enable-low-res-tiling --process-per-site --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --no-sandbox --use-angle=gles --class=IQTerminalPerf --name=IQTerminalPerf --ozone-platform=x11 --user-data-dir=/tmp/playwright_chromiumdev_profile-iEhRuW --remote-debugging-pipe --no-startup-window --enable-features=VaapiVideoDecoder,VaapiVideoEncoder,ParallelDownloading,CDPScreenshotNewSurface --disable-features=UseChromeOSDirectVideoDecoder,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --use-angle=gles --noerrdialogs --ozone-platform=headless --ozone-override-screen-size=800,600 --flag-switches-begin --flag-switches-end --enable-unsafe-swiftshader"
+  },
+  "sizes": [
+    {
+      "canonicalBytes": 20310,
+      "compactBytes": 14626,
+      "nativeBr": 2023,
+      "compactBr": 1692
+    },
+    {
+      "canonicalBytes": 584180,
+      "compactBytes": 335609,
+      "nativeBr": 55804,
+      "compactBr": 43218
+    },
+    {
+      "canonicalBytes": 155139,
+      "compactBytes": 86592,
+      "nativeBr": 15760,
+      "compactBr": 12211
+    },
+    {
+      "canonicalBytes": 150408,
+      "compactBytes": 89734,
+      "nativeBr": 13233,
+      "compactBr": 10673
+    },
+    {
+      "canonicalBytes": 508547,
+      "compactBytes": 251054,
+      "nativeBr": 51901,
+      "compactBr": 39918
+    },
+    {
+      "canonicalBytes": 361484,
+      "compactBytes": 212727,
+      "nativeBr": 35258,
+      "compactBr": 27418
+    },
+    {
+      "canonicalBytes": 429394,
+      "compactBytes": 245492,
+      "nativeBr": 44220,
+      "compactBr": 34199
+    },
+    {
+      "canonicalBytes": 365142,
+      "compactBytes": 207928,
+      "nativeBr": 37080,
+      "compactBr": 28856
+    },
+    {
+      "canonicalBytes": 387385,
+      "compactBytes": 226505,
+      "nativeBr": 36737,
+      "compactBr": 28674
+    },
+    {
+      "canonicalBytes": 532866,
+      "compactBytes": 332906,
+      "nativeBr": 47226,
+      "compactBr": 37941
+    },
+    {
+      "canonicalBytes": 539073,
+      "compactBytes": 349734,
+      "nativeBr": 46168,
+      "compactBr": 37465
+    },
+    {
+      "canonicalBytes": 445429,
+      "compactBytes": 301893,
+      "nativeBr": 40170,
+      "compactBr": 31823
+    },
+    {
+      "canonicalBytes": 187904,
+      "compactBytes": 91343,
+      "nativeBr": 20655,
+      "compactBr": 15332
+    },
+    {
+      "canonicalBytes": 363908,
+      "compactBytes": 219587,
+      "nativeBr": 31386,
+      "compactBr": 25404
+    },
+    {
+      "canonicalBytes": 417203,
+      "compactBytes": 209895,
+      "nativeBr": 42989,
+      "compactBr": 31551
+    },
+    {
+      "canonicalBytes": 490699,
+      "compactBytes": 250014,
+      "nativeBr": 51629,
+      "compactBr": 39215
+    },
+    {
+      "canonicalBytes": 326733,
+      "compactBytes": 217352,
+      "nativeBr": 29009,
+      "compactBr": 23346
+    },
+    {
+      "canonicalBytes": 428294,
+      "compactBytes": 196046,
+      "nativeBr": 48447,
+      "compactBr": 35854
+    },
+    {
+      "canonicalBytes": 385947,
+      "compactBytes": 202742,
+      "nativeBr": 40541,
+      "compactBr": 30652
+    },
+    {
+      "canonicalBytes": 382886,
+      "compactBytes": 227500,
+      "nativeBr": 37306,
+      "compactBr": 29420
+    },
+    {
+      "canonicalBytes": 371058,
+      "compactBytes": 217505,
+      "nativeBr": 34118,
+      "compactBr": 27067
+    },
+    {
+      "canonicalBytes": 442289,
+      "compactBytes": 258318,
+      "nativeBr": 41800,
+      "compactBr": 32890
+    },
+    {
+      "canonicalBytes": 414366,
+      "compactBytes": 260349,
+      "nativeBr": 38585,
+      "compactBr": 30680
+    },
+    {
+      "canonicalBytes": 419087,
+      "compactBytes": 265553,
+      "nativeBr": 41088,
+      "compactBr": 32300
+    },
+    {
+      "canonicalBytes": 253076,
+      "compactBytes": 151797,
+      "nativeBr": 24057,
+      "compactBr": 18642
+    },
+    {
+      "canonicalBytes": 352334,
+      "compactBytes": 203962,
+      "nativeBr": 35153,
+      "compactBr": 27171
+    },
+    {
+      "canonicalBytes": 540802,
+      "compactBytes": 336055,
+      "nativeBr": 49477,
+      "compactBr": 39581
+    },
+    {
+      "canonicalBytes": 530908,
+      "compactBytes": 341327,
+      "nativeBr": 47583,
+      "compactBr": 38120
+    },
+    {
+      "canonicalBytes": 324284,
+      "compactBytes": 191304,
+      "nativeBr": 30402,
+      "compactBr": 24016
+    },
+    {
+      "canonicalBytes": 317465,
+      "compactBytes": 172539,
+      "nativeBr": 34036,
+      "compactBr": 26269
+    },
+    {
+      "canonicalBytes": 572950,
+      "compactBytes": 387986,
+      "nativeBr": 44425,
+      "compactBr": 36534
+    },
+    {
+      "canonicalBytes": 608554,
+      "compactBytes": 442170,
+      "nativeBr": 45099,
+      "compactBr": 37821
+    },
+    {
+      "canonicalBytes": 514957,
+      "compactBytes": 338725,
+      "nativeBr": 40444,
+      "compactBr": 33425
+    },
+    {
+      "canonicalBytes": 205293,
+      "compactBytes": 130070,
+      "nativeBr": 16236,
+      "compactBr": 13098
+    }
+  ]
+}

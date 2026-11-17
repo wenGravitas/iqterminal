@@ -1,0 +1,4 @@
+{"kind":"native","header":0.296961,"total":0.297048,"bytes":38490}
+8550a849e0f7501404cb98a325ccc9298292b8f8abf694ba39b3b3670da6ef3c  /tmp/iq-warm-loopback-native.gz
+{"kind":"projection","header":0.003677,"total":0.004295,"bytes":924807}
+0132ac6889d228afc7e9e1bc6b6522a269da52c5b1a7291141c684af596e4493  /tmp/iq-warm-loopback-projection.gz

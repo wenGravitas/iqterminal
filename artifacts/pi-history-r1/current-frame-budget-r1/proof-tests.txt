@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: advancing same-socket validated execution and confirmed ACK chain passes
+ok 1 - advancing same-socket validated execution and confirmed ACK chain passes
+  ---
+  duration_ms: 13.227671
+  type: 'test'
+  ...
+# Subtest: live status alone, stale cursors or counters cannot certify progress
+ok 2 - live status alone, stale cursors or counters cannot certify progress
+  ---
+  duration_ms: 6.579363
+  type: 'test'
+  ...
+# Subtest: reset/reconnect/error, source jump and a regressed counter remain explicit failures
+ok 3 - reset/reconnect/error, source jump and a regressed counter remain explicit failures
+  ---
+  duration_ms: 1.967016
+  type: 'test'
+  ...
+# Subtest: non-live observation status and unconfirmed baseline cannot pass
+ok 4 - non-live observation status and unconfirmed baseline cannot pass
+  ---
+  duration_ms: 0.874629
+  type: 'test'
+  ...
+# Subtest: forming candle is reported separately from every eligible closed slot
+ok 5 - forming candle is reported separately from every eligible closed slot
+  ---
+  duration_ms: 7.518047
+  type: 'test'
+  ...
+# Subtest: extra painted data cannot hide a missing/duplicate/unvalidated requested closed slot
+ok 6 - extra painted data cannot hide a missing/duplicate/unvalidated requested closed slot
+  ---
+  duration_ms: 1.137295
+  type: 'test'
+  ...
+# Subtest: connected durable catch-up is reported separately and never substitutes for ACK progress
+ok 7 - connected durable catch-up is reported separately and never substitutes for ACK progress
+  ---
+  duration_ms: 4.331236
+  type: 'test'
+  ...
+# Subtest: explicit validated slots in a wider rounded viewport prove the unchanged pinned range
+ok 8 - explicit validated slots in a wider rounded viewport prove the unchanged pinned range
+  ---
+  duration_ms: 9.405027
+  type: 'test'
+  ...
+# Subtest: complete measured interval is eligible
+ok 9 - complete measured interval is eligible
+  ---
+  duration_ms: 8.163083
+  type: 'test'
+  ...
+# Subtest: finite startup measurements cannot hide a failed or missing observation
+ok 10 - finite startup measurements cannot hide a failed or missing observation
+  ---
+  duration_ms: 3.977792
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 500.131131

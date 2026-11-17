@@ -1,0 +1,54 @@
+{
+  "files": [
+    {
+      "path": "build-identity.json",
+      "bytes": 346,
+      "sha256": "eac09f6d8d7691fec0929ca84380f14fd8daf2d0e4b2c0bfac9dce3c45825b42"
+    },
+    {
+      "path": "executed.mjs",
+      "bytes": 125736,
+      "sha256": "dbeed03605c7b0f000fb10e309503ae0d61a5f51dd9ab5505b853663aa1a0cf9"
+    },
+    {
+      "path": "measurement-summary.json",
+      "bytes": 5911,
+      "sha256": "27c59c9d077794d6282f6fe1445c910388b6eb9729c1727756a84a8ab9fb7062"
+    },
+    {
+      "path": "observer-stop.txt",
+      "bytes": 105,
+      "sha256": "ad4795e7c4992da8879e55def6a9211def91d05deb66caac79117b9f6850705c"
+    },
+    {
+      "path": "remote-invocation.py",
+      "bytes": 1098,
+      "sha256": "883ff20fd5e53b4f071fd6d709a1306c5b25f1b9cc4a5170243fd37db0069249"
+    },
+    {
+      "path": "resource-observer-executed.mjs",
+      "bytes": 2763,
+      "sha256": "3ef81cbb31d23e299c2c806d60797cc21ec21fbc249e5c3481c16e4f3221ee9f"
+    },
+    {
+      "path": "runner-console.jsonl",
+      "bytes": 91235,
+      "sha256": "1daf00a262f42e4d5e68d9fcbbee9104e43094982f6bcaca0a13f901e8f4d4a8"
+    },
+    {
+      "path": "server-resources.jsonl",
+      "bytes": 388982,
+      "sha256": "fa97168d26de70d77f4ee7ff4e561a7a8c8d10b6dec8f5f5def22dfd324a0a26"
+    },
+    {
+      "path": "serving-precheck.txt",
+      "bytes": 4257,
+      "sha256": "81362470217cc91ffb9d1ef7756487e61180425dbfdfa3280718027450e19802"
+    },
+    {
+      "path": "source.mjs",
+      "bytes": 6889,
+      "sha256": "d44898b5e130c138612e20a8f8642eb9cadc3431aef41e8e08ceaabb0c658ef8"
+    }
+  ]
+}

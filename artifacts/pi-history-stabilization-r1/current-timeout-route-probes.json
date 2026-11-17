@@ -1,0 +1,20 @@
+[
+  {
+    "route": "history-forward",
+    "ms": 912.0222669953364,
+    "build": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb",
+    "collector": null
+  },
+  {
+    "route": "current-forward",
+    "ms": 911.075099997106,
+    "build": null,
+    "collector": "live"
+  },
+  {
+    "route": "preview-current",
+    "ms": 910.4616199983866,
+    "build": null,
+    "collector": "live"
+  }
+]

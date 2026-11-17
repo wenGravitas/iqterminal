@@ -1,0 +1,33 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/staging-service.test.ts (25 tests | 1 failed | 24 skipped) 162ms
+   × explicit canonical invalidation revokes a same-revision prepared summary without resetting live state 157ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/staging-service.test.ts > explicit canonical invalidation revokes a same-revision prepared summary without resetting live state
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/staging-service.test.ts:334:66
+    332|   expect(g.analysisSummaries.get(60).coverageEvidence.validated).toBe(…
+    333|   pending=true;await (service as any).loadViewport(g,'a');
+    334|   expect(g.analysisSummaries.get(60).coverageEvidence.validated).toBe(…
+       |                                                                  ^
+    335|   expect(g.cursor).toBe(cursor);expect(g.accumulator).toBe(accumulator…
+    336|   expect((service as any).historyState(g).validated).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 24 skipped (25)
+   Start at  09:50:56
+   Duration  1.45s (transform 72%, tests 15%, import 12%, worker 1%)
+

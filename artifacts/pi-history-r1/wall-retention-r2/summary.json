@@ -1,0 +1,293 @@
+{
+  "observation": {
+    "firstTracked": 116,
+    "lastTracked": 110,
+    "firstRetired": 3,
+    "lastRetired": 10,
+    "namespaceChecks": 8,
+    "allRetiredNamespacesAbsent": true,
+    "allLatestTwoManifestsPresent": true,
+    "currentHealthStates": [
+      "live"
+    ],
+    "elapsedMs": 222669.9891742319,
+    "lastReadyDefaults": {
+      "spot": [
+        {
+          "id": "bc90f90eeba0cfb5808736e7801195d8bacbc53356bf042fb02660c329f8187f",
+          "to": 1794314400000,
+          "sourceKey": "c59317c2e6a00e8f55120724206024c40aaececb8f04fe05987c330e12fe0381",
+          "projectionKey": "f1031c5469da84083e1d9c96630640c63a544c62f0ee74b36d92dae9bd8194db",
+          "manifestsPresent": true
+        },
+        {
+          "id": "d395181ebdce227210d56f3ef75afa87f4d8db08e9e05723c0cf10b42166ccab",
+          "to": 1794314100000,
+          "sourceKey": "619de24b958e644f3f2b8c868fba2a880276b1e3dd10f9f66b5f0e7e200689c0",
+          "projectionKey": "98fbf3bf142d9ee204e3d4c37544fe0aa5fd671a64b17456e00be11cdba1e9e6",
+          "manifestsPresent": true
+        }
+      ],
+      "perpetual": [
+        {
+          "id": "7c92cf232d2fab5d703f0e83104ee2e8500d19f940cccc35419b4c06b224b6e3",
+          "to": 1794313800000,
+          "sourceKey": "aace89e32c19d8972ffa733d8ed124c8569f942ffbed609131d118f73d311b69",
+          "projectionKey": "467e8fbf93b5059036e0d99d4a7d89573e6178d6e828f98afef24b017f15127e",
+          "manifestsPresent": true
+        },
+        {
+          "id": "a2740eefb2169b413e0587c94be2d80bc5372fc75456b55cb7c1dc981e1e72c5",
+          "to": 1794312900000,
+          "sourceKey": "b68b8b3fe5453847efedb5be49485dc7cbe09cc49dd8a8ac97fcdd57841f11b3",
+          "projectionKey": "fb47f824024f78be7bb157b6e2dd9f02ec64531edff37a5f018e2f3491550614",
+          "manifestsPresent": true
+        }
+      ]
+    },
+    "componentConditionsObserved": true
+  },
+  "both-rollovers": {
+    "firstTracked": 102,
+    "lastTracked": 96,
+    "firstRetired": 19,
+    "lastRetired": 26,
+    "namespaceChecks": 8,
+    "allRetiredNamespacesAbsent": true,
+    "allLatestTwoManifestsPresent": true,
+    "currentHealthStates": [
+      "live"
+    ],
+    "elapsedMs": 205511.46202348173,
+    "lastReadyDefaults": {
+      "spot": [
+        {
+          "id": "f98d97c83ba8eaa2fcca45c4f3e4a8710fbc38810b35f22449cc83720b1aaf3a",
+          "to": 1794314700000,
+          "sourceKey": "3141d0437dd2bdbfa156d5169af947bb82c9e7e4cac573620214520ca2e56993",
+          "projectionKey": "a2d598eae746462de5f52a332102d6dd4327eb317d1fd979534c520c5ab70d6d",
+          "manifestsPresent": true
+        },
+        {
+          "id": "bc90f90eeba0cfb5808736e7801195d8bacbc53356bf042fb02660c329f8187f",
+          "to": 1794314400000,
+          "sourceKey": "c59317c2e6a00e8f55120724206024c40aaececb8f04fe05987c330e12fe0381",
+          "projectionKey": "f1031c5469da84083e1d9c96630640c63a544c62f0ee74b36d92dae9bd8194db",
+          "manifestsPresent": true
+        }
+      ],
+      "perpetual": [
+        {
+          "id": "c3e5aa15c3e509c1a3f1a20e628839ee7e98e575c79f1f96e3126d5a286b2fdf",
+          "to": 1794314700000,
+          "sourceKey": "b7ca9feca59dcc866bc10152a046c816cbe844fe788ccc1ca993b159d4d977f3",
+          "projectionKey": "9d16bc677d9ab3b0dbbfbb5908f7dc8091ffbef56c86043109ec6fef8578a9e2",
+          "manifestsPresent": true
+        },
+        {
+          "id": "7c92cf232d2fab5d703f0e83104ee2e8500d19f940cccc35419b4c06b224b6e3",
+          "to": 1794313800000,
+          "sourceKey": "aace89e32c19d8972ffa733d8ed124c8569f942ffbed609131d118f73d311b69",
+          "projectionKey": "467e8fbf93b5059036e0d99d4a7d89573e6178d6e828f98afef24b017f15127e",
+          "manifestsPresent": true
+        }
+      ]
+    },
+    "componentConditionsObserved": true
+  },
+  "references": [
+    {
+      "cohort": "reference",
+      "market": "spot",
+      "request": {
+        "market": "spot",
+        "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794205800000,
+        "to": 1794314400000
+      },
+      "sourceToken": "bfec219a1319a38f2c64293ab32214f27ccae2f26926b590bbd49706fec7cb74",
+      "segments": 4257,
+      "valueRuns": 32396,
+      "financialHash": "78e0975ad30a69c2ecd661a2dc3be5757b4da9055f649d8cb7cffc1ea3ad6772",
+      "selectedStateHash": "0095d8e4a845319ad752e069a56e0fcac200e495844b8f455ebbb5d11359b1d0",
+      "result": "exact-match",
+      "gaps": 13
+    },
+    {
+      "cohort": "reference",
+      "market": "perpetual",
+      "request": {
+        "market": "perpetual",
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794204000000,
+        "to": 1794313800000
+      },
+      "sourceToken": "b80cada7c3ee9a95925a59e004864b11aaf2adb65c7ea387727a7a7132c5d440",
+      "segments": 39627,
+      "valueRuns": 118191,
+      "financialHash": "27c6be6215315fa24c4ea93f3149eb7e658da900068115daada09e65ec519d73",
+      "selectedStateHash": "c1ce62f571fe9491b5154e07c53f95cf66c8caa32f575736773baf398f9097c4",
+      "result": "exact-match",
+      "gaps": 4
+    },
+    {
+      "cohort": "rollover-reference",
+      "market": "spot",
+      "request": {
+        "market": "spot",
+        "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794206400000,
+        "to": 1794315000000
+      },
+      "sourceToken": "cb644a43a40d88aa1cf3c6577f9e1e3e80286b72a91c8d6339ae3712e3c2855f",
+      "segments": 4258,
+      "valueRuns": 32350,
+      "financialHash": "56933ce4826b295eb38f866fd237dd1713746e8411c62a045589a8b932c8e5b2",
+      "selectedStateHash": "423477b1b186b58e9ee182e2bad04840959cec43c9f4c0a7254127847e061626",
+      "result": "exact-match",
+      "gaps": 13
+    },
+    {
+      "cohort": "rollover-reference",
+      "market": "perpetual",
+      "request": {
+        "market": "perpetual",
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794204900000,
+        "to": 1794314700000
+      },
+      "sourceToken": "bb0122b1dbbf6d9c3944a48563629f8ab4f18ce23e20742bd1e4b2939c3f522f",
+      "segments": 39625,
+      "valueRuns": 118173,
+      "financialHash": "16db0ce2d25f6e92b1a653e1c25ffc4ad98dec95851edcdbc1999839fbd47713",
+      "selectedStateHash": "839c4858204bc05f807e63eb3eb9bd2788221c27bb0b5f5c7c3c5367ca577a9e",
+      "result": "exact-match",
+      "gaps": 4
+    }
+  ],
+  "postflight": {
+    "kind": "health-postflight",
+    "at": 1794315373.5137281,
+    "build": "13730f76752ec9db7f2253aa541fd4131e578141",
+    "counts": {
+      "building": 0,
+      "ready": 83,
+      "failed": 0,
+      "paused": 0
+    },
+    "readers": 0,
+    "pins": 0,
+    "consumers": 0,
+    "retention": {
+      "retired": 41,
+      "blocked": 0,
+      "scanned": 0,
+      "lastError": "",
+      "lastRetired": "300152ce946cbfd4b5834a7397d2db606fbaf4f282079b37fc8becdc50e8783b",
+      "pending": 0,
+      "quarantine": false
+    },
+    "defaults": {
+      "enabled": true,
+      "pollMs": 15000,
+      "retryMs": 60000,
+      "configurations": [
+        {
+          "market": "spot",
+          "interval": "5m",
+          "step": 300000,
+          "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+          "requestedClosedTo": 1794315300000,
+          "topLevels": 8,
+          "bandPercent": 10,
+          "aggregation": "native",
+          "sourceHead": {
+            "cursor": 20785262,
+            "at": 1794315362043,
+            "availableFrom": 1793521565645
+          },
+          "eligibleClosedTo": 1794315300000,
+          "behindSlots": 0,
+          "request": {
+            "market": "spot",
+            "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+            "from": 1794206700000,
+            "to": 1794315300000
+          },
+          "state": "ready",
+          "job": "1adf08dea14d83a25764343f966e31407aa7d142243836dbf0c1931de4d69f3e",
+          "phase": "ready",
+          "coverage": {
+            "status": "partial",
+            "partial": true,
+            "availableFrom": 1793521565645,
+            "confirmedTo": 1794315300000,
+            "gapCount": 13,
+            "gapsTruncated": false,
+            "reason": "Depth continuity gaps are present in the requested range"
+          },
+          "pages": 23,
+          "projectionPages": 23
+        },
+        {
+          "market": "perpetual",
+          "interval": "15m",
+          "step": 900000,
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "requestedClosedTo": 1794314700000,
+          "topLevels": 8,
+          "bandPercent": 10,
+          "aggregation": "native",
+          "sourceHead": {
+            "cursor": 24722307,
+            "at": 1794315360991,
+            "availableFrom": 1793506604584
+          },
+          "eligibleClosedTo": 1794314700000,
+          "behindSlots": 0,
+          "request": {
+            "market": "perpetual",
+            "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+            "from": 1794204900000,
+            "to": 1794314700000
+          },
+          "state": "ready",
+          "job": "c3e5aa15c3e509c1a3f1a20e628839ee7e98e575c79f1f96e3126d5a286b2fdf",
+          "phase": "ready",
+          "coverage": {
+            "status": "partial",
+            "partial": true,
+            "availableFrom": 1793506604584,
+            "confirmedTo": 1794314700000,
+            "gapCount": 4,
+            "gapsTruncated": false,
+            "reason": "Depth continuity gaps are present in the requested range"
+          },
+          "pages": 79,
+          "projectionPages": 79
+        }
+      ],
+      "scope": "Closed default source-window preparation; overlapping-window composition and live-tail bridging remain independent requirements"
+    },
+    "scope": "Live isolated worker state after reference readers released; health is not client ACK continuity"
+  },
+  "diskScan": {
+    "samplesMs": [
+      9.766746,
+      7.7213840000000005,
+      24.139746,
+      10.972923999999999,
+      8.759762999999992
+    ],
+    "medianMs": 9.766746,
+    "maximumMs": 24.139746,
+    "bytes": [
+      1076196170,
+      1076196170,
+      1076196170,
+      1076196170,
+      1076196170
+    ],
+    "scope": "Five exact production du scans inside existing worker cgroup; diagnostic only, no loading gate or exclusive phase attribution"
+  }
+}

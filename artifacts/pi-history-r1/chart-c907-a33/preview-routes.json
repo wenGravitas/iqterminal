@@ -1,0 +1,22 @@
+{
+  "port": 4182,
+  "pid": 338171,
+  "routes": {
+    "/market-data/v1/liquidations/stream": "http://127.0.0.1:18781",
+    "/market-data/v1/liquidations": "http://127.0.0.1:18794",
+    "/market-data/v2/history/walls/reader": "http://127.0.0.1:18781",
+    "/market-data/v2/history/walls/preparation": "http://127.0.0.1:18781",
+    "/market-data/v2/history/footprint-current": "http://127.0.0.1:18781",
+    "/market-data/v2/history/current": "http://127.0.0.1:18781",
+    "/market-data/v2/history/health": "http://127.0.0.1:18781",
+    "/market-data/v1/order-walls/archive/current": "http://127.0.0.1:18781",
+    "/market-data/v1/effort-result": "http://127.0.0.1:18781",
+    "/market-data/v1/health": "http://127.0.0.1:18781",
+    "/market-data/v1/depth-matrix": "http://127.0.0.1:18781",
+    "/market-data/v1/footprints": "http://127.0.0.1:18794",
+    "/market-data/v1/native-candles": "http://127.0.0.1:18794",
+    "/market-data/v1/stream": "http://127.0.0.1:18781",
+    "/market-data": "http://127.0.0.1:18794"
+  },
+  "scope": "Production dist; history via isolated SSH18794, current/health via existing independent18781"
+}

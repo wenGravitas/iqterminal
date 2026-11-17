@@ -1,0 +1,19 @@
+{
+  "application": "241406ed1367fb0fb973200e8edc2f24252fc471",
+  "buildMetadataWorkerAssets": [
+    "dist-final/assets/worker-CZCyBNvb.js"
+  ],
+  "assets": {
+    "dist-final/assets/editor-DgtsWAyX.js": "3986f6e6b33712c4ef7eafbcbae901bc7b1f80f225a70d8feb058495341cf617",
+    "dist-final/assets/worker-BKSmN_Bs.js": "a4a6ce6a89338368aae66ca167f53ee803f95d70c7d89c555eaae9c5aa2f9b6e",
+    "dist-final/assets/main-DuadqPLo.css": "5caf8d6e3ccd3ef234c5ab99dfea43b02956db4856703f631771e9ac864e94ac",
+    "dist-final/assets/main-ByRZeWpm.js": "48b406ccc516d3721cafd90323ba02cca062b1c7872f1fe8edf6911d287ec3b8",
+    "dist-final/assets/worker-CZCyBNvb.js": "0047070890bca7cb429dd722231f6157ed5395cb07651b841e76ed67cd021243",
+    "dist-final/assets/worker-DaWyXJKB.js": "fe771eaf11363d6e8085639c9d4cd9172c5a0475016d73c3f595aeb2667f56b9",
+    "dist-final/assets/index-IaEv43rg.js": "5072b6211544a9d87d0d919f28809bba53ec4b0660fadd2720f31b8936ca166e"
+  },
+  "observedWorkerBuilds": [
+    "241406ed1367fb0fb973200e8edc2f24252fc471",
+    "absent"
+  ]
+}

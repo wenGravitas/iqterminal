@@ -6,12 +6,15 @@ describe('visible chart scheduler', () => {
   let nextFrame = 0;
   let visibilityListener: (() => void) | undefined;
   let documentHidden = false;
+  let workTime = 0;
 
   const makeScheduler = () => {
     pending.clear();
     nextFrame = 0;
     visibilityListener = undefined;
     documentHidden = false;
+    workTime = 0;
+    vi.spyOn(performance,'now').mockImplementation(()=>workTime);
     vi.stubGlobal('document', {
       get hidden() { return documentHidden; },
       addEventListener: (_type: string, listener: () => void) => { visibilityListener = listener; },
@@ -34,7 +37,7 @@ describe('visible chart scheduler', () => {
     callback(time);
   };
 
-  afterEach(() => vi.unstubAllGlobals());
+  afterEach(() => {vi.restoreAllMocks();vi.unstubAllGlobals();});
 
   it('flushes only dirty visible work and lets the queued frame process the rest', () => {
     const scheduler = makeScheduler();
@@ -102,5 +105,26 @@ describe('visible chart scheduler', () => {
     scheduler.invalidate(hiddenChart);
     expect(scheduler.flush(hiddenChart)).toBe(false);
     expect(pending.size).toBe(0);
+  });
+
+  it('yields an expensive burst between charts and does not starve queued charts when one invalidates itself',()=>{
+    const scheduler=makeScheduler(),calls:string[]=[];
+    const first:Drawable={visible:true,draw(){calls.push('first');workTime+=20;scheduler.invalidate(first);}};
+    const second:Drawable={visible:true,draw(){calls.push('second');workTime+=20;}};
+    const third:Drawable={visible:true,draw(){calls.push('third');workTime+=20;}};
+    scheduler.invalidate(first);scheduler.invalidate(second);scheduler.invalidate(third);
+    runFrame();expect(calls).toEqual(['first']);expect(pending.size).toBe(1);
+    runFrame();expect(calls).toEqual(['first','second']);
+    runFrame();expect(calls).toEqual(['first','second','third']);
+    runFrame();expect(calls).toEqual(['first','second','third','first']);scheduler.dispose();expect(pending.size).toBe(0);
+  });
+
+  it('releases removed deferred work and preserves explicit single-chart flush',()=>{
+    const scheduler=makeScheduler(),calls:string[]=[];
+    const chart=(id:string):Drawable=>({visible:true,draw(){calls.push(id);workTime+=20;}});
+    const first=chart('first'),removed=chart('removed'),flushed=chart('flushed'),last=chart('last');
+    for(const c of [first,removed,flushed,last])scheduler.invalidate(c);
+    runFrame();scheduler.remove(removed);expect(scheduler.flush(flushed)).toBe(true);runFrame();
+    expect(calls).toEqual(['first','flushed','last']);expect(pending.size).toBe(0);scheduler.dispose();
   });
 });

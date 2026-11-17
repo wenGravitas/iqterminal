@@ -1,0 +1,12 @@
+{
+  "latestApplicationBuild": "b1bb790589f14542c479e9e922122571451a5ca9",
+  "measuredFiveRunApplication": "74beebcc70a295c07a3d2ee2c2fd5d3649ccc32f",
+  "earlierMappingApplication": "e43144147d694fe4e7b4755fddec83cfcd1f96eb",
+  "apiBuild": "e122f9d8d3995d5b6b907a1519cd6b2f639fa751",
+  "backendBranchHead": "54968eaab1c7c649de586c888fa54594956bf920",
+  "runtimeRoute": "existing SSH history18780/current18781; preview4185; running tunnel flags unchanged",
+  "futureScript": "history-only IPQoS=none; current lane unchanged; optional VITE_HISTORY_API_URL accepts loopback HTTP origins only",
+  "validation": "Frontend1211passed2skipped,70focused archive/projection,35chart mapping,6Vite/proxy/guard tests; types/build pass. Backend source/deployment unchanged. Cold loading, long interaction tasks, default wall preparation, concurrency, heap plateau and normal foreground UX remain incomplete.",
+  "latestSmoke": "Exact cold selected reference matches on b1bb; useful warm395ms but warm validated paint/hash absent at12s. One diagnostic, not five-run acceptance.",
+  "protectedContainersVerifiedAfter": true
+}

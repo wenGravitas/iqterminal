@@ -1,0 +1,202 @@
+{
+  "source": "artifacts/pi-history-r1/stage691-transport-product-samples.jsonl",
+  "method": "Pi client observations; navigation-relative main-thread painted content; null is not complete; every sample retained; no p95 from five runs. Recorded rendering labels require their browser-environment receipts; this report does not independently certify foreground execution.",
+  "renderingModes": [
+    "headless-gles"
+  ],
+  "scenarios": [
+    {
+      "case": "walls-30h-perp-15m",
+      "samplesMs": [
+        9766.89999999851,
+        9736.89999999851,
+        10441.39999999851,
+        10859.10000000149,
+        10217.60000000149
+      ],
+      "medianMs": 10217.60000000149,
+      "maximumMs": 10859.10000000149,
+      "sampleCount": 5,
+      "requestedSpanVerified": true,
+      "footprintCoverage": null,
+      "environmentVerified": true,
+      "wallReferenceVerified": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "environments": [
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "691e68e846a696e28b453c9cb5fa25ad5ccae758"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "691e68e846a696e28b453c9cb5fa25ad5ccae758"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "691e68e846a696e28b453c9cb5fa25ad5ccae758"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "691e68e846a696e28b453c9cb5fa25ad5ccae758"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "691e68e846a696e28b453c9cb5fa25ad5ccae758"
+        }
+      ],
+      "gate": "SUPPLEMENTAL",
+      "limitsMs": {
+        "median": 5000,
+        "maximum": 10000
+      },
+      "firstHistoricalPaintMs": [
+        3567.699999999255,
+        3530.39999999851,
+        3606.300000000745,
+        4071,
+        4689.699999999255
+      ],
+      "firstHistory3sGate": "SUPPLEMENTAL",
+      "builds": [
+        "691e68e846a696e28b453c9cb5fa25ad5ccae758"
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "requested": {
+            "from": 1794276900000,
+            "to": 1794384900000
+          },
+          "viewport": {
+            "from": 1794276900,
+            "to": 1794384900
+          },
+          "paintedClosedBars": 0,
+          "formingPainted": false,
+          "archive": {
+            "state": "partial",
+            "from": 1794276000000,
+            "to": 1794385800000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1794385800000
+          },
+          "exception": null
+        },
+        {
+          "run": 2,
+          "requested": {
+            "from": 1794276900000,
+            "to": 1794384900000
+          },
+          "viewport": {
+            "from": 1794276900,
+            "to": 1794384900
+          },
+          "paintedClosedBars": 0,
+          "formingPainted": false,
+          "archive": {
+            "state": "partial",
+            "from": 1794276000000,
+            "to": 1794385800000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1794385800000
+          },
+          "exception": null
+        },
+        {
+          "run": 3,
+          "requested": {
+            "from": 1794276900000,
+            "to": 1794384900000
+          },
+          "viewport": {
+            "from": 1794276900,
+            "to": 1794384900
+          },
+          "paintedClosedBars": 0,
+          "formingPainted": false,
+          "archive": {
+            "state": "partial",
+            "from": 1794276000000,
+            "to": 1794385800000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1794385800000
+          },
+          "exception": null
+        },
+        {
+          "run": 4,
+          "requested": {
+            "from": 1794276900000,
+            "to": 1794384900000
+          },
+          "viewport": {
+            "from": 1794276900,
+            "to": 1794384900
+          },
+          "paintedClosedBars": 0,
+          "formingPainted": false,
+          "archive": {
+            "state": "partial",
+            "from": 1794276000000,
+            "to": 1794385800000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1794385800000
+          },
+          "exception": null
+        },
+        {
+          "run": 5,
+          "requested": {
+            "from": 1794276900000,
+            "to": 1794384900000
+          },
+          "viewport": {
+            "from": 1794276900,
+            "to": 1794384900
+          },
+          "paintedClosedBars": 0,
+          "formingPainted": false,
+          "archive": {
+            "state": "partial",
+            "from": 1794276000000,
+            "to": 1794385800000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1794385800000
+          },
+          "exception": null
+        }
+      ]
+    }
+  ]
+}

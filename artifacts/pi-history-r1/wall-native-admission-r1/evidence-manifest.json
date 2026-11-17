@@ -1,0 +1,419 @@
+{
+  "apiBuild": "dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51",
+  "clientBuilds": [
+    "c68989c5ed1ca6b8f6ebe1e873df7cc1f64b225b",
+    "397f07ade191e0d361e4a0ddae4b0764e005fb09"
+  ],
+  "files": [
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-perp-r1-browser-environment.json",
+      "bytes": 9260,
+      "sha256": "bb2a7ec0b91baba03c6a52e4abc24b27f6c56fd8f9cc5560fdc670b210ca6ab2"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-perp-r1-executed.mjs",
+      "bytes": 21765,
+      "sha256": "45a9d94154eb92b31aa00a538f47cdf0041ec23e91bb636fe6e694593a0c14e3"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-perp-r1-observations.jsonl",
+      "bytes": 257111,
+      "sha256": "c77bddd5512c53193ef48b956a26a2382c74355eefbb5a4e87ed2f75b96e30ca"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-perp-r1-samples.jsonl",
+      "bytes": 332725,
+      "sha256": "649825eeb16525a5bfd05e4fa8d95601f8db8580deeee53a04d7b02950521b1f"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-perp-r1-summary.json",
+      "bytes": 2718,
+      "sha256": "a5ac3037a491459716b4c9b7c4d21f3f5e09a67270c352ccb85d6070f20645b0"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-perp-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-perp-r1-walls-30h-perp-15m-1.png",
+      "bytes": 127337,
+      "sha256": "5e2f188b0e3b0b8e77e7f779391b03a99211313d3edaee27a7e5db2051fa7f5d"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-perp-r1-walls-30h-perp-15m-2.png",
+      "bytes": 127429,
+      "sha256": "521846b72fcbe8fa20f17f396dd6580bdc9fbeef67b29600d43ab068d7ceeece"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-perp-r1-walls-30h-perp-15m-3.png",
+      "bytes": 127402,
+      "sha256": "d1543570be5f82c386b44d5ed5a23011e33fd541579851c6c633e39f201fbd07"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-perp-r1-walls-30h-perp-15m-4.png",
+      "bytes": 127393,
+      "sha256": "8f8f61259c6b6cbf3ea238f83f5b5b028d97f007727479de9d4c25fc68a065b1"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-perp-r1-walls-30h-perp-15m-5.png",
+      "bytes": 127402,
+      "sha256": "61bff67d6bbcdd1255f8f71c9348bf02a7780b1d5742c8ac6de89d8dbefd08a3"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-spot-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "cd0dd2fdd46eac567e1a0fc90de2715ad6c0dca9d5eaec7ba20f0f1c23097ed1"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-spot-r1-executed.mjs",
+      "bytes": 21765,
+      "sha256": "45a9d94154eb92b31aa00a538f47cdf0041ec23e91bb636fe6e694593a0c14e3"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-spot-r1-observations.jsonl",
+      "bytes": 245064,
+      "sha256": "b04fdf4664b39ed36632bdc93e28f54f344f8ba7beca93179f68b2d38f622171"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-spot-r1-samples.jsonl",
+      "bytes": 320697,
+      "sha256": "1e78f163ccdd1917a3b2085a6c3c57ac7d3b24928c4ff0dd8496ea158b8521c4"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-spot-r1-summary.json",
+      "bytes": 2710,
+      "sha256": "9e97c42ac2b7ecb294a29edb821f5736aa827ae17b3521990b985f43e2a4aa83"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-spot-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-spot-r1-walls-30h-spot-5m-1.png",
+      "bytes": 94358,
+      "sha256": "360e650f9d06717e02c6af0e960b56e2ebbd028d56d3c5006f6e2d5e7e9a8ee1"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-spot-r1-walls-30h-spot-5m-2.png",
+      "bytes": 94304,
+      "sha256": "49285aeda3039d37c2721a34cb8a335473b29900a2fbc75371bc680bb2067ebb"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-spot-r1-walls-30h-spot-5m-3.png",
+      "bytes": 94292,
+      "sha256": "5acf6f8158657d392c33acb51a7ba933e1f79680e70c00d448d3bc0be8ad20a0"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-spot-r1-walls-30h-spot-5m-4.png",
+      "bytes": 94187,
+      "sha256": "e86b8d90cca36ea3455644959c250eef53a7df8be0b1ac13b466a726ed407046"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native397-dca-spot-r1-walls-30h-spot-5m-5.png",
+      "bytes": 94267,
+      "sha256": "089e287b7c77c1343a85681940127d43920990036c4c3e385dbf8a3ed52ecfdd"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-perp-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "5eb3795f374dd2062876d0e39358941d250b40ec7ff9d6ada66ab2064e01da20"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-perp-r1-executed.mjs",
+      "bytes": 21765,
+      "sha256": "45a9d94154eb92b31aa00a538f47cdf0041ec23e91bb636fe6e694593a0c14e3"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-perp-r1-observations.jsonl",
+      "bytes": 249703,
+      "sha256": "884077da07df89302993da773068537364602cecaa1fded64bf16e0cc2da4f68"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-perp-r1-samples.jsonl",
+      "bytes": 325755,
+      "sha256": "d59cf0d189014e0d4e5056a4e565f0e22b322ad8bccde27a0f85f5b87ad9e13a"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-perp-r1-summary.json",
+      "bytes": 2710,
+      "sha256": "baf6da832f7b4bfa16449f62a3d1adbd46ca9b48ea310447bff2a0838cdb44f7"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-perp-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-perp-r1-walls-30h-perp-15m-1.png",
+      "bytes": 127387,
+      "sha256": "51c253e2991b29f64c852443c7dfe262c751f334c8dccd6dfaa924a0f1efd926"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-perp-r1-walls-30h-perp-15m-2.png",
+      "bytes": 127426,
+      "sha256": "b10c91c56e52673e440b3666a452f5b5847f4d6709c2cf3e628118427e5a9f86"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-perp-r1-walls-30h-perp-15m-3.png",
+      "bytes": 127382,
+      "sha256": "b33c35f1b43a2d71b4c21e6171139a34b7174cf8e1b10ea6f0deb85b891df64c"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-perp-r1-walls-30h-perp-15m-4.png",
+      "bytes": 127360,
+      "sha256": "02c8fe40d7bfb57d6b1b929a612859408c26b641cc48924b3c8c6663b44efcd2"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-perp-r1-walls-30h-perp-15m-5.png",
+      "bytes": 127346,
+      "sha256": "7ebc30b75502879bc40073a10e852ce357faf77c2af5c28ebbdce3136744d5a2"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-spot-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "1f73ff238d13053592fa92a6e1ac02b62da3ab94f3b7ac24212e46b339bb45c2"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-spot-r1-executed.mjs",
+      "bytes": 21765,
+      "sha256": "45a9d94154eb92b31aa00a538f47cdf0041ec23e91bb636fe6e694593a0c14e3"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-spot-r1-observations.jsonl",
+      "bytes": 242488,
+      "sha256": "d300ff82054c158987be5a72d4177016eb5845ae97c5582c179e841f0958125b"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-spot-r1-samples.jsonl",
+      "bytes": 317593,
+      "sha256": "51007448f5fd970d0f5138e01aa13bcb3a31b1c175a4fffa44d385d01e632f9d"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-spot-r1-summary.json",
+      "bytes": 2698,
+      "sha256": "d131ba484388cc51f91994d8e8c803bedb22389d93d0a7fe95ef545274a0ee3f"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-spot-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-spot-r1-walls-30h-spot-5m-1.png",
+      "bytes": 94777,
+      "sha256": "80847312b4c37a95eb91cf3b11d390dadd7d31e3d04db7e09d9e3455628c6148"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-spot-r1-walls-30h-spot-5m-2.png",
+      "bytes": 94750,
+      "sha256": "5574ce2338fc0e00a21edfe36aea2d6694e6d38cd7a029b16430e1fd2dfbc694"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-spot-r1-walls-30h-spot-5m-3.png",
+      "bytes": 94702,
+      "sha256": "7f729987ecb565aff45260fb370d30d8b380406e5f3a07c289c8cfa0659c6b40"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-spot-r1-walls-30h-spot-5m-4.png",
+      "bytes": 94753,
+      "sha256": "1cec9391bafeb68eacd69618239f9f084c5c39b354261b321bc97572ac8b0766"
+    },
+    {
+      "path": "artifacts/pi-history-r1/product-c689-dca-spot-r1-walls-30h-spot-5m-5.png",
+      "bytes": 94781,
+      "sha256": "733e854bb2bf089c8ec86afee12734ca8f96d075f1969b9bf18dec8f19efd84b"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/api-image-runtime.txt",
+      "bytes": 153,
+      "sha256": "fe0e2da7dda6a361e53bdad0c6e1c36539d268512c100ba9aed6f40b4e529269"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/client-build-receipt.json",
+      "bytes": 459,
+      "sha256": "84ca5d64d6a2fd968e6e86a8eae85a87b985040beddf582f72720df85bce6e79"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/client-build.txt",
+      "bytes": 1314,
+      "sha256": "4109d07595799f7848948453082d85506540571ae3f78b32e20be28d8a759772"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/counterfactual.json",
+      "bytes": 420,
+      "sha256": "abea21714899006aeb002ca4c12bbda9ae832b0b00e2a4c057707796bfc59447"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/duplicate-import-setup-failure.txt",
+      "bytes": 3669,
+      "sha256": "a6337469c77b5233d9a6106d4ae555945aa2aadb8fe83fa09e95e9a391120889"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/duplicate-import-typecheck-failure.txt",
+      "bytes": 341,
+      "sha256": "9f42c5e7c478fc20cf3bab4a09363f7c8e23e099f2f77b244cc354724082544e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/executed-server-observer.mjs",
+      "bytes": 2699,
+      "sha256": "532479d89eb9c35798fea5795e54b754f22034ab0efed79127225318ba304c5e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/focused-tests.txt",
+      "bytes": 403,
+      "sha256": "17ee0a51cd39da98b4778a47dbaaf78716e6e77392f5c51478d5317bd983ba6f"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/i3-after.json",
+      "bytes": 129,
+      "sha256": "9b91a2ffa86bf318606c2131feee8e40441293955b64c46ca7b4e86166b53951"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/observer-completion.json",
+      "bytes": 364,
+      "sha256": "efc08e9ddfeb4bee831cf631c2fe0ac3afe7fd0554ecf4d4c46107ba6cc1c2d2"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/observer-stop-guard-empty.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/old-loader-regression.txt",
+      "bytes": 1251,
+      "sha256": "8129d55bb436fd6e636c5979454a200a881f9f747114126844119c8b31eca7ab"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/perp-console.txt",
+      "bytes": 38791,
+      "sha256": "763c35184617b5944c7347f046a8c0e7190885b7366e117f27cc9574d5d1c341"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/phase-evidence.json",
+      "bytes": 39134,
+      "sha256": "291bb6a2aac417d47dfe611c725d040881764bb3a2432374eba41e84c1a94e77"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/postcheck.txt",
+      "bytes": 3530,
+      "sha256": "98784aab2aab87c9982a728d83ee5b51fe3327748ea2aa1a1afda69349d0c399"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/protected-check.json",
+      "bytes": 1057,
+      "sha256": "d71ba9370acec54048cce57850a28e4650eb45fa5f9b8c39a3838520938f7953"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/proxy-history-health.json",
+      "bytes": 2608,
+      "sha256": "a52f885c0d34d50440355878c4644486513a94928a26adc1c745ce308f3ccb41"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/server-resources.jsonl",
+      "bytes": 388810,
+      "sha256": "db7e55836194c36a98333a8cab0981bded0b79e3347f35940289217ff1c46ea6"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/spot-console.txt",
+      "bytes": 37722,
+      "sha256": "d6894359f9ba2250d176d58dd59449599aee9797c474cc2de036120d5d7d0b89"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/test-browser-i3-setup.mjs",
+      "bytes": 759,
+      "sha256": "501b7f5c0c908be76a95ea45cac4e97f6cc43afc30b396ed8928978f59cfb3f9"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/test-browser-launch.mjs",
+      "bytes": 503,
+      "sha256": "f324ff7ce845f7e5900ef52b8c283c3644a54ab6008ea4d22f234ece3045affb"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/test-browser-workspace.mjs",
+      "bytes": 1478,
+      "sha256": "4f4bcdd984c211da7654f7f541093eaa6037f37c5f7aee7fa39dd990d7f594b3"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-native-admission-r1/typecheck.txt",
+      "bytes": 90,
+      "sha256": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-product-route-r1/client-build-receipt.json",
+      "bytes": 451,
+      "sha256": "ff7483a613e27ea2bc09d308adfb744a457939c00bc9d853bdd5e81c691aea2e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-product-route-r1/client-build.txt",
+      "bytes": 1314,
+      "sha256": "22054518ecadfb7aa1ec85f3696a651f3555a1d3b57a736bbde082d2b4053e10"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-product-route-r1/i3-after.json",
+      "bytes": 118,
+      "sha256": "f9713d3455271d9364088ee157bef22c442659b26ae16d02889fa2eb6049206c"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-product-route-r1/i3-before.json",
+      "bytes": 99,
+      "sha256": "0ea09ddb293dc9dc02838882624e8afdb105c146eea935f6a00dfadaf4431329"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-product-route-r1/perp-console.txt",
+      "bytes": 38782,
+      "sha256": "d4084b60fb236c056d086afc808d8a7f8e7adda2361309d9b91df520c602ef24"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-product-route-r1/phase-evidence.json",
+      "bytes": 60812,
+      "sha256": "3bfecc7cc9afc5dc9f5809048fb14e88554b24f6c6c0e0fcb86e0869906949c8"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-product-route-r1/postcheck.txt",
+      "bytes": 3529,
+      "sha256": "38b184754bf97731aacaca793a7b41d583757ccc2468f76b2b4319f6111b2400"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-product-route-r1/protected-check.json",
+      "bytes": 1057,
+      "sha256": "d71ba9370acec54048cce57850a28e4650eb45fa5f9b8c39a3838520938f7953"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-product-route-r1/proxy-current-health.json",
+      "bytes": 1611,
+      "sha256": "fd1eb8ebb39cbafef638793d90eb85e8df447dda21b4ad91b93ebfab9b85f9e6"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-product-route-r1/proxy-history-health.json",
+      "bytes": 2595,
+      "sha256": "e34d4c743911c8d3bee923cf3023500cd73a20f6b2bfac8000580f93657d5431"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-product-route-r1/server-spot-resources.jsonl",
+      "bytes": 330381,
+      "sha256": "569cb18ea80d43da640e07a84c815fa21ccaa67678c929efbff743419fbfb5ce"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-product-route-r1/spot-console.txt",
+      "bytes": 37718,
+      "sha256": "cc5eff5e5996b9b469c346f740af72349189ab86daed107ac22935a99f458a9d"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-product-route-r1/staging-api-rollout.txt",
+      "bytes": 86380,
+      "sha256": "586d5d3649eecdf13a88556880016f7171dfc6309d23588b732dda92107ef200"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-product-route-r1/staging-path-setup-error.txt",
+      "bytes": 287,
+      "sha256": "296d36675dcadd96d3292fbee92c7e26712e53e4d02501436b4d9d229863e590"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-product-route-r1/staging-preflight.txt",
+      "bytes": 21185,
+      "sha256": "e9bc25ded880e0e68597fb420c97d7f626516b440a7971c4ff03668f7a444591"
+    }
+  ]
+}

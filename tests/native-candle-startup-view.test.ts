@@ -1,0 +1,3 @@
+import{test,expect}from'vitest';import{NativeCandleStartupView}from'../src/feed/native-candle-state';
+test('saved current view survives closed and forming startup knots without pinning later rollover',()=>{const v=new NativeCandleStartupView();v.reset(true);expect(v.consume(true,false,false)).toBe(true);expect(v.consume(false,false,false)).toBe(false);expect(v.consume(true,false,true)).toBe(true);expect(v.consume(true,false,true)).toBe(false);});
+test('historical preservation and explicit gesture override remain independent',()=>{const v=new NativeCandleStartupView();v.reset(true);v.release();expect(v.consume(true,false,true)).toBe(false);expect(v.consume(true,true,true)).toBe(true);v.reset(false);expect(v.consume(true,false,true)).toBe(false);});

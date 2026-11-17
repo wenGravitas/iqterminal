@@ -1,0 +1,47 @@
+{
+  "build": "821092d83943b3e17bba88ee6a0a41657d17807a",
+  "phase": "seeding",
+  "error": "TimeoutError: page.waitForFunction: Timeout 90000ms exceeded.",
+  "failures": [
+    {
+      "phase": "seeding",
+      "url": "http://127.0.0.1:4185/market-data/v2/history/walls/discover?market=spot&profile=binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1&from=1793696100000&to=1793804700000",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "seeding",
+      "url": "http://127.0.0.1:4185/market-data/v1/native-candles?interval=15m&from=1793696400000",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "seeding",
+      "url": "http://127.0.0.1:4185/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1793695500000&to=1793805300000",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "seeding",
+      "url": "http://127.0.0.1:4185/market-data/v1/level-watches",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "seeding",
+      "url": "http://127.0.0.1:4185/market-data/v1/level-watches",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "seeding",
+      "url": "http://127.0.0.1:4185/market-data/v1/level-watches",
+      "error": "net::ERR_ABORTED"
+    }
+  ],
+  "pageErrors": [],
+  "activeRequestsAtCleanup": 2,
+  "activeRequestUrls": [
+    "http://127.0.0.1:4185/market-data/v2/history/walls/projection-batch?market=perpetual&key=a6d39a0a5e53f05455032059e17d7586fb17e6b332d648fea25701ded1c9831d&start=16&version=1",
+    "http://127.0.0.1:4185/market-data/v2/history/walls/projection-batch?market=perpetual&key=a6d39a0a5e53f05455032059e17d7586fb17e6b332d648fea25701ded1c9831d&start=36&version=1"
+  ],
+  "independentGlobalRequestUrls": [
+    "http://127.0.0.1:4185/market-data/v1/level-watches"
+  ],
+  "scope": "No plateau claim without all exact-coverage cycles and inspection of retained heap/queue trend."
+}

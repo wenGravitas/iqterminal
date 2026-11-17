@@ -1,0 +1,37 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/staging-service.test.ts (32 tests | 1 failed | 31 skipped) 68ms
+   × large native backfill uses one merging snapshot while retaining the independently streamed current candle 65ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/staging-service.test.ts > large native backfill uses one merging snapshot while retaining the independently streamed current candle
+AssertionError: expected { type: 'patch', …(3) } to match object { type: 'snapshot', merge: true }
+(3 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "merge": true,
+-   "type": "snapshot",
++   "type": "patch",
+  }
+
+ ❯ tests/staging-service.test.ts:439:22
+    437|   resolve(new Response(JSON.stringify({source:'binance-native-kline',c…
+    438|   const updates=events.filter(e=>e.type==='snapshot'||e.type==='patch'…
+    439|   expect(updates[1]).toMatchObject({type:'snapshot',merge:true});
+       |                      ^
+    440|   expect((updates[1] as any).candles).toHaveLength(1000);expect((updat…
+    441|   expect(service.diagnostics().retainedBars).toBe(1000);expect(sockets…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 31 skipped (32)
+   Start at  14:35:54
+   Duration  810ms (transform 77%, tests 12%, import 10%, worker 1%)
+

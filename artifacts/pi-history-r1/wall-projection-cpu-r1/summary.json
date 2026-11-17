@@ -1,0 +1,314 @@
+{
+  "profile": {
+    "scope": "V8 sampled elapsed attribution under cgroup throttling, including idle/GC and terminal harness failure formatting. Not exclusive CPU durations or Pi chart latency.",
+    "largestSelfSamples": [
+      {
+        "sampledMs": 15551.811,
+        "frame": {
+          "functionName": "(garbage collector)",
+          "scriptId": "0",
+          "url": "",
+          "lineNumber": -1,
+          "columnNumber": -1
+        }
+      },
+      {
+        "sampledMs": 10437.385,
+        "frame": {
+          "functionName": "(idle)",
+          "scriptId": "0",
+          "url": "",
+          "lineNumber": -1,
+          "columnNumber": -1
+        }
+      },
+      {
+        "sampledMs": 5670.438,
+        "frame": {
+          "functionName": "advancePreparedWallProjection",
+          "scriptId": "86",
+          "url": "file:///app/profile.mjs",
+          "lineNumber": 1266,
+          "columnNumber": 44
+        }
+      },
+      {
+        "sampledMs": 5525.489,
+        "frame": {
+          "functionName": "advancePreparedWallProjection",
+          "scriptId": "86",
+          "url": "file:///app/profile.mjs",
+          "lineNumber": 1266,
+          "columnNumber": 44
+        }
+      },
+      {
+        "sampledMs": 926.402,
+        "frame": {
+          "functionName": "",
+          "scriptId": "86",
+          "url": "file:///app/profile.mjs",
+          "lineNumber": 0,
+          "columnNumber": 0
+        }
+      },
+      {
+        "sampledMs": 859.755,
+        "frame": {
+          "functionName": "wallProjectionReplay",
+          "scriptId": "86",
+          "url": "file:///app/profile.mjs",
+          "lineNumber": 9,
+          "columnNumber": 29
+        }
+      },
+      {
+        "sampledMs": 619.775,
+        "frame": {
+          "functionName": "update",
+          "scriptId": "140",
+          "url": "node:internal/crypto/hash",
+          "lineNumber": 131,
+          "columnNumber": 39
+        }
+      },
+      {
+        "sampledMs": 589.004,
+        "frame": {
+          "functionName": "flush",
+          "scriptId": "86",
+          "url": "file:///app/profile.mjs",
+          "lineNumber": 1345,
+          "columnNumber": 16
+        }
+      },
+      {
+        "sampledMs": 456.351,
+        "frame": {
+          "functionName": "(program)",
+          "scriptId": "0",
+          "url": "",
+          "lineNumber": -1,
+          "columnNumber": -1
+        }
+      },
+      {
+        "sampledMs": 405.182,
+        "frame": {
+          "functionName": "toString",
+          "scriptId": "24",
+          "url": "node:buffer",
+          "lineNumber": 834,
+          "columnNumber": 45
+        }
+      },
+      {
+        "sampledMs": 334.465,
+        "frame": {
+          "functionName": "store",
+          "scriptId": "86",
+          "url": "file:///app/profile.mjs",
+          "lineNumber": 970,
+          "columnNumber": 7
+        }
+      },
+      {
+        "sampledMs": 194.994,
+        "frame": {
+          "functionName": "restoreCheckpoint",
+          "scriptId": "86",
+          "url": "file:///app/profile.mjs",
+          "lineNumber": 502,
+          "columnNumber": 26
+        }
+      }
+    ],
+    "builderPositionTicks": [
+      {
+        "ticks": 1562,
+        "bundleLine": 1277,
+        "source": "    state2 = JSON.parse((await boundedRead(join2(dir, \"progress.json\"), MAX_STATE_BYTES)).toString());"
+      },
+      {
+        "ticks": 1215,
+        "bundleLine": 1410,
+        "source": "  const text = JSON.stringify(next);"
+      },
+      {
+        "ticks": 500,
+        "bundleLine": 1324,
+        "source": "  const entries = { ...state2?.entries ?? {} };"
+      },
+      {
+        "ticks": 495,
+        "bundleLine": 1319,
+        "source": "    page = JSON.parse(text2.toString());"
+      },
+      {
+        "ticks": 381,
+        "bundleLine": 1342,
+        "source": "  const counts = Object.values(entries);"
+      },
+      {
+        "ticks": 336,
+        "bundleLine": 1370,
+        "source": "        if (Buffer.byteLength(JSON.stringify(fragment(middle))) + 2 <= WALL_PROJECTION_PART_BYTES) low = middle;"
+      },
+      {
+        "ticks": 295,
+        "bundleLine": 1321,
+        "source": "  if (hash(JSON.stringify(page)) !== part.hash || JSON.stringify(page.profile) !== JSON.stringify(profile) || page.from !== source3.request.from || page.to !== source3.request.to || page.watermark !== source3.watermark || JSON.stringify(page.head) !== JSON.stringify(source3.head) || page.page.after !== part.after || page.page.nextAfter !== part.nextAfter || page.page.hasMore !== index < source3.parts.length - 1) throw Error(\"Prepared wall projection canonical identity mismatch\");"
+      },
+      {
+        "ticks": 116,
+        "bundleLine": 1374,
+        "source": "      const row = fragment(low), bytes = Buffer.byteLength(JSON.stringify(row));"
+      },
+      {
+        "ticks": 39,
+        "bundleLine": 1326,
+        "source": "  for (const patch of projector.applyPage(page)) {"
+      },
+      {
+        "ticks": 33,
+        "bundleLine": 1403,
+        "source": "    const prefix = JSON.stringify(state2), bytes = Buffer.byteLength(prefix);"
+      },
+      {
+        "ticks": 32,
+        "bundleLine": 1415,
+        "source": "  return next;"
+      },
+      {
+        "ticks": 22,
+        "bundleLine": 1331,
+        "source": "    const previous = entries[patch.id];"
+      }
+    ]
+  },
+  "baseline-fixed": {
+    "scope": "Unprofiled offline projection component, warm host filesystem, fresh output; same pinned canonical input. Not raw cold materialization or end-to-end Pi route.",
+    "samplesMs": [
+      42230.269627,
+      40382.844276,
+      41852.738073,
+      42487.445772,
+      38814.224081
+    ],
+    "medianMs": 41852.738073,
+    "maximumMs": 42487.445772,
+    "cpuMs": [
+      20924.033,
+      20002.832,
+      20668.147,
+      21044.923,
+      19137.63
+    ],
+    "terminalRssBytes": [
+      189284352,
+      190312448,
+      196530176,
+      194322432,
+      188743680
+    ]
+  },
+  "candidate": {
+    "scope": "Unprofiled offline projection component, warm host filesystem, fresh output; same pinned canonical input. Not raw cold materialization or end-to-end Pi route.",
+    "samplesMs": [
+      40233.049337,
+      40418.003368000005,
+      39597.846526,
+      39382.98713,
+      41279.905695
+    ],
+    "medianMs": 40233.049337,
+    "maximumMs": 41279.905695,
+    "cpuMs": [
+      19790.47,
+      20027.077,
+      19431.481,
+      19447.089,
+      20431.231
+    ],
+    "terminalRssBytes": [
+      186302464,
+      188055552,
+      185655296,
+      188272640,
+      189534208
+    ]
+  },
+  "checkpointSha256": "10ecf3d53f2644bbe6d727903852246cd7b53a6026f511acc7bd0995016d477f",
+  "pageLogs": [
+    {
+      "name": "baseline-fixed-1.jsonl",
+      "pages": 79,
+      "maximumSampledRssBytes": 218746880,
+      "scope": "Page-boundary RSS samples, not peak RSS or retained-heap plateau"
+    },
+    {
+      "name": "baseline-fixed-2.jsonl",
+      "pages": 79,
+      "maximumSampledRssBytes": 218988544,
+      "scope": "Page-boundary RSS samples, not peak RSS or retained-heap plateau"
+    },
+    {
+      "name": "baseline-fixed-3.jsonl",
+      "pages": 79,
+      "maximumSampledRssBytes": 223854592,
+      "scope": "Page-boundary RSS samples, not peak RSS or retained-heap plateau"
+    },
+    {
+      "name": "baseline-fixed-4.jsonl",
+      "pages": 79,
+      "maximumSampledRssBytes": 223457280,
+      "scope": "Page-boundary RSS samples, not peak RSS or retained-heap plateau"
+    },
+    {
+      "name": "baseline-fixed-5.jsonl",
+      "pages": 79,
+      "maximumSampledRssBytes": 221474816,
+      "scope": "Page-boundary RSS samples, not peak RSS or retained-heap plateau"
+    },
+    {
+      "name": "candidate-1.jsonl",
+      "pages": 79,
+      "maximumSampledRssBytes": 215764992,
+      "scope": "Page-boundary RSS samples, not peak RSS or retained-heap plateau"
+    },
+    {
+      "name": "candidate-2.jsonl",
+      "pages": 79,
+      "maximumSampledRssBytes": 218796032,
+      "scope": "Page-boundary RSS samples, not peak RSS or retained-heap plateau"
+    },
+    {
+      "name": "candidate-3.jsonl",
+      "pages": 79,
+      "maximumSampledRssBytes": 212979712,
+      "scope": "Page-boundary RSS samples, not peak RSS or retained-heap plateau"
+    },
+    {
+      "name": "candidate-4.jsonl",
+      "pages": 79,
+      "maximumSampledRssBytes": 216948736,
+      "scope": "Page-boundary RSS samples, not peak RSS or retained-heap plateau"
+    },
+    {
+      "name": "candidate-5.jsonl",
+      "pages": 79,
+      "maximumSampledRssBytes": 218677248,
+      "scope": "Page-boundary RSS samples, not peak RSS or retained-heap plateau"
+    }
+  ],
+  "postflight": {
+    "protectedServices": 8,
+    "terminalSuccessfulContainers": 10,
+    "workerId": "dca671725098a47d7592f9af201b4d7b2d63887d761e5caf737799da7855123c",
+    "gatewayId": "569422becf7c417d91b2ca6eb90a6a8264a0c10ae49421f352e94ccd225e60ae",
+    "readers": 0,
+    "consumers": 0
+  },
+  "medianReductionPercent": 3.86997078464717,
+  "acceptance": "Release loading/current/concurrency/warm/heap/foreground gates unchanged and incomplete."
+}

@@ -1,0 +1,32 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-history.test.ts (41 tests | 1 failed) 4224ms
+   × specific nonretryable preparation failure is preserved in the chart history status 1063ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-history.test.ts > specific nonretryable preparation failure is preserved in the chart history status
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/prepared-wall-history.test.ts:91:169
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 65 passed (66)
+   Start at  09:44:14
+   Duration  7.05s (tests 66%, transform 26%, import 7%)
+
+  Transform  transforming modules took 3.43s · 26% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+

@@ -1,0 +1,293 @@
+{
+  "clientBuild": "7e9303823c46bc36587d49946c79427c3de07a3a",
+  "gatewayBuild": "71f62d2efceb8a4ac0fadb9c8a1495bcf1eb4efa",
+  "workerBuild": "0811e742b74c1898f6c885bdd75fa50cdbba22c5",
+  "scope": "Nov10 headless Pi failed loading cohorts and separate pinned first-batch route probes",
+  "files": [
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/discovery-diagnostic.jsonl",
+      "bytes": 1349,
+      "sha256": "746e4354cb7cfb382c7c8cc32e5ad6ee5a01d43d20a794c0e33d0198b89ab359"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/discovery-diagnostic.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/discovery-probe.py",
+      "bytes": 1102,
+      "sha256": "dfa6738eadb46c7a063a8c0b17c9e94c9bfd4cb24a4ddaad058e5e79f477685a"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/discovery-requests.json",
+      "bytes": 383,
+      "sha256": "df1a2348971b6ca7e053bd485cd119db52ac7119388198bd1b603fde02d19a2f"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/health-18880.json",
+      "bytes": 1611,
+      "sha256": "3e246aa6aa5e30a0168e1f23938e1478f9bcdc8fde3b33933ee8310936714dfe"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/health-18881.json",
+      "bytes": 1610,
+      "sha256": "1321b6006893e1692086f3000f6c66deb63d8e80bfc69580b00fcecab57782d0"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/loopback-route.jsonl",
+      "bytes": 16227,
+      "sha256": "41811780e4855a83a5a11ed21faf7464871eb51bf430b2753e5f33e4bf3aa69e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/loopback-route.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/loopback-unleased-route.jsonl",
+      "bytes": 7720,
+      "sha256": "c5ba98d73afa2de29e7965efade440dcca4d8bd6457b821f553355e1da4d48cc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/perp-console.jsonl",
+      "bytes": 2863,
+      "sha256": "db779baf5cf6742e839e356b14976be621c294dd9d16007ee3b76fd3652ae612"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/perp-gate.json",
+      "bytes": 4009,
+      "sha256": "5f089f138240324b79ba1a672b7e6668b4fa78095f6eb87510b62fddba73fc52"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/preview-route.jsonl",
+      "bytes": 17248,
+      "sha256": "6dd2ab13f153175e1e2f5cfa651b240f97ec358904f1c092bb0e8bb3a86e0a77"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/preview-route.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/preview.log",
+      "bytes": 12209,
+      "sha256": "d68136f280d467a716a5485f30da1b21a640bb9469eb06da724df7468142c6a3"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/production-build.log",
+      "bytes": 1828,
+      "sha256": "dd42f5b261887371979bf3aea5e5b0d57ef24c03a3a6fdf4ff6bceb0914b6209"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/protected-check.json",
+      "bytes": 3620,
+      "sha256": "f050a48459cc4fa307ade69d7b6448ef9fcefbf01dc9eb46faa74f63acbce24a"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/proxy-tests.log",
+      "bytes": 205,
+      "sha256": "700e8fabf9534c44ad3bb217ebf093cf76b5d0f85de9a357640cfa0ba799f4d5"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/reference-executed.mjs",
+      "bytes": 65321,
+      "sha256": "03de1bce8eb6aff553fa03639cc5807998f9c4b2a997bbd3b4a2631051bb3f5f"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/reference-invocation.py",
+      "bytes": 788,
+      "sha256": "3c4c63707852b759d80850f9548d67a728e2b7873f7318c950f4aee2577502ef"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/reference.jsonl",
+      "bytes": 6135,
+      "sha256": "b34a920f9509a28376909a234e09e5270e2e4e692faf57d92ff3b037bc6bce8f"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/references.json",
+      "bytes": 858,
+      "sha256": "530cb63dda3ddb5ff8b536dd61658b771c00b941b0991921ec793b2680bb53a4"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/resource-observer-executed.mjs",
+      "bytes": 2868,
+      "sha256": "6202cc3b32888673e60a29cb7937aee1a306e09280eb9c62ce9853e96e31c426"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/resources.jsonl",
+      "bytes": 250493,
+      "sha256": "f57fffabe20f336141a2d175df1885a959a1111238b35a66fd69a7675d405348"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/resources.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/route-config.json",
+      "bytes": 633,
+      "sha256": "d628b037968e51899df6004b61fd91378d2ac1b92719082b3905f8b3bd5041ae"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/route-probe-executed.mjs",
+      "bytes": 4734,
+      "sha256": "5837bf028eca3d5bc989e05e88f0e89d01a73b0be53f5b37892ab15aa98f0914"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/route-summary.json",
+      "bytes": 4811,
+      "sha256": "81ac5e706ff12439daae79004a73e24d06cbf862a03a8226e33059ae5fe96864"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/services-after.txt",
+      "bytes": 1381,
+      "sha256": "aab37e865554beccaa186a917f4375eaca5e5969bb2535da23ec969338fb29fc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/spot-console.jsonl",
+      "bytes": 2666,
+      "sha256": "5665c12205e42054e45c2b94f84897965c101ccbf0e27e4b1abfd44972b256bb"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/spot-gate.json",
+      "bytes": 3748,
+      "sha256": "0a360e119bfa5c3aa8952c597c1c2d5669f3a468944eb89a7da55f6ef2064074"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/ssh-route.jsonl",
+      "bytes": 16110,
+      "sha256": "0fcecc929e45774b7d628f0af6c549885a658a772623071d960967dee17434ac"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/ssh-route.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/typecheck.log",
+      "bytes": 90,
+      "sha256": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/windows-perpetual.json",
+      "bytes": 23,
+      "sha256": "7f1102d539b4e2576282330be3cb2b4a4ee8126304028f5ceef7e2cfa0892854"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/windows-spot.json",
+      "bytes": 23,
+      "sha256": "c29256fc7b0f277d975be679998d2ebdb679a32a9e4576b85b2896882454e03b"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/worker-after.json",
+      "bytes": 13955,
+      "sha256": "2e8a5a19b30533a3aa4196ef0cc7a3a87587b396abf8d8c797a029b67df7a8d7"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-client-r1/worker-final.json",
+      "bytes": 15114,
+      "sha256": "03df0123672b1c62e20eeae7713cbdb9f9c7c4a2acd519143928b6c1fcbe33d7"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-perp-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "2374d46d6500469584e44206a299e7e60ab8771eedeeec1636f197dcc2493e13"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-perp-executed.mjs",
+      "bytes": 22663,
+      "sha256": "7139b094601b431bf5fa2e0c57bd329cc812502cc79a2299c131f327306be145"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-perp-observations.jsonl",
+      "bytes": 134226,
+      "sha256": "36440561494aeaa6656da2a34ef341f8f2417437172a73bb16787c25ec887e5d"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-perp-samples.jsonl",
+      "bytes": 216132,
+      "sha256": "e859e4ea7d7adde69087a2a8d44fd7817fc0d579c2dbfb0b2ea72618f33201e3"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-perp-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-perp-walls-30h-perp-15m-1.png",
+      "bytes": 120476,
+      "sha256": "b1a1a020ee5b33414fa8a422a9804981c5009111bfb0bf6fd70690e1def318b8"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-perp-walls-30h-perp-15m-2.png",
+      "bytes": 56714,
+      "sha256": "6ca58257cca22ac2d0362c9ca680465ca8c7b4de46ba961d23bc81bb89022a3c"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-perp-walls-30h-perp-15m-3.png",
+      "bytes": 60495,
+      "sha256": "f7f3f05d6d745b056783c3c5196dbebc6db4fb6db5ec1b0c9aeca564d62197ed"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-perp-walls-30h-perp-15m-4.png",
+      "bytes": 83235,
+      "sha256": "874797956bfa77c02b76cd35318f2f964b3a6e1ec17c87f776e33008135d6583"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-perp-walls-30h-perp-15m-5.png",
+      "bytes": 58323,
+      "sha256": "56185c0995cccb5cae74a67dca4f484659223b4a8d072785ad104c42a2d5605d"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-spot-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "7629874099ce2aec6eedc56ffaa4b492c963de9d0ab3aa0e2449a48906f8c47c"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-spot-executed.mjs",
+      "bytes": 22663,
+      "sha256": "7139b094601b431bf5fa2e0c57bd329cc812502cc79a2299c131f327306be145"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-spot-observations.jsonl",
+      "bytes": 155155,
+      "sha256": "94ca6e668047d0067461915f1c2425518a74d9aa6b6d58f9bb65df84120c70a8"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-spot-samples.jsonl",
+      "bytes": 237250,
+      "sha256": "3aabf6bf75a2525cd6571b37172582fae39800fa1004cd6efe8d45a940f07e2c"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-spot-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-spot-walls-30h-spot-5m-1.png",
+      "bytes": 75352,
+      "sha256": "63ebbd95079993557cc20de3772cf55ce98b90a87752e0f09a0a2985cf68dfde"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-spot-walls-30h-spot-5m-2.png",
+      "bytes": 49815,
+      "sha256": "e9e1d2c54eb4f8b4c9b45bbafbbb779822c9a5e1d73fecb0d2eb396497c9d6af"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-spot-walls-30h-spot-5m-3.png",
+      "bytes": 79222,
+      "sha256": "7d81bac054d946613aae40d2703cf02785f94cef8ff791a27cf1c011b7812b71"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-spot-walls-30h-spot-5m-4.png",
+      "bytes": 76058,
+      "sha256": "70de46f701a24daa796b3a2d4dfe21515c6aa7e836dc99999efb1f7dfb7c2c49"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r1-spot-walls-30h-spot-5m-5.png",
+      "bytes": 71601,
+      "sha256": "92606c86126d60824bcdcb86cd77e162edc5513119c8b8716852e2cfa55025d0"
+    }
+  ]
+}

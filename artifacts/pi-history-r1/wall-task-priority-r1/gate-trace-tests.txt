@@ -1,0 +1,106 @@
+TAP version 13
+# Subtest: a canceled response with an unresolved trace cannot prevent sample finalization
+ok 1 - a canceled response with an unresolved trace cannot prevent sample finalization
+  ---
+  duration_ms: 33.897393
+  type: 'test'
+  ...
+# Subtest: completed and failed traces finish without retaining a cleanup timer
+ok 2 - completed and failed traces finish without retaining a cleanup timer
+  ---
+  duration_ms: 4.928575
+  type: 'test'
+  ...
+# Subtest: ready closed history cannot end a current-display observation before healthy current paint
+ok 3 - ready closed history cannot end a current-display observation before healthy current paint
+  ---
+  duration_ms: 6.794538
+  type: 'test'
+  ...
+# Subtest: extended current observation remains active after both current and history paint
+ok 4 - extended current observation remains active after both current and history paint
+  ---
+  duration_ms: 0.483871
+  type: 'test'
+  ...
+# Subtest: wall history observation stays open until native closed coverage is inspected
+ok 5 - wall history observation stays open until native closed coverage is inspected
+  ---
+  duration_ms: 0.552796
+  type: 'test'
+  ...
+# Subtest: native coverage cannot hide a missing interior candle behind endpoints, extra bars or a forming bar
+ok 6 - native coverage cannot hide a missing interior candle behind endpoints, extra bars or a forming bar
+  ---
+  duration_ms: 6.418593
+  type: 'test'
+  ...
+# Subtest: all five exact paints pass unchanged targets
+ok 7 - all five exact paints pass unchanged targets
+  ---
+  duration_ms: 19.987169
+  type: 'test'
+  ...
+# Subtest: missing run is never a finite-subset completion median
+ok 8 - missing run is never a finite-subset completion median
+  ---
+  duration_ms: 17.044354
+  type: 'test'
+  ...
+# Subtest: 45 second observation never widens latency targets
+ok 9 - 45 second observation never widens latency targets
+  ---
+  duration_ms: 5.336205
+  type: 'test'
+  ...
+# Subtest: metadata completion cannot hide missing walls or native slots
+ok 10 - metadata completion cannot hide missing walls or native slots
+  ---
+  duration_ms: 13.113076
+  type: 'test'
+  ...
+# Subtest: different future whitespace/range/profile/source cannot pass
+ok 11 - different future whitespace/range/profile/source cannot pass
+  ---
+  duration_ms: 14.24402
+  type: 'test'
+  ...
+# Subtest: mixed cohorts and duplicate/missing runs are refused
+ok 12 - mixed cohorts and duplicate/missing runs are refused
+  ---
+  duration_ms: 8.188983
+  type: 'test'
+  ...
+# Subtest: first-useful failure is independent of completed coverage
+ok 13 - first-useful failure is independent of completed coverage
+  ---
+  duration_ms: 2.046556
+  type: 'test'
+  ...
+# Subtest: fixture or wrong-profile paint cannot certify first useful history
+ok 14 - fixture or wrong-profile paint cannot certify first useful history
+  ---
+  duration_ms: 2.406944
+  type: 'test'
+  ...
+# Subtest: native flags cannot hide a missing raw slot and source flags cannot hide a wrong response revision
+ok 15 - native flags cannot hide a missing raw slot and source flags cannot hide a wrong response revision
+  ---
+  duration_ms: 18.038262
+  type: 'test'
+  ...
+# Subtest: main or worker CPU profiling cannot certify loading latency
+ok 16 - main or worker CPU profiling cannot certify loading latency
+  ---
+  duration_ms: 5.141168
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 288.887684

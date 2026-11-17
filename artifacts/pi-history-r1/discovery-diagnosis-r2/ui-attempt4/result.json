@@ -1,0 +1,491 @@
+{
+  "scope": "Explicit mocked discovery503 over actual staging native candles; headless UI/status check only, not latency, financial-wall coverage or current ACK acceptance",
+  "expectedBuild": "e12965d38f9dc584c8fdfe46b8817a249166259a",
+  "pass": false,
+  "error": "TimeoutError: page.waitForFunction: Timeout 15000ms exceeded.",
+  "faults": 1,
+  "trace": [
+    {
+      "kind": "response",
+      "status": 503,
+      "url": "http://127.0.0.1:4191/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794178800000&to=1794288600000"
+    }
+  ],
+  "failureSnapshot": {
+    "panels": [
+      "chart-bench"
+    ],
+    "status": {
+      "state": "loading",
+      "message": "Waiting for the current selected-profile archive.",
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "loading",
+        "requestComplete": false,
+        "rangeComplete": false,
+        "from": 1794178800000,
+        "to": 1794288600000,
+        "market": "perpetual",
+        "aggregation": "native",
+        "gaps": [],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true
+      },
+      "currentSubscribed": false
+    },
+    "text": "1\nBTCUSDT\nP\nBinance · BTCUSDT USD-M Perp\n1m\n5m\n15m\n1h\n4h\nIndicators\nUSDT quote · BTC volume · USDT settlement · UTC\nWatch level\nFinancial chart, 1000 bars, latest price 74,323.6\nIndicators (1)\nOrder Walls\nHistorical view · history loading · exact profile · Top 8/side · ±10%\nHistory 11-08 23:00–pending UTC · observed band unknown\nNative prices loaded · 120/120 closed bars · 11-08 23:15–11-10 05:15 UTC\nBASIS\nMain Workspace\n▾\n+ Add ▾\nHL · disconnected\nNotifications\n1 monitored feed live\n15:06:21\nUTC+03\n3 OPEN",
+    "diagnostics": {
+      "series": 0,
+      "subscriptions": 0,
+      "sockets": 0,
+      "caches": [],
+      "inactiveCaches": 0,
+      "comparison": {
+        "subscriptions": 0,
+        "activeIdentities": 0,
+        "transport": "direct",
+        "socket": "closed",
+        "socketCreations": 0,
+        "historyRequests": 0,
+        "reconnectAttempts": 0,
+        "retainedBars": 0,
+        "pendingCandles": 0,
+        "pendingHistory": 0,
+        "metadataCaches": 0
+      },
+      "cvd": {
+        "clients": 0,
+        "sources": [],
+        "fixture": false
+      },
+      "liquidations": {
+        "clients": 0,
+        "events": 0,
+        "sockets": 0,
+        "cursor": 0,
+        "state": "loading",
+        "loaded": 0,
+        "requests": 0,
+        "rejected": 0,
+        "reconnects": 0,
+        "historyPages": 0,
+        "stalePackets": 0,
+        "batches": 0
+      },
+      "tpo": {
+        "subscriptions": 0,
+        "cacheHits": 0,
+        "pagesFetched": 0,
+        "profileRecomputes": 0,
+        "nakedRecomputes": 0,
+        "livePatches": 0,
+        "groups": []
+      },
+      "staging": {
+        "historyLoadAttempts": [],
+        "nativePresentation": {
+          "hits": 0,
+          "admissions": 2,
+          "capacityMisses": 0,
+          "entries": 1,
+          "rows": 120,
+          "accountedBytes": 66026,
+          "activeLeases": 1,
+          "retainedKeys": 1,
+          "limits": {
+            "entries": 2,
+            "rows": 1000,
+            "accountedBytes": 1048576,
+            "ttlMs": 60000,
+            "activeLeases": 128
+          }
+        },
+        "scheduler": {
+          "submitted": 2,
+          "coalesced": 1,
+          "cancelled": 1,
+          "completed": 1,
+          "failed": 1,
+          "peakActive": 2,
+          "queueMs": 0.9000000022351742,
+          "runMs": 1811.5,
+          "active": 0,
+          "queued": 0
+        },
+        "requests": [
+          {
+            "id": "view-b0acb734-76dc-4e68-b7f0-c500e7278942-1",
+            "url": "/market-data/v1/native-candles?interval=15m&from=1794179700000",
+            "eligibleAt": 189.60000000149012,
+            "wireAt": 197.60000000149012,
+            "queueMs": 8,
+            "headersAt": 1897.3999999985099,
+            "headerMs": 1699.7999999970198,
+            "requestId": "daf0e535-31b6-4f78-93a2-b04a4f0bf3dc",
+            "serverTiming": "admission;dur=0, db;dur=0.00, dbdecode;dur=0.00, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=0.57, total;dur=275.99, legacy;dur=279.90, proxyqueue;dur=3.43, proxyheader;dur=1561.17",
+            "encodedBytes": 5594,
+            "proxyQueueMs": 3.43,
+            "proxyHeaderMs": 1561.17,
+            "receivedAt": 1904.1000000014901,
+            "transferMs": 6.700000002980232,
+            "decodedBytes": 21774,
+            "decodedAt": 1904.6000000014901,
+            "decodeMs": 0.5,
+            "receivedBars": 148,
+            "receivedFrom": 1794179700000,
+            "receivedLast": 1794312000000
+          }
+        ],
+        "config": {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "e12965d38f9dc584c8fdfe46b8817a249166259a"
+        },
+        "views": [],
+        "source": "staging",
+        "transport": "websocket",
+        "streams": [
+          {
+            "key": "binance:perpetual:BTCUSDT:15m",
+            "connected": true,
+            "lastHeartbeat": 1794312380993,
+            "native": {
+              "historyReady": true,
+              "historyLoading": false,
+              "historyRetryAt": 0,
+              "lastCandleReceivedAt": 1794312380993,
+              "retainedStreamVersions": 2,
+              "viewportHistory": {
+                "requests": 1,
+                "receivedBars": 120,
+                "presentedBars": 0,
+                "applyMs": 0.4000000022351742,
+                "retainedOHLC": 0,
+                "views": 1,
+                "busy": 0,
+                "retainedTimes": 120
+              }
+            }
+          }
+        ],
+        "groups": 1,
+        "subscriptions": 1,
+        "retainedLiveBars": 0,
+        "preparedClosedBars": 0,
+        "retainedBars": 1000
+      },
+      "depth": {
+        "subscribers": 0,
+        "bookObservers": 0,
+        "sockets": 0,
+        "state": "syncing",
+        "lastUpdateId": 0,
+        "buffered": 0,
+        "samples": 0,
+        "snapshotBidBoundary": null,
+        "snapshotAskBoundary": null,
+        "collectionStartedAt": null,
+        "synthetic": false
+      },
+      "heatmap": {
+        "prepared": {
+          "cacheReadMs": 0,
+          "cacheWriteMs": 0,
+          "cacheHits": 0,
+          "tileReads": 0,
+          "manifestReads": 0,
+          "retries": 0,
+          "headerMs": 0,
+          "transferMs": 0,
+          "decodeMs": 0,
+          "mergeMs": 0,
+          "bytes": 0
+        },
+        "scheduler": {
+          "submitted": 2,
+          "coalesced": 1,
+          "cancelled": 1,
+          "completed": 1,
+          "failed": 1,
+          "peakActive": 2,
+          "queueMs": 0.9000000022351742,
+          "runMs": 1811.5,
+          "active": 0,
+          "queued": 0
+        },
+        "configurations": 0,
+        "streams": [],
+        "groups": []
+      },
+      "orderWalls": {
+        "pages": 0,
+        "records": 0,
+        "bytes": 0,
+        "replayMs": 0,
+        "failures": 0,
+        "active": 0,
+        "cacheHits": 0,
+        "cachePrefixHits": 0,
+        "cacheEpochRejects": 0,
+        "liveTailEvictions": 0,
+        "replayBridgePages": 0,
+        "replayBridgeRecords": 0,
+        "cacheEntries": 0,
+        "cacheBytes": 0,
+        "subscriptions": []
+      },
+      "orderWallsArchive": {
+        "warmAdmissions": 0,
+        "warmCapacityMisses": 0,
+        "warmInvalidMisses": 0,
+        "warmCompactBuilds": 0,
+        "warmRevisionReuses": 0,
+        "warmValidatedReuses": 0,
+        "warmBuildFailures": 0,
+        "warmDecodeFailures": 0,
+        "incrementalSegments": 0,
+        "fullReconciliations": 0,
+        "comparisonVisits": 0,
+        "subscriptions": 1,
+        "groups": 0,
+        "historyRequests": 1,
+        "currentPages": 0,
+        "historyPages": 0,
+        "bytes": 0,
+        "historyBytes": 0,
+        "historyResponseHeadersMs": 0,
+        "historyBodyReadMs": 0,
+        "historyJsonParseMs": 0,
+        "historyValidationMs": 0,
+        "historyProjectorApplyMs": 0,
+        "historyUpdateCallbackMs": 0,
+        "historyEventLoopYieldDelayMs": 0,
+        "currentPatches": 0,
+        "ringDrops": 0,
+        "failures": 1,
+        "projections": [],
+        "historyJobs": 1,
+        "readerControl": {
+          "submitted": 0,
+          "coalesced": 0,
+          "cancelled": 0,
+          "completed": 0,
+          "failed": 0,
+          "peakActive": 0,
+          "queueMs": 0,
+          "runMs": 0,
+          "active": 0,
+          "queued": 0
+        },
+        "warmTimings": [],
+        "warmEntries": 0,
+        "warmBuilds": 0,
+        "warmReplayJobs": 0,
+        "warmReplaySegments": 0,
+        "warmReplayRuns": 0,
+        "warmCompactEntries": 0,
+        "warmReplayConsumers": 0,
+        "warmSegments": 0,
+        "warmRuns": 0,
+        "warmBytes": 0,
+        "historyConsumers": 1,
+        "ringPages": 0,
+        "ringBytes": 0,
+        "recentHistoryRequests": [],
+        "historyPageTiming": {
+          "totalPages": 0,
+          "retainedSamples": 0,
+          "completeSample": true,
+          "p50": {
+            "responseHeadersMs": null,
+            "responseBodyReadMs": null,
+            "jsonParseMs": null,
+            "validationMs": null,
+            "projectorApplyMs": null,
+            "updateCallbackMs": null,
+            "eventLoopYieldDelayMs": null,
+            "responseBytes": null
+          },
+          "p95": {
+            "responseHeadersMs": null,
+            "responseBodyReadMs": null,
+            "jsonParseMs": null,
+            "validationMs": null,
+            "projectorApplyMs": null,
+            "updateCallbackMs": null,
+            "eventLoopYieldDelayMs": null,
+            "responseBytes": null
+          },
+          "max": {
+            "responseHeadersMs": null,
+            "responseBodyReadMs": null,
+            "jsonParseMs": null,
+            "validationMs": null,
+            "projectorApplyMs": null,
+            "updateCallbackMs": null,
+            "eventLoopYieldDelayMs": null,
+            "responseBytes": null
+          }
+        }
+      },
+      "depthMatrix": {
+        "requests": 0,
+        "failures": 0,
+        "activeWidgets": 0,
+        "activeMarkets": 0,
+        "activeGrids": 0,
+        "emittedRows": 0,
+        "cacheHits": 0,
+        "markets": []
+      },
+      "netPositioning": {
+        "requests": 0,
+        "rowsReceived": 0,
+        "rowsChanged": 0,
+        "snapshots": 0,
+        "patches": 0,
+        "errors": 0,
+        "subscribers": 0,
+        "cachedIntervals": 0,
+        "lastPollMs": 0,
+        "cache": []
+      },
+      "rawOpenInterest": {
+        "requests": 0,
+        "rowsReceived": 0,
+        "rowsChanged": 0,
+        "snapshots": 0,
+        "patches": 0,
+        "errors": 0,
+        "subscribers": 0,
+        "lastPollMs": 0,
+        "fixtureSelected": false,
+        "history": {
+          "received": 0,
+          "changed": 0,
+          "snapshots": 0,
+          "patches": 0,
+          "duplicateRows": 0,
+          "retained": 0
+        },
+        "cacheVenues": []
+      },
+      "footprint": {
+        "subscribers": 0,
+        "executionConsumers": 0,
+        "groups": [],
+        "sockets": 0,
+        "connected": false,
+        "tickSize": null,
+        "pending": 0,
+        "recentIds": 0,
+        "lastTradeId": null,
+        "expiredIdFloor": null,
+        "lastTradeTime": null,
+        "lastEventTime": null,
+        "counters": {
+          "messages": 0,
+          "accepted": 0,
+          "duplicates": 0,
+          "late": 0,
+          "unknownSide": 0,
+          "invalidGrid": 0,
+          "pendingFlushes": 0,
+          "socketOpens": 0,
+          "reconnects": 0,
+          "capacityDrops": 0,
+          "aggregationBatches": 0,
+          "aggregationObservations": 0,
+          "aggregationTotalMs": 0,
+          "aggregationMaxMs": 0
+        },
+        "rejected": {
+          "market": 0,
+          "contract": 0,
+          "symbol": 0,
+          "maker-side": 0,
+          "trade-id": 0,
+          "time": 0,
+          "price": 0,
+          "quantity": 0
+        },
+        "state": "loading"
+      },
+      "spotFootprint": {
+        "subscribers": 0,
+        "executionConsumers": 0,
+        "groups": [],
+        "sockets": 0,
+        "connected": false,
+        "tickSize": null,
+        "pending": 0,
+        "recentIds": 0,
+        "lastTradeId": null,
+        "expiredIdFloor": null,
+        "lastTradeTime": null,
+        "lastEventTime": null,
+        "counters": {
+          "messages": 0,
+          "accepted": 0,
+          "duplicates": 0,
+          "late": 0,
+          "unknownSide": 0,
+          "invalidGrid": 0,
+          "pendingFlushes": 0,
+          "socketOpens": 0,
+          "reconnects": 0,
+          "capacityDrops": 0,
+          "aggregationBatches": 0,
+          "aggregationObservations": 0,
+          "aggregationTotalMs": 0,
+          "aggregationMaxMs": 0
+        },
+        "rejected": {
+          "market": 0,
+          "contract": 0,
+          "symbol": 0,
+          "maker-side": 0,
+          "trade-id": 0,
+          "time": 0,
+          "price": 0,
+          "quantity": 0
+        },
+        "state": "loading"
+      },
+      "tickers": {
+        "publishedBatches": 0,
+        "publishedRecords": 0,
+        "widgets": 0,
+        "subscribers": []
+      },
+      "tradeBubbles": {
+        "subscribers": 0,
+        "feeds": [],
+        "fixture": false,
+        "caches": {
+          "binance:spot": 0,
+          "binance:perpetual": 0
+        },
+        "subscribersState": [],
+        "publishedRecords": 0,
+        "duplicateRecords": 0
+      },
+      "effortResult": [],
+      "fixture": false,
+      "networkSockets": 0,
+      "syntheticMessages": 0,
+      "historyApply": {
+        "footprintMs": 0,
+        "heatmapMs": 0,
+        "orderWallsMs": 1.199999999254942,
+        "footprintBatches": 0,
+        "heatmapBatches": 0,
+        "orderWallsBatches": 3
+      }
+    }
+  }
+}

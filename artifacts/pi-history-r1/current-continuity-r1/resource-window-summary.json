@@ -1,0 +1,24 @@
+[
+  {
+    "file": "fixed-server-resources.jsonl",
+    "samples": 60,
+    "errors": [],
+    "end": {
+      "kind": "end",
+      "label": "current-confirm-8aa-r1",
+      "elapsedMs": 300037.33035,
+      "stopping": false
+    }
+  },
+  {
+    "file": "server-resources.jsonl",
+    "samples": 60,
+    "errors": [],
+    "end": {
+      "kind": "end",
+      "label": "current-confirm-b219-r1",
+      "elapsedMs": 300037.671977,
+      "stopping": false
+    }
+  }
+]

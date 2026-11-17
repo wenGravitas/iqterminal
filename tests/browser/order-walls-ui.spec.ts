@@ -1,6 +1,18 @@
 import { test, expect } from '@playwright/test';
 import { installDepthFixture } from './depth-fixture';
 import { addIndicator, chooseChartMarket } from './indicator-actions';
+import {twoChartWorkspaceState} from './workspace-state';
+
+test.use({storageState:async({baseURL},use)=>{await use(twoChartWorkspaceState(baseURL??'http://127.0.0.1:4173'));}});
+
+test('historical archive gaps do not claim a live-feed continuity failure',async({page})=>{
+  await page.goto('/?fixture=1&fixtureTime=now');await page.waitForFunction(()=>(window as any).__terminal?.stats().panels.every((p:any)=>p.bars>=1000));
+  const panel=page.locator('.candle-panel').first(),id=await panel.getAttribute('data-panel-id');await page.evaluate(()=>(window as any).__terminal.feed.subscribeOrderWalls=()=>()=>{});await addIndicator(panel,'Order Walls');
+  const apply=async(currentSubscribed:boolean,state:string)=>page.evaluate(({id,currentSubscribed,state})=>{const p=(window as any).__terminal.panels.get(id);p.orderWallsControls.setStatus({state,currentSubscribed,lastConfirmedAt:1800000000000,archive:{profileId:'explicit-fixture',state:'partial',from:1800000000000,to:1800000060000,eligibleTo:1800000030000,loadedThrough:1800000020000,confirmedTo:1800000030000,gaps:[{from:1800000001000,to:1800000002000,reason:'Recorded history gap'}],requestedBandPercent:10,profileBandPercent:10,requestedTopN:8,exact:true,requestComplete:true,reason:'Recorded history gap'}});},{id,currentSubscribed,state});
+  const notice=panel.locator('.order-walls-notice');await apply(false,'gap');await expect(notice).toContainText('Historical view · history partial');await expect(notice).toContainText('1 gap');await expect(notice).toContainText('requested');await expect(notice).toContainText('eligible through');await expect(notice).toContainText('loaded through');await expect(notice).not.toContainText('Live has a continuity gap');
+  await apply(true,'live');await expect(notice).toContainText('Live · confirmed');await expect(notice).toContainText('history partial');await apply(true,'gap');await expect(notice).toContainText('Live has a continuity gap');
+  await apply(false,'gap');await page.screenshot({path:`${process.env.IQ_HISTORY_CAPTURE_DIR??'artifacts/pi-history-r1'}/wall-status-live-history-scope.png`});
+});
 
 test('Order Walls settings persist and remain a single viewport consumer alongside Heatmap', async ({ page }) => {
   test.setTimeout(60000);
@@ -64,7 +76,10 @@ test('Order Walls settings persist and remain a single viewport consumer alongsi
   expect(await page.evaluate(() => (window as any).__terminal.stats().panels[0].orderWalls.mounted)).toBe(true);
   await addIndicator(panel, 'Order-book Heatmap');
   await expect(panel.locator('.active-indicator[data-definition-id="native.orderbook-heatmap"]')).toHaveCount(1);
-  expect(await page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe.length)).toBe(1);
+  // Hide/show above deliberately released and recreated the consumer. Heatmap
+  // must leave that second subscription intact, with one active consumer.
+  expect(await page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe)).toHaveLength(2);
+  expect(await page.evaluate(() => {const c=(window as any).__orderWallsUiCalls;return c.subscribe.length-c.unsubscribe.length;})).toBe(1);
 
   await panel.getByLabel('Timeframe', { exact: true }).selectOption('5m');
   const viewportCount = await page.evaluate(() => (window as any).__orderWallsUiCalls.viewport.length);
@@ -75,7 +90,8 @@ test('Order Walls settings persist and remain a single viewport consumer alongsi
   });
   await expect.poll(() => page.evaluate(() => (window as any).__orderWallsUiCalls.viewport.length)).toBeGreaterThan(viewportCount);
   await page.setViewportSize({ width: 900, height: 760 });
-  expect(await page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe.length)).toBe(1);
+  expect(await page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe.length)).toBe(2);
+  expect(await page.evaluate(() => {const c=(window as any).__orderWallsUiCalls;return c.subscribe.length-c.unsubscribe.length;})).toBe(1);
 
   await chooseChartMarket(panel, 'Binance · BTCUSDT Spot');
   await expect.poll(() => page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe.length)).toBe(3);
@@ -95,7 +111,7 @@ test('Order Walls settings persist and remain a single viewport consumer alongsi
   expect(errors).toEqual([]);
 });
 
-test('Order Walls exposes a scoped history resume action only while the visible Top Levels archive is incomplete', async ({ page }) => {
+for (const retryWithoutCursor of [false,true]) test(`Order Walls exposes scoped history retry with ${retryWithoutCursor ? 'a superseded revision' : 'a resume cursor'}`, async ({ page }) => {
   await installDepthFixture(page);
   const panel = page.locator('.candle-panel').first();
   const panelId = await panel.getAttribute('data-panel-id');
@@ -118,12 +134,12 @@ test('Order Walls exposes a scoped history resume action only while the visible 
   });
   await addIndicator(panel, 'Order Walls');
   await expect.poll(() => page.evaluate(() => Boolean((window as any).__orderWallsRetryUi.callback))).toBe(true);
-  await page.evaluate(() => (window as any).__orderWallsRetryUi.callback({ kind: 'patch', patches: [], status: {
+  await page.evaluate((retryWithoutCursor) => (window as any).__orderWallsRetryUi.callback({ kind: 'patch', patches: [], status: {
     state: 'live', lastConfirmedAt: Date.now(), message: 'History request incomplete; validated prefix retained and can be resumed.',
-    archive: { profileId: 'binance-spot-profile', market: 'spot', state: 'partial', requestComplete: false, resumeAfter: 321,
+    archive: { profileId: 'binance-spot-profile', market: 'spot', state: 'partial', requestComplete: false, ...(retryWithoutCursor ? {retryable: true} : {resumeAfter: 321}),
       from: Date.now() - 3_600_000, to: Date.now(), gaps: [], requestedBandPercent: 10, profileBandPercent: 10,
       requestedTopN: 8, exact: true },
-  } }));
+  } }), retryWithoutCursor);
 
   const resume = panel.getByRole('button', { name: 'Resume Order Walls history', exact: true });
   await expect(resume).toBeVisible();
@@ -296,4 +312,52 @@ test('Order Walls distinguishes pending replay from an empty finished history',a
   await page.screenshot({path:'/tmp/iqterminal-order-walls-replay-progress.png'});
   await page.evaluate(()=>(window as any).__wallProgressCallback({kind:'patch',patches:[],status:{state:'live',provisional:false}}));
   await expect(panel.locator('.order-walls-notice')).not.toContainText('History replay');
+});
+
+
+test('wall value patches preserve every point without rebuilding pane and indicator controls',async({page})=>{
+  await installDepthFixture(page);
+  await page.evaluate(()=>{(window as any).__terminal.feed.subscribeOrderWalls=(_id:string,_request:unknown,callback:unknown)=>{
+    (window as any).__wallDataOnlyCallback=callback;return()=>{};
+  };});
+  const panel=page.locator('.candle-panel').first(),panelId=await panel.getAttribute('data-panel-id');await addIndicator(panel,'Order Walls');
+  const result=await page.evaluate(id=>{
+    const p=(window as any).__terminal.panels.get(id),send=(window as any).__wallDataOnlyCallback,at=Date.now()-10000;
+    const segment={id:'data-only-wall',epoch:1,side:'bid',price:p.candles.at(-1).c,start:at,end:null,peakUsd:100000,meanUsd:100000,durationMs:0,percentile:null,scopePartial:false,startKnown:true,currentSelection:true,rank:1,
+      detectionMode:'top-levels',valueRuns:[{at,usd:100000,percentile:null,rank:1,quantity:1}],valueRunsTruncated:false,endReason:null,endKnown:false};
+    send({kind:'snapshot',segments:[segment],status:{state:'live',lastConfirmedAt:at}});
+    const before=p.diagnostics().compositionWork.activeIndicatorRenders;
+    for(let i=1;i<=100;i++)send({kind:'patch',patches:[{id:segment.id,revision:i,segment:{...segment,rank:i%8+1,durationMs:i,valueRuns:[]},valuePoints:[{at:at+i,usd:100000+i,percentile:null,rank:i%8+1,quantity:1+i/100}]}],status:{state:'live',lastConfirmedAt:at+i}});
+    const after=p.diagnostics().compositionWork.activeIndicatorRenders,wall=p.engine.orderWallSegments.get(segment.id);
+    send({kind:'patch',patches:[],status:{state:'loading',message:'Revalidating history'}});
+    const loading=p.diagnostics().compositionWork.activeIndicatorRenders;
+    return {before,after,loading,points:wall.valueRuns.length,last:wall.valueRuns.at(-1),rank:wall.rank};
+  },panelId);
+  expect(result.after).toBe(result.before);expect(result.loading).toBe(result.after+1);expect(result.points).toBe(101);
+  expect(result.last).toMatchObject({usd:100100,quantity:2,rank:5});expect(result.rank).toBe(5);
+  await expect(panel.getByRole('button',{name:'Hide Order Walls',exact:true})).toHaveAttribute('aria-busy','true');
+  await page.evaluate(()=> (window as any).__wallDataOnlyCallback({kind:'patch',patches:[],status:{state:'live',lastConfirmedAt:Date.now()}}));
+  await expect(panel.getByRole('button',{name:'Hide Order Walls',exact:true})).not.toHaveAttribute('aria-busy','true');
+});
+
+test('current snapshot tooltip reports one selected state without inventing episode duration',async({page})=>{
+  await page.goto('/?fixture=1&fixtureTime=now');await page.waitForFunction(()=>(window as any).__terminal?.stats().panels.every((p:any)=>p.bars>=1000));
+  await page.evaluate(()=>(window as any).__terminal.feed.subscribeOrderWalls=()=>()=>{});
+  const panel=page.locator('.candle-panel').first(),id=await panel.getAttribute('data-panel-id');await addIndicator(panel,'Order Walls');
+  const result=await page.evaluate(id=>{
+    const p=(window as any).__terminal.panels.get(id),at=Date.now()-10000,price=p.candles.at(-1).c;
+    const snapshot={id:'explicit-current-snapshot-fixture',archiveEntryId:'current-checkpoint',presentationKind:'current-snapshot',currentSelection:true,epoch:1,side:'bid',price,priceExact:String(price),
+      start:at,end:null,peakUsd:130000,meanUsd:130000,durationMs:0,percentile:null,scopePartial:false,startKnown:false,rank:3,detectionMode:'top-levels',
+      valueRuns:[{at,usd:130000,percentile:null,rank:3,quantity:1.5,quantityExact:'1.50000000',notionalExact:'130000.00000000'}],valueRunsTruncated:false,endReason:null,endKnown:false};
+    const status={state:'live',currentSubscribed:true,lastConfirmedAt:at+5000,coverage:{complete:true,partial:false,from:at-100000,to:at},archive:{profileId:'explicit-fixture',state:'complete',from:at-100000,to:at,confirmedTo:at,gaps:[],requestedTopN:8,requestedBandPercent:10,profileBandPercent:10,exact:true,requestComplete:true}};
+    p.engine.setOrderWallSnapshot([snapshot],status);p.orderWallsControls.setStatus(status);
+    const text=p.orderWallsControls.tooltip({segment:snapshot,at,x:0,y:0,priceLow:price,priceHigh:price,percentile:null},p.diagnostics().series,status,at+7000);
+    p.heatmapControls.showSharedTooltip(text);return {text,retention:p.engine.orderWallsDiagnostics(),snapshotAt:at,scope:'Explicit diagnostic fixture in real native chart; no venue, serving, foreground or latency acceptance'};
+  },id);
+  expect(result.retention).toMatchObject({archiveSegments:0,archiveValueRuns:0,directSegments:1,directValueRuns:1});
+  expect(result.text).toContain('selected Top Level');expect(result.text).toContain('Selected snapshot');expect(result.text).toContain('observed rank #3');expect(result.text).toContain('1.5 BTC');
+  expect(result.text).toContain('Resting notional $130,000');expect(result.text).toContain('observed book');
+  for(const text of ['Observed since','Observed span','Duration','Active through','complete history window'])expect(result.text).not.toContain(text);
+  await expect(panel.locator('.heatmap-readout')).toHaveText(result.text);
+  await page.screenshot({path:`${process.env.IQ_HISTORY_CAPTURE_DIR??'artifacts/pi-history-r1/verified-wall-revisions-r1'}/current-snapshot-ui-fixture.png`});
 });

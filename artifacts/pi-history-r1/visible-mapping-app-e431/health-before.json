@@ -1,0 +1,146 @@
+{
+  "status": 200,
+  "elapsedMs": 2112.2111919999998,
+  "headers": {
+    "cache-control": "no-store",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-length": "1004",
+    "content-type": "application/json",
+    "date": "Sun, 08 Nov 2026 14:42:55 GMT",
+    "keep-alive": "timeout=60",
+    "server-timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.82, total;dur=8.40, proxyqueue;dur=9.87, proxyheader;dur=1870.70",
+    "vary": "Accept-Encoding",
+    "x-iq-db-queries": "0",
+    "x-iq-db-read-bytes": "0",
+    "x-iq-db-read-rows": "0",
+    "x-iq-decoded-bytes": "1952",
+    "x-iq-proxy-header-ms": "1870.70",
+    "x-iq-proxy-queue-ms": "9.87",
+    "x-iq-request-id": "cb952769-fab4-48f9-ba81-69f52339faee"
+  },
+  "body": {
+    "enabled": true,
+    "build": "e122f9d8d3995d5b6b907a1519cd6b2f639fa751",
+    "metrics": {
+      "requests": 388,
+      "rejected": 0,
+      "bytes": 72872014,
+      "serializeMs": 376.70518099922447,
+      "legacyHeatmap": 0,
+      "legacyFootprint": 0,
+      "closedTileReads": 0,
+      "manifests": 0,
+      "orderWallPages": 0,
+      "peakRss": 224989184,
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4,
+      "rss": 224706560
+    },
+    "wallProjectionEncoding": {
+      "active": 0,
+      "limit": 3,
+      "cacheEntries": 14,
+      "cacheBytes": 6997137
+    },
+    "materializer": {
+      "version": 1,
+      "head": {
+        "cursor": 23086001,
+        "at": 1794148974343,
+        "epoch": 1794143722831
+      },
+      "live": {
+        "cursor": 23086001,
+        "at": 1794148974343,
+        "from": 1794148800000,
+        "widths": [
+          10,
+          25,
+          50,
+          100,
+          250,
+          1000
+        ]
+      },
+      "archive": {
+        "pinned": {
+          "pages": 1,
+          "processed": 7,
+          "cursor": 23085994,
+          "lag": 0,
+          "caughtUp": true
+        },
+        "current": [
+          {
+            "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+            "lane": "pinned",
+            "pages": 1,
+            "processed": 7,
+            "cursor": 23085994,
+            "lag": 0,
+            "caughtUp": true
+          },
+          {
+            "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+            "lane": "pinned",
+            "pages": 1,
+            "processed": 14,
+            "cursor": 19121364,
+            "lag": 0,
+            "caughtUp": true
+          }
+        ],
+        "custom": [],
+        "customWorker": "perpetual-materializer"
+      },
+      "metrics": {
+        "startedAt": 1793984035129,
+        "lastPoll": 1794148975340,
+        "lastPersist": 1794148801986,
+        "records": 1616605,
+        "closedBuckets": 3300,
+        "liveLagMs": 0,
+        "derivedBytes": 1188531991,
+        "freeBytes": 192462315520,
+        "paused": false,
+        "error": "",
+        "pages": 97028,
+        "pageMs": 2893205.062303194,
+        "accumulateMs": 1272954.267740996,
+        "persistMs": 237328.53352913668,
+        "peakRss": 470634496,
+        "sourceHeadAgeMs": 1598,
+        "liveAgeMs": 1598,
+        "rss": 352301056
+      },
+      "backlog": []
+    },
+    "sqlAdmission": {
+      "enabled": true,
+      "version": 1,
+      "build": "18579d938364e5fd5a9c7631bb19681a043f1b66",
+      "completed": 3698082,
+      "cancelled": 12,
+      "rejected": 0,
+      "peakActive": 2,
+      "peakQueued": 4,
+      "waitMs": 106888128.73669131,
+      "maxWaitMs": 737.4628309998661,
+      "active": 1,
+      "history": 1,
+      "queued": 1,
+      "waiting": {
+        "current": 0,
+        "visible": 0,
+        "background": 1
+      },
+      "limit": 2,
+      "reservedCurrent": 1,
+      "oldestWaitMs": 47.40237200260162,
+      "rss": 103464960
+    }
+  }
+}

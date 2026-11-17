@@ -1,0 +1,113 @@
+{
+  "rounds": 52,
+  "forwardedProbes": 104,
+  "forwardedTimeouts": [
+    {
+      "turn": 6,
+      "operation": "/v1/health",
+      "id": "startup-r1-diagnostic-mon-6-forward",
+      "url": "http://127.0.0.1:18881/v1/health",
+      "ms": 4006.8107189999864,
+      "status": null,
+      "error": "timed out"
+    },
+    {
+      "turn": 6,
+      "operation": "/v1/health",
+      "id": "startup-r1-diagnostic-mon-6-preview",
+      "url": "http://127.0.0.1:4202/market-data/v1/health",
+      "ms": 4005.6740019990684,
+      "status": null,
+      "error": "timed out"
+    },
+    {
+      "turn": 8,
+      "operation": "/v2/history/health",
+      "id": "startup-r1-diagnostic-mon-8-forward",
+      "url": "http://127.0.0.1:18881/v2/history/health",
+      "ms": 4005.479467999976,
+      "status": null,
+      "error": "timed out"
+    },
+    {
+      "turn": 8,
+      "operation": "/v2/history/health",
+      "id": "startup-r1-diagnostic-mon-8-preview",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/health",
+      "ms": 4005.158321999261,
+      "status": null,
+      "error": "timed out"
+    },
+    {
+      "turn": 12,
+      "operation": "/v2/history/health",
+      "id": "startup-r1-diagnostic-mon-12-forward",
+      "url": "http://127.0.0.1:18881/v2/history/health",
+      "ms": 4003.764572000364,
+      "status": null,
+      "error": "timed out"
+    },
+    {
+      "turn": 12,
+      "operation": "/v2/history/health",
+      "id": "startup-r1-diagnostic-mon-12-preview",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/health",
+      "ms": 4005.020861999583,
+      "status": null,
+      "error": "timed out"
+    },
+    {
+      "turn": 13,
+      "operation": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+      "id": "startup-r1-diagnostic-mon-13-forward",
+      "url": "http://127.0.0.1:18881/v2/history/footprint-current?interval=5m&rowPrice=25",
+      "ms": 4004.697344998931,
+      "status": null,
+      "error": "timed out"
+    },
+    {
+      "turn": 13,
+      "operation": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+      "id": "startup-r1-diagnostic-mon-13-preview",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/footprint-current?interval=5m&rowPrice=25",
+      "ms": 4006.4422430004925,
+      "status": null,
+      "error": "timed out"
+    },
+    {
+      "turn": 15,
+      "operation": "/v2/history/_startup-probe",
+      "id": "startup-r1-diagnostic-mon-15-forward",
+      "url": "http://127.0.0.1:18881/v2/history/_startup-probe",
+      "ms": 4002.3487850012316,
+      "status": null,
+      "error": "timed out"
+    },
+    {
+      "turn": 16,
+      "operation": "/v2/history/health",
+      "id": "startup-r1-diagnostic-mon-16-forward",
+      "url": "http://127.0.0.1:18881/v2/history/health",
+      "ms": 4005.0035870008287,
+      "status": null,
+      "error": "timed out"
+    },
+    {
+      "turn": 16,
+      "operation": "/v2/history/health",
+      "id": "startup-r1-diagnostic-mon-16-preview",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/health",
+      "ms": 4003.7750370011054,
+      "status": null,
+      "error": "timed out"
+    }
+  ],
+  "serverLocalProbeCount": 102,
+  "serverLocalOperationErrors": [],
+  "sshMonitorErrors": [
+    {
+      "turn": 16,
+      "error": "Connection timed out during banner exchange\nConnection to 100.124.223.41 port 22 timed out\n"
+    }
+  ]
+}

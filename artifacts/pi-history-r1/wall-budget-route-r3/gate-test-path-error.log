@@ -1,0 +1,9 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+No test files found, exiting with code 1
+
+filter: tests/wall-loading-gate.test.ts
+include: tests/**/*.test.ts
+exclude:  **/node_modules/**, **/.git/**
+

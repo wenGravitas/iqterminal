@@ -1,0 +1,13 @@
+[WebServer] (node:388787) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:388800) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:388828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/order-walls-ui.spec.ts:98:48 › Order Walls exposes scoped history retry with a resume cursor (19.2s)
+  ✓  2 tests/browser/order-walls-ui.spec.ts:98:48 › Order Walls exposes scoped history retry with a superseded revision (19.7s)
+
+  2 passed (49.0s)

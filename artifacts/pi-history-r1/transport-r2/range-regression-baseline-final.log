@@ -1,0 +1,64 @@
+
+Running 2 tests using 1 worker
+
+(node:203951) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/native-candle-history.spec.ts:12:36 › saved 5m wall view one candle back survives separate latest-closed and forming arrivals (4.0s)
+(node:204454) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 tests/browser/native-candle-history.spec.ts:12:36 › saved 15m wall view one candle back survives separate latest-closed and forming arrivals (4.1s)
+
+
+  1) tests/browser/native-candle-history.spec.ts:12:36 › saved 5m wall view one candle back survives separate latest-closed and forming arrivals 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 2
+    + Received  + 2
+
+      Object {
+    -   "from": 1794287700,
+    -   "to": 1794395700,
+    +   "from": 1794288000,
+    +   "to": 1794396000,
+      }
+
+      26 |   const emit=async(t:number,closed:boolean)=>page.workers()[0].evaluate(({t,closed,interval})=>{for(const socket of (globalThis as any).__stagingNativeFixture.sockets)if(socket.command?.interval===interval)socket.onmessage?.({data:JSON.stringify({type:'native-candle',source:'binance-native-kline',interval,candle:{t,o:80000,h:80050,l:79990,c:80010,v:8,revision:Date.now(),closed}})});},{t,closed,interval});
+      27 |   await emit(current-step,true);await expect.poll(()=>page.evaluate(({id,current,step})=>(window as any).__terminal.panels.get(id).candles.some((c:any)=>c.t===current-step),{id,current,step})).toBe(true);
+    > 28 |   expect(await page.evaluate(id=>(window as any).__terminal.panels.get(id).engine.visibleTimeRange(),id)).toEqual({from:from/1000,to:to/1000});
+         |                                                                                                           ^
+      29 |   await emit(current,false);
+      30 |   await expect.poll(()=>page.evaluate(({id,current})=>(window as any).__terminal.panels.get(id).candles.some((c:any)=>c.t===current&&!c.closed),{id,current})).toBe(true);
+      31 |   // Both missing axis knots are outside the saved window. Neither arrival may
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/native-candle-history.spec.ts:28:107
+
+    Error Context: test-results/native-candle-history-save-f550d-closed-and-forming-arrivals/error-context.md
+
+  2) tests/browser/native-candle-history.spec.ts:12:36 › saved 15m wall view one candle back survives separate latest-closed and forming arrivals 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 2
+    + Received  + 2
+
+      Object {
+    -   "from": 1794286800,
+    -   "to": 1794394800,
+    +   "from": 1794287700,
+    +   "to": 1794395700,
+      }
+
+      26 |   const emit=async(t:number,closed:boolean)=>page.workers()[0].evaluate(({t,closed,interval})=>{for(const socket of (globalThis as any).__stagingNativeFixture.sockets)if(socket.command?.interval===interval)socket.onmessage?.({data:JSON.stringify({type:'native-candle',source:'binance-native-kline',interval,candle:{t,o:80000,h:80050,l:79990,c:80010,v:8,revision:Date.now(),closed}})});},{t,closed,interval});
+      27 |   await emit(current-step,true);await expect.poll(()=>page.evaluate(({id,current,step})=>(window as any).__terminal.panels.get(id).candles.some((c:any)=>c.t===current-step),{id,current,step})).toBe(true);
+    > 28 |   expect(await page.evaluate(id=>(window as any).__terminal.panels.get(id).engine.visibleTimeRange(),id)).toEqual({from:from/1000,to:to/1000});
+         |                                                                                                           ^
+      29 |   await emit(current,false);
+      30 |   await expect.poll(()=>page.evaluate(({id,current})=>(window as any).__terminal.panels.get(id).candles.some((c:any)=>c.t===current&&!c.closed),{id,current})).toBe(true);
+      31 |   // Both missing axis knots are outside the saved window. Neither arrival may
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/native-candle-history.spec.ts:28:107
+
+    Error Context: test-results/native-candle-history-save-54fba-closed-and-forming-arrivals/error-context.md
+
+  2 failed
+    tests/browser/native-candle-history.spec.ts:12:36 › saved 5m wall view one candle back survives separate latest-closed and forming arrivals 
+    tests/browser/native-candle-history.spec.ts:12:36 › saved 15m wall view one candle back survives separate latest-closed and forming arrivals 

@@ -1,0 +1,31 @@
+{
+  "scope": "isolated retained-source prepared reuse with an older authoritative bootstrap fence; not Pi/chart latency acceptance",
+  "build": "0ccfa7a871a9d635b87a18bdeffd864c23d1e29c",
+  "clientSha256": "4c7eb46159f9f36ee4171f1383b08351def63997f96170169f4bac49d98f9a92",
+  "scriptSha256": "314c753a15a4c8f40f9877cc18b6377423439e2c98aca49ad2186ed64a6a4681",
+  "request": {
+    "market": "spot",
+    "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+    "from": 1793696100000,
+    "to": 1793804700000
+  },
+  "target": {
+    "cursor": 18135954,
+    "epoch": 1793987438220,
+    "at": 1794050144644
+  },
+  "preparedWatermark": 18135968,
+  "financialMaxCursor": 15679177,
+  "anchorCursor": 14589045,
+  "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+  "cacheState": "ready",
+  "pinnedBootstrapPreparedReuse": false,
+  "requests": [
+    {
+      "path": "/v2/history/walls/discover?market=spot&profile=binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1&from=1793696100000&to=1793804700000",
+      "http": 200,
+      "requestId": "21293453-378c-4d0b-b74e-6e7355576933",
+      "dbQueries": 3
+    }
+  ]
+}

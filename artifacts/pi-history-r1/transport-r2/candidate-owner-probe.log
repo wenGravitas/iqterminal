@@ -1,0 +1,6 @@
+{"cycle":0,"firstMs":9340.199999999255,"completeMs":null,"projectors":0,"workerHeap":[19835640],"paintFailure":"TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."}
+{"cycle":1,"firstMs":8927,"completeMs":null,"projectors":0,"workerHeap":[24262344],"paintFailure":"TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."}
+{"cycle":2,"firstMs":3796.900000002235,"completeMs":9436.60000000149,"projectors":0,"workerHeap":[26985684],"paintFailure":null}
+{"cycle":3,"firstMs":2071.699999999255,"completeMs":8192.10000000149,"projectors":0,"workerHeap":[51678428],"paintFailure":null}
+{"cycle":4,"firstMs":2304.800000000745,"completeMs":8150.39999999851,"projectors":0,"workerHeap":[51379956],"paintFailure":null}
+{"cycle":5,"firstMs":472.9000000022352,"completeMs":8971.900000002235,"projectors":0,"workerHeap":[52670368],"paintFailure":null}

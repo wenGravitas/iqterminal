@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: an older pinned build cannot replace a newer canonical revision, even with a later wall clock
+ok 1 - an older pinned build cannot replace a newer canonical revision, even with a later wall clock
+  ---
+  duration_ms: 12.406981
+  type: 'test'
+  ...
+# Subtest: unchanged canonical content is idempotent across publication clocks and source horizons
+ok 2 - unchanged canonical content is idempotent across publication clocks and source horizons
+  ---
+  duration_ms: 3.31812
+  type: 'test'
+  ...
+# Subtest: canonical history keeps time bounds, while initialized current pages observe bounded ID tails
+ok 3 - canonical history keeps time bounds, while initialized current pages observe bounded ID tails
+  ---
+  duration_ms: 2.136992
+  type: 'test'
+  ...
+# Subtest: current cursor seed uses the canonical first ID of the highest observed candle when head timestamps regress
+ok 4 - current cursor seed uses the canonical first ID of the highest observed candle when head timestamps regress
+  ---
+  duration_ms: 5.022104
+  type: 'test'
+  ...
+# Subtest: current seed rejects missing retained source instead of advancing past the unavailable cursor
+ok 5 - current seed rejects missing retained source instead of advancing past the unavailable cursor
+  ---
+  duration_ms: 4.816788
+  type: 'test'
+  ...
+# Subtest: normal current tails require the measured index and bounded SQL read work
+ok 6 - normal current tails require the measured index and bounded SQL read work
+  ---
+  duration_ms: 1.301391
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 846.343107

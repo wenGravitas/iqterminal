@@ -1,0 +1,7 @@
+{
+  "backendBuild": "b0f0209795e22e64961b27d0a6e38ef13d21fa49",
+  "bundleSha256": "dbeed03605c7b0f000fb10e309503ae0d61a5f51dd9ab5505b853663aa1a0cf9",
+  "servingBuild": "dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51",
+  "existingRoot": "/home/daz/iqterminal-wall-rolling-defaults-r1",
+  "isolatedOutput": "/home/daz/iqterminal-wall-prefix-verify-r1"
+}

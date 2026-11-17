@@ -1,0 +1,4 @@
+{
+  "model": "Raspberry Pi 5 Model B Rev 1.0",
+  "scope": "Client device-tree identity. Installed Chromium version is recorded separately; no foreground or GPU acceptance inferred."
+}

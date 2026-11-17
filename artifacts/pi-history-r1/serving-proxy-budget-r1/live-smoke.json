@@ -1,0 +1,566 @@
+{
+  "scope": "Single headless genuine staging current-native candle smoke through Pi SSH/Vite. Both native paint and a subsequent live update observed. Not footprint/wall first-useful, five-sample loading, confirmation-gap, historical coverage, custom-profile or foreground acceptance.",
+  "clientBuild": "638caabff4d4a441c3706898dc8602274a4d41d6",
+  "backendBuild": "95114d0cb236e9de54fb535d58b901d5ac4a2d79",
+  "firstObservationMs": 2895.8259519999997,
+  "first": {
+    "clientAt": 2831.60000000149,
+    "status": {
+      "state": "live",
+      "message": "Staging · Binance native candle stream · history loading",
+      "lastUpdate": 1794136619304,
+      "nativeHistory": {
+        "state": "loading",
+        "loadedBars": 2
+      }
+    },
+    "last": {
+      "t": 1794136500000,
+      "o": 75926.1,
+      "h": 75926.1,
+      "l": 75926,
+      "c": 75926.1,
+      "v": 10.497,
+      "quoteVolume": 796996.1204,
+      "closed": false,
+      "revision": 1794136619077
+    },
+    "count": 2,
+    "draws": 5
+  },
+  "final": {
+    "status": {
+      "state": "live",
+      "message": "Staging · Binance native candle stream",
+      "lastUpdate": 1794136621564,
+      "nativeHistory": {
+        "state": "ready",
+        "loadedBars": 1000,
+        "viewport": {
+          "from": 1793954700000,
+          "to": 1794136500000,
+          "requestedSlots": 202,
+          "loadedSlots": 202,
+          "state": "ready",
+          "capacityLimited": false,
+          "retryable": false,
+          "unloaded": [],
+          "unloadedTruncated": false
+        }
+      }
+    },
+    "last": {
+      "t": 1794136500000,
+      "o": 75926.1,
+      "h": 75926.1,
+      "l": 75926,
+      "c": 75926.1,
+      "v": 10.619,
+      "quoteVolume": 806259.1046,
+      "closed": false,
+      "revision": 1794136621339
+    },
+    "count": 1000,
+    "diagnostics": {
+      "series": 0,
+      "subscriptions": 0,
+      "sockets": 0,
+      "caches": [],
+      "inactiveCaches": 0,
+      "comparison": {
+        "subscriptions": 0,
+        "activeIdentities": 0,
+        "transport": "direct",
+        "socket": "closed",
+        "socketCreations": 0,
+        "historyRequests": 0,
+        "reconnectAttempts": 0,
+        "retainedBars": 0,
+        "pendingCandles": 0,
+        "pendingHistory": 0,
+        "metadataCaches": 0
+      },
+      "cvd": {
+        "clients": 0,
+        "sources": [],
+        "fixture": false
+      },
+      "liquidations": {
+        "clients": 0,
+        "events": 0,
+        "sockets": 0,
+        "cursor": 0,
+        "state": "loading",
+        "loaded": 0,
+        "requests": 0,
+        "rejected": 0,
+        "reconnects": 0,
+        "historyPages": 0,
+        "stalePackets": 0,
+        "batches": 0
+      },
+      "tpo": {
+        "subscriptions": 0,
+        "cacheHits": 0,
+        "pagesFetched": 0,
+        "profileRecomputes": 0,
+        "nakedRecomputes": 0,
+        "livePatches": 0,
+        "groups": []
+      },
+      "staging": {
+        "nativePresentation": {
+          "hits": 1,
+          "admissions": 1,
+          "capacityMisses": 0,
+          "entries": 1,
+          "rows": 202,
+          "accountedBytes": 110218,
+          "activeLeases": 1,
+          "retainedKeys": 1,
+          "limits": {
+            "entries": 2,
+            "rows": 1000,
+            "accountedBytes": 1048576,
+            "ttlMs": 60000,
+            "activeLeases": 128
+          }
+        },
+        "scheduler": {
+          "submitted": 0,
+          "coalesced": 0,
+          "cancelled": 0,
+          "completed": 0,
+          "failed": 0,
+          "peakActive": 0,
+          "queueMs": 0,
+          "runMs": 0,
+          "active": 0,
+          "queued": 0
+        },
+        "requests": [],
+        "config": {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "638caabff4d4a441c3706898dc8602274a4d41d6"
+        },
+        "views": [],
+        "source": "staging",
+        "transport": "websocket",
+        "streams": [
+          {
+            "key": "binance:perpetual:BTCUSDT:15m",
+            "connected": true,
+            "lastHeartbeat": 1794136621571,
+            "native": {
+              "historyReady": true,
+              "historyLoading": false,
+              "historyRetryAt": 0,
+              "lastCandleReceivedAt": 1794136621564,
+              "retainedStreamVersions": 2,
+              "viewportHistory": {
+                "requests": 0,
+                "receivedBars": 0,
+                "presentedBars": 0,
+                "applyMs": 0,
+                "retainedOHLC": 0,
+                "views": 1,
+                "busy": 0,
+                "retainedTimes": 202
+              }
+            }
+          }
+        ],
+        "groups": 1,
+        "subscriptions": 1,
+        "retainedLiveBars": 0,
+        "preparedClosedBars": 0,
+        "retainedBars": 1000
+      },
+      "depth": {
+        "subscribers": 0,
+        "bookObservers": 0,
+        "sockets": 0,
+        "state": "syncing",
+        "lastUpdateId": 0,
+        "buffered": 0,
+        "samples": 0,
+        "snapshotBidBoundary": null,
+        "snapshotAskBoundary": null,
+        "collectionStartedAt": null,
+        "synthetic": false
+      },
+      "heatmap": {
+        "prepared": {
+          "cacheReadMs": 0,
+          "cacheWriteMs": 0,
+          "cacheHits": 0,
+          "tileReads": 0,
+          "manifestReads": 0,
+          "retries": 0,
+          "headerMs": 0,
+          "transferMs": 0,
+          "decodeMs": 0,
+          "mergeMs": 0,
+          "bytes": 0
+        },
+        "scheduler": {
+          "submitted": 0,
+          "coalesced": 0,
+          "cancelled": 0,
+          "completed": 0,
+          "failed": 0,
+          "peakActive": 0,
+          "queueMs": 0,
+          "runMs": 0,
+          "active": 0,
+          "queued": 0
+        },
+        "configurations": 0,
+        "streams": [],
+        "groups": []
+      },
+      "orderWalls": {
+        "pages": 0,
+        "records": 0,
+        "bytes": 0,
+        "replayMs": 0,
+        "failures": 0,
+        "active": 0,
+        "cacheHits": 0,
+        "cachePrefixHits": 0,
+        "cacheEpochRejects": 0,
+        "liveTailEvictions": 0,
+        "replayBridgePages": 0,
+        "replayBridgeRecords": 0,
+        "cacheEntries": 0,
+        "cacheBytes": 0,
+        "subscriptions": []
+      },
+      "orderWallsArchive": {
+        "warmAdmissions": 0,
+        "warmCapacityMisses": 0,
+        "warmInvalidMisses": 0,
+        "warmCompactBuilds": 0,
+        "warmRevisionReuses": 0,
+        "warmBuildFailures": 0,
+        "warmDecodeFailures": 0,
+        "incrementalSegments": 0,
+        "fullReconciliations": 0,
+        "comparisonVisits": 0,
+        "subscriptions": 0,
+        "groups": 0,
+        "historyRequests": 0,
+        "currentPages": 0,
+        "historyPages": 0,
+        "bytes": 0,
+        "historyBytes": 0,
+        "historyResponseHeadersMs": 0,
+        "historyBodyReadMs": 0,
+        "historyJsonParseMs": 0,
+        "historyValidationMs": 0,
+        "historyProjectorApplyMs": 0,
+        "historyUpdateCallbackMs": 0,
+        "historyEventLoopYieldDelayMs": 0,
+        "currentPatches": 0,
+        "ringDrops": 0,
+        "failures": 0,
+        "projections": [],
+        "historyJobs": 0,
+        "readerControl": {
+          "submitted": 0,
+          "coalesced": 0,
+          "cancelled": 0,
+          "completed": 0,
+          "failed": 0,
+          "peakActive": 0,
+          "queueMs": 0,
+          "runMs": 0,
+          "active": 0,
+          "queued": 0
+        },
+        "warmTimings": [],
+        "warmEntries": 0,
+        "warmBuilds": 0,
+        "warmReplayJobs": 0,
+        "warmReplaySegments": 0,
+        "warmReplayRuns": 0,
+        "warmCompactEntries": 0,
+        "warmReplayConsumers": 0,
+        "warmSegments": 0,
+        "warmRuns": 0,
+        "warmBytes": 0,
+        "historyConsumers": 0,
+        "ringPages": 0,
+        "ringBytes": 0,
+        "recentHistoryRequests": [],
+        "historyPageTiming": {
+          "totalPages": 0,
+          "retainedSamples": 0,
+          "completeSample": true,
+          "p50": {
+            "responseHeadersMs": null,
+            "responseBodyReadMs": null,
+            "jsonParseMs": null,
+            "validationMs": null,
+            "projectorApplyMs": null,
+            "updateCallbackMs": null,
+            "eventLoopYieldDelayMs": null,
+            "responseBytes": null
+          },
+          "p95": {
+            "responseHeadersMs": null,
+            "responseBodyReadMs": null,
+            "jsonParseMs": null,
+            "validationMs": null,
+            "projectorApplyMs": null,
+            "updateCallbackMs": null,
+            "eventLoopYieldDelayMs": null,
+            "responseBytes": null
+          },
+          "max": {
+            "responseHeadersMs": null,
+            "responseBodyReadMs": null,
+            "jsonParseMs": null,
+            "validationMs": null,
+            "projectorApplyMs": null,
+            "updateCallbackMs": null,
+            "eventLoopYieldDelayMs": null,
+            "responseBytes": null
+          }
+        }
+      },
+      "depthMatrix": {
+        "requests": 0,
+        "failures": 0,
+        "activeWidgets": 0,
+        "activeMarkets": 0,
+        "activeGrids": 0,
+        "emittedRows": 0,
+        "cacheHits": 0,
+        "markets": []
+      },
+      "netPositioning": {
+        "requests": 0,
+        "rowsReceived": 0,
+        "rowsChanged": 0,
+        "snapshots": 0,
+        "patches": 0,
+        "errors": 0,
+        "subscribers": 0,
+        "cachedIntervals": 0,
+        "lastPollMs": 0,
+        "cache": []
+      },
+      "rawOpenInterest": {
+        "requests": 0,
+        "rowsReceived": 0,
+        "rowsChanged": 0,
+        "snapshots": 0,
+        "patches": 0,
+        "errors": 0,
+        "subscribers": 0,
+        "lastPollMs": 0,
+        "fixtureSelected": false,
+        "history": {
+          "received": 0,
+          "changed": 0,
+          "snapshots": 0,
+          "patches": 0,
+          "duplicateRows": 0,
+          "retained": 0
+        },
+        "cacheVenues": []
+      },
+      "footprint": {
+        "subscribers": 0,
+        "executionConsumers": 0,
+        "groups": [],
+        "sockets": 0,
+        "connected": false,
+        "tickSize": null,
+        "pending": 0,
+        "recentIds": 0,
+        "lastTradeId": null,
+        "expiredIdFloor": null,
+        "lastTradeTime": null,
+        "lastEventTime": null,
+        "counters": {
+          "messages": 0,
+          "accepted": 0,
+          "duplicates": 0,
+          "late": 0,
+          "unknownSide": 0,
+          "invalidGrid": 0,
+          "pendingFlushes": 0,
+          "socketOpens": 0,
+          "reconnects": 0,
+          "capacityDrops": 0,
+          "aggregationBatches": 0,
+          "aggregationObservations": 0,
+          "aggregationTotalMs": 0,
+          "aggregationMaxMs": 0
+        },
+        "rejected": {
+          "market": 0,
+          "contract": 0,
+          "symbol": 0,
+          "maker-side": 0,
+          "trade-id": 0,
+          "time": 0,
+          "price": 0,
+          "quantity": 0
+        },
+        "state": "loading"
+      },
+      "spotFootprint": {
+        "subscribers": 0,
+        "executionConsumers": 0,
+        "groups": [],
+        "sockets": 0,
+        "connected": false,
+        "tickSize": null,
+        "pending": 0,
+        "recentIds": 0,
+        "lastTradeId": null,
+        "expiredIdFloor": null,
+        "lastTradeTime": null,
+        "lastEventTime": null,
+        "counters": {
+          "messages": 0,
+          "accepted": 0,
+          "duplicates": 0,
+          "late": 0,
+          "unknownSide": 0,
+          "invalidGrid": 0,
+          "pendingFlushes": 0,
+          "socketOpens": 0,
+          "reconnects": 0,
+          "capacityDrops": 0,
+          "aggregationBatches": 0,
+          "aggregationObservations": 0,
+          "aggregationTotalMs": 0,
+          "aggregationMaxMs": 0
+        },
+        "rejected": {
+          "market": 0,
+          "contract": 0,
+          "symbol": 0,
+          "maker-side": 0,
+          "trade-id": 0,
+          "time": 0,
+          "price": 0,
+          "quantity": 0
+        },
+        "state": "loading"
+      },
+      "tickers": {
+        "publishedBatches": 0,
+        "publishedRecords": 0,
+        "widgets": 0,
+        "subscribers": []
+      },
+      "tradeBubbles": {
+        "subscribers": 0,
+        "feeds": [],
+        "fixture": false,
+        "caches": {
+          "binance:spot": 0,
+          "binance:perpetual": 0
+        },
+        "subscribersState": [],
+        "publishedRecords": 0,
+        "duplicateRecords": 0
+      },
+      "effortResult": [],
+      "fixture": false,
+      "networkSockets": 0,
+      "syntheticMessages": 0,
+      "historyApply": {
+        "footprintMs": 0,
+        "heatmapMs": 0,
+        "orderWallsMs": 0,
+        "footprintBatches": 0,
+        "heatmapBatches": 0,
+        "orderWallsBatches": 0
+      }
+    }
+  },
+  "system": {
+    "gpu": {
+      "devices": [
+        {
+          "vendorId": 0,
+          "deviceId": 0,
+          "vendorString": "Google Inc. (Broadcom)",
+          "deviceString": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1 Mesa 24.2.8-1~bpo12+rpt5)",
+          "driverVendor": "Mesa",
+          "driverVersion": "24.2.8"
+        }
+      ],
+      "auxAttributes": {
+        "amdSwitchable": false,
+        "canSupportThreadedTextureMailbox": false,
+        "directRenderingVersion": "",
+        "displayType": "ANGLE_OPENGLES",
+        "glExtensions": "GL_AMD_performance_monitor GL_ANGLE_blob_cache GL_ANGLE_client_arrays GL_ANGLE_compressed_texture_etc GL_ANGLE_depth_texture GL_ANGLE_framebuffer_blit GL_ANGLE_framebuffer_multisample GL_ANGLE_get_serialized_context_string GL_ANGLE_get_tex_level_parameter GL_ANGLE_instanced_arrays GL_ANGLE_memory_size GL_ANGLE_program_binary_readiness_query GL_ANGLE_program_cache_control GL_ANGLE_renderability_validation GL_ANGLE_request_extension GL_ANGLE_robust_client_memory GL_ANGLE_shader_pixel_local_storage GL_ANGLE_stencil_texturing GL_ANGLE_texture_compression_dxt3 GL_ANGLE_texture_compression_dxt5 GL_ANGLE_texture_multisample GL_ANGLE_translated_shader_source GL_ARM_rgba8 GL_CHROMIUM_bind_generates_resource GL_CHROMIUM_bind_uniform_location GL_CHROMIUM_copy_texture GL_CHROMIUM_lose_context GL_EXT_blend_minmax GL_EXT_clear_texture GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_compressed_ETC1_RGB8_sub_texture GL_EXT_debug_label GL_EXT_debug_marker GL_EXT_depth_clamp GL_EXT_discard_framebuffer GL_EXT_draw_buffers GL_EXT_draw_buffers_indexed GL_EXT_float_blend GL_EXT_frag_depth GL_EXT_instanced_arrays GL_EXT_map_buffer_range GL_EXT_occlusion_query_boolean GL_EXT_polygon_offset_clamp GL_EXT_read_format_bgra GL_EXT_sRGB GL_EXT_sRGB_write_control GL_EXT_shadow_samplers GL_EXT_texture_border_clamp GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_rgtc GL_EXT_texture_compression_s3tc_srgb GL_EXT_texture_filter_anisotropic GL_EXT_texture_format_BGRA8888 GL_EXT_texture_mirror_clamp_to_edge GL_EXT_texture_rg GL_EXT_texture_sRGB_decode GL_EXT_texture_storage GL_EXT_texture_type_2_10_10_10_REV GL_EXT_unpack_subimage GL_KHR_debug GL_KHR_parallel_shader_compile GL_KHR_texture_compression_astc_ldr GL_KHR_texture_compression_astc_sliced_3d GL_MESA_framebuffer_flip_y GL_NV_fence GL_NV_framebuffer_blit GL_NV_pack_subimage GL_NV_pixel_buffer_object GL_NV_read_depth GL_NV_read_stencil GL_NV_shader_noperspective_interpolation GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_EGL_image_external_essl3 GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth24 GL_OES_draw_buffers_indexed GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_get_program_binary GL_OES_mapbuffer GL_OES_packed_depth_stencil GL_OES_required_internalformat GL_OES_rgb8_rgba8 GL_OES_standard_derivatives GL_OES_surfaceless_context GL_OES_texture_3D GL_OES_texture_border_clamp GL_OES_texture_float GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_texture_stencil8 GL_OES_texture_storage_multisample_2d_array GL_OES_vertex_array_object ",
+        "glImplementationParts": "(gl=egl-angle,angle=opengles)",
+        "glRenderer": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1 Mesa 24.2.8-1~bpo12+rpt5)",
+        "glResetNotificationStrategy": 0,
+        "glVendor": "Google Inc. (Broadcom)",
+        "glVersion": "OpenGL ES 3.0 (ANGLE 2.1 git hash: unknown hash)",
+        "glWsExtensions": "EGL_KHR_create_context EGL_KHR_get_all_proc_addresses EGL_ANGLE_create_context_webgl_compatibility EGL_CHROMIUM_create_context_bind_generates_resource EGL_CHROMIUM_sync_control EGL_ANGLE_sync_control_rate EGL_EXT_pixel_format_float EGL_KHR_surfaceless_context EGL_ANGLE_display_texture_share_group EGL_ANGLE_display_semaphore_share_group EGL_ANGLE_create_context_client_arrays EGL_ANGLE_program_cache_control EGL_ANGLE_robust_resource_initialization EGL_ANGLE_create_context_extensions_enabled EGL_ANDROID_blob_cache EGL_ANDROID_recordable EGL_ANGLE_create_context_backwards_compatible EGL_KHR_create_context_no_error EGL_NOK_texture_from_pixmap EGL_KHR_reusable_sync EGL_ANGLE_context_virtualization EGL_ANGLE_memory_usage_report EGL_ANGLE_create_context_passthrough_shaders ",
+        "glWsVendor": "Google Inc. (Broadcom)",
+        "glWsVersion": "1.5 (ANGLE 2.1 git hash: unknown hash)",
+        "hardwareSupportsVulkan": false,
+        "inProcessGpu": false,
+        "initializationTime": 0.406305,
+        "isAsan": false,
+        "isClangCoverage": false,
+        "jpegDecodeAcceleratorSupported": false,
+        "maxMsaaSamples": "4",
+        "optimus": false,
+        "passthroughCmdDecoder": true,
+        "pixelShaderVersion": "3.00",
+        "processCrashCount": 0,
+        "sandboxed": false,
+        "skiaBackendType": "GaneshGL",
+        "subpixelFontRendering": true,
+        "targetCpuBits": 64,
+        "vertexShaderVersion": "3.00",
+        "visibilityCallbackCallCount": 0
+      },
+      "featureStatus": {
+        "2d_canvas": "enabled",
+        "direct_rendering_display_compositor": "disabled_off_ok",
+        "gpu_compositing": "enabled",
+        "multiple_raster_threads": "enabled_force_on",
+        "opengl": "enabled_on",
+        "rasterization": "enabled_force",
+        "raw_draw": "disabled_off_ok",
+        "skia_graphite": "disabled_off",
+        "trees_in_viz": "disabled_off",
+        "video_decode": "enabled",
+        "video_encode": "disabled_software",
+        "vulkan": "disabled_off",
+        "webgl": "enabled",
+        "webgpu": "disabled_off",
+        "webgpu_on_vk_via_gl_interop": "disabled_off",
+        "webnn": "disabled_off"
+      },
+      "driverBugWorkarounds": [
+        "enable_webgl_timer_query_extensions",
+        "exit_on_context_lost",
+        "rely_on_implicit_sync_for_swap_buffers",
+        "disabled_extension_GL_KHR_blend_equation_advanced",
+        "disabled_extension_GL_KHR_blend_equation_advanced_coherent"
+      ],
+      "videoDecoding": [],
+      "videoEncoding": []
+    },
+    "modelName": "",
+    "modelVersion": "",
+    "commandLine": "/usr/lib/chromium/chromium --force-renderer-accessibility --enable-remote-extensions --force-dark-mode --show-component-extension-options --enable-gpu-rasterization --no-default-browser-check --disable-pings --media-router=0 --enable-remote-extensions --load-extension --ignore-gpu-blocklist --enable-checker-imaging --cc-scroll-animation-duration-in-seconds=0.6 --disable-quic --enable-tcp-fast-open --enable-experimental-canvas-features --enable-scroll-prediction --enable-simple-cache-backend --max-tiles-for-interest-area=512 --num-raster-threads=4 --default-tile-height=512 --enable-accelerated-video-decode --enable-low-res-tiling --process-per-site --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --no-sandbox --use-angle=gles --class=IQTerminalPerf --name=IQTerminalPerf --ozone-platform=x11 --user-data-dir=/tmp/playwright_chromiumdev_profile-8KXhu6 --remote-debugging-pipe --no-startup-window --enable-features=VaapiVideoDecoder,VaapiVideoEncoder,ParallelDownloading,CDPScreenshotNewSurface --disable-features=UseChromeOSDirectVideoDecoder,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --use-angle=gles --noerrdialogs --ozone-platform=headless --ozone-override-screen-size=800,600 --flag-switches-begin --flag-switches-end --enable-unsafe-swiftshader"
+  },
+  "errors": []
+}

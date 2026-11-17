@@ -1,0 +1,72 @@
+[
+  {
+    "pair": 1,
+    "variant": "control",
+    "label": "native-pair-1-control-r1",
+    "exitCode": 0,
+    "rawSample": "../native-pair-1-control-r1-samples.jsonl"
+  },
+  {
+    "pair": 1,
+    "variant": "early",
+    "label": "native-pair-1-early-r1",
+    "exitCode": 0,
+    "rawSample": "../native-pair-1-early-r1-samples.jsonl"
+  },
+  {
+    "pair": 2,
+    "variant": "early",
+    "label": "native-pair-2-early-r1",
+    "exitCode": 0,
+    "rawSample": "../native-pair-2-early-r1-samples.jsonl"
+  },
+  {
+    "pair": 2,
+    "variant": "control",
+    "label": "native-pair-2-control-r1",
+    "exitCode": 0,
+    "rawSample": "../native-pair-2-control-r1-samples.jsonl"
+  },
+  {
+    "pair": 3,
+    "variant": "control",
+    "label": "native-pair-3-control-r1",
+    "exitCode": 0,
+    "rawSample": "../native-pair-3-control-r1-samples.jsonl"
+  },
+  {
+    "pair": 3,
+    "variant": "early",
+    "label": "native-pair-3-early-r1",
+    "exitCode": 0,
+    "rawSample": "../native-pair-3-early-r1-samples.jsonl"
+  },
+  {
+    "pair": 4,
+    "variant": "early",
+    "label": "native-pair-4-early-r1",
+    "exitCode": 0,
+    "rawSample": "../native-pair-4-early-r1-samples.jsonl"
+  },
+  {
+    "pair": 4,
+    "variant": "control",
+    "label": "native-pair-4-control-r1",
+    "exitCode": 0,
+    "rawSample": "../native-pair-4-control-r1-samples.jsonl"
+  },
+  {
+    "pair": 5,
+    "variant": "control",
+    "label": "native-pair-5-control-r1",
+    "exitCode": 0,
+    "rawSample": "../native-pair-5-control-r1-samples.jsonl"
+  },
+  {
+    "pair": 5,
+    "variant": "early",
+    "label": "native-pair-5-early-r1",
+    "exitCode": 0,
+    "rawSample": "../native-pair-5-early-r1-samples.jsonl"
+  }
+]

@@ -1,0 +1,467 @@
+{
+  "compiledClient": "b47457b460a1d4d18be2b73af2415af0e75c6217",
+  "backendServing": "18579d938364e5fd5a9c7631bb19681a043f1b66",
+  "latestSource": "ffb6e7ccd89562c44298925fb1662588c8eeb889",
+  "platform": "Linux-6.12.109+rpt-rpi-v8-aarch64-with-glibc2.36",
+  "chromium": "Chromium 155.0.8059.79 built on Debian GNU/Linux 12 (bookworm)",
+  "cohorts": [
+    "nov7-spot-ae8-route",
+    "nov7-spot-saved-view",
+    "nov7-perp-saved-view",
+    "nov7-footprint-4h-saved-build",
+    "nov7-footprint-24h-saved-build",
+    "nov7-current-saved-build",
+    "nov7-current-footprint-corrected-stop"
+  ],
+  "files": [
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-footprint-corrected-stop-current-footprint-5m-1.png",
+      "bytes": 77804,
+      "sha256": "2d49e00f9a416fbca0f2a185cfc7a8b12bd97cc7424abc2799db16d5ee3ac17a"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-footprint-corrected-stop-current-footprint-5m-2-failure.png",
+      "bytes": 33785,
+      "sha256": "6bf83710d18fd674fc39d9b50cb9ced1f6ae3e118b396fb8fbf83d53adff5cc1"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-footprint-corrected-stop-current-footprint-5m-3.png",
+      "bytes": 56941,
+      "sha256": "5c7d24eac3ed95f569a844dad2472d85d524656be7bcf57de1e676135a1337aa"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-footprint-corrected-stop-current-footprint-5m-4.png",
+      "bytes": 57164,
+      "sha256": "1c78da58599eac2f5f9e039a95ad37792ee1dccf39221e212517a352f1041255"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-footprint-corrected-stop-current-footprint-5m-5.png",
+      "bytes": 56723,
+      "sha256": "6718c6c586e1d760e1e685213810abfd8f4e392f3750c2dd22ab4afbc0259e3f"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-footprint-corrected-stop-executed.mjs",
+      "bytes": 18065,
+      "sha256": "373ef207f9a6f7ad33338edfa7ba34ff5d79e4d3402665ab331251540ae4c545"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-footprint-corrected-stop-gates.json",
+      "bytes": 3382,
+      "sha256": "2c881432c3101edb9219f7b6fabacb51f83bba0aeb7241baf3990d70c7c9a036"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-footprint-corrected-stop-observations.jsonl",
+      "bytes": 84234,
+      "sha256": "3b614f37185b95e880e4a9b4af544a6b342c0775343d68e717b7b9f45578c555"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-footprint-corrected-stop-samples.jsonl",
+      "bytes": 156122,
+      "sha256": "d8a46e71ae6e6828a600b217fcacc08d7393b92402ad8d69e6cd73dfe6313f38"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-footprint-corrected-stop-trace-helper-executed.mjs",
+      "bytes": 649,
+      "sha256": "3a3a6ca1b46d90f16d0b44ebc30945e3ef2557bca1691c7d91d2f9dad84b54c7"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-saved-build-current-footprint-5m-1.png",
+      "bytes": 78457,
+      "sha256": "6fe264673b798286858a7cda3ab565c73babc071f097ccd6fd1027a0edf4ed35"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-saved-build-current-footprint-5m-2.png",
+      "bytes": 78397,
+      "sha256": "80f30242b79da86191889ebc3dec725b25f6029232b6b106698a41b7b910f0a5"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-saved-build-current-footprint-5m-3.png",
+      "bytes": 78506,
+      "sha256": "72698f7370bdd2acbcf102c72fc236f2865de653c7c4aa031429111ea8cb281f"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-saved-build-current-footprint-5m-4.png",
+      "bytes": 78061,
+      "sha256": "9a8c51346ca5d03c93217aab8d6c795d6a6fa9232eecab14d6566152b29d761d"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-saved-build-current-footprint-5m-5.png",
+      "bytes": 78957,
+      "sha256": "922c716266a839e5fbfc4f48140769117bd3f22074b3dcfc449642eb6c845acc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-saved-build-current-walls-15m-1.png",
+      "bytes": 65539,
+      "sha256": "13e7419304f64a43dba4c38131425a2325d65f4da1e16c37f8a375dae4c91292"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-saved-build-current-walls-15m-2.png",
+      "bytes": 65106,
+      "sha256": "d7b11b83aa5a7e774d762ed9e593300286bfd8e47faaeece25e27b60dcc1f21b"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-saved-build-current-walls-15m-3.png",
+      "bytes": 65437,
+      "sha256": "b468f3bc7b58e59a4ce2e693fa8d5e8071c97ea5aecc50e415e39bf0d6d02808"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-saved-build-current-walls-15m-4.png",
+      "bytes": 65379,
+      "sha256": "24d348187a72002659201c0a426d8dc8c7f25c4dc1b0666e49bb5c47d13f9ea2"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-saved-build-current-walls-15m-5.png",
+      "bytes": 65261,
+      "sha256": "ba0a9edd8694cd725ddaf177dc1e5fc9e5dfea47f19e5e8f806b169d8ee172ae"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-saved-build-executed.mjs",
+      "bytes": 17894,
+      "sha256": "f29ef48ac665223daa4bc2772c314fd617b55b14201720403566532f5c84c0e7"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-saved-build-gates.json",
+      "bytes": 7742,
+      "sha256": "6dbf0eb2c7462f6f523c8dd0c314c2e7d0430c861168157ba70706eace382afb"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-saved-build-observations.jsonl",
+      "bytes": 364933,
+      "sha256": "acb8e346dc2e7289a08cb3a0999b987e4ba4df92719d24e18e0a4fc4e003cab5"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-saved-build-samples.jsonl",
+      "bytes": 507883,
+      "sha256": "913ae14ae029e3ba5ff24c27323fe76eca85cf1db65fbc60c6a338a85be1e723"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-current-saved-build-trace-helper-executed.mjs",
+      "bytes": 390,
+      "sha256": "d97097080c0fcdb1bd53a9afea8464d4d19774fd63a78cb57b0fe07e64180465"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-24h-saved-build-executed.mjs",
+      "bytes": 17894,
+      "sha256": "f29ef48ac665223daa4bc2772c314fd617b55b14201720403566532f5c84c0e7"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-24h-saved-build-footprint-24h-1h-1.png",
+      "bytes": 77954,
+      "sha256": "90d7f45ddeec878bca1d2238b5fb13e5af304d44c845891ce2d62d653c6c6cb3"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-24h-saved-build-footprint-24h-1h-2.png",
+      "bytes": 78097,
+      "sha256": "172ec507b2872dd0370365e6b75e1f0bab476393aca1387bbdfedaedf84b274f"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-24h-saved-build-footprint-24h-1h-3.png",
+      "bytes": 77980,
+      "sha256": "63c59dd0bb1dbbf8aa7c9a40da417558585467540883f2a335d9cb642ce8a527"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-24h-saved-build-footprint-24h-1h-4.png",
+      "bytes": 78099,
+      "sha256": "ee6e806ad1afa2ad37afe7b919c8db9c4e0004280dcad69a3546891d00018d34"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-24h-saved-build-footprint-24h-1h-5.png",
+      "bytes": 78379,
+      "sha256": "a658eb8bcda4d665d08dd3aa2402cb159f3510d5490b52b69f0f5b7aab809156"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-24h-saved-build-gates.json",
+      "bytes": 3464,
+      "sha256": "93e8e8e34544afcda9192baf9a69d06dba05ffab67eb5880b2b40f9fd25ab310"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-24h-saved-build-observations.jsonl",
+      "bytes": 168325,
+      "sha256": "16b1ce8e31474681f63ecf7eed08ead8a243f8f3f01bf34e92a6df328d99a30e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-24h-saved-build-samples.jsonl",
+      "bytes": 239817,
+      "sha256": "4a152afdd70e20fafe6ba71e4edd77c2411a82e7c01a15a80c5fd6396f24d6fb"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-24h-saved-build-trace-helper-executed.mjs",
+      "bytes": 390,
+      "sha256": "d97097080c0fcdb1bd53a9afea8464d4d19774fd63a78cb57b0fe07e64180465"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-4h-saved-build-executed.mjs",
+      "bytes": 17894,
+      "sha256": "f29ef48ac665223daa4bc2772c314fd617b55b14201720403566532f5c84c0e7"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-4h-saved-build-footprint-4h-5m-1.png",
+      "bytes": 82093,
+      "sha256": "ba0323d0d111fc4d3ffb57a07d784b56c9692347eb29226b4e3730acfe29f688"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-4h-saved-build-footprint-4h-5m-2.png",
+      "bytes": 82009,
+      "sha256": "7bd2fbdf5ad17e19e9e6dbc392e8ad933aa3c42a87245a1a65943746e87963a2"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-4h-saved-build-footprint-4h-5m-3.png",
+      "bytes": 81988,
+      "sha256": "3338a571d1c4e0ea14b9a3d69794b7a596a0e90a0a26b6317c3648c37f4421f2"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-4h-saved-build-footprint-4h-5m-4.png",
+      "bytes": 81974,
+      "sha256": "afce5ae014d0ab1aa3ecf329649dbf3092a9aaf2c4f1c4b1a5ae3d2fbdb9241e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-4h-saved-build-footprint-4h-5m-5.png",
+      "bytes": 81952,
+      "sha256": "0c2a6a20a7b5793c4c0124bf2c522db65b223ae99b3fd5df274abbe20b262801"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-4h-saved-build-gates.json",
+      "bytes": 3439,
+      "sha256": "c79776d8742aca7fd1a92a76f263d3a404094022ccf82a020265bbf17fa75ddc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-4h-saved-build-observations.jsonl",
+      "bytes": 134274,
+      "sha256": "628d3d43233bcf09e3cb32caa7b4c7c5a59648f084160807bebbf8b7d84230f4"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-4h-saved-build-samples.jsonl",
+      "bytes": 205697,
+      "sha256": "1513f363f3bb8b869e30b6b83607aa2e3d229183cd920f67a05a6b4753b60e7e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-footprint-4h-saved-build-trace-helper-executed.mjs",
+      "bytes": 390,
+      "sha256": "d97097080c0fcdb1bd53a9afea8464d4d19774fd63a78cb57b0fe07e64180465"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-perp-saved-view-executed.mjs",
+      "bytes": 17894,
+      "sha256": "f29ef48ac665223daa4bc2772c314fd617b55b14201720403566532f5c84c0e7"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-perp-saved-view-gates.json",
+      "bytes": 4764,
+      "sha256": "8d7bc2868309ca9851fbae06ba8b88d6fb89d38ce28f6c210aca4069fc86692e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-perp-saved-view-observations.jsonl",
+      "bytes": 202788,
+      "sha256": "d510907cfb108f3942909d87ee203c3a80b6af5bdf07162d55baaaeefae74d0e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-perp-saved-view-samples.jsonl",
+      "bytes": 276548,
+      "sha256": "d244edaaf13404b68716af805d721ba548a0fc734b281fcb972d2738674a0d4c"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-perp-saved-view-trace-helper-executed.mjs",
+      "bytes": 390,
+      "sha256": "d97097080c0fcdb1bd53a9afea8464d4d19774fd63a78cb57b0fe07e64180465"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-perp-saved-view-walls-30h-perp-15m-1.png",
+      "bytes": 127180,
+      "sha256": "46fd9b614aed9e94a3bc6ad1e8ce37ffd5a17d295652decc6c22b8b476bd0417"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-perp-saved-view-walls-30h-perp-15m-2.png",
+      "bytes": 124667,
+      "sha256": "eb1b0b892be1bacde83bb28b67578692d173ad6d6e6705ac753f27b1da45d7c7"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-perp-saved-view-walls-30h-perp-15m-3.png",
+      "bytes": 127488,
+      "sha256": "0b3563c5b7174d2652c07a62f044f8850d087a0544c591164295c81a4ca4d4db"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-perp-saved-view-walls-30h-perp-15m-4.png",
+      "bytes": 127355,
+      "sha256": "5118a26d86f59b0098e1650f44b256b2eb8c133f13d3cdc603cbc8af14dcdf72"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-perp-saved-view-walls-30h-perp-15m-5.png",
+      "bytes": 127295,
+      "sha256": "d775fb12f7f4d4298ee8a9d583f3ff20894066afcc470b8f48fd4c4a5daee533"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-ae8-route-executed.mjs",
+      "bytes": 16470,
+      "sha256": "35578a6ac57805f8dcf8cc35001e093939b9da5065e8b056bdbcc5ff177b7b31"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-ae8-route-gates.json",
+      "bytes": 4731,
+      "sha256": "1c69d1f591afd7393e5bc2a6810025050f2f3cd8e11000d2ffe92e919c95f869"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-ae8-route-observations.jsonl",
+      "bytes": 152914,
+      "sha256": "d9294e7929b4998519d6cbc43976fca966608b02c1f1a2c33c4f22b154f61dc2"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-ae8-route-samples.jsonl",
+      "bytes": 225330,
+      "sha256": "d00a00d3720b13aeb6a4f8395a5b2c486af0046ec320c9fd147209b031d61e76"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-ae8-route-trace-helper-executed.mjs",
+      "bytes": 390,
+      "sha256": "d97097080c0fcdb1bd53a9afea8464d4d19774fd63a78cb57b0fe07e64180465"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-ae8-route-walls-30h-spot-5m-1.png",
+      "bytes": 90295,
+      "sha256": "3470110c32d097f6a038644772bbfec1c9e419fad3dc2c52257d76dd3affde4f"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-ae8-route-walls-30h-spot-5m-2.png",
+      "bytes": 87742,
+      "sha256": "d90af4150904aa6175dfad03a8543ec95bd7f2ac5d664dc902b1c4807046ec3c"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-ae8-route-walls-30h-spot-5m-3.png",
+      "bytes": 90470,
+      "sha256": "6aff8d83af81f63da6f8470c130a092f89927fcc0f7c4b75381402223fec17e9"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-ae8-route-walls-30h-spot-5m-4.png",
+      "bytes": 65152,
+      "sha256": "926aab3c88ce413c2cd10c7751b6070b5026ef165182c0783a05753dc365ccbf"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-ae8-route-walls-30h-spot-5m-5.png",
+      "bytes": 86771,
+      "sha256": "87ff3f35fbe1a0a723f8c2805388c0dc391de85828667c87f02abef4d87d68dd"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-saved-view-executed.mjs",
+      "bytes": 17894,
+      "sha256": "f29ef48ac665223daa4bc2772c314fd617b55b14201720403566532f5c84c0e7"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-saved-view-gates.json",
+      "bytes": 4760,
+      "sha256": "dfd71ce8eda1a319a428fe94406e18784f6f041154f23fb39067bc14d93d65df"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-saved-view-observations.jsonl",
+      "bytes": 185788,
+      "sha256": "6cfb76ff2d4ace1d383f7ef384346d00a369cc0ed5b44344ddd8ab45193b5cfb"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-saved-view-samples.jsonl",
+      "bytes": 259386,
+      "sha256": "2d1c92697d3fcf9b2f6a953644c6d808b3eea7e4a34ad10d35b9f59b31e0fcab"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-saved-view-trace-helper-executed.mjs",
+      "bytes": 390,
+      "sha256": "d97097080c0fcdb1bd53a9afea8464d4d19774fd63a78cb57b0fe07e64180465"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-saved-view-walls-30h-spot-5m-1.png",
+      "bytes": 90016,
+      "sha256": "3a2ee422d4833366210e86b80ae92b17352feae53cf805e6751c6e47fe1093f5"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-saved-view-walls-30h-spot-5m-2.png",
+      "bytes": 89907,
+      "sha256": "a565f473cc8dbd8668134e2a04669c1ed6fa120f4295607b327f055b1fca5b46"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-saved-view-walls-30h-spot-5m-3.png",
+      "bytes": 92368,
+      "sha256": "e0e0f1d2b7dbded540549d958655b989fe9ec64b43e687812de428081d83f90c"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-saved-view-walls-30h-spot-5m-4.png",
+      "bytes": 91678,
+      "sha256": "25c6d951b26628425593d778b4c126921c1a0b293848d16a4752569ea7154bd0"
+    },
+    {
+      "path": "artifacts/pi-history-r1/nov7-spot-saved-view-walls-30h-spot-5m-5.png",
+      "bytes": 90056,
+      "sha256": "65817be13903ecf125cb526b8e71fe9a3343fe6158624457ee70d409b0d1697e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/saved-wall-startup/526-browser-handoff-failure.log",
+      "bytes": 3843,
+      "sha256": "4e534dafe84fde6d13aa0501d153041039a553e7329cc7be326dbeda84177aa1"
+    },
+    {
+      "path": "artifacts/pi-history-r1/saved-wall-startup/526-full-tests.log",
+      "bytes": 522,
+      "sha256": "e770d7f1f0c90e34f40092b5bbf99289e14c1f63a865ba619114186a3ba7bf53"
+    },
+    {
+      "path": "artifacts/pi-history-r1/saved-wall-startup/526-staging-build.log",
+      "bytes": 1314,
+      "sha256": "0deddbbe9b84c62b6e11c862329f548b1caa15ff48d800dba6e7f5b558bd8e90"
+    },
+    {
+      "path": "artifacts/pi-history-r1/saved-wall-startup/ae8-browser-before.log",
+      "bytes": 2116,
+      "sha256": "4cac77e13731e626bc1905d7f1f3f941b13013771b6861536ee41dd21cd6e042"
+    },
+    {
+      "path": "artifacts/pi-history-r1/saved-wall-startup/b474-browser-pass.log",
+      "bytes": 398,
+      "sha256": "dec7dce16987ab91d66f0770450ab9945f453839f1add187b91d933658e97c5c"
+    },
+    {
+      "path": "artifacts/pi-history-r1/saved-wall-startup/b474-focused-tests.log",
+      "bytes": 205,
+      "sha256": "7a8ce2cb9dcf1a91dc27a7a5ce5fb42b8c8ca62c886646220f0c202d9b4808ff"
+    },
+    {
+      "path": "artifacts/pi-history-r1/saved-wall-startup/b474-staging-build.log",
+      "bytes": 1314,
+      "sha256": "4e11b08bb91609972ae3368822e7a5c786ed1a485e57335ead5fde87fe5ec037"
+    },
+    {
+      "path": "artifacts/pi-history-r1/saved-wall-startup/final-browser-lifecycle.log",
+      "bytes": 2007,
+      "sha256": "3fd45079cd824e8dc644ffe7083ba77ecae5ff6b38fde6593c6e4cd986fb6085"
+    },
+    {
+      "path": "artifacts/pi-history-r1/saved-wall-startup/final-full-tests.log",
+      "bytes": 522,
+      "sha256": "fe2ee3c10c71364d57c6b3ae4421a85e247f9df98bb3c33adfa5d259584c63fa"
+    },
+    {
+      "path": "artifacts/pi-history-r1/saved-wall-startup/final-typecheck.log",
+      "bytes": 90,
+      "sha256": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961"
+    },
+    {
+      "path": "artifacts/pi-history-r1/saved-wall-startup/scenario-stop-tests.log",
+      "bytes": 1037,
+      "sha256": "eb31f9e526b4af9f8b622d31797ed4ad1849a676cb900212c12a886fc338a263"
+    },
+    {
+      "path": "artifacts/pi-history-r1/saved-wall-startup/shared-projection-check.log",
+      "bytes": 250,
+      "sha256": "23dd4c3bbb0e06ab8fd414188fc3e5b057d86c88c298c5f28ab88c617a8514dc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/saved-wall-startup/staging-resource-and-identity.txt",
+      "bytes": 1009,
+      "sha256": "92d9cfafd754831f61014a5d87a3411714ad577b99f47e36a5185c8dc10d56b0"
+    },
+    {
+      "path": "artifacts/pi-history-r1/saved-wall-startup/strict-report-tests.log",
+      "bytes": 102,
+      "sha256": "95ab3ab7f7c8e3875ab168641f413d218ca3f5522e7aee1c6ec0cf763a19c56d"
+    }
+  ],
+  "indexToolNode": "v22.19.0",
+  "benchmarkNode": "v22.23.4",
+  "benchmarkNodePath": "/home/daz/.nvm/versions/node/v22.23.4/bin/node",
+  "nodeProvenance": "Every recorded browser/build/test launch explicitly prepended this installation to PATH; index generation used the shell default separately."
+}

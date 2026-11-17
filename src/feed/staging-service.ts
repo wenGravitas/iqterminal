@@ -1,12 +1,22 @@
-import {PreparedFootprints} from './prepared-footprints';
+import {historyTaskYieldMode} from './history-task-yield';
+import {pastCandleViewport,snapCandleViewportBoundary} from './candle-viewport';
+import {NativeCandlePresentationCache} from './native-candle-presentation-cache';
+import {NativeCandleHistory,type NativeCandleVersion} from './native-candle-history';
+import {historyRequestTraces} from './history-trace';
+import {PreparedFootprints, type PreparedFootprintProgress} from './prepared-footprints';
 import {historyScheduler} from './history-scheduler';
 import { FOOTPRINT_MAX_BARS, FOOTPRINT_MAX_CELLS, FootprintAccumulator } from './footprint';
 import { footprintTicksForPrice } from './protocol';
-import { duration, footprintAnalysisSourceKey, footprintKeyOf, keyOf, marketOf, validCandle, type Candle, type Command, type Event, type FootprintAnalysisSummary, type FootprintBar, type FootprintStatus, type Series } from './protocol';
+import { duration, instrumentKey, instrumentOf, footprintAnalysisSourceKey, footprintKeyOf, keyOf, marketOf, validCandle, type Candle, type Command, type Event, type FootprintAnalysisSummary, type FootprintBar, type FootprintStatus, type Series } from './protocol';
 import { DEFAULT_DELTA_FLIP_LOOKBACK, MAX_DELTA_FLIP_LOOKBACK, MAX_FOOTPRINT_ANALYSIS_SUMMARIES, durableFootprintAnalysisSummary, withoutLiveFootprintPreview } from '../chart/footprint-delta-flips';
 
 type Envelope = Extract<Event, { type: 'footprint-status' | 'footprint-snapshot' | 'footprint-patch' }>;
-interface View {from:number;to:number;candidateFrom:number;key:string;analysisEnabled:boolean;analysisLookback:number;abort?:AbortController;busy?:boolean;loaded?:boolean;validatedAt?:number;}
+interface ExecutionProof {
+ socketStarts:number;disconnects:number;errors:number;resets:number;appliedBatches:number;appliedExecutions:number;
+ acksSent:number;confirmedAckBatches:number;sourceCursorJumps:number;maxApplyMs:number;maxReceiptGapMs:number;
+ lastAfter?:number;lastAppliedCursor?:number;lastConfirmedAckCursor?:number;lastReceiptMonoMs?:number;
+}
+interface View {consumers:Set<string>;retryRequested?:boolean;progress?:PreparedFootprintProgress;error?:string;retryAt?:number;from:number;to:number;candidateFrom:number;key:string;analysisEnabled:boolean;analysisLookback:number;abort?:AbortController;busy?:boolean;loaded?:boolean;validatedAt?:number;}
 async function readStagingJson(response:Response,label:string){
   const text=await response.text();let data:any;
   try{data=JSON.parse(text);}catch(error){
@@ -18,22 +28,31 @@ async function readStagingJson(response:Response,label:string){
   return data;
 }
 interface Group {
+  executionProof?:ExecutionProof;pendingExecutionAck?:number;
+  native?: { readOrder:number;history?:NativeCandleHistory;ready:boolean; error?:string; retryAt:number; failures:number; sequence:number; receivedAt?:number; sourceState?:string; versions:Map<number,{sequence:number;revision:number}> };
   preparedTimes:Set<number>;views:Map<string,View>;
   key: string; series: Series; rowPrice?: number; ids: Set<string>; generation: number;
   abort?: AbortController; busy: boolean; inFlight?: number; pending?: Envelope;
-  bars: FootprintBar[]; candles: Candle[]; lastUpdate: number; failures: number; retryAt: number;
+  bars: FootprintBar[]; candles: Candle[]; lastUpdate: number; failures: number; retryAt: number; bootstrapRetry?:boolean;
   analysisSummaries: Map<number, FootprintAnalysisSummary>; liveSummaryVersions: Map<number, number>; quoteAvailable: Map<number, boolean>;
   streamRevision: number; appliedExecutionThroughMs: number | null;
   history?: { next: number; target: number; watermark: number }; historyAbort?: AbortController; historyBusy?: boolean; historyError?: string;
   lastStatus?: FootprintStatus; accumulator?: FootprintAccumulator; cursor?: number; from?: number; ws?: WebSocket; streamAt?: number; lastCoverage?: any; lagMs?: number;
 }
+/** Whitespace is outside the eligible past range; four hours bounds a request, not a view. */
+export function footprintPastViewport(from: number, to: number, now: number, step: number) {
+  const range=pastCandleViewport(from,to,now,step);return {from:Math.max(step,range.from),to:range.to};
+}
+
 export const stagingMarket = (series: Series) => series.venue === 'binance';
 const NATIVE_CANDLE_HISTORY_TIMEOUT_MS = 60_000;
+const NATIVE_HISTORY_BULK_MIN_BARS = 32;
 const FOOTPRINT_BOOTSTRAP_TIMEOUT_MS = 20_000;
 const footprintSource = (market: ReturnType<typeof marketOf>) => market === 'spot' ? 'binance-spot-aggtrade' : 'binance-usdm-aggtrade';
 
 /** Worker-owned snapshot restore + durable cursor replay, with bounded shared caches and acknowledged IPC. */
 export class StagingFeedService {
+  private nativePresentation=new NativeCandlePresentationCache();
   private prepared:PreparedFootprints;private usePrepared=import.meta.env.VITE_HISTORY_TILES!=='0';
   private groups = new Map<string, Group>();
   private clients = new Map<string, string>();
@@ -52,21 +71,35 @@ export class StagingFeedService {
       if (!group) {
         if (this.groups.size >= 16) return;
         group = { preparedTimes:new Set(),views:new Map(),key, series: c.series, rowPrice, ids: new Set(), generation: ++this.sequence,
+          ...(rowPrice!==undefined?{executionProof:{socketStarts:0,disconnects:0,errors:0,resets:0,appliedBatches:0,appliedExecutions:0,acksSent:0,confirmedAckBatches:0,sourceCursorJumps:0,maxApplyMs:0,maxReceiptGapMs:0}}:{}),
           busy: false, bars: [], candles: [], lastUpdate: 0, failures: 0, retryAt: 0,
+          native: rowPrice === undefined ? {readOrder:0,ready:false,retryAt:0,failures:0,sequence:0,versions:new Map()} : undefined,
           analysisSummaries: new Map(), liveSummaryVersions: new Map(), quoteAvailable: new Map(), streamRevision: 0, appliedExecutionThroughMs: null };
         this.groups.set(key, group);
+      }
+      if(group.native&&!group.native.history){
+        const g=group;
+        group.native.history=new NativeCandleHistory(group.series,{request:this.request,now:this.now,presentation:this.nativePresentation,nativeBars:()=>g.candles,
+          version:()=>({stream:g.native!.sequence,request:++g.native!.readOrder}),
+          apply:(id,bars,version,at)=>this.applyNativeHistory(g,id,bars,version,at),
+          changed:()=>{if(!this.dead&&this.groups.get(g.key)===g)this.nativeStatus(g);}});
       }
       group.ids.add(c.id); this.clients.set(c.id, key);
       if (group.candles.length) this.emit({ type: 'snapshot', key, ids: [c.id], candles: group.candles });
       if (group.bars.length && group.lastStatus) this.publish(group, { type: 'footprint-snapshot', key, ids: [...group.ids], generation: group.generation, batchId: 0, bars: group.bars, analysisSummaries: [...group.analysisSummaries.values()], retentionStart: group.bars[0]?.time ?? null, status: group.lastStatus });
-      this.status(group, 'loading', rowPrice === undefined ? 'Staging · loading native Binance candles' : 'Staging · loading retained aggregate executions');
-      if (!group.ws) void this.load(group);
+      // A second view shares the acknowledged live accumulator. Its history
+      // demand must not revoke previews or downgrade every existing subscriber.
+      this.status(group, group.lastStatus?.state??'loading', group.lastStatus?.message??(rowPrice === undefined ? 'Staging · loading native Binance candles' : 'Staging · loading retained aggregate executions'));
+      if (group.native) { this.connect(group); if(!group.native.ready)void this.load(group); this.nativeStatus(group); }
+      else if (!group.ws) void this.load(group);
+    } else if(c.type==='candle-viewport'){
+      const key=this.clients.get(c.id),g=key?this.groups.get(key):undefined;
+      if(g?.native&&this.usePrepared){g.native.history?.viewport(c.id,c.from,c.to,c.known);this.nativeStatus(g);}
     } else if (c.type === 'footprint-viewport') {
       const key = this.clients.get(c.id), g = key ? this.groups.get(key) : undefined;
       if (!g || g.rowPrice === undefined || !this.usePrepared || !Number.isFinite(c.from) || !Number.isFinite(c.to) || c.from >= c.to) return;
       const step = duration[g.series.interval];
-      const to = Math.min(Math.ceil(c.to / step) * step, Math.floor(this.now() / step) * step);
-      const from = Math.max(step, Math.floor(Math.max(c.from, c.to - 14_400_000) / step) * step);
+      const { from, to } = footprintPastViewport(c.from, c.to, this.now(), step);
       if (from >= to) return;
       const analysisEnabled = c.analysis?.enabled === true;
       const requestedLookback = c.analysis?.lookback;
@@ -74,14 +107,18 @@ export class StagingFeedService {
         ? Math.max(20, Math.min(MAX_DELTA_FLIP_LOOKBACK, Math.trunc(requestedLookback))) : DEFAULT_DELTA_FLIP_LOOKBACK;
       const rawCandidateFrom = typeof c.analysis?.candidateFrom === 'number' && Number.isFinite(c.analysis.candidateFrom)
         ? c.analysis.candidateFrom : c.from;
-      const candidateFrom = Math.max(step, Math.floor(rawCandidateFrom / step) * step);
+      const candidateFrom = Math.max(step, Math.floor(snapCandleViewportBoundary(rawCandidateFrom,step) / step) * step);
       const viewKey = `${from}:${to}:${candidateFrom}:${analysisEnabled ? analysisLookback : 0}`;
       const old = g.views.get(c.id);
       if (old?.key === viewKey) return;
-      old?.abort?.abort();
-      g.views.set(c.id, { from, to, candidateFrom, key: viewKey, analysisEnabled, analysisLookback });
+      this.releaseViewport(g,c.id);
+      // The restore preload overlaps its visible chart. Share the same logical
+      // demand, including validation/progress, rather than rereading ready chunks.
+      const shared=[...g.views.values()].find(view=>view.key===viewKey);
+      if(shared){shared.consumers.add(c.id);g.views.set(c.id,shared);this.status(g,g.lastStatus?.state??'loading',g.lastStatus?.message??'Staging · loading visible footprints');return;}
+      g.views.set(c.id, {consumers:new Set([c.id]), from, to, candidateFrom, key: viewKey, analysisEnabled, analysisLookback });
       this.status(g, g.lastStatus?.state ?? 'loading', 'Staging · loading visible footprints');
-      if (g.accumulator) void this.loadViewport(g, c.id);
+      void this.loadViewport(g, c.id,'viewport');
     } else if (c.type === 'unsubscribe' || c.type === 'footprint-unsubscribe') this.unsubscribe(c.id);
     else if (c.type === 'footprint-ack') {
       const g = this.groups.get(c.key);
@@ -90,26 +127,52 @@ export class StagingFeedService {
         if (pending) this.publish(g, pending);
       }
     } else if (c.type === 'retry' || c.type === 'footprint-retry') {
-      for (const g of this.groups.values()) if (c.type === 'footprint-retry' || g.ids.has(c.id)) { g.retryAt = 0; g.failures = 0; g.ws?.close(); g.ws = undefined; if (g.rowPrice !== undefined && g.cursor !== undefined) { this.connect(g); if (g.history) void this.loadOlder(g); } else void this.load(g); }
+      const groups=[...this.groups.values()].filter(g=>c.type==='footprint-retry'
+        ?g.rowPrice!==undefined&&(!c.id||g.ids.has(c.id)):g.ids.has(c.id));
+      const failedViews=(g:Group)=>[...g.views].filter(([id,v])=>v.error&&(c.type!=='footprint-retry'||!c.id||id===c.id));
+      const historyOnly=this.usePrepared&&groups.some(g=>failedViews(g).length>0);
+      for(const g of groups){
+        const failed=this.usePrepared?failedViews(g):[];
+        if(failed.length){const retried=new Set<View>();for(const [id,v] of failed){if(retried.has(v)||v.busy)continue;retried.add(v);v.retryAt=0;v.error=undefined;v.loaded=false;v.retryRequested=true;void this.loadViewport(g,id,'retry');}continue;}
+        if(historyOnly)continue;
+        if(g.native){
+          if(c.id&&g.native.history?.progress(c.id)?.retryable){g.native.history.retry(c.id);if(!g.native.error)continue;}
+          if(g.native.error){g.native.error=undefined;g.native.retryAt=0;g.native.failures=0;void this.load(g);this.nativeStatus(g);}
+          else if(!g.ws){g.retryAt=0;this.connect(g);if(!g.native.ready)void this.load(g);}
+          continue;
+        }
+        if(g.rowPrice!==undefined&&g.cursor===undefined)g.bootstrapRetry=true;
+        g.retryAt=0;g.failures=0;g.ws?.close();g.ws=undefined;
+        if(g.rowPrice!==undefined&&g.cursor!==undefined){this.connect(g);if(g.history)void this.loadOlder(g);}else void this.load(g);
+      }
     } else if (c.type === 'online') {
       this.online = c.online;
       for (const g of this.groups.values()) {
-        if (!c.online) {for(const v of g.views.values())v.abort?.abort();g.abort?.abort(); g.historyAbort?.abort(); g.ws?.close(); g.ws = undefined; this.status(g, 'stale', 'Staging · offline; retained data preserved'); }
-        else { g.retryAt = 0; if (g.rowPrice !== undefined && g.cursor !== undefined) { this.connect(g); if (g.history) void this.loadOlder(g); } else void this.load(g); }
+        if (!c.online) {for(const v of g.views.values())v.abort?.abort();g.abort?.abort(); g.historyAbort?.abort(); g.ws?.close(); g.ws = undefined;g.native?.history?.setOnline(false); this.status(g, 'stale', 'Staging · offline; retained data preserved'); }
+        else { g.retryAt = 0; if(g.native){this.connect(g);if(!g.native.ready)void this.load(g);g.native.history?.setOnline(true);} else if (g.rowPrice !== undefined && g.cursor !== undefined) { this.connect(g); if (g.history) void this.loadOlder(g); } else void this.load(g); }
       }
     }
   }
+  private releaseViewport(g:Group,id:string){
+    const view=g.views.get(id);if(!view)return;g.views.delete(id);view.consumers.delete(id);if(!view.consumers.size)view.abort?.abort();
+  }
   private unsubscribe(id: string) {
     const key = this.clients.get(id); this.clients.delete(id); const g = key && this.groups.get(key);
-    if (!g) return;g.views.get(id)?.abort?.abort();g.views.delete(id);g.ids.delete(id);
-    if (!g.ids.size) {for(const v of g.views.values())v.abort?.abort();g.abort?.abort(); g.historyAbort?.abort(); g.ws?.close(); g.accumulator?.dispose(); this.groups.delete(g.key); }
+    if (!g) return;g.native?.history?.release(id);this.releaseViewport(g,id);g.ids.delete(id);
+    if (!g.ids.size) {g.native?.history?.dispose();for(const v of g.views.values())v.abort?.abort();g.abort?.abort(); g.historyAbort?.abort(); g.ws?.close(); g.accumulator?.dispose(); this.groups.delete(g.key); }
   }
+  private readonly historyLoadAttempts:Array<{at:number;cause:string;consumer:string;generation:number;from:number;to:number;viewKey:string;previousProgressId?:string;loaded:boolean;validated:boolean}>=[];
   private refresh() {
+    this.nativePresentation.expire();
     for (const g of this.groups.values()) {
       if (g.rowPrice !== undefined) this.expireLivePreviews(g);
       if (g.ws && g.streamAt && this.now() - g.streamAt > 15000) { g.ws.close(); g.ws = undefined; this.status(g, 'stale', 'Staging · stream heartbeat expired; replay pending'); }
-      if (!g.ws && this.online && this.now() >= g.retryAt) { if (g.rowPrice !== undefined && g.cursor !== undefined) { this.connect(g); if (g.history) void this.loadOlder(g); } else void this.load(g); }
-      if(this.online&&this.usePrepared&&g.accumulator)for(const [id,v] of g.views)if((!v.loaded||this.now()-(v.validatedAt??0)>30000)&&!v.busy&&this.now()>=g.retryAt)void this.loadViewport(g,id);
+      if (!g.ws && this.online && this.now() >= g.retryAt) { if(g.native)this.connect(g); else if (g.rowPrice !== undefined && g.cursor !== undefined) { this.connect(g); if (g.history) void this.loadOlder(g); } else void this.load(g); }
+      if(g.native&&this.online){
+        if(!g.native.ready&&!g.busy&&this.now()>=g.native.retryAt)void this.load(g);
+        if(g.ws&&g.native.receivedAt!==undefined&&this.now()-g.native.receivedAt>15000)this.nativeStatus(g);
+      }
+      if(this.online&&this.usePrepared)for(const [id,v] of g.views)if((!v.loaded||this.now()-(v.validatedAt??0)>30000)&&!v.busy&&this.now()>=(v.retryAt??0))void this.loadViewport(g,id,'refresh');
       if (this.online && g.history && g.history.next > g.history.target && !g.historyBusy && !g.historyError && g.cursor !== undefined) void this.loadOlder(g);
     }
   }
@@ -134,13 +197,15 @@ export class StagingFeedService {
       const url = new URL('/market-data/v1/stream', base.replace(/^http/, 'ws'));
       if (marketOf(g.series) === 'spot') url.searchParams.set('market', 'spot');
       const ws = this.socket(url.href); g.ws = ws; g.streamAt = this.now();
+      if(g.executionProof){g.executionProof.socketStarts++;g.pendingExecutionAck=undefined;}
       ws.onopen = () => { if (g.ws !== ws) return; ws.send(JSON.stringify({ type: 'subscribe', after: g.cursor ?? 0, from: Math.max(g.from ?? this.now() - 900000, this.now() - 4 * 3600000 + 1000), ...(g.rowPrice === undefined ? { interval: g.series.interval } : {}), ...(marketOf(g.series) === 'spot' ? { market: 'spot' } : {}) })); };
       ws.onmessage = event => {
         if (g.ws !== ws || this.dead || !this.online) return;
         try {
-          const receivedAt = this.now(); g.streamAt = receivedAt; const data = JSON.parse(String(event.data));
-          if (data.type === 'reset') { g.historyAbort?.abort(); g.history = undefined; g.cursor = undefined; g.accumulator?.dispose(); g.accumulator = undefined; g.analysisSummaries.clear(); g.liveSummaryVersions.clear(); g.quoteAvailable.clear(); g.appliedExecutionThroughMs = null; throw new Error(data.reason); }
+          const receivedAt = this.now(),receivedMono=performance.now(); g.streamAt = receivedAt; const data = JSON.parse(String(event.data));
+          if (data.type === 'reset') { if(g.executionProof)g.executionProof.resets++;g.historyAbort?.abort(); g.history = undefined; g.cursor = undefined; g.accumulator?.dispose(); g.accumulator = undefined; g.analysisSummaries.clear(); g.liveSummaryVersions.clear(); g.quoteAvailable.clear(); g.appliedExecutionThroughMs = null; throw new Error(data.reason); }
           if (data.type === 'health') {
+            if(g.native){g.native.sourceState=data.collector?.state;this.nativeStatus(g);return;}
             const catchingUp = g.rowPrice !== undefined && g.cursor !== undefined && g.cursor < (data.watermark?.id ?? g.cursor);
             const live = !catchingUp && data.collector?.state === 'live' && this.now() - data.collector.lastUpdate < 15000;
             this.status(g, live ? 'live' : catchingUp ? 'reconnecting' : 'stale', `Staging · ${live ? 'streaming' : catchingUp ? 'replaying durable cursor' : 'ingestion recovering/stale'} · delivery ${g.lagMs ?? 0}ms`); return;
@@ -148,9 +213,15 @@ export class StagingFeedService {
           if (g.rowPrice === undefined && data.type === 'native-candle') {
             if (data.source !== 'binance-native-kline' || data.interval !== g.series.interval || !validCandle(data.candle)) throw new Error('Invalid streamed native candle');
             const c = data.candle as Candle; const old = g.candles.find(b => b.t === c.t);
-            if (old && old.revision > c.revision) return;
-            const map = new Map(g.candles.map(b => [b.t, b])); map.set(c.t, c); g.candles = [...map.values()].sort((a,b) => a.t-b.t).slice(-1000); g.lastUpdate = this.now();
-            this.emit({ type: 'patch', key: g.key, ids: [...g.ids], candles: [c] }); this.status(g, 'live', 'Staging · Binance native kline stream'); return;
+            const native=g.native!,version=native.versions.get(c.t);
+            // REST revisions are receipt times; compare exchange revisions only
+            // with other native events, and never reopen a finalized candle.
+            if ((version && version.revision > c.revision) || (old?.closed && (!c.closed || old.revision > c.revision))) return;
+            const initial=!g.candles.length;
+            native.versions.set(c.t,{sequence:++native.sequence,revision:c.revision});
+            const map = new Map(g.candles.map(b => [b.t, b])); map.set(c.t, c); this.retainNative(g,map);
+            native.receivedAt=receivedAt;g.lastUpdate=receivedAt;g.failures=0;g.retryAt=0;
+            this.emit({ type: initial?'snapshot':'patch', key: g.key, ids: [...g.ids], candles: initial?g.candles:[c],nativeVersion:{stream:native.sequence},...(initial?{merge:true}:{}) }); if(c.closed===true)native.history?.confirmClosed([c]);this.nativeStatus(g); return;
           }
           if (data.type !== 'executions' || !g.accumulator || data.version !== 1 || data.after !== g.cursor || !Number.isSafeInteger(data.cursor) || data.cursor <= (g.cursor ?? 0) || !Array.isArray(data.executions) || !data.executions.length || data.executions.length > 1000 || !data.coverage) throw new Error('Invalid durable execution batch');
           let previous = g.cursor!;
@@ -160,7 +231,8 @@ export class StagingFeedService {
             previous = t.id;
           }
           if (previous !== data.cursor) throw new Error('Batch cursor mismatch');
-          for (const t of data.executions) { if (t.id !== g.cursor! + 1) g.accumulator.markGap(t.timeMs); g.accumulator.ingest({ ...t, quoteNotionalText: String(t.quoteNotional), market: marketOf(g.series) }); g.cursor = t.id; g.appliedExecutionThroughMs = Math.max(g.appliedExecutionThroughMs ?? 0, t.timeMs); }
+          let sourceJumps=0;
+          for (const t of data.executions) { if (t.id !== g.cursor! + 1) {sourceJumps++;g.accumulator.markGap(t.timeMs);} g.accumulator.ingest({ ...t, quoteNotionalText: String(t.quoteNotional), market: marketOf(g.series) }); g.cursor = t.id; g.appliedExecutionThroughMs = Math.max(g.appliedExecutionThroughMs ?? 0, t.timeMs); }
           g.lastUpdate = data.collector.lastUpdate; const priorGaps = g.lastCoverage?.gaps?.filter((x:any)=>x.reason !== 'not yet confirmed by durable execution watermark') ?? []; data.coverage.gaps = [...new Map([...data.coverage.gaps, ...priorGaps].map((x:any)=>[`${x.from}:${x.to}:${x.reason}`,x])).values()].slice(-512);
           g.lastCoverage = data.coverage; g.lagMs = Math.max(0, this.now() - data.sentAt);
           const caughtUp = g.cursor === data.watermark;
@@ -184,10 +256,16 @@ export class StagingFeedService {
             bars:g.bars.filter(b=>dirty.has(b.time) || previousBars.get(b.time)?.coverage !== b.coverage),
             analysisSummaries: [...g.analysisSummaries.values()], retentionStart:g.bars[0]?.time??null,status });
           ws.send(JSON.stringify({ type:'ack',cursor:g.cursor })); g.failures=0;
-        } catch (e) { this.status(g, 'stale', `Staging stream · ${e instanceof Error ? e.message : 'invalid data'} · replay pending`); ws.close(); }
+          const proof=g.executionProof!;
+          if(g.pendingExecutionAck===data.after){proof.confirmedAckBatches++;proof.lastConfirmedAckCursor=data.after;}
+          proof.appliedBatches++;proof.appliedExecutions+=data.executions.length;proof.acksSent++;proof.sourceCursorJumps+=sourceJumps;
+          proof.maxApplyMs=Math.max(proof.maxApplyMs,performance.now()-receivedMono);
+          if(proof.lastReceiptMonoMs!==undefined)proof.maxReceiptGapMs=Math.max(proof.maxReceiptGapMs,receivedMono-proof.lastReceiptMonoMs);
+          proof.lastReceiptMonoMs=receivedMono;proof.lastAfter=data.after;proof.lastAppliedCursor=g.cursor;g.pendingExecutionAck=g.cursor;
+        } catch (e) { if(g.executionProof)g.executionProof.errors++;this.status(g, 'stale', `Staging stream · ${e instanceof Error ? e.message : 'invalid data'} · replay pending`); ws.close(); }
       };
       ws.onerror = () => ws.close();
-      ws.onclose = () => { if (g.ws !== ws) return; g.ws=undefined; g.failures=Math.min(10,g.failures+1); g.retryAt=this.now()+Math.min(30000,500*2**g.failures); this.status(g,'stale','Staging · disconnected; retained data preserved; cursor replay pending'); };
+      ws.onclose = () => { if (g.ws !== ws) return; if(g.executionProof)g.executionProof.disconnects++;g.ws=undefined; g.failures=Math.min(10,g.failures+1); g.retryAt=this.now()+Math.min(30000,500*2**g.failures); this.status(g,'stale','Staging · disconnected; retained data preserved; cursor replay pending'); };
     } catch (e) { g.retryAt=this.now()+2000; this.status(g,'stale',`Staging stream unavailable · ${String(e)}`); }
   }
   private publish(g: Group, event: Envelope) {
@@ -216,7 +294,11 @@ export class StagingFeedService {
       coverage: historicalGaps.length ? 'gapped' : g.bars.some(b => b.coverage === 'capacity-limited') ? 'capacity-limited' : 'partial' };
   }
   private status(g: Group, state: FootprintStatus['state'], message: string) {
-    if (g.rowPrice === undefined) this.emit({ type: 'status', key: g.key, ids: [...g.ids], status: { state, message, lastUpdate: g.lastUpdate } });
+    if (g.rowPrice === undefined) {
+      const text=message+(g.native?.error?` · history: ${g.native.error} · Retry available`:g.native&&!g.native.ready?' · history loading':'');
+      for(const id of g.ids)this.emit({type:'status',key:g.key,ids:[id],status:{state,message:text,lastUpdate:g.lastUpdate,
+        ...(g.native?{nativeHistory:{state:g.native.error?'failed' as const:g.native.ready?'ready' as const:'loading' as const,error:g.native.error,loadedBars:g.candles.length,viewport:g.native.history?.progress(id)}}:{})}});
+    }
     else {
       if (state !== 'live') this.revokeLivePreviews(g);
       const status = g.lastStatus ? { ...g.lastStatus, history:this.historyState(g), state, message: this.historyMessage(g, message) } : this.footprintStatus(g, state, message);
@@ -226,6 +308,33 @@ export class StagingFeedService {
     }
   }
 
+  private nativeStatus(g:Group){
+    const native=g.native!;
+    const fresh=!!g.ws&&(native.sourceState===undefined||native.sourceState==='live')&&native.receivedAt!==undefined&&this.now()-native.receivedAt<=15000;
+    const state=fresh?'live':native.receivedAt!==undefined?'stale':native.error&&!g.candles.length?'failed':'loading';
+    this.status(g,state,fresh?'Staging · Binance native candle stream':native.receivedAt!==undefined?'Staging · native candle updates stale; awaiting current data':'Staging · awaiting native candle stream');
+  }
+  private retainNative(g:Group,map:Map<number,Candle>){
+    g.candles=[...map.values()].sort((a,b)=>a.t-b.t).slice(-1000);
+    const retained=new Set(g.candles.map(c=>c.t));
+    for(const time of g.native!.versions.keys())if(!retained.has(time))g.native!.versions.delete(time);
+  }
+  private applyNativeHistory(g:Group,id:string,bars:Candle[],version:NativeCandleVersion,at:number){
+    if(this.dead||!this.online||this.groups.get(g.key)!==g||!g.ids.has(id))return [];
+    const accepted:Candle[]=[],covered:number[]=[],currentByTime=new Map(g.candles.map(c=>[c.t,c]));
+    for(const candle of bars){
+      const current=currentByTime.get(candle.t),stream=g.native!.versions.get(candle.t);
+      // Presentation cannot replace any bar already owned by the native group.
+      if(version.request===0&&current)continue;
+      if(current?.closed&&!candle.closed)continue;
+      if(stream&&(stream.sequence>version.stream||!candle.closed||candle.t+duration[g.series.interval]>at)){
+        if(current?.closed)covered.push(candle.t);continue;
+      }
+      accepted.push(candle);covered.push(candle.t);
+    }
+    if(accepted.length)this.emit({type:'snapshot',merge:true,nativeVersion:version,key:g.key,ids:[id],candles:accepted});
+    return covered;
+  }
   private revokeLivePreviews(g: Group) {
     for (const [time, summary] of g.analysisSummaries) {
       const revoked = withoutLiveFootprintPreview(summary);
@@ -233,62 +342,87 @@ export class StagingFeedService {
     }
   }
   private async load(g: Group) {
-    if (g.busy || !this.online || this.dead || this.now() < g.retryAt) return;
-    g.busy = true; const abort = new AbortController(); g.abort = abort;
+    if (g.busy || !this.online || this.dead || this.now() < (g.native?.retryAt??g.retryAt)) return;
+    g.busy = true; const bootstrapRetry = g.bootstrapRetry === true;
+    const nativeSequence=g.native?.sequence??0,nativeRequestedAt=this.now();
+    const nativeReadVersion=g.native?{stream:nativeSequence,request:++g.native.readOrder}:undefined;
+    const abort = new AbortController(); g.abort = abort;
     // A full retained candle history can take about 45s to transfer through the
     // staging tunnel. Keep the short bound for the smaller footprint bootstrap.
     const timeoutMs = g.rowPrice === undefined ? NATIVE_CANDLE_HISTORY_TIMEOUT_MS : FOOTPRINT_BOOTSTRAP_TIMEOUT_MS;
-    const timeout = setTimeout(() => abort.abort(), timeoutMs);
+    let timedOut=false;
+    const timeout = setTimeout(() => {timedOut=true;abort.abort();}, timeoutMs);
     try {
       // Identical UTC boundaries across timeframe changes; each response captures one committed watermark.
       const to = this.now(), from = Math.floor((to - 15 * 60000) / duration[g.series.interval]) * duration[g.series.interval];
       const marketQuery = marketOf(g.series) === 'spot' ? '&market=spot' : '';
       const path = g.rowPrice === undefined ? `/v1/native-candles?interval=${g.series.interval}${marketQuery}`
+        : this.usePrepared ? `/v2/history/footprint-current?interval=${g.series.interval}&rowPrice=${g.rowPrice}${marketQuery}${bootstrapRetry?'&retry=1':''}`
         : `/v1/footprints?from=${from}&to=${to}&interval=${g.series.interval}&rowPrice=${g.rowPrice}${marketQuery}`;
       const response = await this.request(`/market-data${path}`, { signal: abort.signal });
       const data = await readStagingJson(response,'Staging history');
-      if (this.groups.get(g.key) !== g || this.dead || !this.online) return;
+      if (this.groups.get(g.key) !== g || this.dead || !this.online || abort.signal.aborted) return;
+      // Only the request that carried Retry may acknowledge it. A normal poll
+      // already in flight must leave a later explicit Retry queued.
+      if(g.rowPrice!==undefined&&this.usePrepared&&bootstrapRetry)g.bootstrapRetry=false;
+      if (g.rowPrice !== undefined && this.usePrepared && data.state && data.state !== 'ready') {
+        g.retryAt = this.now() + 1000;
+        this.status(g, data.state === 'unavailable' ? 'failed' : 'loading', data.error ?? 'Staging · preparing authoritative current execution state');
+        return;
+      }
       if (g.rowPrice === undefined) {
-        if (data.source !== 'binance-native-kline' || !Array.isArray(data.candles) || data.candles.length > 1000 || !data.candles.every(validCandle)) throw new Error('Invalid staging native candles');
-        const previous = new Map(g.candles.map(c => [c.t, c]));
-        const changes = data.candles.filter((c: Candle) => {
-          const old = previous.get(c.t);
-          return !old || ['o', 'h', 'l', 'c', 'v', 'closed'].some(field => (old as any)[field] !== (c as any)[field]);
-        });
-        const initial = !g.candles.length;
-        g.candles = data.candles; g.lastUpdate = this.now();
-        if (initial || changes.length) this.emit({ type: initial ? 'snapshot' : 'patch', key: g.key, ids: [...g.ids], candles: initial ? g.candles : changes });
-        g.cursor = 0; g.from = from; this.status(g, 'live', 'Staging · native Binance candle history loaded; connecting stream');
+        if (data.source !== 'binance-native-kline' || data.market!==undefined&&data.market!==marketOf(g.series) || data.instrument!==undefined&&data.instrument!==`${instrumentKey(g.series)}:${instrumentOf(g.series).native}` || !Array.isArray(data.candles) || data.candles.length > 1000 || !data.candles.every(validCandle)) throw new Error('Invalid staging native candles');
+        const initial=!g.candles.length,map=new Map(g.candles.map(c=>[c.t,c])),changes:Candle[]=[],confirmed:Candle[]=[];
+        for(const c of data.candles as Candle[]){
+          const old=map.get(c.t),version=g.native!.versions.get(c.t);
+          // The REST response has no exchange event cursor. It may repair closed
+          // history observed before this request, but cannot replace a stream
+          // update received in flight or a live/forming bar with ambiguous order.
+          if(old?.closed&&!c.closed)continue;
+          if(version&&(version.sequence>nativeSequence||!c.closed||c.t+duration[g.series.interval]>nativeRequestedAt))continue;
+          map.set(c.t,c);if(c.closed===true)confirmed.push(c);
+          if(!old||['o','h','l','c','v','closed','quoteVolume'].some(field=>(old as any)[field]!==(c as any)[field]))changes.push(c);
+        }
+        this.retainNative(g,map);g.native!.ready=true;g.native!.error=undefined;g.native!.retryAt=0;g.native!.failures=0;
+        // Large historical imports must rebuild the chart series once rather
+        // than rebuilding its data/accessibility indexes for every old bar.
+        // Merge at the consumer preserves older displayed bars beyond this
+        // worker's bounded replay cache; forming source state is already merged.
+        const bulk=!initial&&changes.length>=NATIVE_HISTORY_BULK_MIN_BARS;
+        if(initial||changes.length)this.emit({type:initial||bulk?'snapshot':'patch',key:g.key,ids:[...g.ids],candles:initial||bulk?g.candles:changes,nativeVersion:nativeReadVersion,...(initial||bulk?{merge:true}:{})});
+        g.native!.history?.confirmClosed(confirmed);this.nativeStatus(g);
       } else {
         const source = footprintSource(marketOf(g.series));
         if (data.version !== 1 || data.source !== source || !Array.isArray(data.bars) || data.bars.length > 300 || !data.bars.every((bar: unknown) => validBackendBar(bar, marketOf(g.series))) || !Number.isSafeInteger(data.watermark) || !data.coverage || !Number.isFinite(data.tickSize)) throw new Error('Invalid staging footprint contract');
-        const oldBars = g.bars;
-        g.bars = data.bars; g.cursor = data.cursor ?? data.watermark; g.from = from;
-        g.analysisSummaries.clear(); g.liveSummaryVersions.clear(); g.quoteAvailable.clear();
+        const bootstrapBars = data.bars as FootprintBar[];
+        g.bars = boundedFootprintHistory([...bootstrapBars, ...g.bars.filter(bar => g.preparedTimes.has(bar.time))]); g.cursor = data.cursor ?? data.watermark; g.from = data.coverage?.from ?? from;
+        g.liveSummaryVersions.clear(); g.quoteAvailable.clear();
         const caughtUp = g.cursor === data.watermark;
         g.appliedExecutionThroughMs = caughtUp ? data.coverage.confirmedTo
           : Math.max(0, ...g.bars.map(bar => bar.time * 1000));
-        for (const bar of g.bars) g.quoteAvailable.set(bar.time, hasQuoteProjection(bar));
-        g.bars = g.bars.map(bar => applyQuoteAvailability(bar, g.quoteAvailable.get(bar.time) === true));
+        for (const bar of bootstrapBars) g.quoteAvailable.set(bar.time, hasQuoteProjection(bar));
+        g.bars = g.bars.map(bar => applyQuoteAvailability(bar, g.preparedTimes.has(bar.time) ? hasQuoteProjection(bar) : g.quoteAvailable.get(bar.time) === true));
         const ticks = footprintTicksForPrice(g.rowPrice!, data.tickSize); if (ticks === null) throw new Error('Invalid staging tick size');
-        g.accumulator = new FootprintAccumulator(g.series.interval, data.tickSize, ticks); g.accumulator.restore(g.bars);
+        g.accumulator = new FootprintAccumulator(g.series.interval, data.tickSize, ticks); g.accumulator.restore(bootstrapBars);
         retainMutableQuoteAvailability(g, g.accumulator.snapshot());
         const analysisSourceKey = footprintAnalysisSourceKey(marketOf(g.series), g.series.interval);
-        for (const bar of g.bars) this.mergeSummary(g, durableFootprintAnalysisSummary(
+        for (const bar of bootstrapBars) if (!g.preparedTimes.has(bar.time)) this.mergeSummary(g, durableFootprintAnalysisSummary(
           applyQuoteAvailability(bar, g.quoteAvailable.get(bar.time) === true), analysisSourceKey, g.series.interval,
           data.coverage, g.appliedExecutionThroughMs ?? 0, caughtUp, this.now(), data.status?.state === 'live'));
-        g.preparedTimes.clear();for(const v of g.views.values()){v.loaded=false;v.validatedAt=undefined;}
+
         g.lastCoverage = data.coverage; g.lastUpdate = Number(data.status?.lastUpdate ?? 0);
-        const live = data.status?.state === 'live' && this.now() - g.lastUpdate < 15000;
-        const status = this.footprintStatus(g, live ? 'live' : 'stale', `Staging · retained aggTrades · ${g.bars.length} bars · ${data.coverage.gaps.length} coverage gap(s)${live ? '' : ' · ingestion recovering/stale'}`, data);
+        const fresh = data.status?.state === 'live' && this.now() - g.lastUpdate < 15000;
+        // A fresh authoritative snapshot is displayable, but its cursor does
+        // not confirm that the newly opening live transport is delivering.
+        const status = this.footprintStatus(g, fresh ? 'loading' : 'stale', `Staging · retained aggTrades · ${g.bars.length} bars · ${data.coverage.gaps.length} coverage gap(s)${fresh ? ' · awaiting live execution stream' : ' · ingestion recovering/stale'}`, data);
         g.lastStatus = status;
-        const snapshot = !oldBars.length || oldBars[0]?.time !== g.bars[0]?.time;
-        const previous = new Map(oldBars.map(b => [b.time, b]));
-        const changed = snapshot ? g.bars : g.bars.filter(b => JSON.stringify(previous.get(b.time)) !== JSON.stringify(b));
-        this.publish(g, { type: snapshot ? 'footprint-snapshot' : 'footprint-patch', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0,
-          bars: changed, analysisSummaries: [...g.analysisSummaries.values()], retentionStart: g.bars[0]?.time ?? null, status });
+        // Authoritative bootstrap replaces the presentation atomically, including
+        // retained prepared bars. A live append would auto-follow and move a
+        // restored range even when this first forming bar is contiguous.
+        this.publish(g, { type: 'footprint-snapshot', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0,
+          bars: g.bars, analysisSummaries: [...g.analysisSummaries.values()], retentionStart: g.bars[0]?.time ?? null, status });
       }
-      g.failures = 0; g.retryAt = 0; this.connect(g);
+      if(!g.native){g.failures = 0; g.retryAt = 0;} this.connect(g);
       if (g.rowPrice !== undefined && !this.usePrepared) {
         const step = duration[g.series.interval];
         const end = Math.floor(from / step) * step;
@@ -297,25 +431,34 @@ export class StagingFeedService {
         void this.loadOlder(g);
       }
     } catch (error) {
-      if (this.groups.get(g.key) !== g || this.dead) return;
+      if (this.groups.get(g.key) !== g || this.dead || (abort.signal.aborted&&!timedOut)) return;
+      if(g.native){
+        if(!this.online)return;
+        g.native.failures=Math.min(10,g.native.failures+1);g.native.retryAt=this.now()+Math.min(30000,1000*2**g.native.failures);
+        g.native.error=error instanceof Error?error.message:'request failed';this.nativeStatus(g);return;
+      }
       g.failures = Math.min(10, g.failures + 1); g.retryAt = this.now() + Math.min(30000, 1000 * 2 ** g.failures);
       this.status(g, g.bars.length || g.candles.length ? 'stale' : 'failed', `Staging unavailable · ${error instanceof Error ? error.message : 'request failed'} · retrying; Retry available`);
     } finally { clearTimeout(timeout); g.busy = false; g.abort = undefined; }
   }
-  private async loadViewport(g: Group, id: string) {
+  private async loadViewport(g: Group, id: string,cause='unspecified') {
     const view = g.views.get(id);
-    if (!view || view.busy || !g.accumulator) return;
-    view.busy = true; view.abort = new AbortController();
+    if (!view || view.busy || !this.online) return;
+    if(import.meta.env.VITE_DIAGNOSTICS==='1'){this.historyLoadAttempts.push({at:performance.now(),cause,consumer:id,generation:g.generation,from:view.from,to:view.to,viewKey:view.key,previousProgressId:view.progress?.viewId,loaded:view.loaded===true,validated:view.validatedAt!==undefined});if(this.historyLoadAttempts.length>16)this.historyLoadAttempts.shift();}
+    view.busy = true; const abort=new AbortController();view.abort=abort;
+    const retry = view.retryRequested === true; view.retryRequested = false;
     const requestLiveVersion = g.streamRevision;
     const step = duration[g.series.interval];
     // A flip at the first visible candle needs its predecessor plus N reference
     // deltas. Disabled analysis has no offscreen warmup demand.
     const analysisFrom = view.analysisEnabled ? Math.max(step, view.candidateFrom - (view.analysisLookback + 1) * step) : view.from;
     try {
-      await this.prepared.load(view.from, view.to, g.series.interval, g.rowPrice!, view.abort.signal,
-        (bars, complete, validated, analysis) => {
-          if (view.abort!.signal.aborted || g.views.get(id) !== view || this.groups.get(g.key) !== g || !g.accumulator) return;
+      await this.prepared.load(view.from, view.to, g.series.interval, g.rowPrice!, abort.signal,
+        (bars, complete, validated, analysis, progress) => {
+          if (abort.signal.aborted || !view.consumers.size || this.groups.get(g.key) !== g) return;
           if (!bars.every((bar: unknown) => validBackendBar(bar, marketOf(g.series)))) throw Error('Invalid historical footprint bars');
+          if (progress) view.progress = progress;
+          view.error = undefined; view.retryAt = 0;
           const beforeBarsKey = barRevisionKey(g.bars);
           const wasLoaded = view.loaded === true;
           const wasValidated = view.validatedAt !== undefined;
@@ -329,7 +472,7 @@ export class StagingFeedService {
               if ((g.liveSummaryVersions.get(summary.time) ?? 0) > requestLiveVersion) continue;
               const allowPreview = g.lastStatus?.state === 'live' && this.now() - g.lastStatus.lastUpdate <= 15_000;
               const safeSummary = allowPreview ? summary : withoutLiveFootprintPreview(summary);
-              summariesChanged = this.mergeSummary(g, safeSummary) || summariesChanged;
+              summariesChanged = this.mergeSummary(g, safeSummary, analysis.invalidatedTimes?.includes(summary.time)) || summariesChanged;
             }
             this.trimAnalysisSummaries(g);
           }
@@ -341,29 +484,32 @@ export class StagingFeedService {
           // Prepared projections are independent presentation/analysis data.
           // They must not seed the mutable accumulator's quote anchor.
           const presentationBars = bars.map(bar => applyQuoteAvailability(bar, hasQuoteProjection(bar)));
-          const candidates = [...g.bars.filter(bar => !complete || !validated || bar.time * 1000 < view.from || bar.time * 1000 >= Math.min(view.to, liveStart)),
+          const removed = new Set(progress?.slots.filter(slot => slot.validated && slot.state === 'empty').map(slot => slot.from / 1000) ?? []);
+          const candidates = [...g.bars.filter(bar => !removed.has(bar.time)),
             ...presentationBars.filter(bar => bar.time * 1000 < liveStart)];
           g.bars = boundedFootprintHistory(candidates, this.visibleTimes(g, candidates));
           const retained = new Set(g.bars.map(bar => bar.time));
+          if (view.progress) view.progress = { ...view.progress, capacityLimited: presentationBars.some(bar => !retained.has(bar.time)) };
+          if (view.progress?.capacityLimited) { view.loaded = false; view.error = 'Configured footprint bar/cell budget cannot retain the requested view'; view.retryAt = Infinity; }
           g.preparedTimes = new Set([...g.preparedTimes].sort((a, b) => Number(retained.has(b)) - Number(retained.has(a)) || b - a).slice(0, FOOTPRINT_MAX_BARS));
-          view.loaded = complete; if (complete && validated) view.validatedAt = this.now();
+          view.loaded = complete && !view.progress?.capacityLimited; if (view.loaded && validated) view.validatedAt = this.now();
           const status = this.footprintStatus(g, g.lastStatus?.state ?? 'loading',
-            `Staging · ${validated ? 'validated' : 'cached; validating'} visible footprints${complete ? '' : ' · loading history'}`,
-            { coverage: g.lastCoverage, tickSize: .1 });
+            g.lastStatus?.message ?? 'Staging · connecting live executions',
+            { coverage: g.lastCoverage, tickSize: marketOf(g.series) === 'spot' ? .01 : .1 });
           g.lastStatus = status;
           const barsChanged = beforeBarsKey !== barRevisionKey(g.bars);
           if (barsChanged) this.publish(g, { type: 'footprint-snapshot', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0,
             bars: g.bars, analysisSummaries: [...g.analysisSummaries.values()], retentionStart: g.bars[0]?.time ?? null, status });
           else if (summariesChanged || wasLoaded !== complete || wasValidated !== (complete && validated)) this.publish(g, { type: 'footprint-status', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0,
             status, analysisSummaries: [...g.analysisSummaries.values()] });
-        }, marketOf(g.series), analysisFrom);
+        }, marketOf(g.series), analysisFrom, retry);
     } catch (error) {
-      if (!view.abort.signal.aborted) {
-        g.historyError = error instanceof Error ? error.message : String(error); g.retryAt = this.now() + 2000;
-        this.status(g, 'stale', `Staging visible footprints · ${g.historyError}`);
+      if (!abort.signal.aborted) {
+        view.error = error instanceof Error ? error.message : String(error); view.retryAt = this.now() + 5000;
+        this.status(g, g.lastStatus?.state ?? 'loading', g.lastStatus?.message ?? 'Staging · connecting live executions');
       }
     } finally {
-      view.busy = false;
+      if(view.abort===abort)view.busy = false;
     }
   }
   private updateDurableSummaries(g: Group, bars: readonly FootprintBar[], coverage: unknown, appliedThroughMs: number, caughtUp: boolean, streamRevision: number, allowPreview: boolean) {
@@ -380,12 +526,12 @@ export class StagingFeedService {
     return changed;
   }
 
-  private mergeSummary(g: Group, summary: FootprintAnalysisSummary) {
+  private mergeSummary(g: Group, summary: FootprintAnalysisSummary, invalidate = false) {
     const previous = g.analysisSummaries.get(summary.time);
     if (previous && previous.revisionSource === summary.revisionSource) {
       if (previous.revision > summary.revision) return false;
       if (previous.revision === summary.revision && summary.revisionSource === 'prepared-content-hash'
-        && previous.coverageEvidence.validated && !summary.coverageEvidence.validated) return false;
+        && previous.coverageEvidence.validated && !summary.coverageEvidence.validated && !invalidate) return false;
     }
     if (previous && JSON.stringify(previous) === JSON.stringify(summary)) return false;
     g.analysisSummaries.set(summary.time, summary);
@@ -409,9 +555,15 @@ export class StagingFeedService {
   }
 
   private visibleTimes(g:Group,bars:FootprintBar[]){return new Set(bars.filter(b=>b.time===g.accumulator?.latestTime||[...g.views.values()].some(v=>b.time*1000>=v.from&&b.time*1000<v.to)).map(b=>b.time));}
-  private historyState(g:Group){const views=[...g.views.values()];return {views:views.length,ready:views.every(v=>v.loaded===true),validated:views.every(v=>v.loaded===true&&v.validatedAt!==undefined)};}
+  private historyState(g:Group){
+    const views=[...new Set(g.views.values())];
+    return {views:views.length,ready:views.every(v=>v.loaded===true),validated:views.every(v=>v.loaded===true&&v.validatedAt!==undefined),
+      error:views.find(v=>v.error)?.error, ranges:views.map(v=>({from:v.from,to:v.to,progress:v.progress})),
+      capacityLimited: views.some(v=>v.progress?.capacityLimited===true)};
+  }
   private historyMessage(g: Group, message: string) {
-    return message + (g.historyError ? ` · older history incomplete: ${g.historyError} · Retry available` : g.historyBusy ? ` · loading older history (${g.bars.length} bars)` : '');
+    const current=message.split(' · older history incomplete:')[0]!.split(' · loading older history (')[0]!;
+    return current + (g.historyError ? ` · older history incomplete: ${g.historyError} · Retry available` : g.historyBusy ? ` · loading older history (${g.bars.length} bars)` : '');
   }
   /** Load complete, disjoint older bars at one durable watermark; live bars always win. */
   private async loadOlder(g: Group) {
@@ -450,7 +602,7 @@ export class StagingFeedService {
         const merged = boundedFootprintHistory([...data.bars, ...g.bars]);
         const full = merged.length === FOOTPRINT_MAX_BARS || merged.length < data.bars.length + g.bars.length;
         g.accumulator.restore(merged); retainMutableQuoteAvailability(g, g.accumulator.snapshot()); g.bars = merged; history.next = from;
-        const status = this.footprintStatus(g, g.lastStatus?.state ?? 'loading', 'Staging · retained history and durable live executions', { coverage: g.lastCoverage, tickSize: data.tickSize });
+        const status = this.footprintStatus(g, g.lastStatus?.state ?? 'loading', g.lastStatus?.message??'Staging · awaiting live execution stream', { coverage: g.lastCoverage, tickSize: data.tickSize });
         g.lastStatus = status;
         this.publish(g, { type: 'footprint-snapshot', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0,
           bars: g.bars, analysisSummaries: [...g.analysisSummaries.values()], retentionStart: g.bars[0]?.time ?? null, status });
@@ -460,11 +612,11 @@ export class StagingFeedService {
     finally {
       g.historyBusy = false;
       if (g.historyAbort === abort) g.historyAbort = undefined;
-      if (!this.dead && this.groups.get(g.key) === g && !abort.signal.aborted) this.status(g, g.lastStatus?.state ?? 'live', 'Staging · retained history and durable live executions');
+      if (!this.dead && this.groups.get(g.key) === g && !abort.signal.aborted) this.status(g, g.lastStatus?.state ?? 'loading', g.lastStatus?.message??'Staging · awaiting live execution stream');
     }
   }
-  diagnostics() { return { scheduler:historyScheduler.diagnostics(),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt })), groups: this.groups.size, subscriptions: this.clients.size, retainedLiveBars:[...this.groups.values()].reduce((n,g)=>n+(g.accumulator?.barCount??0),0),preparedClosedBars:[...this.groups.values()].reduce((n,g)=>n+g.preparedTimes.size,0),retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
-  dispose() { this.prepared.dispose();this.dead = true; clearInterval(this.timer); for (const g of this.groups.values()) { g.abort?.abort(); g.historyAbort?.abort();for(const v of g.views.values())v.abort?.abort();g.ws?.close(); g.accumulator?.dispose(); } this.groups.clear(); this.clients.clear(); }
+  diagnostics() { return {historyLoadAttempts:this.historyLoadAttempts.map(attempt=>({...attempt})), nativePresentation:this.nativePresentation.diagnostics(),scheduler:historyScheduler.diagnostics(),requests:historyRequestTraces(),config:{historyTaskYield:historyTaskYieldMode('user-visible'),historyBackgroundYield:historyTaskYieldMode(),dataMode:import.meta.env.VITE_DATA_MODE??'direct',historyTiles:this.usePrepared,build:import.meta.env.VITE_BUILD_COMMIT??'unknown'},views:[...this.groups.values()].flatMap(g=>[...new Set(g.views.values())].map(v=>({key:g.key,consumers:v.consumers.size,from:v.from,to:v.to,loaded:v.loaded,error:v.error,progress:v.progress}))),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, ...(g.executionProof?{executionProof:{generation:g.generation,...g.executionProof}}:{}), connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt, native:g.native?{historyReady:g.native.ready,historyLoading:g.busy,historyError:g.native.error,historyRetryAt:g.native.retryAt,lastCandleReceivedAt:g.native.receivedAt,retainedStreamVersions:g.native.versions.size,viewportHistory:g.native.history?.diagnostics()}:undefined })), groups: this.groups.size, subscriptions: this.clients.size, retainedLiveBars:[...this.groups.values()].reduce((n,g)=>n+(g.accumulator?.barCount??0),0),preparedClosedBars:[...this.groups.values()].reduce((n,g)=>n+g.preparedTimes.size,0),retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
+  dispose() { this.nativePresentation.clear();this.prepared.dispose();this.dead = true; clearInterval(this.timer); for (const g of this.groups.values()) { g.abort?.abort(); g.historyAbort?.abort();for(const v of g.views.values())v.abort?.abort();g.ws?.close(); g.accumulator?.dispose();g.native?.history?.dispose(); } this.groups.clear(); this.clients.clear(); }
 }
 
 function hasQuoteProjection(bar: FootprintBar) {

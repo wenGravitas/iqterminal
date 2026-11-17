@@ -1,0 +1,257 @@
+{
+  "scope": "Single diagnostic CPU-profiled browser; sampled stack self time includes profiler/OS scheduling effects, not exclusive network phases or an acceptance cohort.",
+  "source": "wall13d-f82-perp-profile-r1-walls-30h-perp-15m-1.cpuprofile",
+  "sha256": "6c7a989e4e163d4ba0c37a3a1dbd5e2af9bf85dab4c9b01fce509e98d17061d7",
+  "topSelfTime": [
+    {
+      "sampledMs": 2304.1710000000016,
+      "frame": {
+        "functionName": "(program)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      }
+    },
+    {
+      "sampledMs": 1508.8329999999985,
+      "frame": {
+        "functionName": "(idle)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      }
+    },
+    {
+      "sampledMs": 1207.5849999999996,
+      "frame": {
+        "functionName": "worker.onmessage",
+        "scriptId": "6",
+        "url": "http://127.0.0.1:4187/assets/index-CjdczTNn.js",
+        "lineNumber": 1,
+        "columnNumber": 7109
+      }
+    },
+    {
+      "sampledMs": 953.8160000000004,
+      "frame": {
+        "functionName": "(garbage collector)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      }
+    },
+    {
+      "sampledMs": 737.649,
+      "frame": {
+        "functionName": "setDrawable",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 30,
+        "columnNumber": 459464
+      }
+    },
+    {
+      "sampledMs": 533.2220000000001,
+      "frame": {
+        "functionName": "updateReference",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 30,
+        "columnNumber": 449046
+      }
+    },
+    {
+      "sampledMs": 424.36200000000014,
+      "frame": {
+        "functionName": "project",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 30,
+        "columnNumber": 464380
+      }
+    },
+    {
+      "sampledMs": 420.36099999999993,
+      "frame": {
+        "functionName": "frame",
+        "scriptId": "4",
+        "url": "",
+        "lineNumber": 5,
+        "columnNumber": 16
+      }
+    },
+    {
+      "sampledMs": 346.919,
+      "frame": {
+        "functionName": "patchOrderWalls",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 32,
+        "columnNumber": 40706
+      }
+    },
+    {
+      "sampledMs": 268.32900000000006,
+      "frame": {
+        "functionName": "compileTopPaths",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 30,
+        "columnNumber": 458454
+      }
+    },
+    {
+      "sampledMs": 264.829,
+      "frame": {
+        "functionName": "topLevelPaintPaths",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 30,
+        "columnNumber": 456256
+      }
+    },
+    {
+      "sampledMs": 221.485,
+      "frame": {
+        "functionName": "projectIndex",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 30,
+        "columnNumber": 463772
+      }
+    },
+    {
+      "sampledMs": 215.36699999999993,
+      "frame": {
+        "functionName": "patch",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 30,
+        "columnNumber": 446443
+      }
+    },
+    {
+      "sampledMs": 210.876,
+      "frame": {
+        "functionName": "draw",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 30,
+        "columnNumber": 451256
+      }
+    },
+    {
+      "sampledMs": 197.39199999999994,
+      "frame": {
+        "functionName": "",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "sampledMs": 160.17499999999995,
+      "frame": {
+        "functionName": "a",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 30,
+        "columnNumber": 458480
+      }
+    },
+    {
+      "sampledMs": 110.404,
+      "frame": {
+        "functionName": "rememberClosed",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 30,
+        "columnNumber": 449687
+      }
+    },
+    {
+      "sampledMs": 109.68800000000002,
+      "frame": {
+        "functionName": "iH",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 56,
+        "columnNumber": 31364
+      }
+    },
+    {
+      "sampledMs": 100.75499999999998,
+      "frame": {
+        "functionName": "r",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 30,
+        "columnNumber": 456509
+      }
+    },
+    {
+      "sampledMs": 97.54,
+      "frame": {
+        "functionName": "",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 1,
+        "columnNumber": 140862
+      }
+    },
+    {
+      "sampledMs": 88.86000000000003,
+      "frame": {
+        "functionName": "changedClosedPaint",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 30,
+        "columnNumber": 460230
+      }
+    },
+    {
+      "sampledMs": 88.29699999999998,
+      "frame": {
+        "functionName": "",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 33,
+        "columnNumber": 346109
+      }
+    },
+    {
+      "sampledMs": 73.76,
+      "frame": {
+        "functionName": "projectAll",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 30,
+        "columnNumber": 462556
+      }
+    },
+    {
+      "sampledMs": 70.41699999999999,
+      "frame": {
+        "functionName": "renderStatus",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 30,
+        "columnNumber": 387246
+      }
+    },
+    {
+      "sampledMs": 67.17099999999999,
+      "frame": {
+        "functionName": "LP",
+        "scriptId": "8",
+        "url": "http://127.0.0.1:4187/assets/main-DMKy5aKW.js",
+        "lineNumber": 32,
+        "columnNumber": 159632
+      }
+    }
+  ]
+}

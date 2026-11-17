@@ -1,0 +1,26 @@
+{
+  "error": "Error: parent: Prepared wall discovery HTTP 503: Historical read capacity reserved for current data; retry",
+  "captures": [],
+  "requests": [
+    {
+      "at": 5173.705813999999,
+      "path": "/market-data/v2/history/walls/discover",
+      "from": 1794781800000,
+      "to": 1794890981250,
+      "consumer": "75c866f7-5feb-4536-8e34-f0f87c0ea047"
+    },
+    {
+      "at": 5181.296774999999,
+      "path": "/market-data/v2/history/walls/discover",
+      "from": 1794781800000,
+      "to": 1794890981275,
+      "consumer": "fc06bd1a-4279-4b3a-85a8-09dfb82f727a"
+    }
+  ],
+  "errors": [],
+  "consumers": [
+    "75c866f7-5feb-4536-8e34-f0f87c0ea047",
+    "fc06bd1a-4279-4b3a-85a8-09dfb82f727a"
+  ],
+  "elapsedMs": 7350.161609999999
+}

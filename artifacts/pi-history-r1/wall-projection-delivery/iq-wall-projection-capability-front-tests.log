@@ -1,0 +1,13 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+
+ Test Files  2 passed (2)
+      Tests  27 passed (27)
+   Start at  19:48:58
+   Duration  4.44s (transform 50%, tests 37%, import 12%)
+
+  Transform  transforming modules took 3.74s · 50% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+

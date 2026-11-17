@@ -1,0 +1,11 @@
+{
+  "utc": 1794560563.0289927,
+  "scope": "Single Pi resource sample during final ordinary-chart preparation; no expensive profiling",
+  "meminfo": "MemTotal:        8142664 kB\nMemFree:          216716 kB\nMemAvailable:     679820 kB\nBuffers:           10808 kB\nCached:          1433144 kB\nSwapCached:         1044 kB\nActive:          3138520 kB\nInactive:        2815656 kB\nActive(anon):    2746212 kB\nInactive(anon):  2484736 kB\nActive(file):     392308 kB\nInactive(file):   330920 kB\nUnevictable:      629044 kB\nMlocked:             408 kB\nSwapTotal:      33094924 kB\nSwapFree:       31067444 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              2988 kB\nWriteback:             0 kB\nAnonPages:       5138528 kB\nMapped:           574108 kB\nShmem:            720728 kB\nKReclaimable:     157884 kB\nSlab:             277236 kB\nSReclaimable:     157884 kB\nSUnreclaim:       119352 kB\nKernelStack:       20640 kB\nPageTables:       102420 kB\nSecPageTables:        92 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   29461756 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      331184 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:            1772 kB\n",
+  "pressure": {
+    "cpu": "not available",
+    "memory": "not available",
+    "io": "not available"
+  },
+  "vmstat": "procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----\n r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st\n12  0 2027480 216744  11092 1590744  646  679   839   737 1691 2375 48  7 44  0  0\n 7  0 2027480 216744  11092 1590744 22564 7736 23084  7736 8992 12655 76 18  6  0  0\n"
+}

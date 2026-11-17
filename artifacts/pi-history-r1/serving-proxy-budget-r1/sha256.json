@@ -1,0 +1,182 @@
+[
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/bootstrap-seeded-before-validation.png",
+    "bytes": 63794,
+    "sha256": "ca0f3db101951635c55de383715c48831fd685446f2133e701c332d3729f36d3"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/cached-before-validation.png",
+    "bytes": 61917,
+    "sha256": "c56c660a1d688f7de1d0f09e271082fb8ec5867ea740d3a554491063b2a9e9ca"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/control-build.log",
+    "bytes": 1340,
+    "sha256": "6289d44f5ac65b562745bd28334134cce20f809db3684ab09ddf468530551f00"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/environment.json",
+    "bytes": 785,
+    "sha256": "e3ac63308989ca2ae2b378ee5ee793e78e035a50916754ec89fdb84d5caaf440"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-shared3-final-build.log",
+    "bytes": 1314,
+    "sha256": "d43a88651ef20cb9af2713f5ae570e3cfb27174bf094d47954aebea02268e3ba"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-shared3-final-types.log",
+    "bytes": 90,
+    "sha256": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-shared3-final-wire.log",
+    "bytes": 1486,
+    "sha256": "d281cf6cc6789269d81bd320c0e19a118fe33c5b5ede691251a1487ec467e3a2"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-shared3-full-tests.log",
+    "bytes": 523,
+    "sha256": "d99ea4d1745bb4fe49831e3c65df35825677ffe5b8eedb6d6053d5fec808ab2c"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-shared3-native-browser.log",
+    "bytes": 884,
+    "sha256": "bd11b21d04c998398ea296a1bc78605c6384472e413c45de9e16bad876931f83"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-shared3-tests.log",
+    "bytes": 1485,
+    "sha256": "504d0cf750e710341b86208baa3dcdd5f1aeb7375a837736f91c7ed38b6a2cc9"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-shared3-typecheck.log",
+    "bytes": 1414,
+    "sha256": "f46f428803ccddf0846f4362feb3cbbe733cc0ece611b92e33bb142bfedd829e"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-shared3-typed.log",
+    "bytes": 90,
+    "sha256": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-shared3-unit.log",
+    "bytes": 679,
+    "sha256": "5c90a2fe98fa144551ebe24596de879f3b396c4f96ffc83cdce10759f614f54b"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-three-budget-build.log",
+    "bytes": 1726,
+    "sha256": "a2fd9f203d51d4231ba03cc86b0736fb85cb4f4e45bc717cb10736b045c1ef8c"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-three-budget-red.log",
+    "bytes": 1701,
+    "sha256": "d19b2fe23e7fb3aa9f6c8a01288dc790afa6fe3f132ee7679a41d3feec340449"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-three-budget-tests.log",
+    "bytes": 518,
+    "sha256": "5893a18344bcf8658613c9e5613b50022fe3a199ddb1b5715b1abb4358ee1e1a"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-three-budget-typecheck.log",
+    "bytes": 90,
+    "sha256": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-total4-final-types.log",
+    "bytes": 90,
+    "sha256": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-total4-final-unit.log",
+    "bytes": 203,
+    "sha256": "d946ce483ff4ca02f76f80a0dda43041847aa4a8d19a23822c71ea1d1bc1eb7f"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-total4-final-wire.log",
+    "bytes": 1087,
+    "sha256": "c07261bb674542f1b73ff3ed66c5a147076ef4100cdfd14fbd101d60e11763c8"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-total4-final2-types.log",
+    "bytes": 90,
+    "sha256": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-total4-final2-wire.log",
+    "bytes": 518,
+    "sha256": "37fdb6ba73a5f062bd396ae7fc600d233baf7800c61ce2aa2540bffe7b416a3c"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-total4-full-tests.log",
+    "bytes": 523,
+    "sha256": "1a331c9780c341e2d29614fe9f804958ebf51b71ef8717e6be58d635234fa4f6"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-total4-release-browser.log",
+    "bytes": 884,
+    "sha256": "3455c01d24a3555ccdb744b3d996b93522060b042b6a0e45b83eee0ba0532e48"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-total4-release-build.log",
+    "bytes": 1314,
+    "sha256": "1ad2f53916700035a808d5bc8935d9ffa41fc83acbb42b0dd54e37aaaafb5879"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/iq-proxy-total4-release-types.log",
+    "bytes": 90,
+    "sha256": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/live-native.png",
+    "bytes": 52590,
+    "sha256": "9590efbe7806f6db44437482196ff091df47050f924b6840da00b403328d00d9"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/live-smoke.json",
+    "bytes": 21704,
+    "sha256": "91b1f8c8a2f3f6109b37487f93e769e661ba35317ef8f94e02608e8a4c0f4c72"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/live-smoke.log",
+    "bytes": 42,
+    "sha256": "065c271dcbcff7458564186a04be3fcb4e4e1f6a1243939d5b157572a7c3b30d"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/live-smoke.mjs",
+    "bytes": 3602,
+    "sha256": "947659361d9e2eb017a2b3d570fd321c5a99a60925f39bffcb7f5ef0b7411d28"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/runtime-control-diff.patch",
+    "bytes": 1051,
+    "sha256": "1005fae3241d479ac47ea11a078234f17e723b7419cae73895166869d8566200"
+  },
+  {
+    "path": "artifacts/pi-history-r1/serving-proxy-budget-r1/wire-receipts.json",
+    "bytes": 16368,
+    "sha256": "13e7b09f57045d49b912d5706e5d25da4dd77ccd1944dbc4ba3de2e6ced1af63"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-api951-proxy3-spot-pilot/executed.mjs",
+    "bytes": 13969,
+    "sha256": "275303156e2d17797bdca04b1835e6c9df80caf2c3a241300d024fe36819a4cf"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-api951-proxy3-spot-pilot/observations.jsonl",
+    "bytes": 2660023,
+    "sha256": "585ece35ab86fd9ca6eda3b96b36568fa1f1ddd751ecebe395ab9da09257f58a"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-api951-proxy3-spot-pilot/run-1-cold.png",
+    "bytes": 76931,
+    "sha256": "47bc78b03a6d7423574cdc299fb6010f6fce36cd05385efbf9c2811529c962d1"
+  },
+  {
+    "path": "artifacts/pi-history-r1/warm-route-api951-proxy3-spot-pilot/run-1.json",
+    "bytes": 59206,
+    "sha256": "edac56f63878e01f8566803e0b95de6c7881d79f7ce0539503abca1ef4b6d8e0"
+  }
+]

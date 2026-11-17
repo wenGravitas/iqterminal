@@ -1,0 +1,21 @@
+{
+  "clientBuild": "43ba067fb108fae6cee1f857adbfdac6586e661b",
+  "proxyAndProbeCommit": "0421d004ee3b15db4c61adbce2c775042be2d97e",
+  "route": "http://127.0.0.1:4185",
+  "nativeHistoryTarget": "127.0.0.1:18780",
+  "bulkHistoryTarget": "127.0.0.1:18780",
+  "currentTarget": "127.0.0.1:18781",
+  "historicalSlots": {
+    "native": 2,
+    "bulk": 2,
+    "aggregate": 4
+  },
+  "currentSlots": 4,
+  "sshTransports": 2,
+  "fixture": false,
+  "dataMode": "staging",
+  "historyTiles": true,
+  "diagnostics": true,
+  "rendering": "headless system Chromium; actual SystemInfo and flags in each result; not foreground Pi acceptance",
+  "proxySha256": "a193e76410a4d6313025d1368d9b87b18f220a5d6a84f28bde6dcc73a346bbf0"
+}

@@ -1,0 +1,33 @@
+
+ RUN  v5.0.3 /tmp/iq-wall-revision-baseline-9feb-2670VL
+
+ ❯ tests/prepared-wall-history.test.ts (25 tests | 1 failed | 24 skipped) 1127ms
+   × Retry of a retained prefix escalates a source-changed worker with a distinct revision command, retaining good bars 1125ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-history.test.ts > Retry of a retained prefix escalates a source-changed worker with a distinct revision command, retaining good bars
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/prepared-wall-history.test.ts:111:80
+    109|   service.subscribe('retry-revision',{market:'binance-spot',from,to,se…
+    110|   expect(events.some(e=>e.kind==='snapshot'&&e.segments?.length)).toBe…
+    111|   await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.requestC…
+       |                                                                                ^
+    112|   expect(commands[0].get('X-IQ-Wall-New-Revision')).toBeNull();expect(…
+    113|   expect(events.slice(before).filter(e=>e.kind==='snapshot').every(e=>…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 24 skipped (25)
+   Start at  14:05:16
+   Duration  1.91s (tests 65%, transform 30%, import 4%)
+

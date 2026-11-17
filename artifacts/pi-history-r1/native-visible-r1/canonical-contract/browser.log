@@ -1,0 +1,9 @@
+
+Running 2 tests using 1 worker
+
+(node:119898) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/native-candle-history.spec.ts:12:1 › native30hpricecontext paints before bootstrap and retains current volume and newer historical reads (2.8s)
+  ✓  2 tests/browser/native-candle-history.spec.ts:44:1 › nativepricepan preserves the requested past and current bars within the5000barbudget (9.9s)
+
+  2 passed (17.0s)

@@ -1,0 +1,3796 @@
+{
+  "run": 1,
+  "clientBuild": "42c69a6e6d83a76f95daefafb9f2be5e8e440cff",
+  "route": "http://127.0.0.1:4185",
+  "market": "spot",
+  "reference": {
+    "from": 1793696400000,
+    "to": 1793804400000,
+    "sourceFrom": 1793696100000,
+    "sourceTo": 1793804700000,
+    "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+    "segments": 8293,
+    "valueRuns": 49154,
+    "gaps": 35,
+    "evidence": "backend 9bb4d7b wall-admission-staging original-projector exact reference"
+  },
+  "rendering": "headless system Chromium; effective GPU and command line recorded; not normal foreground Pi acceptance",
+  "profiled": true,
+  "seedObservationMs": 90000,
+  "requestedRenderer": "gles",
+  "browserInfo": {
+    "commandLine": {
+      "error": "Error: cdpSession.send: Protocol error (Browser.getBrowserCommandLine): Command line not returned because --enable-automation not set."
+    },
+    "system": {
+      "gpu": {
+        "devices": [
+          {
+            "vendorId": 0,
+            "deviceId": 0,
+            "vendorString": "Google Inc. (Broadcom)",
+            "deviceString": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1 Mesa 24.2.8-1~bpo12+rpt5)",
+            "driverVendor": "Mesa",
+            "driverVersion": "24.2.8"
+          }
+        ],
+        "auxAttributes": {
+          "amdSwitchable": false,
+          "canSupportThreadedTextureMailbox": false,
+          "directRenderingVersion": "",
+          "displayType": "ANGLE_OPENGLES",
+          "glExtensions": "GL_AMD_performance_monitor GL_ANGLE_blob_cache GL_ANGLE_client_arrays GL_ANGLE_compressed_texture_etc GL_ANGLE_depth_texture GL_ANGLE_framebuffer_blit GL_ANGLE_framebuffer_multisample GL_ANGLE_get_serialized_context_string GL_ANGLE_get_tex_level_parameter GL_ANGLE_instanced_arrays GL_ANGLE_memory_size GL_ANGLE_program_binary_readiness_query GL_ANGLE_program_cache_control GL_ANGLE_renderability_validation GL_ANGLE_request_extension GL_ANGLE_robust_client_memory GL_ANGLE_shader_pixel_local_storage GL_ANGLE_stencil_texturing GL_ANGLE_texture_compression_dxt3 GL_ANGLE_texture_compression_dxt5 GL_ANGLE_texture_multisample GL_ANGLE_translated_shader_source GL_ARM_rgba8 GL_CHROMIUM_bind_generates_resource GL_CHROMIUM_bind_uniform_location GL_CHROMIUM_copy_texture GL_CHROMIUM_lose_context GL_EXT_blend_minmax GL_EXT_clear_texture GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_compressed_ETC1_RGB8_sub_texture GL_EXT_debug_label GL_EXT_debug_marker GL_EXT_depth_clamp GL_EXT_discard_framebuffer GL_EXT_draw_buffers GL_EXT_draw_buffers_indexed GL_EXT_float_blend GL_EXT_frag_depth GL_EXT_instanced_arrays GL_EXT_map_buffer_range GL_EXT_occlusion_query_boolean GL_EXT_polygon_offset_clamp GL_EXT_read_format_bgra GL_EXT_sRGB GL_EXT_sRGB_write_control GL_EXT_shadow_samplers GL_EXT_texture_border_clamp GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_rgtc GL_EXT_texture_compression_s3tc_srgb GL_EXT_texture_filter_anisotropic GL_EXT_texture_format_BGRA8888 GL_EXT_texture_mirror_clamp_to_edge GL_EXT_texture_rg GL_EXT_texture_sRGB_decode GL_EXT_texture_storage GL_EXT_texture_type_2_10_10_10_REV GL_EXT_unpack_subimage GL_KHR_debug GL_KHR_parallel_shader_compile GL_KHR_texture_compression_astc_ldr GL_KHR_texture_compression_astc_sliced_3d GL_MESA_framebuffer_flip_y GL_NV_fence GL_NV_framebuffer_blit GL_NV_pack_subimage GL_NV_pixel_buffer_object GL_NV_read_depth GL_NV_read_stencil GL_NV_shader_noperspective_interpolation GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_EGL_image_external_essl3 GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth24 GL_OES_draw_buffers_indexed GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_get_program_binary GL_OES_mapbuffer GL_OES_packed_depth_stencil GL_OES_required_internalformat GL_OES_rgb8_rgba8 GL_OES_standard_derivatives GL_OES_surfaceless_context GL_OES_texture_3D GL_OES_texture_border_clamp GL_OES_texture_float GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_texture_stencil8 GL_OES_texture_storage_multisample_2d_array GL_OES_vertex_array_object ",
+          "glImplementationParts": "(gl=egl-angle,angle=opengles)",
+          "glRenderer": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1 Mesa 24.2.8-1~bpo12+rpt5)",
+          "glResetNotificationStrategy": 0,
+          "glVendor": "Google Inc. (Broadcom)",
+          "glVersion": "OpenGL ES 3.0 (ANGLE 2.1 git hash: unknown hash)",
+          "glWsExtensions": "EGL_KHR_create_context EGL_KHR_get_all_proc_addresses EGL_ANGLE_create_context_webgl_compatibility EGL_CHROMIUM_create_context_bind_generates_resource EGL_CHROMIUM_sync_control EGL_ANGLE_sync_control_rate EGL_EXT_pixel_format_float EGL_KHR_surfaceless_context EGL_ANGLE_display_texture_share_group EGL_ANGLE_display_semaphore_share_group EGL_ANGLE_create_context_client_arrays EGL_ANGLE_program_cache_control EGL_ANGLE_robust_resource_initialization EGL_ANGLE_create_context_extensions_enabled EGL_ANDROID_blob_cache EGL_ANDROID_recordable EGL_ANGLE_create_context_backwards_compatible EGL_KHR_create_context_no_error EGL_NOK_texture_from_pixmap EGL_KHR_reusable_sync EGL_ANGLE_context_virtualization EGL_ANGLE_memory_usage_report EGL_ANGLE_create_context_passthrough_shaders ",
+          "glWsVendor": "Google Inc. (Broadcom)",
+          "glWsVersion": "1.5 (ANGLE 2.1 git hash: unknown hash)",
+          "hardwareSupportsVulkan": false,
+          "inProcessGpu": false,
+          "initializationTime": 0.289934,
+          "isAsan": false,
+          "isClangCoverage": false,
+          "jpegDecodeAcceleratorSupported": false,
+          "maxMsaaSamples": "4",
+          "optimus": false,
+          "passthroughCmdDecoder": true,
+          "pixelShaderVersion": "3.00",
+          "processCrashCount": 0,
+          "sandboxed": false,
+          "skiaBackendType": "GaneshGL",
+          "subpixelFontRendering": true,
+          "targetCpuBits": 64,
+          "vertexShaderVersion": "3.00",
+          "visibilityCallbackCallCount": 0
+        },
+        "featureStatus": {
+          "2d_canvas": "enabled",
+          "direct_rendering_display_compositor": "disabled_off_ok",
+          "gpu_compositing": "enabled",
+          "multiple_raster_threads": "enabled_force_on",
+          "opengl": "enabled_on",
+          "rasterization": "enabled_force",
+          "raw_draw": "disabled_off_ok",
+          "skia_graphite": "disabled_off",
+          "trees_in_viz": "disabled_off",
+          "video_decode": "enabled",
+          "video_encode": "disabled_software",
+          "vulkan": "disabled_off",
+          "webgl": "enabled",
+          "webgpu": "disabled_off",
+          "webgpu_on_vk_via_gl_interop": "disabled_off",
+          "webnn": "disabled_off"
+        },
+        "driverBugWorkarounds": [
+          "enable_webgl_timer_query_extensions",
+          "exit_on_context_lost",
+          "rely_on_implicit_sync_for_swap_buffers",
+          "disabled_extension_GL_KHR_blend_equation_advanced",
+          "disabled_extension_GL_KHR_blend_equation_advanced_coherent"
+        ],
+        "videoDecoding": [],
+        "videoEncoding": []
+      },
+      "modelName": "",
+      "modelVersion": "",
+      "commandLine": "/usr/lib/chromium/chromium --force-renderer-accessibility --enable-remote-extensions --force-dark-mode --show-component-extension-options --enable-gpu-rasterization --no-default-browser-check --disable-pings --media-router=0 --enable-remote-extensions --load-extension --ignore-gpu-blocklist --enable-checker-imaging --cc-scroll-animation-duration-in-seconds=0.6 --disable-quic --enable-tcp-fast-open --enable-experimental-canvas-features --enable-scroll-prediction --enable-simple-cache-backend --max-tiles-for-interest-area=512 --num-raster-threads=4 --default-tile-height=512 --enable-accelerated-video-decode --enable-low-res-tiling --process-per-site --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --no-sandbox --use-angle=gles --enable-precise-memory-info --class=IQTerminalPerf --name=IQTerminalPerf --ozone-platform=headless --user-data-dir=/tmp/playwright_chromiumdev_profile-DELWYy --remote-debugging-pipe --no-startup-window --enable-features=VaapiVideoDecoder,VaapiVideoEncoder,ParallelDownloading,CDPScreenshotNewSurface --disable-features=UseChromeOSDirectVideoDecoder,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --use-angle=gles --noerrdialogs --ozone-platform=headless --ozone-override-screen-size=800,600 --flag-switches-begin --flag-switches-end --enable-unsafe-swiftshader"
+    }
+  },
+  "scope": "Actual staging SSH/Vite route, cold browser context followed by same-worker reopen. Cold seed observes at most the recorded seedObservationMs; completion after12s is a late supplemental observation, never a loading-gate pass. Warm observes12s, first useful target1s. Useful paint requires actual historical draw content and the last painted viewport (not input quiescence); complete paint additionally requires latest input revision and exact complete counts/native slots plus independent native revision validation; cached prices alone cannot certify completion.",
+  "browser": "155.0.8059.79",
+  "scriptSha256": "9283c8102a9b410dccc3f8108576209f14d4e868cccc168e25974333f076dd85",
+  "environment": {
+    "fixture": false,
+    "config": {
+      "dataMode": "staging",
+      "historyTiles": true,
+      "build": "42c69a6e6d83a76f95daefafb9f2be5e8e440cff"
+    }
+  },
+  "cold": {
+    "phase": "cold",
+    "start": 0,
+    "now": 11765,
+    "firstHistory": 4873.19999999553,
+    "complete": 11632.39999999851,
+    "nativeData": 4350.89999999851,
+    "nativeValidated": 4350.89999999851,
+    "frames": [
+      79.90000000298022,
+      150,
+      266.7,
+      133.30000000000007,
+      50,
+      133.29999999999995,
+      66.70000000000005,
+      33.299999999999955,
+      1000,
+      316.5999999999999,
+      433.4000000000001,
+      166.5999999999999,
+      100,
+      83.30000000000018,
+      50,
+      33.29999999999973,
+      33.40000000000009,
+      33.30000000000018,
+      33.40000000000009,
+      33.29999999999973,
+      50,
+      16.59999999999991,
+      50,
+      33.40000000000009,
+      33.30000000000018,
+      33.40000000000009,
+      49.899999999999636,
+      66.70000000000027,
+      50,
+      33.29999999999973,
+      66.70000000000027,
+      33.40000000000009,
+      33.29999999999973,
+      83.20000000000027,
+      266.8000000000002,
+      549.8999999999996,
+      50,
+      100.10000000000036,
+      50,
+      16.599999999999454,
+      50,
+      33.30000000000018,
+      33.30000000000018,
+      50,
+      50.099999999999454,
+      66.60000000000036,
+      50,
+      50,
+      149.89999999999964,
+      183.40000000000055,
+      166.59999999999945,
+      83.40000000000055,
+      166.69999999999982,
+      333.3000000000002,
+      250,
+      83.30000000000018,
+      166.69999999999982,
+      116.59999999999945,
+      66.70000000000073,
+      66.59999999999945,
+      116.69999999999982,
+      66.70000000000073,
+      66.59999999999945,
+      333.3000000000002,
+      500.10000000000036,
+      233.29999999999927,
+      433.3000000000011,
+      249.89999999999964,
+      433.39999999999964,
+      166.60000000000036,
+      116.79999999999927,
+      149.89999999999964,
+      50,
+      100,
+      116.70000000000073,
+      66.60000000000036,
+      133.39999999999964,
+      33.29999999999927,
+      66.70000000000073,
+      33.29999999999927,
+      33.30000000000109,
+      50,
+      66.69999999999891,
+      33.30000000000109,
+      66.69999999999891,
+      50,
+      49.900000000001455,
+      33.399999999999636,
+      33.399999999999636,
+      49.899999999999636,
+      83.39999999999964,
+      33.30000000000109,
+      133.39999999999964,
+      116.60000000000036,
+      150
+    ],
+    "tasks": [
+      {
+        "at": 255.39999999850988,
+        "duration": 153
+      },
+      {
+        "at": 411.79999999701977,
+        "duration": 87
+      },
+      {
+        "at": 697.5,
+        "duration": 96
+      },
+      {
+        "at": 1094,
+        "duration": 883
+      },
+      {
+        "at": 1978.1999999955297,
+        "duration": 191
+      },
+      {
+        "at": 2276.60000000149,
+        "duration": 82
+      },
+      {
+        "at": 2494.2999999970198,
+        "duration": 99
+      },
+      {
+        "at": 2841.5,
+        "duration": 69
+      },
+      {
+        "at": 4036.2999999970198,
+        "duration": 61
+      },
+      {
+        "at": 4097.5,
+        "duration": 196
+      },
+      {
+        "at": 4342.69999999553,
+        "duration": 137
+      },
+      {
+        "at": 5604.60000000149,
+        "duration": 152
+      },
+      {
+        "at": 5847.69999999553,
+        "duration": 89
+      },
+      {
+        "at": 5960.39999999851,
+        "duration": 66
+      },
+      {
+        "at": 6040.5,
+        "duration": 55
+      },
+      {
+        "at": 6204.5,
+        "duration": 206
+      },
+      {
+        "at": 6547.5,
+        "duration": 208
+      },
+      {
+        "at": 6798.60000000149,
+        "duration": 69
+      },
+      {
+        "at": 7585.69999999553,
+        "duration": 218
+      },
+      {
+        "at": 7894.60000000149,
+        "duration": 469
+      },
+      {
+        "at": 8435.29999999702,
+        "duration": 50
+      },
+      {
+        "at": 8485.79999999702,
+        "duration": 126
+      },
+      {
+        "at": 8675.29999999702,
+        "duration": 362
+      },
+      {
+        "at": 9127.10000000149,
+        "duration": 151
+      },
+      {
+        "at": 9378.19999999553,
+        "duration": 299
+      },
+      {
+        "at": 9754.29999999702,
+        "duration": 86
+      },
+      {
+        "at": 9905,
+        "duration": 51
+      },
+      {
+        "at": 10312.29999999702,
+        "duration": 70
+      },
+      {
+        "at": 11473.19999999553,
+        "duration": 130
+      }
+    ],
+    "view": {
+      "from": 1793696400,
+      "to": 1793804400
+    },
+    "wall": {
+      "state": "gap",
+      "message": "Depth continuity gaps are present in the requested range",
+      "coverage": {
+        "from": 1793696100000,
+        "to": 1793804700000,
+        "complete": false,
+        "partial": true,
+        "reason": "Depth continuity gaps are present in the requested range"
+      },
+      "archive": {
+        "profileId": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+        "state": "partial",
+        "from": 1793696100000,
+        "to": 1793804700000,
+        "rangeComplete": false,
+        "market": "spot",
+        "feed": "binance:spot:BTCUSDT:spot-diff-depth",
+        "aggregation": "native",
+        "availableFrom": 1793521565645,
+        "confirmedTo": 1793804700000,
+        "gaps": [
+          {
+            "from": 1793708577644,
+            "to": 1793708577644,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793710873844,
+            "to": 1793710873844,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793721742643,
+            "to": 1793721742643,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793728093743,
+            "to": 1793728093743,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793739494053,
+            "to": 1793739494053,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793751787745,
+            "to": 1793751787745,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793760185253,
+            "to": 1793760185253,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793763136547,
+            "to": 1793763136547,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793767321244,
+            "to": 1793767321244,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793771281948,
+            "to": 1793771281948,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793782105351,
+            "to": 1793782105351,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793790793947,
+            "to": 1793790793947,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793791257049,
+            "to": 1793791257049,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793791441744,
+            "to": 1793791441744,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793791885344,
+            "to": 1793791885344,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793791934245,
+            "to": 1793791934245,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793792435047,
+            "to": 1793792435047,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793792666349,
+            "to": 1793792666349,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793792867854,
+            "to": 1793792867854,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793792873053,
+            "to": 1793792873053,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793793224746,
+            "to": 1793793224746,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793793346851,
+            "to": 1793793346851,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793793404643,
+            "to": 1793793404643,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793794904150,
+            "to": 1793794904150,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793795264547,
+            "to": 1793795264547,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793795475351,
+            "to": 1793795475351,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793796041047,
+            "to": 1793796041047,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793797727143,
+            "to": 1793797727143,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793797764744,
+            "to": 1793797764744,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793798054743,
+            "to": 1793798054743,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793800432445,
+            "to": 1793800432445,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793801910045,
+            "to": 1793801910045,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793802645644,
+            "to": 1793802645644,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793803779344,
+            "to": 1793803779344,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793804251942,
+            "to": 1793804251942,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          }
+        ],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "reason": "Depth continuity gaps are present in the requested range",
+        "requestComplete": true,
+        "loadedThrough": 1793804700000,
+        "profileVersion": 1,
+        "algorithmVersion": 1,
+        "schemaVersion": 1,
+        "midpoint": "80089.015"
+      }
+    },
+    "paint": {
+      "draws": 18,
+      "rebuilds": 1,
+      "patchProjects": 8293,
+      "segments": 8293,
+      "visible": 41870,
+      "visibleHistorical": 41870,
+      "visibleCurrent": 0,
+      "bytes": 3558416,
+      "renderMs": 1810.5,
+      "maxRenderMs": 309.6000000014901,
+      "strokes": 7,
+      "lastProjectMs": 0,
+      "lastReferenceMs": 0,
+      "lastPaintMs": 0.29999999701976776,
+      "referenceRebuilds": 1,
+      "referenceSegments": 0,
+      "referenceValueScans": 0,
+      "paintCacheHits": 3,
+      "paintCacheBuilds": 15,
+      "paintStyleVisits": 295224,
+      "paintedViewport": {
+        "fromMs": 1793696400000,
+        "toMs": 1793804400000,
+        "minPrice": 75113.42625,
+        "maxPrice": 81342.96375,
+        "plotWidth": 1756,
+        "plotHeight": 920
+      },
+      "inputRevision": 48,
+      "paintedRevision": 48,
+      "pendingProjectionSegments": 0,
+      "retainedPaintPaths": 7,
+      "retainedSegments": 8293,
+      "openSegments": 16,
+      "retainedReferenceSegments": 7573,
+      "referenceExtentValues": 8227,
+      "pendingReferenceSegments": 0,
+      "referenceMinimum": 230626.4040927,
+      "referenceMaximum": 12204574,
+      "retainedDrawables": 41870,
+      "p95RenderMs": 269.79999999701977,
+      "mounted": true,
+      "archiveSegments": 8293,
+      "directSegments": 0,
+      "valueRuns": 49154,
+      "archiveValueRuns": 49154,
+      "directValueRuns": 0,
+      "valueHistoryLimited": false,
+      "episodeHistoryLimited": false
+    },
+    "native": {
+      "count": 1360,
+      "visible": 360,
+      "progress": {
+        "from": 1793696400000,
+        "to": 1793804400000,
+        "requestedSlots": 360,
+        "loadedSlots": 360,
+        "state": "ready",
+        "capacityLimited": false,
+        "retryable": false,
+        "unloaded": [],
+        "unloadedTruncated": false
+      }
+    },
+    "selection": {
+      "venue": "binance",
+      "market": "spot",
+      "interval": "5m",
+      "type": "candle",
+      "rowPrice": 25,
+      "historyViewport": {
+        "from": 1793696400000,
+        "to": 1793804400000
+      },
+      "studies": [],
+      "indicators": [
+        {
+          "instanceId": "native.order-walls",
+          "definitionId": "native.order-walls",
+          "settingsVersion": 2,
+          "visible": true,
+          "source": {
+            "kind": "chart"
+          },
+          "placement": "overlay",
+          "settings": {
+            "enabled": true,
+            "mode": "top-levels",
+            "topLevels": 8,
+            "searchRangePercent": 10,
+            "minimumNotionalEnabled": false,
+            "minimumNotionalUsd": 100000,
+            "highContrast": true,
+            "visibleRangeOnly": true,
+            "strengthThickness": true,
+            "historyEpisodes": 2000,
+            "showHistory": true,
+            "showPriceLines": false,
+            "method": "relative",
+            "thresholdUsd": 500000,
+            "relativeFloorUsd": 250000,
+            "relativePercentile": 95,
+            "exitRatio": 0.85,
+            "minDurationMs": 0,
+            "aggregation": "native",
+            "colorMode": "heat",
+            "opacity": 0.85,
+            "thicknessPx": 3
+          }
+        }
+      ],
+      "candleElapsedTimer": true,
+      "tradingOverlay": false,
+      "grid": true,
+      "wheelMode": "tradingview",
+      "drawingMagnet": "weak",
+      "floatingDrawingToolbar": {
+        "visible": false,
+        "tools": [],
+        "x": 0.55,
+        "y": 0.14
+      },
+      "footprintUnits": "btc",
+      "footprint": {
+        "displayMode": "bidask",
+        "cellStyle": "ladder",
+        "statsPosition": "bottom",
+        "opacity": 0.85,
+        "showCandle": true,
+        "showPoc": true,
+        "showValueArea": true,
+        "showDiagonalImbalances": true,
+        "stackedImbalances": false,
+        "imbalanceRatio": 3,
+        "imbalanceThreshold": 0.01
+      },
+      "heatmap": {
+        "enabled": false,
+        "rowPrice": 10,
+        "bucketMs": 500,
+        "mode": "average",
+        "contrast": "enhanced",
+        "opacity": 0.85,
+        "intensity": 100,
+        "minimum": 0.01,
+        "labels": "auto",
+        "bids": true,
+        "asks": true
+      },
+      "indicatorVersion": 1,
+      "composition": {
+        "version": 1,
+        "panes": [],
+        "embeddedBands": [],
+        "plots": [],
+        "scales": [],
+        "opaqueLegacyPanes": []
+      },
+      "paneOrder": [],
+      "basePriceVisible": true
+    },
+    "composition": {
+      "indicatorReconciles": 1,
+      "activeIndicatorRenders": 9,
+      "objectRefreshes": 1,
+      "scriptObjectProviderSyncs": 1,
+      "dataCallbacks": 0,
+      "visibleRangeScaleUpdates": 0,
+      "autoscaleValuesScanned": 0,
+      "sma": {
+        "fullCalls": 0,
+        "fullInputValues": 0,
+        "tailCalls": 0,
+        "tailInputValues": 0,
+        "tailValuesProcessed": 0,
+        "registryRevisions": 0,
+        "registryFullValuesProcessed": 0,
+        "registryTailValuesProcessed": 0,
+        "derivedPublications": 0
+      }
+    }
+  },
+  "warm": {
+    "phase": "warm",
+    "start": 17351,
+    "now": 28192.79999999702,
+    "firstHistory": 18808.19999999553,
+    "complete": 28107.29999999702,
+    "nativeData": 17934.39999999851,
+    "nativeValidated": 22453.10000000149,
+    "frames": [
+      16.599999999998545,
+      450,
+      250.10000000000218,
+      583.2999999999993,
+      566.5999999999985,
+      216.70000000000073,
+      249.90000000000146,
+      416.6999999999971,
+      266.7000000000007,
+      416.6000000000022,
+      266.6999999999971,
+      150,
+      99.90000000000146,
+      150,
+      116.70000000000073,
+      183.29999999999927,
+      83.40000000000146,
+      133.29999999999927,
+      83.29999999999927,
+      50,
+      133.29999999999927,
+      50,
+      183.40000000000146,
+      1083.2000000000007,
+      150.09999999999854,
+      100,
+      99.90000000000146,
+      1116.5999999999985,
+      100,
+      200,
+      150,
+      50.099999999998545,
+      50,
+      133.3000000000029,
+      50,
+      66.69999999999709,
+      83.20000000000073,
+      66.79999999999927,
+      66.60000000000218,
+      66.70000000000073,
+      66.59999999999854,
+      100,
+      50,
+      66.70000000000073,
+      149.89999999999782,
+      1433.4000000000015,
+      166.59999999999854
+    ],
+    "tasks": [
+      {
+        "at": 17349.19999999553,
+        "duration": 270
+      },
+      {
+        "at": 17624.39999999851,
+        "duration": 161
+      },
+      {
+        "at": 17896.5,
+        "duration": 271
+      },
+      {
+        "at": 18285.29999999702,
+        "duration": 344
+      },
+      {
+        "at": 18772.19999999553,
+        "duration": 404
+      },
+      {
+        "at": 19307.60000000149,
+        "duration": 90
+      },
+      {
+        "at": 19527.69999999553,
+        "duration": 110
+      },
+      {
+        "at": 19740.5,
+        "duration": 302
+      },
+      {
+        "at": 20144.29999999702,
+        "duration": 193
+      },
+      {
+        "at": 20445.5,
+        "duration": 298
+      },
+      {
+        "at": 20846.39999999851,
+        "duration": 150
+      },
+      {
+        "at": 21040.69999999553,
+        "duration": 75
+      },
+      {
+        "at": 21586.39999999851,
+        "duration": 94
+      },
+      {
+        "at": 21823.89999999851,
+        "duration": 58
+      },
+      {
+        "at": 21940,
+        "duration": 51
+      },
+      {
+        "at": 22438.39999999851,
+        "duration": 1017
+      },
+      {
+        "at": 23672.89999999851,
+        "duration": 64
+      },
+      {
+        "at": 23791,
+        "duration": 58
+      },
+      {
+        "at": 23849.39999999851,
+        "duration": 84
+      },
+      {
+        "at": 23963.60000000149,
+        "duration": 1014
+      },
+      {
+        "at": 25436.39999999851,
+        "duration": 52
+      },
+      {
+        "at": 26423,
+        "duration": 653
+      },
+      {
+        "at": 27076,
+        "duration": 865
+      }
+    ],
+    "view": {
+      "from": 1793696400,
+      "to": 1793804400
+    },
+    "wall": {
+      "state": "gap",
+      "message": "Depth continuity gaps are present in the requested range",
+      "coverage": {
+        "from": 1793696100000,
+        "to": 1793804700000,
+        "complete": false,
+        "partial": true,
+        "reason": "Depth continuity gaps are present in the requested range"
+      },
+      "archive": {
+        "profileId": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+        "state": "partial",
+        "from": 1793696100000,
+        "to": 1793804700000,
+        "rangeComplete": false,
+        "market": "spot",
+        "feed": "binance:spot:BTCUSDT:spot-diff-depth",
+        "aggregation": "native",
+        "availableFrom": 1793521565645,
+        "confirmedTo": 1793804700000,
+        "gaps": [
+          {
+            "from": 1793708577644,
+            "to": 1793708577644,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793710873844,
+            "to": 1793710873844,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793721742643,
+            "to": 1793721742643,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793728093743,
+            "to": 1793728093743,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793739494053,
+            "to": 1793739494053,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793751787745,
+            "to": 1793751787745,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793760185253,
+            "to": 1793760185253,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793763136547,
+            "to": 1793763136547,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793767321244,
+            "to": 1793767321244,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793771281948,
+            "to": 1793771281948,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793782105351,
+            "to": 1793782105351,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793790793947,
+            "to": 1793790793947,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793791257049,
+            "to": 1793791257049,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793791441744,
+            "to": 1793791441744,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793791885344,
+            "to": 1793791885344,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793791934245,
+            "to": 1793791934245,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793792435047,
+            "to": 1793792435047,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793792666349,
+            "to": 1793792666349,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793792867854,
+            "to": 1793792867854,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793792873053,
+            "to": 1793792873053,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793793224746,
+            "to": 1793793224746,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793793346851,
+            "to": 1793793346851,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793793404643,
+            "to": 1793793404643,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793794904150,
+            "to": 1793794904150,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793795264547,
+            "to": 1793795264547,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793795475351,
+            "to": 1793795475351,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793796041047,
+            "to": 1793796041047,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793797727143,
+            "to": 1793797727143,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793797764744,
+            "to": 1793797764744,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793798054743,
+            "to": 1793798054743,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793800432445,
+            "to": 1793800432445,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793801910045,
+            "to": 1793801910045,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793802645644,
+            "to": 1793802645644,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1793803779344,
+            "to": 1793803779344,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1793804251942,
+            "to": 1793804251942,
+            "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          }
+        ],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "reason": "Depth continuity gaps are present in the requested range",
+        "requestComplete": true,
+        "loadedThrough": 1793804700000,
+        "profileVersion": 1,
+        "algorithmVersion": 1,
+        "schemaVersion": 1,
+        "midpoint": "80089.015"
+      }
+    },
+    "paint": {
+      "draws": 23,
+      "rebuilds": 5,
+      "patchProjects": 35011,
+      "segments": 8293,
+      "visible": 41870,
+      "visibleHistorical": 41870,
+      "visibleCurrent": 0,
+      "bytes": 3558416,
+      "renderMs": 4131.79999999702,
+      "maxRenderMs": 953.3999999985099,
+      "strokes": 7,
+      "lastProjectMs": 0,
+      "lastReferenceMs": 0,
+      "lastPaintMs": 0.20000000298023224,
+      "referenceRebuilds": 5,
+      "referenceSegments": 0,
+      "referenceValueScans": 0,
+      "paintCacheHits": 11,
+      "paintCacheBuilds": 12,
+      "paintStyleVisits": 298387,
+      "paintedViewport": {
+        "fromMs": 1793696400000,
+        "toMs": 1793804400000,
+        "minPrice": 75113.42625,
+        "maxPrice": 81342.96375,
+        "plotWidth": 1756,
+        "plotHeight": 920
+      },
+      "inputRevision": 152,
+      "paintedRevision": 152,
+      "pendingProjectionSegments": 0,
+      "retainedPaintPaths": 7,
+      "retainedSegments": 8293,
+      "openSegments": 16,
+      "retainedReferenceSegments": 7573,
+      "referenceExtentValues": 8227,
+      "pendingReferenceSegments": 0,
+      "referenceMinimum": 230626.4040927,
+      "referenceMaximum": 12204574,
+      "retainedDrawables": 41870,
+      "p95RenderMs": 822.1999999955297,
+      "mounted": true,
+      "archiveSegments": 8293,
+      "directSegments": 0,
+      "valueRuns": 49154,
+      "archiveValueRuns": 49154,
+      "directValueRuns": 0,
+      "valueHistoryLimited": false,
+      "episodeHistoryLimited": false
+    },
+    "native": {
+      "count": 1360,
+      "visible": 360,
+      "progress": {
+        "from": 1793696400000,
+        "to": 1793804400000,
+        "requestedSlots": 360,
+        "loadedSlots": 360,
+        "state": "ready",
+        "capacityLimited": false,
+        "retryable": false,
+        "unloaded": [],
+        "unloadedTruncated": false
+      }
+    },
+    "selection": {
+      "venue": "binance",
+      "market": "spot",
+      "interval": "5m",
+      "type": "candle",
+      "rowPrice": 25,
+      "historyViewport": {
+        "from": 1793696400000,
+        "to": 1793804400000
+      },
+      "studies": [],
+      "indicators": [
+        {
+          "instanceId": "native.order-walls",
+          "definitionId": "native.order-walls",
+          "settingsVersion": 2,
+          "visible": true,
+          "source": {
+            "kind": "chart"
+          },
+          "placement": "overlay",
+          "settings": {
+            "enabled": true,
+            "mode": "top-levels",
+            "topLevels": 8,
+            "searchRangePercent": 10,
+            "minimumNotionalEnabled": false,
+            "minimumNotionalUsd": 100000,
+            "highContrast": true,
+            "visibleRangeOnly": true,
+            "strengthThickness": true,
+            "historyEpisodes": 2000,
+            "showHistory": true,
+            "showPriceLines": false,
+            "method": "relative",
+            "thresholdUsd": 500000,
+            "relativeFloorUsd": 250000,
+            "relativePercentile": 95,
+            "exitRatio": 0.85,
+            "minDurationMs": 0,
+            "aggregation": "native",
+            "colorMode": "heat",
+            "opacity": 0.85,
+            "thicknessPx": 3
+          }
+        }
+      ],
+      "candleElapsedTimer": true,
+      "tradingOverlay": false,
+      "grid": true,
+      "wheelMode": "tradingview",
+      "drawingMagnet": "weak",
+      "floatingDrawingToolbar": {
+        "visible": false,
+        "tools": [],
+        "x": 0.55,
+        "y": 0.14
+      },
+      "footprintUnits": "btc",
+      "footprint": {
+        "displayMode": "bidask",
+        "cellStyle": "ladder",
+        "statsPosition": "bottom",
+        "opacity": 0.85,
+        "showCandle": true,
+        "showPoc": true,
+        "showValueArea": true,
+        "showDiagonalImbalances": true,
+        "stackedImbalances": false,
+        "imbalanceRatio": 3,
+        "imbalanceThreshold": 0.01
+      },
+      "heatmap": {
+        "enabled": false,
+        "rowPrice": 10,
+        "bucketMs": 500,
+        "mode": "average",
+        "contrast": "enhanced",
+        "opacity": 0.85,
+        "intensity": 100,
+        "minimum": 0.01,
+        "labels": "auto",
+        "bids": true,
+        "asks": true
+      },
+      "indicatorVersion": 1,
+      "composition": {
+        "version": 1,
+        "panes": [],
+        "embeddedBands": [],
+        "plots": [],
+        "scales": [],
+        "opaqueLegacyPanes": []
+      },
+      "paneOrder": [],
+      "basePriceVisible": true
+    },
+    "composition": {
+      "indicatorReconciles": 1,
+      "activeIndicatorRenders": 10,
+      "objectRefreshes": 1,
+      "scriptObjectProviderSyncs": 1,
+      "dataCallbacks": 0,
+      "visibleRangeScaleUpdates": 0,
+      "autoscaleValuesScanned": 0,
+      "sma": {
+        "fullCalls": 0,
+        "fullInputValues": 0,
+        "tailCalls": 0,
+        "tailInputValues": 0,
+        "tailValuesProcessed": 0,
+        "registryRevisions": 0,
+        "registryFullValuesProcessed": 0,
+        "registryTailValuesProcessed": 0,
+        "derivedPublications": 0
+      }
+    }
+  },
+  "cacheReady": {
+    "warmAdmissions": 1,
+    "warmCapacityMisses": 0,
+    "warmInvalidMisses": 0,
+    "warmCompactBuilds": 1,
+    "warmRevisionReuses": 0,
+    "warmBuildFailures": 0,
+    "warmDecodeFailures": 0,
+    "incrementalSegments": 0,
+    "fullReconciliations": 0,
+    "comparisonVisits": 0,
+    "subscriptions": 1,
+    "groups": 0,
+    "historyRequests": 1,
+    "currentPages": 0,
+    "historyPages": 34,
+    "bytes": 13330354,
+    "historyBytes": 13330354,
+    "historyResponseHeadersMs": 4275.39999999851,
+    "historyBodyReadMs": 1742.2999999970198,
+    "historyJsonParseMs": 252.10000000149012,
+    "historyValidationMs": 834.7000000178814,
+    "historyProjectorApplyMs": 841.9999999627471,
+    "historyUpdateCallbackMs": 242.40000004321337,
+    "historyEventLoopYieldDelayMs": 1002.5000000521541,
+    "currentPatches": 0,
+    "ringDrops": 0,
+    "failures": 0,
+    "projections": [
+      {
+        "retainedSegments": 8293,
+        "activeCandidates": 20,
+        "valueRuns": 49154,
+        "largestSegmentRuns": 465,
+        "queuedValueRuns": 49154,
+        "episodeHistoryLimited": false,
+        "valueHistoryLimited": false
+      }
+    ],
+    "historyJobs": 1,
+    "readerControl": {
+      "submitted": 0,
+      "coalesced": 0,
+      "cancelled": 0,
+      "completed": 0,
+      "failed": 0,
+      "peakActive": 0,
+      "queueMs": 0,
+      "runMs": 0,
+      "active": 0,
+      "queued": 0
+    },
+    "warmTimings": [
+      {
+        "kind": "encode",
+        "identity": "[\"binance-spot\",\"[\\\"binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1\\\",\\\"spot\\\",\\\"binance:spot:BTCUSDT\\\",\\\"binance:spot:BTCUSDT:spot-diff-depth\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1\",1793696100000,1793804700000,0,null,null]",
+        "queueMs": 0.8999999985098839,
+        "elapsedMs": 3714.7999999970198,
+        "segments": 8293,
+        "runs": 49154,
+        "state": "ready"
+      }
+    ],
+    "warmEntries": 1,
+    "warmBuilds": 0,
+    "warmReplayJobs": 0,
+    "warmReplaySegments": 0,
+    "warmReplayRuns": 0,
+    "warmCompactEntries": 1,
+    "warmReplayConsumers": 0,
+    "warmSegments": 8293,
+    "warmRuns": 49154,
+    "warmBytes": 1671666,
+    "historyConsumers": 1,
+    "ringPages": 0,
+    "ringBytes": 0,
+    "recentHistoryRequests": [
+      {
+        "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "delivery": "projection",
+        "receivedSegments": 174,
+        "requestId": "75f9ee9b-0dcd-4958-b9b0-2c59cd736155",
+        "encodedBytes": 0,
+        "requestedAfter": 18,
+        "pageAfter": 18,
+        "nextAfter": 19,
+        "patchCount": 0,
+        "responseBytes": 385947,
+        "responseHeadersMs": 0,
+        "responseBodyReadMs": 0.19999999552965164,
+        "jsonParseMs": 4.100000001490116,
+        "validationMs": 8.700000002980232,
+        "projectorApplyMs": 6.300000004470348,
+        "updateCallbackMs": 5.800000004470348,
+        "eventLoopYieldDelayMs": 0,
+        "attempts": 1
+      },
+      {
+        "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "delivery": "projection",
+        "receivedSegments": 225,
+        "requestId": "75f9ee9b-0dcd-4958-b9b0-2c59cd736155",
+        "encodedBytes": 0,
+        "requestedAfter": 19,
+        "pageAfter": 19,
+        "nextAfter": 20,
+        "patchCount": 0,
+        "responseBytes": 382886,
+        "responseHeadersMs": 0,
+        "responseBodyReadMs": 149.69999999552965,
+        "jsonParseMs": 3.8000000044703484,
+        "validationMs": 21.399999998509884,
+        "projectorApplyMs": 20.200000002980232,
+        "updateCallbackMs": 4.700000002980232,
+        "eventLoopYieldDelayMs": 0,
+        "attempts": 1
+      },
+      {
+        "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "delivery": "projection",
+        "receivedSegments": 213,
+        "requestId": "75f9ee9b-0dcd-4958-b9b0-2c59cd736155",
+        "encodedBytes": 0,
+        "requestedAfter": 20,
+        "pageAfter": 20,
+        "nextAfter": 21,
+        "patchCount": 0,
+        "responseBytes": 371058,
+        "responseHeadersMs": 0,
+        "responseBodyReadMs": 26.100000001490116,
+        "jsonParseMs": 18.299999997019768,
+        "validationMs": 15.700000002980232,
+        "projectorApplyMs": 21.100000001490116,
+        "updateCallbackMs": 7.300000004470348,
+        "eventLoopYieldDelayMs": 0.3999999985098839,
+        "attempts": 1
+      },
+      {
+        "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "delivery": "projection",
+        "receivedSegments": 254,
+        "requestId": "75f9ee9b-0dcd-4958-b9b0-2c59cd736155",
+        "encodedBytes": 0,
+        "requestedAfter": 21,
+        "pageAfter": 21,
+        "nextAfter": 22,
+        "patchCount": 0,
+        "responseBytes": 442289,
+        "responseHeadersMs": 0,
+        "responseBodyReadMs": 137,
+        "jsonParseMs": 14,
+        "validationMs": 16.399999998509884,
+        "projectorApplyMs": 42.599999994039536,
+        "updateCallbackMs": 25.5,
+        "eventLoopYieldDelayMs": 1.4000000059604645,
+        "attempts": 1
+      },
+      {
+        "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "delivery": "projection",
+        "receivedSegments": 282,
+        "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+        "encodedBytes": 361904,
+        "requestedAfter": 22,
+        "pageAfter": 22,
+        "nextAfter": 23,
+        "patchCount": 0,
+        "responseBytes": 414366,
+        "responseHeadersMs": 3171.5,
+        "responseBodyReadMs": 12.100000001490116,
+        "jsonParseMs": 3.7000000029802322,
+        "validationMs": 29.700000002980232,
+        "projectorApplyMs": 46.099999994039536,
+        "updateCallbackMs": 9.699999995529652,
+        "eventLoopYieldDelayMs": 44.1000000089407,
+        "attempts": 1
+      },
+      {
+        "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "delivery": "projection",
+        "receivedSegments": 285,
+        "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+        "encodedBytes": 0,
+        "requestedAfter": 23,
+        "pageAfter": 23,
+        "nextAfter": 24,
+        "patchCount": 0,
+        "responseBytes": 419087,
+        "responseHeadersMs": 0,
+        "responseBodyReadMs": 22.299999997019768,
+        "jsonParseMs": 9.300000004470348,
+        "validationMs": 21.19999999552965,
+        "projectorApplyMs": 45.8999999910593,
+        "updateCallbackMs": 4.200000002980232,
+        "eventLoopYieldDelayMs": 163.80000000447035,
+        "attempts": 1
+      },
+      {
+        "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "delivery": "projection",
+        "receivedSegments": 162,
+        "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+        "encodedBytes": 0,
+        "requestedAfter": 24,
+        "pageAfter": 24,
+        "nextAfter": 25,
+        "patchCount": 0,
+        "responseBytes": 253076,
+        "responseHeadersMs": 0,
+        "responseBodyReadMs": 42.100000001490116,
+        "jsonParseMs": 12,
+        "validationMs": 16.399999998509884,
+        "projectorApplyMs": 35.29999998956919,
+        "updateCallbackMs": 7.399999998509884,
+        "eventLoopYieldDelayMs": 6.9000000059604645,
+        "attempts": 1
+      },
+      {
+        "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "delivery": "projection",
+        "receivedSegments": 206,
+        "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+        "encodedBytes": 0,
+        "requestedAfter": 25,
+        "pageAfter": 25,
+        "nextAfter": 26,
+        "patchCount": 0,
+        "responseBytes": 352334,
+        "responseHeadersMs": 0,
+        "responseBodyReadMs": 18.299999997019768,
+        "jsonParseMs": 21.5,
+        "validationMs": 78.30000000447035,
+        "projectorApplyMs": 15.700000002980232,
+        "updateCallbackMs": 2.5,
+        "eventLoopYieldDelayMs": 20.599999994039536,
+        "attempts": 1
+      },
+      {
+        "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "delivery": "projection",
+        "receivedSegments": 353,
+        "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+        "encodedBytes": 0,
+        "requestedAfter": 26,
+        "pageAfter": 26,
+        "nextAfter": 27,
+        "patchCount": 0,
+        "responseBytes": 540802,
+        "responseHeadersMs": 0,
+        "responseBodyReadMs": 0.8999999985098839,
+        "jsonParseMs": 10,
+        "validationMs": 70.29999999701977,
+        "projectorApplyMs": 59.99999999254942,
+        "updateCallbackMs": 19.100000001490116,
+        "eventLoopYieldDelayMs": 187.00000000745058,
+        "attempts": 1
+      },
+      {
+        "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "delivery": "projection",
+        "receivedSegments": 383,
+        "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+        "encodedBytes": 0,
+        "requestedAfter": 27,
+        "pageAfter": 27,
+        "nextAfter": 28,
+        "patchCount": 0,
+        "responseBytes": 530908,
+        "responseHeadersMs": 0,
+        "responseBodyReadMs": 190.79999999701977,
+        "jsonParseMs": 31.200000002980232,
+        "validationMs": 71.89999999850988,
+        "projectorApplyMs": 20.099999994039536,
+        "updateCallbackMs": 5,
+        "eventLoopYieldDelayMs": 46,
+        "attempts": 1
+      },
+      {
+        "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "delivery": "projection",
+        "receivedSegments": 195,
+        "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+        "encodedBytes": 0,
+        "requestedAfter": 28,
+        "pageAfter": 28,
+        "nextAfter": 29,
+        "patchCount": 0,
+        "responseBytes": 324284,
+        "responseHeadersMs": 0,
+        "responseBodyReadMs": 1.2000000029802322,
+        "jsonParseMs": 2.6999999955296516,
+        "validationMs": 12.400000005960464,
+        "projectorApplyMs": 6.5,
+        "updateCallbackMs": 3.4000000059604645,
+        "eventLoopYieldDelayMs": 0,
+        "attempts": 1
+      },
+      {
+        "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "delivery": "projection",
+        "receivedSegments": 162,
+        "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+        "encodedBytes": 0,
+        "requestedAfter": 29,
+        "pageAfter": 29,
+        "nextAfter": 30,
+        "patchCount": 0,
+        "responseBytes": 317465,
+        "responseHeadersMs": 0,
+        "responseBodyReadMs": 365.30000000447035,
+        "jsonParseMs": 10.699999995529652,
+        "validationMs": 13.700000002980232,
+        "projectorApplyMs": 12.399999991059303,
+        "updateCallbackMs": 5.399999998509884,
+        "eventLoopYieldDelayMs": 0.30000000447034836,
+        "attempts": 1
+      },
+      {
+        "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "delivery": "projection",
+        "receivedSegments": 447,
+        "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+        "encodedBytes": 0,
+        "requestedAfter": 30,
+        "pageAfter": 30,
+        "nextAfter": 31,
+        "patchCount": 0,
+        "responseBytes": 572950,
+        "responseHeadersMs": 0,
+        "responseBodyReadMs": 232,
+        "jsonParseMs": 18.600000001490116,
+        "validationMs": 31.700000002980232,
+        "projectorApplyMs": 40.8999999910593,
+        "updateCallbackMs": 8,
+        "eventLoopYieldDelayMs": 109.7000000178814,
+        "attempts": 1
+      },
+      {
+        "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "delivery": "projection",
+        "receivedSegments": 535,
+        "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+        "encodedBytes": 0,
+        "requestedAfter": 31,
+        "pageAfter": 31,
+        "nextAfter": 32,
+        "patchCount": 0,
+        "responseBytes": 608554,
+        "responseHeadersMs": 0,
+        "responseBodyReadMs": 43.399999998509884,
+        "jsonParseMs": 6.200000002980232,
+        "validationMs": 33.5,
+        "projectorApplyMs": 107.39999999850988,
+        "updateCallbackMs": 15,
+        "eventLoopYieldDelayMs": 24.69999999552965,
+        "attempts": 1
+      },
+      {
+        "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "delivery": "projection",
+        "receivedSegments": 381,
+        "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+        "encodedBytes": 0,
+        "requestedAfter": 32,
+        "pageAfter": 32,
+        "nextAfter": 33,
+        "patchCount": 0,
+        "responseBytes": 514957,
+        "responseHeadersMs": 0,
+        "responseBodyReadMs": 0.5,
+        "jsonParseMs": 3.7999999970197678,
+        "validationMs": 16.30000000447035,
+        "projectorApplyMs": 44.20000000298023,
+        "updateCallbackMs": 12.600000001490116,
+        "eventLoopYieldDelayMs": 17.69999999552965,
+        "attempts": 1
+      },
+      {
+        "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "delivery": "projection",
+        "receivedSegments": 145,
+        "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+        "encodedBytes": 0,
+        "requestedAfter": 33,
+        "pageAfter": 33,
+        "nextAfter": 34,
+        "patchCount": 0,
+        "responseBytes": 205293,
+        "responseHeadersMs": 0,
+        "responseBodyReadMs": 0.20000000298023224,
+        "jsonParseMs": 1.3999999985098839,
+        "validationMs": 4.799999997019768,
+        "projectorApplyMs": 24.400000005960464,
+        "updateCallbackMs": 6.700000002980232,
+        "eventLoopYieldDelayMs": 6.399999998509884,
+        "attempts": 1
+      }
+    ],
+    "historyPageTiming": {
+      "totalPages": 34,
+      "retainedSamples": 34,
+      "completeSample": true,
+      "p50": {
+        "responseHeadersMs": 0,
+        "responseBodyReadMs": 1,
+        "jsonParseMs": 4.100000001490116,
+        "validationMs": 15.800000004470348,
+        "projectorApplyMs": 20.099999994039536,
+        "updateCallbackMs": 4.700000002980232,
+        "eventLoopYieldDelayMs": 1.4000000059604645,
+        "responseBytes": 387385
+      },
+      "p95": {
+        "responseHeadersMs": 1103.8999999985099,
+        "responseBodyReadMs": 284.70000000298023,
+        "jsonParseMs": 21.5,
+        "validationMs": 78.30000000447035,
+        "projectorApplyMs": 59.99999999254942,
+        "updateCallbackMs": 25.5,
+        "eventLoopYieldDelayMs": 179.80000000447035,
+        "responseBytes": 584180
+      },
+      "max": {
+        "responseHeadersMs": 3171.5,
+        "responseBodyReadMs": 365.30000000447035,
+        "jsonParseMs": 31.200000002980232,
+        "validationMs": 96.5,
+        "projectorApplyMs": 107.39999999850988,
+        "updateCallbackMs": 27.30000000447035,
+        "eventLoopYieldDelayMs": 187.00000000745058,
+        "responseBytes": 608554
+      }
+    }
+  },
+  "cacheAtReopen": {
+    "walls": {
+      "warmAdmissions": 1,
+      "warmCapacityMisses": 0,
+      "warmInvalidMisses": 0,
+      "warmCompactBuilds": 1,
+      "warmRevisionReuses": 0,
+      "warmBuildFailures": 0,
+      "warmDecodeFailures": 0,
+      "incrementalSegments": 0,
+      "fullReconciliations": 0,
+      "comparisonVisits": 0,
+      "subscriptions": 1,
+      "groups": 0,
+      "historyRequests": 1,
+      "currentPages": 0,
+      "historyPages": 34,
+      "bytes": 13330354,
+      "historyBytes": 13330354,
+      "historyResponseHeadersMs": 4275.39999999851,
+      "historyBodyReadMs": 1742.2999999970198,
+      "historyJsonParseMs": 252.10000000149012,
+      "historyValidationMs": 834.7000000178814,
+      "historyProjectorApplyMs": 841.9999999627471,
+      "historyUpdateCallbackMs": 242.40000004321337,
+      "historyEventLoopYieldDelayMs": 1002.5000000521541,
+      "currentPatches": 0,
+      "ringDrops": 0,
+      "failures": 0,
+      "projections": [
+        {
+          "retainedSegments": 8293,
+          "activeCandidates": 20,
+          "valueRuns": 49154,
+          "largestSegmentRuns": 465,
+          "queuedValueRuns": 49154,
+          "episodeHistoryLimited": false,
+          "valueHistoryLimited": false
+        }
+      ],
+      "historyJobs": 1,
+      "readerControl": {
+        "submitted": 0,
+        "coalesced": 0,
+        "cancelled": 0,
+        "completed": 0,
+        "failed": 0,
+        "peakActive": 0,
+        "queueMs": 0,
+        "runMs": 0,
+        "active": 0,
+        "queued": 0
+      },
+      "warmTimings": [
+        {
+          "kind": "encode",
+          "identity": "[\"binance-spot\",\"[\\\"binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1\\\",\\\"spot\\\",\\\"binance:spot:BTCUSDT\\\",\\\"binance:spot:BTCUSDT:spot-diff-depth\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1\",1793696100000,1793804700000,0,null,null]",
+          "queueMs": 0.8999999985098839,
+          "elapsedMs": 3714.7999999970198,
+          "segments": 8293,
+          "runs": 49154,
+          "state": "ready"
+        }
+      ],
+      "warmEntries": 1,
+      "warmBuilds": 0,
+      "warmReplayJobs": 0,
+      "warmReplaySegments": 0,
+      "warmReplayRuns": 0,
+      "warmCompactEntries": 1,
+      "warmReplayConsumers": 0,
+      "warmSegments": 8293,
+      "warmRuns": 49154,
+      "warmBytes": 1671666,
+      "historyConsumers": 1,
+      "ringPages": 0,
+      "ringBytes": 0,
+      "recentHistoryRequests": [
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+          "delivery": "projection",
+          "receivedSegments": 174,
+          "requestId": "75f9ee9b-0dcd-4958-b9b0-2c59cd736155",
+          "encodedBytes": 0,
+          "requestedAfter": 18,
+          "pageAfter": 18,
+          "nextAfter": 19,
+          "patchCount": 0,
+          "responseBytes": 385947,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 0.19999999552965164,
+          "jsonParseMs": 4.100000001490116,
+          "validationMs": 8.700000002980232,
+          "projectorApplyMs": 6.300000004470348,
+          "updateCallbackMs": 5.800000004470348,
+          "eventLoopYieldDelayMs": 0,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+          "delivery": "projection",
+          "receivedSegments": 225,
+          "requestId": "75f9ee9b-0dcd-4958-b9b0-2c59cd736155",
+          "encodedBytes": 0,
+          "requestedAfter": 19,
+          "pageAfter": 19,
+          "nextAfter": 20,
+          "patchCount": 0,
+          "responseBytes": 382886,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 149.69999999552965,
+          "jsonParseMs": 3.8000000044703484,
+          "validationMs": 21.399999998509884,
+          "projectorApplyMs": 20.200000002980232,
+          "updateCallbackMs": 4.700000002980232,
+          "eventLoopYieldDelayMs": 0,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+          "delivery": "projection",
+          "receivedSegments": 213,
+          "requestId": "75f9ee9b-0dcd-4958-b9b0-2c59cd736155",
+          "encodedBytes": 0,
+          "requestedAfter": 20,
+          "pageAfter": 20,
+          "nextAfter": 21,
+          "patchCount": 0,
+          "responseBytes": 371058,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 26.100000001490116,
+          "jsonParseMs": 18.299999997019768,
+          "validationMs": 15.700000002980232,
+          "projectorApplyMs": 21.100000001490116,
+          "updateCallbackMs": 7.300000004470348,
+          "eventLoopYieldDelayMs": 0.3999999985098839,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+          "delivery": "projection",
+          "receivedSegments": 254,
+          "requestId": "75f9ee9b-0dcd-4958-b9b0-2c59cd736155",
+          "encodedBytes": 0,
+          "requestedAfter": 21,
+          "pageAfter": 21,
+          "nextAfter": 22,
+          "patchCount": 0,
+          "responseBytes": 442289,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 137,
+          "jsonParseMs": 14,
+          "validationMs": 16.399999998509884,
+          "projectorApplyMs": 42.599999994039536,
+          "updateCallbackMs": 25.5,
+          "eventLoopYieldDelayMs": 1.4000000059604645,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+          "delivery": "projection",
+          "receivedSegments": 282,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 361904,
+          "requestedAfter": 22,
+          "pageAfter": 22,
+          "nextAfter": 23,
+          "patchCount": 0,
+          "responseBytes": 414366,
+          "responseHeadersMs": 3171.5,
+          "responseBodyReadMs": 12.100000001490116,
+          "jsonParseMs": 3.7000000029802322,
+          "validationMs": 29.700000002980232,
+          "projectorApplyMs": 46.099999994039536,
+          "updateCallbackMs": 9.699999995529652,
+          "eventLoopYieldDelayMs": 44.1000000089407,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+          "delivery": "projection",
+          "receivedSegments": 285,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 23,
+          "pageAfter": 23,
+          "nextAfter": 24,
+          "patchCount": 0,
+          "responseBytes": 419087,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 22.299999997019768,
+          "jsonParseMs": 9.300000004470348,
+          "validationMs": 21.19999999552965,
+          "projectorApplyMs": 45.8999999910593,
+          "updateCallbackMs": 4.200000002980232,
+          "eventLoopYieldDelayMs": 163.80000000447035,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+          "delivery": "projection",
+          "receivedSegments": 162,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 24,
+          "pageAfter": 24,
+          "nextAfter": 25,
+          "patchCount": 0,
+          "responseBytes": 253076,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 42.100000001490116,
+          "jsonParseMs": 12,
+          "validationMs": 16.399999998509884,
+          "projectorApplyMs": 35.29999998956919,
+          "updateCallbackMs": 7.399999998509884,
+          "eventLoopYieldDelayMs": 6.9000000059604645,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+          "delivery": "projection",
+          "receivedSegments": 206,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 25,
+          "pageAfter": 25,
+          "nextAfter": 26,
+          "patchCount": 0,
+          "responseBytes": 352334,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 18.299999997019768,
+          "jsonParseMs": 21.5,
+          "validationMs": 78.30000000447035,
+          "projectorApplyMs": 15.700000002980232,
+          "updateCallbackMs": 2.5,
+          "eventLoopYieldDelayMs": 20.599999994039536,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+          "delivery": "projection",
+          "receivedSegments": 353,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 26,
+          "pageAfter": 26,
+          "nextAfter": 27,
+          "patchCount": 0,
+          "responseBytes": 540802,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 0.8999999985098839,
+          "jsonParseMs": 10,
+          "validationMs": 70.29999999701977,
+          "projectorApplyMs": 59.99999999254942,
+          "updateCallbackMs": 19.100000001490116,
+          "eventLoopYieldDelayMs": 187.00000000745058,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+          "delivery": "projection",
+          "receivedSegments": 383,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 27,
+          "pageAfter": 27,
+          "nextAfter": 28,
+          "patchCount": 0,
+          "responseBytes": 530908,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 190.79999999701977,
+          "jsonParseMs": 31.200000002980232,
+          "validationMs": 71.89999999850988,
+          "projectorApplyMs": 20.099999994039536,
+          "updateCallbackMs": 5,
+          "eventLoopYieldDelayMs": 46,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+          "delivery": "projection",
+          "receivedSegments": 195,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 28,
+          "pageAfter": 28,
+          "nextAfter": 29,
+          "patchCount": 0,
+          "responseBytes": 324284,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 1.2000000029802322,
+          "jsonParseMs": 2.6999999955296516,
+          "validationMs": 12.400000005960464,
+          "projectorApplyMs": 6.5,
+          "updateCallbackMs": 3.4000000059604645,
+          "eventLoopYieldDelayMs": 0,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+          "delivery": "projection",
+          "receivedSegments": 162,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 29,
+          "pageAfter": 29,
+          "nextAfter": 30,
+          "patchCount": 0,
+          "responseBytes": 317465,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 365.30000000447035,
+          "jsonParseMs": 10.699999995529652,
+          "validationMs": 13.700000002980232,
+          "projectorApplyMs": 12.399999991059303,
+          "updateCallbackMs": 5.399999998509884,
+          "eventLoopYieldDelayMs": 0.30000000447034836,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+          "delivery": "projection",
+          "receivedSegments": 447,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 30,
+          "pageAfter": 30,
+          "nextAfter": 31,
+          "patchCount": 0,
+          "responseBytes": 572950,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 232,
+          "jsonParseMs": 18.600000001490116,
+          "validationMs": 31.700000002980232,
+          "projectorApplyMs": 40.8999999910593,
+          "updateCallbackMs": 8,
+          "eventLoopYieldDelayMs": 109.7000000178814,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+          "delivery": "projection",
+          "receivedSegments": 535,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 31,
+          "pageAfter": 31,
+          "nextAfter": 32,
+          "patchCount": 0,
+          "responseBytes": 608554,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 43.399999998509884,
+          "jsonParseMs": 6.200000002980232,
+          "validationMs": 33.5,
+          "projectorApplyMs": 107.39999999850988,
+          "updateCallbackMs": 15,
+          "eventLoopYieldDelayMs": 24.69999999552965,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+          "delivery": "projection",
+          "receivedSegments": 381,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 32,
+          "pageAfter": 32,
+          "nextAfter": 33,
+          "patchCount": 0,
+          "responseBytes": 514957,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 0.5,
+          "jsonParseMs": 3.7999999970197678,
+          "validationMs": 16.30000000447035,
+          "projectorApplyMs": 44.20000000298023,
+          "updateCallbackMs": 12.600000001490116,
+          "eventLoopYieldDelayMs": 17.69999999552965,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+          "delivery": "projection",
+          "receivedSegments": 145,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 33,
+          "pageAfter": 33,
+          "nextAfter": 34,
+          "patchCount": 0,
+          "responseBytes": 205293,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 0.20000000298023224,
+          "jsonParseMs": 1.3999999985098839,
+          "validationMs": 4.799999997019768,
+          "projectorApplyMs": 24.400000005960464,
+          "updateCallbackMs": 6.700000002980232,
+          "eventLoopYieldDelayMs": 6.399999998509884,
+          "attempts": 1
+        }
+      ],
+      "historyPageTiming": {
+        "totalPages": 34,
+        "retainedSamples": 34,
+        "completeSample": true,
+        "p50": {
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 1,
+          "jsonParseMs": 4.100000001490116,
+          "validationMs": 15.800000004470348,
+          "projectorApplyMs": 20.099999994039536,
+          "updateCallbackMs": 4.700000002980232,
+          "eventLoopYieldDelayMs": 1.4000000059604645,
+          "responseBytes": 387385
+        },
+        "p95": {
+          "responseHeadersMs": 1103.8999999985099,
+          "responseBodyReadMs": 284.70000000298023,
+          "jsonParseMs": 21.5,
+          "validationMs": 78.30000000447035,
+          "projectorApplyMs": 59.99999999254942,
+          "updateCallbackMs": 25.5,
+          "eventLoopYieldDelayMs": 179.80000000447035,
+          "responseBytes": 584180
+        },
+        "max": {
+          "responseHeadersMs": 3171.5,
+          "responseBodyReadMs": 365.30000000447035,
+          "jsonParseMs": 31.200000002980232,
+          "validationMs": 96.5,
+          "projectorApplyMs": 107.39999999850988,
+          "updateCallbackMs": 27.30000000447035,
+          "eventLoopYieldDelayMs": 187.00000000745058,
+          "responseBytes": 608554
+        }
+      }
+    },
+    "native": {
+      "hits": 0,
+      "admissions": 1,
+      "capacityMisses": 0,
+      "entries": 1,
+      "rows": 360,
+      "accountedBytes": 200630,
+      "activeLeases": 1,
+      "retainedKeys": 1,
+      "limits": {
+        "entries": 2,
+        "rows": 1000,
+        "accountedBytes": 1048576,
+        "ttlMs": 60000,
+        "activeLeases": 128
+      }
+    }
+  },
+  "coldHash": {
+    "segments": 8293,
+    "runs": 49154,
+    "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e",
+    "fingerprintMs": 982,
+    "encodedBytes": 12512234
+  },
+  "warmHash": {
+    "segments": 8293,
+    "runs": 49154,
+    "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e",
+    "fingerprintMs": 303.40000000596046,
+    "encodedBytes": 12512234
+  },
+  "diagnostics": {
+    "series": 0,
+    "subscriptions": 0,
+    "sockets": 0,
+    "caches": [],
+    "inactiveCaches": 0,
+    "comparison": {
+      "subscriptions": 0,
+      "activeIdentities": 0,
+      "transport": "direct",
+      "socket": "closed",
+      "socketCreations": 0,
+      "historyRequests": 0,
+      "reconnectAttempts": 0,
+      "retainedBars": 0,
+      "pendingCandles": 0,
+      "pendingHistory": 0,
+      "metadataCaches": 0
+    },
+    "cvd": {
+      "clients": 0,
+      "sources": [],
+      "fixture": false
+    },
+    "liquidations": {
+      "clients": 0,
+      "events": 0,
+      "sockets": 0,
+      "cursor": 0,
+      "state": "loading",
+      "loaded": 0,
+      "requests": 0,
+      "rejected": 0,
+      "reconnects": 0,
+      "historyPages": 0,
+      "stalePackets": 0,
+      "batches": 0
+    },
+    "tpo": {
+      "subscriptions": 0,
+      "cacheHits": 0,
+      "pagesFetched": 0,
+      "profileRecomputes": 0,
+      "nakedRecomputes": 0,
+      "livePatches": 0,
+      "groups": []
+    },
+    "staging": {
+      "historyLoadAttempts": [],
+      "nativePresentation": {
+        "hits": 1,
+        "admissions": 2,
+        "capacityMisses": 0,
+        "entries": 1,
+        "rows": 360,
+        "accountedBytes": 200630,
+        "activeLeases": 1,
+        "retainedKeys": 1,
+        "limits": {
+          "entries": 2,
+          "rows": 1000,
+          "accountedBytes": 1048576,
+          "ttlMs": 60000,
+          "activeLeases": 128
+        }
+      },
+      "scheduler": {
+        "submitted": 11,
+        "coalesced": 0,
+        "cancelled": 1,
+        "completed": 10,
+        "failed": 1,
+        "peakActive": 2,
+        "queueMs": 957.8000000119209,
+        "runMs": 25044.29999998957,
+        "active": 0,
+        "queued": 0
+      },
+      "requests": [
+        {
+          "id": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-2",
+          "url": "/market-data/v1/native-candles?interval=5m&from=1793696400000&market=spot",
+          "eligibleAt": 1280.9000000059605,
+          "wireAt": 1282.5,
+          "queueMs": 1.5999999940395355,
+          "headersAt": 3664.3000000044703,
+          "headerMs": 2381.8000000044703,
+          "requestId": "fc61a10e-bcb6-43ac-9e13-4f267bec0c7e",
+          "serverTiming": "admission;dur=0, db;dur=0.00, dbdecode;dur=0.00, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=3.69, total;dur=565.79, legacy;dur=573.87, proxyqueue;dur=1.51, proxyheader;dur=2314.42",
+          "encodedBytes": 38516,
+          "proxyQueueMs": 1.51,
+          "proxyHeaderMs": 2314.42,
+          "receivedAt": 3668,
+          "transferMs": 3.6999999955296516,
+          "decodedBytes": 151486,
+          "decodedAt": 3670.7000000029802,
+          "decodeMs": 2.7000000029802322,
+          "receivedBars": 1000,
+          "receivedFrom": 1793696400000,
+          "receivedLast": 1793996100000
+        },
+        {
+          "id": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-3",
+          "url": "/market-data/v1/native-candles?interval=5m&from=1793696400000&market=spot",
+          "eligibleAt": 17033,
+          "wireAt": 17033.5,
+          "queueMs": 0.5,
+          "headersAt": 21865.40000000596,
+          "headerMs": 4831.9000000059605,
+          "requestId": "9c176f4c-3242-443f-9384-f06f4cdd09c4",
+          "serverTiming": "admission;dur=0, db;dur=0.00, dbdecode;dur=0.00, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=1.07, total;dur=274.90, legacy;dur=279.61, proxyqueue;dur=7.82, proxyheader;dur=4774.07",
+          "encodedBytes": 38372,
+          "proxyQueueMs": 7.82,
+          "proxyHeaderMs": 4774.07,
+          "receivedAt": 21867.70000000298,
+          "transferMs": 2.2999999970197678,
+          "decodedBytes": 151486,
+          "decodedAt": 21871,
+          "decodeMs": 3.2999999970197678,
+          "receivedBars": 1000,
+          "receivedFrom": 1793696400000,
+          "receivedLast": 1793996100000
+        }
+      ],
+      "config": {
+        "dataMode": "staging",
+        "historyTiles": true,
+        "build": "42c69a6e6d83a76f95daefafb9f2be5e8e440cff"
+      },
+      "views": [],
+      "source": "staging",
+      "transport": "websocket",
+      "streams": [
+        {
+          "key": "binance:spot:BTCUSDT:5m",
+          "connected": true,
+          "lastHeartbeat": 1794146695013,
+          "native": {
+            "historyReady": true,
+            "historyLoading": false,
+            "historyRetryAt": 0,
+            "lastCandleReceivedAt": 1794146694380,
+            "retainedStreamVersions": 2,
+            "viewportHistory": {
+              "requests": 1,
+              "receivedBars": 360,
+              "presentedBars": 360,
+              "applyMs": 0.9000000059604645,
+              "retainedOHLC": 0,
+              "views": 1,
+              "busy": 0,
+              "retainedTimes": 360
+            }
+          }
+        }
+      ],
+      "groups": 1,
+      "subscriptions": 1,
+      "retainedLiveBars": 0,
+      "preparedClosedBars": 0,
+      "retainedBars": 1000
+    },
+    "depth": {
+      "subscribers": 0,
+      "bookObservers": 0,
+      "sockets": 0,
+      "state": "syncing",
+      "lastUpdateId": 0,
+      "buffered": 0,
+      "samples": 0,
+      "snapshotBidBoundary": null,
+      "snapshotAskBoundary": null,
+      "collectionStartedAt": null,
+      "synthetic": false
+    },
+    "heatmap": {
+      "prepared": {
+        "cacheReadMs": 0,
+        "cacheWriteMs": 0,
+        "cacheHits": 0,
+        "tileReads": 0,
+        "manifestReads": 0,
+        "retries": 0,
+        "headerMs": 0,
+        "transferMs": 0,
+        "decodeMs": 0,
+        "mergeMs": 0,
+        "bytes": 0
+      },
+      "scheduler": {
+        "submitted": 11,
+        "coalesced": 0,
+        "cancelled": 1,
+        "completed": 10,
+        "failed": 1,
+        "peakActive": 2,
+        "queueMs": 957.8000000119209,
+        "runMs": 25044.29999998957,
+        "active": 0,
+        "queued": 0
+      },
+      "configurations": 0,
+      "streams": [],
+      "groups": []
+    },
+    "orderWalls": {
+      "pages": 0,
+      "records": 0,
+      "bytes": 0,
+      "replayMs": 0,
+      "failures": 0,
+      "active": 0,
+      "cacheHits": 0,
+      "cachePrefixHits": 0,
+      "cacheEpochRejects": 0,
+      "liveTailEvictions": 0,
+      "replayBridgePages": 0,
+      "replayBridgeRecords": 0,
+      "cacheEntries": 0,
+      "cacheBytes": 0,
+      "subscriptions": []
+    },
+    "orderWallsArchive": {
+      "warmAdmissions": 1,
+      "warmCapacityMisses": 0,
+      "warmInvalidMisses": 0,
+      "warmCompactBuilds": 1,
+      "warmRevisionReuses": 1,
+      "warmBuildFailures": 0,
+      "warmDecodeFailures": 0,
+      "incrementalSegments": 0,
+      "fullReconciliations": 0,
+      "comparisonVisits": 0,
+      "subscriptions": 1,
+      "groups": 0,
+      "historyRequests": 3,
+      "currentPages": 0,
+      "historyPages": 68,
+      "bytes": 26660708,
+      "historyBytes": 26660708,
+      "historyResponseHeadersMs": 4323,
+      "historyBodyReadMs": 1802.599999986589,
+      "historyJsonParseMs": 382.9000000208616,
+      "historyValidationMs": 1735.800000011921,
+      "historyProjectorApplyMs": 1974.2000000029802,
+      "historyUpdateCallbackMs": 299.1000000461936,
+      "historyEventLoopYieldDelayMs": 1826.6000000238419,
+      "currentPatches": 0,
+      "ringDrops": 0,
+      "failures": 0,
+      "projections": [
+        {
+          "retainedSegments": 8293,
+          "activeCandidates": 20,
+          "valueRuns": 49154,
+          "largestSegmentRuns": 465,
+          "queuedValueRuns": 49154,
+          "episodeHistoryLimited": false,
+          "valueHistoryLimited": false
+        }
+      ],
+      "historyJobs": 1,
+      "readerControl": {
+        "submitted": 0,
+        "coalesced": 0,
+        "cancelled": 0,
+        "completed": 0,
+        "failed": 0,
+        "peakActive": 0,
+        "queueMs": 0,
+        "runMs": 0,
+        "active": 0,
+        "queued": 0
+      },
+      "warmTimings": [
+        {
+          "kind": "encode",
+          "identity": "[\"binance-spot\",\"[\\\"binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1\\\",\\\"spot\\\",\\\"binance:spot:BTCUSDT\\\",\\\"binance:spot:BTCUSDT:spot-diff-depth\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1\",1793696100000,1793804700000,0,null,null]",
+          "queueMs": 0.8999999985098839,
+          "elapsedMs": 3714.7999999970198,
+          "segments": 8293,
+          "runs": 49154,
+          "state": "ready"
+        },
+        {
+          "kind": "replay",
+          "identity": "[\"binance-spot\",\"[\\\"binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1\\\",\\\"spot\\\",\\\"binance:spot:BTCUSDT\\\",\\\"binance:spot:BTCUSDT:spot-diff-depth\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1\",1793696100000,1793804700000,0,null,null]",
+          "queueMs": 0,
+          "elapsedMs": 26.399999998509884,
+          "segments": 0,
+          "runs": 0,
+          "state": "cancelled"
+        },
+        {
+          "kind": "replay",
+          "identity": "[\"binance-spot\",\"[\\\"binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1\\\",\\\"spot\\\",\\\"binance:spot:BTCUSDT\\\",\\\"binance:spot:BTCUSDT:spot-diff-depth\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1\",1793696100000,1793804700000,0,null,null]",
+          "queueMs": 0,
+          "elapsedMs": 3268.39999999851,
+          "firstContentMs": 14.899999998509884,
+          "segments": 8293,
+          "runs": 49154,
+          "state": "ready"
+        }
+      ],
+      "warmEntries": 1,
+      "warmBuilds": 0,
+      "warmReplayJobs": 0,
+      "warmReplaySegments": 0,
+      "warmReplayRuns": 0,
+      "warmCompactEntries": 1,
+      "warmReplayConsumers": 0,
+      "warmSegments": 8293,
+      "warmRuns": 49154,
+      "warmBytes": 1671666,
+      "historyConsumers": 1,
+      "ringPages": 0,
+      "ringBytes": 0,
+      "recentHistoryRequests": [
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+          "delivery": "projection",
+          "receivedSegments": 174,
+          "requestId": "75f9ee9b-0dcd-4958-b9b0-2c59cd736155",
+          "encodedBytes": 0,
+          "requestedAfter": 18,
+          "pageAfter": 18,
+          "nextAfter": 19,
+          "patchCount": 0,
+          "responseBytes": 385947,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 0.19999999552965164,
+          "jsonParseMs": 2.5,
+          "validationMs": 10.300000004470348,
+          "projectorApplyMs": 38.30000000447035,
+          "updateCallbackMs": 7.299999997019768,
+          "eventLoopYieldDelayMs": 11.599999994039536,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+          "delivery": "projection",
+          "receivedSegments": 225,
+          "requestId": "75f9ee9b-0dcd-4958-b9b0-2c59cd736155",
+          "encodedBytes": 0,
+          "requestedAfter": 19,
+          "pageAfter": 19,
+          "nextAfter": 20,
+          "patchCount": 0,
+          "responseBytes": 382886,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 1,
+          "jsonParseMs": 2.5,
+          "validationMs": 8.899999998509884,
+          "projectorApplyMs": 68,
+          "updateCallbackMs": 0.30000000447034836,
+          "eventLoopYieldDelayMs": 11.899999998509884,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+          "delivery": "projection",
+          "receivedSegments": 213,
+          "requestId": "75f9ee9b-0dcd-4958-b9b0-2c59cd736155",
+          "encodedBytes": 0,
+          "requestedAfter": 20,
+          "pageAfter": 20,
+          "nextAfter": 21,
+          "patchCount": 0,
+          "responseBytes": 371058,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 0.3999999985098839,
+          "jsonParseMs": 2.7999999970197678,
+          "validationMs": 10.5,
+          "projectorApplyMs": 25.400000005960464,
+          "updateCallbackMs": 0.6000000014901161,
+          "eventLoopYieldDelayMs": 8.199999995529652,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+          "delivery": "projection",
+          "receivedSegments": 254,
+          "requestId": "75f9ee9b-0dcd-4958-b9b0-2c59cd736155",
+          "encodedBytes": 0,
+          "requestedAfter": 21,
+          "pageAfter": 21,
+          "nextAfter": 22,
+          "patchCount": 0,
+          "responseBytes": 442289,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 0.29999999701976776,
+          "jsonParseMs": 3.600000001490116,
+          "validationMs": 10,
+          "projectorApplyMs": 28.700000002980232,
+          "updateCallbackMs": 0.6000000014901161,
+          "eventLoopYieldDelayMs": 4.299999997019768,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+          "delivery": "projection",
+          "receivedSegments": 282,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 361904,
+          "requestedAfter": 22,
+          "pageAfter": 22,
+          "nextAfter": 23,
+          "patchCount": 0,
+          "responseBytes": 414366,
+          "responseHeadersMs": 27.5,
+          "responseBodyReadMs": 15.299999997019768,
+          "jsonParseMs": 2.8000000044703484,
+          "validationMs": 16.5,
+          "projectorApplyMs": 33.899999998509884,
+          "updateCallbackMs": 3.5,
+          "eventLoopYieldDelayMs": 8.700000002980232,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+          "delivery": "projection",
+          "receivedSegments": 285,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 23,
+          "pageAfter": 23,
+          "nextAfter": 24,
+          "patchCount": 0,
+          "responseBytes": 419087,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 0.20000000298023224,
+          "jsonParseMs": 3.399999998509884,
+          "validationMs": 9.399999998509884,
+          "projectorApplyMs": 33.5,
+          "updateCallbackMs": 0.5,
+          "eventLoopYieldDelayMs": 7.5,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+          "delivery": "projection",
+          "receivedSegments": 162,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 24,
+          "pageAfter": 24,
+          "nextAfter": 25,
+          "patchCount": 0,
+          "responseBytes": 253076,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 0.20000000298023224,
+          "jsonParseMs": 1.3999999985098839,
+          "validationMs": 12.399999998509884,
+          "projectorApplyMs": 14.100000001490116,
+          "updateCallbackMs": 0.5999999940395355,
+          "eventLoopYieldDelayMs": 0,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+          "delivery": "projection",
+          "receivedSegments": 206,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 25,
+          "pageAfter": 25,
+          "nextAfter": 26,
+          "patchCount": 0,
+          "responseBytes": 352334,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 0.3999999985098839,
+          "jsonParseMs": 2.399999998509884,
+          "validationMs": 25.30000000447035,
+          "projectorApplyMs": 45.70000000298023,
+          "updateCallbackMs": 0.7000000029802322,
+          "eventLoopYieldDelayMs": 6.200000002980232,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+          "delivery": "projection",
+          "receivedSegments": 353,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 26,
+          "pageAfter": 26,
+          "nextAfter": 27,
+          "patchCount": 0,
+          "responseBytes": 540802,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 0.3999999985098839,
+          "jsonParseMs": 3.600000001490116,
+          "validationMs": 11.899999998509884,
+          "projectorApplyMs": 44,
+          "updateCallbackMs": 0.5,
+          "eventLoopYieldDelayMs": 0,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+          "delivery": "projection",
+          "receivedSegments": 383,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 27,
+          "pageAfter": 27,
+          "nextAfter": 28,
+          "patchCount": 0,
+          "responseBytes": 530908,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 7.199999995529652,
+          "jsonParseMs": 3.2000000029802322,
+          "validationMs": 11.799999997019768,
+          "projectorApplyMs": 35.400000005960464,
+          "updateCallbackMs": 0.4000000059604645,
+          "eventLoopYieldDelayMs": 4.299999997019768,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+          "delivery": "projection",
+          "receivedSegments": 195,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 28,
+          "pageAfter": 28,
+          "nextAfter": 29,
+          "patchCount": 0,
+          "responseBytes": 324284,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 0.20000000298023224,
+          "jsonParseMs": 2,
+          "validationMs": 7.899999998509884,
+          "projectorApplyMs": 18.600000001490116,
+          "updateCallbackMs": 4,
+          "eventLoopYieldDelayMs": 4.299999997019768,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+          "delivery": "projection",
+          "receivedSegments": 162,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 29,
+          "pageAfter": 29,
+          "nextAfter": 30,
+          "patchCount": 0,
+          "responseBytes": 317465,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 0.30000000447034836,
+          "jsonParseMs": 2,
+          "validationMs": 8.300000004470348,
+          "projectorApplyMs": 62.50000000745058,
+          "updateCallbackMs": 0.3999999985098839,
+          "eventLoopYieldDelayMs": 81.09999999403954,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+          "delivery": "projection",
+          "receivedSegments": 447,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 30,
+          "pageAfter": 30,
+          "nextAfter": 31,
+          "patchCount": 0,
+          "responseBytes": 572950,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 2,
+          "jsonParseMs": 4,
+          "validationMs": 13.799999997019768,
+          "projectorApplyMs": 113.89999999850988,
+          "updateCallbackMs": 0.3999999985098839,
+          "eventLoopYieldDelayMs": 25.100000001490116,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+          "delivery": "projection",
+          "receivedSegments": 535,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 31,
+          "pageAfter": 31,
+          "nextAfter": 32,
+          "patchCount": 0,
+          "responseBytes": 608554,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 0.3999999985098839,
+          "jsonParseMs": 5.4000000059604645,
+          "validationMs": 10.5,
+          "projectorApplyMs": 71.10000000149012,
+          "updateCallbackMs": 0.20000000298023224,
+          "eventLoopYieldDelayMs": 4.399999998509884,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+          "delivery": "projection",
+          "receivedSegments": 381,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 32,
+          "pageAfter": 32,
+          "nextAfter": 33,
+          "patchCount": 0,
+          "responseBytes": 514957,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 0.3999999985098839,
+          "jsonParseMs": 2.7999999970197678,
+          "validationMs": 14.200000002980232,
+          "projectorApplyMs": 68.69999999552965,
+          "updateCallbackMs": 0.3999999985098839,
+          "eventLoopYieldDelayMs": 4.300000004470348,
+          "attempts": 1
+        },
+        {
+          "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+          "delivery": "projection",
+          "receivedSegments": 145,
+          "requestId": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+          "encodedBytes": 0,
+          "requestedAfter": 33,
+          "pageAfter": 33,
+          "nextAfter": 34,
+          "patchCount": 0,
+          "responseBytes": 205293,
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 2.3000000044703484,
+          "jsonParseMs": 1.6000000014901161,
+          "validationMs": 3.7999999970197678,
+          "projectorApplyMs": 57.80000000447035,
+          "updateCallbackMs": 1.3999999985098839,
+          "eventLoopYieldDelayMs": 4.299999997019768,
+          "attempts": 1
+        }
+      ],
+      "historyPageTiming": {
+        "totalPages": 68,
+        "retainedSamples": 68,
+        "completeSample": true,
+        "p50": {
+          "responseHeadersMs": 0,
+          "responseBodyReadMs": 0.5,
+          "jsonParseMs": 3.600000001490116,
+          "validationMs": 13.799999997019768,
+          "projectorApplyMs": 21.900000005960464,
+          "updateCallbackMs": 3.100000001490116,
+          "eventLoopYieldDelayMs": 4.399999998509884,
+          "responseBytes": 387385
+        },
+        "p95": {
+          "responseHeadersMs": 20.100000001490116,
+          "responseBodyReadMs": 190.79999999701977,
+          "jsonParseMs": 18.299999997019768,
+          "validationMs": 78.30000000447035,
+          "projectorApplyMs": 71.10000000149012,
+          "updateCallbackMs": 15,
+          "eventLoopYieldDelayMs": 163.80000000447035,
+          "responseBytes": 584180
+        },
+        "max": {
+          "responseHeadersMs": 3171.5,
+          "responseBodyReadMs": 365.30000000447035,
+          "jsonParseMs": 31.200000002980232,
+          "validationMs": 234.09999999403954,
+          "projectorApplyMs": 113.89999999850988,
+          "updateCallbackMs": 27.30000000447035,
+          "eventLoopYieldDelayMs": 187.00000000745058,
+          "responseBytes": 608554
+        }
+      }
+    },
+    "depthMatrix": {
+      "requests": 0,
+      "failures": 0,
+      "activeWidgets": 0,
+      "activeMarkets": 0,
+      "activeGrids": 0,
+      "emittedRows": 0,
+      "cacheHits": 0,
+      "markets": []
+    },
+    "netPositioning": {
+      "requests": 0,
+      "rowsReceived": 0,
+      "rowsChanged": 0,
+      "snapshots": 0,
+      "patches": 0,
+      "errors": 0,
+      "subscribers": 0,
+      "cachedIntervals": 0,
+      "lastPollMs": 0,
+      "cache": []
+    },
+    "rawOpenInterest": {
+      "requests": 0,
+      "rowsReceived": 0,
+      "rowsChanged": 0,
+      "snapshots": 0,
+      "patches": 0,
+      "errors": 0,
+      "subscribers": 0,
+      "lastPollMs": 0,
+      "fixtureSelected": false,
+      "history": {
+        "received": 0,
+        "changed": 0,
+        "snapshots": 0,
+        "patches": 0,
+        "duplicateRows": 0,
+        "retained": 0
+      },
+      "cacheVenues": []
+    },
+    "footprint": {
+      "subscribers": 0,
+      "executionConsumers": 0,
+      "groups": [],
+      "sockets": 0,
+      "connected": false,
+      "tickSize": null,
+      "pending": 0,
+      "recentIds": 0,
+      "lastTradeId": null,
+      "expiredIdFloor": null,
+      "lastTradeTime": null,
+      "lastEventTime": null,
+      "counters": {
+        "messages": 0,
+        "accepted": 0,
+        "duplicates": 0,
+        "late": 0,
+        "unknownSide": 0,
+        "invalidGrid": 0,
+        "pendingFlushes": 0,
+        "socketOpens": 0,
+        "reconnects": 0,
+        "capacityDrops": 0,
+        "aggregationBatches": 0,
+        "aggregationObservations": 0,
+        "aggregationTotalMs": 0,
+        "aggregationMaxMs": 0
+      },
+      "rejected": {
+        "market": 0,
+        "contract": 0,
+        "symbol": 0,
+        "maker-side": 0,
+        "trade-id": 0,
+        "time": 0,
+        "price": 0,
+        "quantity": 0
+      },
+      "state": "loading"
+    },
+    "spotFootprint": {
+      "subscribers": 0,
+      "executionConsumers": 0,
+      "groups": [],
+      "sockets": 0,
+      "connected": false,
+      "tickSize": null,
+      "pending": 0,
+      "recentIds": 0,
+      "lastTradeId": null,
+      "expiredIdFloor": null,
+      "lastTradeTime": null,
+      "lastEventTime": null,
+      "counters": {
+        "messages": 0,
+        "accepted": 0,
+        "duplicates": 0,
+        "late": 0,
+        "unknownSide": 0,
+        "invalidGrid": 0,
+        "pendingFlushes": 0,
+        "socketOpens": 0,
+        "reconnects": 0,
+        "capacityDrops": 0,
+        "aggregationBatches": 0,
+        "aggregationObservations": 0,
+        "aggregationTotalMs": 0,
+        "aggregationMaxMs": 0
+      },
+      "rejected": {
+        "market": 0,
+        "contract": 0,
+        "symbol": 0,
+        "maker-side": 0,
+        "trade-id": 0,
+        "time": 0,
+        "price": 0,
+        "quantity": 0
+      },
+      "state": "loading"
+    },
+    "tickers": {
+      "publishedBatches": 0,
+      "publishedRecords": 0,
+      "widgets": 0,
+      "subscribers": []
+    },
+    "tradeBubbles": {
+      "subscribers": 0,
+      "feeds": [],
+      "fixture": false,
+      "caches": {
+        "binance:spot": 0,
+        "binance:perpetual": 0
+      },
+      "subscribersState": [],
+      "publishedRecords": 0,
+      "duplicateRecords": 0
+    },
+    "effortResult": [],
+    "fixture": false,
+    "networkSockets": 0,
+    "syntheticMessages": 0,
+    "historyApply": {
+      "footprintMs": 0,
+      "heatmapMs": 0,
+      "orderWallsMs": 908.6999999582767,
+      "footprintBatches": 0,
+      "heatmapBatches": 0,
+      "orderWallsBatches": 180
+    }
+  },
+  "requests": [
+    {
+      "phase": "cold",
+      "url": "http://127.0.0.1:4185/market-data/v1/native-candles?interval=5m&market=spot",
+      "at": 4813.351353,
+      "viewId": null,
+      "state": "complete",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "connection": "keep-alive",
+        "content-encoding": "gzip",
+        "content-length": "37627",
+        "content-type": "application/json",
+        "date": "Sun, 08 Nov 2026 14:04:30 GMT",
+        "keep-alive": "timeout=5",
+        "server-timing": "admission;dur=0, db;dur=0.00, dbdecode;dur=0.00, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=0.98, total;dur=286.52, legacy;dur=291.00, proxyqueue;dur=2.28, proxyheader;dur=3065.12",
+        "vary": "Accept-Encoding",
+        "x-iq-proxy-header-ms": "3065.12",
+        "x-iq-proxy-queue-ms": "2.28",
+        "x-iq-request-id": "37e4128e-2ca0-43d8-8bb8-d655b973bb0f"
+      },
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 434,
+        "responseBodySize": 37627,
+        "responseHeadersSize": 572
+      },
+      "timing": {
+        "startTime": 1794146667785.537,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.981,
+        "responseStart": 3074.25,
+        "responseEnd": 3079.669
+      },
+      "finishedError": null
+    },
+    {
+      "phase": "cold",
+      "url": "http://127.0.0.1:4185/market-data/v2/history/walls/discover?market=spot&profile=binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1&from=1793696100000&to=1793804700000",
+      "at": 4834.791317,
+      "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+      "state": "complete",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "connection": "keep-alive",
+        "content-encoding": "gzip",
+        "content-length": "44883",
+        "content-type": "application/json",
+        "date": "Sun, 08 Nov 2026 14:04:30 GMT",
+        "keep-alive": "timeout=60",
+        "server-timing": "admission;dur=0, db;dur=444.53, sqlqueue;dur=175.35, dbdecode;dur=0.29, project;dur=0.00, serialize;dur=2.20, total;dur=454.76, proxyqueue;dur=1.89, proxyheader;dur=3065.80",
+        "vary": "Accept-Encoding",
+        "x-iq-db-queries": "3",
+        "x-iq-db-read-bytes": "273744877",
+        "x-iq-db-read-rows": "299264",
+        "x-iq-decoded-bytes": "197277",
+        "x-iq-proxy-header-ms": "3065.80",
+        "x-iq-proxy-queue-ms": "1.89",
+        "x-iq-request-id": "97c0f3bd-aa18-4edd-b6b2-95c81810dde2",
+        "x-iq-view-id": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1"
+      },
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 647,
+        "responseBodySize": 44883,
+        "responseHeadersSize": 698
+      },
+      "timing": {
+        "startTime": 1794146667831.5898,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.58,
+        "responseStart": 3072.493,
+        "responseEnd": 3083.08
+      },
+      "finishedError": null
+    },
+    {
+      "phase": "cold",
+      "url": "http://127.0.0.1:4185/market-data/v1/native-candles?interval=5m&from=1793696400000&market=spot",
+      "at": 5706.447131,
+      "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-2",
+      "state": "complete",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "connection": "keep-alive",
+        "content-encoding": "gzip",
+        "content-length": "38516",
+        "content-type": "application/json",
+        "date": "Sun, 08 Nov 2026 14:04:30 GMT",
+        "keep-alive": "timeout=5",
+        "server-timing": "admission;dur=0, db;dur=0.00, dbdecode;dur=0.00, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=3.69, total;dur=565.79, legacy;dur=573.87, proxyqueue;dur=1.51, proxyheader;dur=2314.42",
+        "vary": "Accept-Encoding",
+        "x-iq-proxy-header-ms": "2314.42",
+        "x-iq-proxy-queue-ms": "1.51",
+        "x-iq-request-id": "fc61a10e-bcb6-43ac-9e13-4f267bec0c7e",
+        "x-iq-view-id": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-2"
+      },
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 493,
+        "responseBodySize": 38516,
+        "responseHeadersSize": 631
+      },
+      "timing": {
+        "startTime": 1794146668703.8281,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.621,
+        "responseStart": 2323.85,
+        "responseEnd": 2328.593
+      },
+      "finishedError": null
+    },
+    {
+      "phase": "cold",
+      "url": "http://127.0.0.1:4185/market-data/v1/level-watches",
+      "at": 5843.510886,
+      "viewId": null,
+      "state": "complete",
+      "status": 200,
+      "headers": {
+        "vary": "Origin",
+        "cache-control": "no-store",
+        "connection": "keep-alive",
+        "content-length": "2860",
+        "content-type": "application/json",
+        "date": "Sun, 08 Nov 2026 14:04:31 GMT",
+        "keep-alive": "timeout=5",
+        "server-timing": "legacy;dur=4.68, proxyqueue;dur=2017.12, proxyheader;dur=2829.52",
+        "x-content-type-options": "nosniff",
+        "x-iq-proxy-header-ms": "2829.52",
+        "x-iq-proxy-queue-ms": "2017.12",
+        "x-iq-request-id": "19442ba2-b155-417d-8102-68c49513a67d"
+      },
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 433,
+        "responseBodySize": 2860,
+        "responseHeadersSize": 426
+      },
+      "timing": {
+        "startTime": 1794146668844.85,
+        "domainLookupStart": 0.419,
+        "domainLookupEnd": 0.623,
+        "connectStart": 0.623,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.255,
+        "requestStart": 1.572,
+        "responseStart": 4853.067,
+        "responseEnd": 4859.207
+      },
+      "finishedError": null
+    },
+    {
+      "phase": "cold",
+      "url": "http://127.0.0.1:4185/market-data/v2/history/walls/projection-batch?market=spot&key=efa5629adec8fcb0e7ffc93297bd273d178fae996fad4bae79b30862872863b0&start=0&version=2",
+      "at": 8081.295086,
+      "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+      "state": "complete",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, max-age=31536000, immutable",
+        "connection": "keep-alive",
+        "content-encoding": "br",
+        "content-length": "640872",
+        "content-type": "application/x-ndjson",
+        "date": "Sun, 08 Nov 2026 14:04:31 GMT",
+        "etag": "\"a4bd50e6c3ba71ebfcab65dd2d8244b4fec9df6a8d654bbb7636cd0916605332\"",
+        "keep-alive": "timeout=60",
+        "server-timing": "preparedread;dur=9.05, db;dur=0, proxyqueue;dur=0.92, proxyheader;dur=1076.99",
+        "vary": "Accept-Encoding",
+        "x-iq-batch-cache": "hit",
+        "x-iq-canonical-bytes": "8276300",
+        "x-iq-chunk-key": "efa5629adec8fcb0e7ffc93297bd273d178fae996fad4bae79b30862872863b0",
+        "x-iq-db-queries": "0",
+        "x-iq-db-read-bytes": "0",
+        "x-iq-db-read-rows": "0",
+        "x-iq-decoded-bytes": "4745124",
+        "x-iq-proxy-header-ms": "1076.99",
+        "x-iq-proxy-queue-ms": "0.92",
+        "x-iq-request-id": "75f9ee9b-0dcd-4958-b9b0-2c59cd736155",
+        "x-iq-source-revision": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+        "x-iq-view-id": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "x-iq-wall-next": "22",
+        "x-iq-wall-part-bytes": "[14626,335609,86592,89734,251054,212727,245492,207928,226505,332906,349734,301893,91343,219587,209895,250014,217352,196046,202742,227500,217505,258318]",
+        "x-iq-wall-parts": "22",
+        "x-iq-wall-start": "0",
+        "x-iq-wall-transport": "exact-points-v1"
+      },
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 509,
+        "responseBodySize": 640872,
+        "responseHeadersSize": 1194
+      },
+      "timing": {
+        "startTime": 1794146671075.454,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.818,
+        "responseStart": 1084.263,
+        "responseEnd": 2460.748
+      },
+      "finishedError": null
+    },
+    {
+      "phase": "cold",
+      "url": "http://127.0.0.1:4185/market-data/v2/history/walls/projection-batch?market=spot&key=efa5629adec8fcb0e7ffc93297bd273d178fae996fad4bae79b30862872863b0&start=22&version=2",
+      "at": 8111.201243,
+      "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+      "state": "complete",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, max-age=31536000, immutable",
+        "connection": "keep-alive",
+        "content-encoding": "br",
+        "content-length": "361904",
+        "content-type": "application/x-ndjson",
+        "date": "Sun, 08 Nov 2026 14:04:33 GMT",
+        "etag": "\"6ee239cc1df0692f035133378e023944392bb651f054afdbc503ac2f42c62807\"",
+        "keep-alive": "timeout=60",
+        "server-timing": "preparedread;dur=4.56, db;dur=0, proxyqueue;dur=2415.13, proxyheader;dur=732.47",
+        "vary": "Accept-Encoding",
+        "x-iq-batch-cache": "hit",
+        "x-iq-canonical-bytes": "5054088",
+        "x-iq-chunk-key": "efa5629adec8fcb0e7ffc93297bd273d178fae996fad4bae79b30862872863b0",
+        "x-iq-db-queries": "0",
+        "x-iq-db-read-bytes": "0",
+        "x-iq-db-read-rows": "0",
+        "x-iq-decoded-bytes": "3221849",
+        "x-iq-proxy-header-ms": "732.47",
+        "x-iq-proxy-queue-ms": "2415.13",
+        "x-iq-request-id": "e60e4526-0968-4e40-9285-1f81c2ad633e",
+        "x-iq-source-revision": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+        "x-iq-view-id": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "x-iq-wall-next": "34",
+        "x-iq-wall-part-bytes": "[260349,265553,151797,203962,336055,341327,191304,172539,387986,442170,338725,130070]",
+        "x-iq-wall-parts": "12",
+        "x-iq-wall-start": "22",
+        "x-iq-wall-transport": "exact-points-v1"
+      },
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 509,
+        "responseBodySize": 361904,
+        "responseHeadersSize": 1133
+      },
+      "timing": {
+        "startTime": 1794146671110.535,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.988,
+        "responseStart": 3152.617,
+        "responseEnd": 4520.808
+      },
+      "finishedError": null
+    },
+    {
+      "phase": "cold",
+      "url": "http://127.0.0.1:4185/market-data/v2/history/walls/source?market=spot&profile=binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1&from=1793696100000&to=1793804700000",
+      "at": 14162.400355,
+      "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+      "state": "complete",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "connection": "keep-alive",
+        "content-encoding": "gzip",
+        "content-length": "435",
+        "content-type": "application/json",
+        "date": "Sun, 08 Nov 2026 14:04:38 GMT",
+        "keep-alive": "timeout=60",
+        "server-timing": "admission;dur=0, db;dur=656.48, sqlqueue;dur=360.01, dbdecode;dur=0.53, project;dur=0.00, serialize;dur=0.32, total;dur=658.40, proxyqueue;dur=0.88, proxyheader;dur=1126.42",
+        "vary": "Accept-Encoding",
+        "x-iq-db-queries": "3",
+        "x-iq-db-read-bytes": "273744694",
+        "x-iq-db-read-rows": "299265",
+        "x-iq-decoded-bytes": "670",
+        "x-iq-proxy-header-ms": "1126.42",
+        "x-iq-proxy-queue-ms": "0.88",
+        "x-iq-request-id": "e299209d-16f8-4520-8a1c-061be4cef6cd",
+        "x-iq-view-id": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1"
+      },
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 499,
+        "responseBodySize": 435,
+        "responseHeadersSize": 693
+      },
+      "timing": {
+        "startTime": 1794146677147.3599,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 1.195,
+        "responseStart": 1142.842,
+        "responseEnd": 1145.261
+      },
+      "finishedError": null
+    },
+    {
+      "phase": "cold",
+      "url": "http://127.0.0.1:4185/market-data/v1/level-watches",
+      "at": 15278.437392,
+      "viewId": null,
+      "state": "complete",
+      "status": 200,
+      "headers": {
+        "vary": "Origin",
+        "cache-control": "no-store",
+        "connection": "keep-alive",
+        "content-length": "2861",
+        "content-type": "application/json",
+        "date": "Sun, 08 Nov 2026 14:04:39 GMT",
+        "keep-alive": "timeout=5",
+        "server-timing": "legacy;dur=4.21, proxyqueue;dur=1.43, proxyheader;dur=1077.38",
+        "x-content-type-options": "nosniff",
+        "x-iq-proxy-header-ms": "1077.38",
+        "x-iq-proxy-queue-ms": "1.43",
+        "x-iq-request-id": "8eb50d73-b2d7-40c1-89e3-937a35dc1b97"
+      },
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 433,
+        "responseBodySize": 2861,
+        "responseHeadersSize": 420
+      },
+      "timing": {
+        "startTime": 1794146678275.9941,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 1.228,
+        "responseStart": 1113.634,
+        "responseEnd": 1125.452
+      },
+      "finishedError": null
+    },
+    {
+      "phase": "warm",
+      "url": "http://127.0.0.1:4185/market-data/v1/native-candles?interval=5m&market=spot",
+      "at": 21452.868563,
+      "viewId": null,
+      "state": "complete",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "connection": "keep-alive",
+        "content-encoding": "gzip",
+        "content-length": "37710",
+        "content-type": "application/json",
+        "date": "Sun, 08 Nov 2026 14:04:47 GMT",
+        "keep-alive": "timeout=5",
+        "server-timing": "admission;dur=0, db;dur=0.00, dbdecode;dur=0.00, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=1.48, total;dur=1098.40, legacy;dur=1101.26, proxyqueue;dur=15.60, proxyheader;dur=6144.43",
+        "vary": "Accept-Encoding",
+        "x-iq-proxy-header-ms": "6144.43",
+        "x-iq-proxy-queue-ms": "15.60",
+        "x-iq-request-id": "4727c1fc-1de7-4e94-9587-bc9add6931ae"
+      },
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 434,
+        "responseBodySize": 37710,
+        "responseHeadersSize": 576
+      },
+      "timing": {
+        "startTime": 1794146684447.4722,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 2.784,
+        "responseStart": 6168.34,
+        "responseEnd": 6195.382
+      },
+      "finishedError": null
+    },
+    {
+      "phase": "warm",
+      "url": "http://127.0.0.1:4185/market-data/v1/native-candles?interval=5m&from=1793696400000&market=spot",
+      "at": 21462.542653,
+      "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-3",
+      "state": "complete",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "connection": "keep-alive",
+        "content-encoding": "gzip",
+        "content-length": "38372",
+        "content-type": "application/json",
+        "date": "Sun, 08 Nov 2026 14:04:46 GMT",
+        "keep-alive": "timeout=5",
+        "server-timing": "admission;dur=0, db;dur=0.00, dbdecode;dur=0.00, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=1.07, total;dur=274.90, legacy;dur=279.61, proxyqueue;dur=7.82, proxyheader;dur=4774.07",
+        "vary": "Accept-Encoding",
+        "x-iq-proxy-header-ms": "4774.07",
+        "x-iq-proxy-queue-ms": "7.82",
+        "x-iq-request-id": "9c176f4c-3242-443f-9384-f06f4cdd09c4",
+        "x-iq-view-id": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-3"
+      },
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 493,
+        "responseBodySize": 38372,
+        "responseHeadersSize": 631
+      },
+      "timing": {
+        "startTime": 1794146684462.84,
+        "domainLookupStart": 0.418,
+        "domainLookupEnd": 0.459,
+        "connectStart": 0.459,
+        "secureConnectionStart": -1,
+        "connectEnd": 1.174,
+        "requestStart": 1.543,
+        "responseStart": 4791.828,
+        "responseEnd": 4817.803
+      },
+      "finishedError": null
+    },
+    {
+      "phase": "warm",
+      "url": "http://127.0.0.1:4185/market-data/v2/history/walls/discover?market=spot&profile=binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1&from=1793696100000&to=1793804700000",
+      "at": 21499.363992,
+      "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-4",
+      "state": "failed",
+      "failedAt": 21507.805501,
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "warm",
+      "url": "http://127.0.0.1:4185/market-data/v2/history/walls/discover?market=spot&profile=binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1&from=1793696100000&to=1793804700000",
+      "at": 21520.891001,
+      "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+      "state": "complete",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "connection": "keep-alive",
+        "content-encoding": "gzip",
+        "content-length": "44886",
+        "content-type": "application/json",
+        "date": "Sun, 08 Nov 2026 14:04:45 GMT",
+        "keep-alive": "timeout=60",
+        "server-timing": "admission;dur=0, db;dur=338.14, sqlqueue;dur=77.00, dbdecode;dur=0.58, project;dur=0.00, serialize;dur=2.23, total;dur=346.44, proxyqueue;dur=5.28, proxyheader;dur=3170.54",
+        "vary": "Accept-Encoding",
+        "x-iq-db-queries": "3",
+        "x-iq-db-read-bytes": "273744960",
+        "x-iq-db-read-rows": "299267",
+        "x-iq-decoded-bytes": "197277",
+        "x-iq-proxy-header-ms": "3170.54",
+        "x-iq-proxy-queue-ms": "5.28",
+        "x-iq-request-id": "eb97ea60-d398-4f1d-8d21-0fca4808d02c",
+        "x-iq-view-id": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5"
+      },
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 647,
+        "responseBodySize": 44886,
+        "responseHeadersSize": 697
+      },
+      "timing": {
+        "startTime": 1794146684521.417,
+        "domainLookupStart": 0.372,
+        "domainLookupEnd": 0.407,
+        "connectStart": 0.407,
+        "secureConnectionStart": -1,
+        "connectEnd": 0.973,
+        "requestStart": 1.19,
+        "responseStart": 3181.445,
+        "responseEnd": 3706.32
+      },
+      "finishedError": null
+    },
+    {
+      "phase": "warm",
+      "url": "http://127.0.0.1:4185/market-data/v1/level-watches",
+      "at": 23474.6908,
+      "viewId": null,
+      "state": "complete",
+      "status": 200,
+      "headers": {
+        "vary": "Origin",
+        "cache-control": "no-store",
+        "connection": "keep-alive",
+        "content-length": "2861",
+        "content-type": "application/json",
+        "date": "Sun, 08 Nov 2026 14:04:48 GMT",
+        "keep-alive": "timeout=5",
+        "server-timing": "legacy;dur=4.90, proxyqueue;dur=1743.37, proxyheader;dur=2385.75",
+        "x-content-type-options": "nosniff",
+        "x-iq-proxy-header-ms": "2385.75",
+        "x-iq-proxy-queue-ms": "1743.37",
+        "x-iq-request-id": "fa9fb3d7-abd3-4637-871b-516118e36173"
+      },
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 433,
+        "responseBodySize": 2861,
+        "responseHeadersSize": 426
+      },
+      "timing": {
+        "startTime": 1794146686476.861,
+        "domainLookupStart": 1.613,
+        "domainLookupEnd": 1.806,
+        "connectStart": 1.806,
+        "secureConnectionStart": -1,
+        "connectEnd": 2.389,
+        "requestStart": 7.757,
+        "responseStart": 4154.349,
+        "responseEnd": 4161.025
+      },
+      "finishedError": null
+    },
+    {
+      "phase": "warm",
+      "url": "http://127.0.0.1:4185/market-data/v2/history/walls/projection-batch?market=spot&key=efa5629adec8fcb0e7ffc93297bd273d178fae996fad4bae79b30862872863b0&start=0&version=2",
+      "at": 25345.390433,
+      "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+      "state": "complete",
+      "status": 200,
+      "headers": {
+        "x-iq-view-id": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "x-iq-proxy-queue-ms": "0.92",
+        "x-iq-decoded-bytes": "4745124",
+        "content-encoding": "br",
+        "etag": "\"a4bd50e6c3ba71ebfcab65dd2d8244b4fec9df6a8d654bbb7636cd0916605332\"",
+        "x-iq-db-read-rows": "0",
+        "x-iq-wall-start": "0",
+        "x-iq-db-queries": "0",
+        "x-iq-wall-part-bytes": "[14626,335609,86592,89734,251054,212727,245492,207928,226505,332906,349734,301893,91343,219587,209895,250014,217352,196046,202742,227500,217505,258318]",
+        "x-iq-wall-next": "22",
+        "server-timing": "preparedread;dur=9.05, db;dur=0, proxyqueue;dur=0.92, proxyheader;dur=1076.99",
+        "x-iq-wall-transport": "exact-points-v1",
+        "date": "Sun, 08 Nov 2026 14:04:31 GMT",
+        "content-type": "application/x-ndjson",
+        "vary": "Accept-Encoding",
+        "x-iq-chunk-key": "efa5629adec8fcb0e7ffc93297bd273d178fae996fad4bae79b30862872863b0",
+        "x-iq-source-revision": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+        "cache-control": "private, max-age=31536000, immutable",
+        "x-iq-canonical-bytes": "8276300",
+        "x-iq-batch-cache": "hit",
+        "x-iq-wall-parts": "22",
+        "x-iq-db-read-bytes": "0",
+        "content-length": "640872",
+        "x-iq-proxy-header-ms": "1076.99",
+        "x-iq-request-id": "75f9ee9b-0dcd-4958-b9b0-2c59cd736155"
+      },
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 301,
+        "responseBodySize": -1146,
+        "responseHeadersSize": 1146
+      },
+      "timing": {
+        "startTime": 1794146688358.126,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.188,
+        "responseStart": 0.448,
+        "responseEnd": 110.124
+      },
+      "finishedError": null
+    },
+    {
+      "phase": "warm",
+      "url": "http://127.0.0.1:4185/market-data/v2/history/walls/projection-batch?market=spot&key=efa5629adec8fcb0e7ffc93297bd273d178fae996fad4bae79b30862872863b0&start=22&version=2",
+      "at": 26273.282742,
+      "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+      "state": "complete",
+      "status": 200,
+      "headers": {
+        "x-iq-view-id": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-1",
+        "x-iq-proxy-queue-ms": "2415.13",
+        "x-iq-decoded-bytes": "3221849",
+        "content-encoding": "br",
+        "etag": "\"6ee239cc1df0692f035133378e023944392bb651f054afdbc503ac2f42c62807\"",
+        "x-iq-db-read-rows": "0",
+        "x-iq-wall-start": "22",
+        "x-iq-db-queries": "0",
+        "x-iq-wall-part-bytes": "[260349,265553,151797,203962,336055,341327,191304,172539,387986,442170,338725,130070]",
+        "x-iq-wall-next": "34",
+        "server-timing": "preparedread;dur=4.56, db;dur=0, proxyqueue;dur=2415.13, proxyheader;dur=732.47",
+        "x-iq-wall-transport": "exact-points-v1",
+        "date": "Sun, 08 Nov 2026 14:04:33 GMT",
+        "content-type": "application/x-ndjson",
+        "vary": "Accept-Encoding",
+        "x-iq-chunk-key": "efa5629adec8fcb0e7ffc93297bd273d178fae996fad4bae79b30862872863b0",
+        "x-iq-source-revision": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+        "cache-control": "private, max-age=31536000, immutable",
+        "x-iq-canonical-bytes": "5054088",
+        "x-iq-batch-cache": "hit",
+        "x-iq-wall-parts": "12",
+        "x-iq-db-read-bytes": "0",
+        "content-length": "361904",
+        "x-iq-proxy-header-ms": "732.47",
+        "x-iq-request-id": "e60e4526-0968-4e40-9285-1f81c2ad633e"
+      },
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 301,
+        "responseBodySize": -1085,
+        "responseHeadersSize": 1085
+      },
+      "timing": {
+        "startTime": 1794146689273.977,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.169,
+        "responseStart": 0.396,
+        "responseEnd": 61.397
+      },
+      "finishedError": null
+    },
+    {
+      "phase": "warm",
+      "url": "http://127.0.0.1:4185/market-data/v2/history/walls/source?market=spot&profile=binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1&from=1793696100000&to=1793804700000",
+      "at": 28628.596612,
+      "viewId": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5",
+      "state": "complete",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "connection": "keep-alive",
+        "content-encoding": "gzip",
+        "content-length": "435",
+        "content-type": "application/json",
+        "date": "Sun, 08 Nov 2026 14:04:52 GMT",
+        "keep-alive": "timeout=60",
+        "server-timing": "admission;dur=0, db;dur=431.11, sqlqueue;dur=132.87, dbdecode;dur=0.30, project;dur=0.00, serialize;dur=0.29, total;dur=432.75, proxyqueue;dur=1.34, proxyheader;dur=1353.56",
+        "vary": "Accept-Encoding",
+        "x-iq-db-queries": "3",
+        "x-iq-db-read-bytes": "273745031",
+        "x-iq-db-read-rows": "299266",
+        "x-iq-decoded-bytes": "670",
+        "x-iq-proxy-header-ms": "1353.56",
+        "x-iq-proxy-queue-ms": "1.34",
+        "x-iq-request-id": "41ed3c71-5cd9-4124-8462-9408d399274c",
+        "x-iq-view-id": "view-b30c0a60-2af3-4d47-88dc-1ebce442cb70-5"
+      },
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 499,
+        "responseBodySize": 435,
+        "responseHeadersSize": 693
+      },
+      "timing": {
+        "startTime": 1794146691621.334,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 5.054,
+        "responseStart": 1372.437,
+        "responseEnd": 1375.635
+      },
+      "finishedError": null
+    },
+    {
+      "phase": "warm",
+      "url": "http://127.0.0.1:4185/market-data/v1/level-watches",
+      "at": 30826.483247,
+      "viewId": null,
+      "state": "complete",
+      "status": 200,
+      "headers": {
+        "vary": "Origin",
+        "cache-control": "no-store",
+        "connection": "keep-alive",
+        "content-length": "2840",
+        "content-type": "application/json",
+        "date": "Sun, 08 Nov 2026 14:04:54 GMT",
+        "keep-alive": "timeout=5",
+        "server-timing": "legacy;dur=3.78, proxyqueue;dur=1.40, proxyheader;dur=550.05",
+        "x-content-type-options": "nosniff",
+        "x-iq-proxy-header-ms": "550.05",
+        "x-iq-proxy-queue-ms": "1.40",
+        "x-iq-request-id": "60814b6b-7fca-4825-8e28-896eac05ac3c"
+      },
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 433,
+        "responseBodySize": 2840,
+        "responseHeadersSize": 418
+      },
+      "timing": {
+        "startTime": 1794146693820.962,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.665,
+        "responseStart": 559.015,
+        "responseEnd": 567.002
+      },
+      "finishedError": null
+    }
+  ],
+  "traceFinalization": {
+    "timedOut": false,
+    "taskCount": 16
+  },
+  "errors": [],
+  "before": {
+    "at": "2026-11-08T14:04:25.336Z",
+    "hardware": {
+      "thermalMilliC": "77100",
+      "cpuKHz": "2400000",
+      "governor": "ondemand",
+      "throttleFlags": "throttled=0x80000"
+    },
+    "load": "5.14 4.12 3.39 2/1334 637945",
+    "mem": "MemTotal:        8142664 kB\nMemFree:          750764 kB\nMemAvailable:    1502148 kB\nBuffers:           13636 kB\nCached:          1380936 kB\nSwapCached:         1008 kB\nActive:          3536488 kB\nInactive:        1979088 kB\nActive(anon):    2966256 kB\nInactive(anon):  1706024 kB\nActive(file):     570232 kB\nInactive(file):   273064 kB\nUnevictable:      434000 kB\nMlocked:             136 kB\nSwapTotal:      33094924 kB\nSwapFree:       31677332 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              6416 kB\nWriteback:             0 kB\nAnonPages:       4556952 kB\nMapped:           712148 kB\nShmem:            548076 kB\nKReclaimable:     366320 kB\nSlab:             474384 kB\nSReclaimable:     366320 kB\nSUnreclaim:       108064 kB\nKernelStack:       21184 kB\nPageTables:        81516 kB\nSecPageTables:       120 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   23678728 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      331996 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:             780 kB\n",
+    "cpu": [
+      "cpu  3834316 14784 620860 10705571 27013 0 12173 0 0 0",
+      "cpu0 946746 3438 159923 2670009 7979 0 7560 0 0 0",
+      "cpu1 960646 4567 153984 2678661 6190 0 1520 0 0 0",
+      "cpu2 965538 3193 152784 2676484 6389 0 1536 0 0 0",
+      "cpu3 961385 3584 154168 2680415 6453 0 1556 0 0 0"
+    ],
+    "swap": [
+      "pswpin 6810776",
+      "pswpout 7209200",
+      "pgmajfault 441799"
+    ]
+  },
+  "after": {
+    "at": "2026-11-08T14:04:56.238Z",
+    "hardware": {
+      "thermalMilliC": "78200",
+      "cpuKHz": "2400000",
+      "governor": "ondemand",
+      "throttleFlags": "throttled=0x80000"
+    },
+    "load": "7.04 4.68 3.60 14/1338 638419",
+    "mem": "MemTotal:        8142664 kB\nMemFree:          363712 kB\nMemAvailable:    1047660 kB\nBuffers:            6976 kB\nCached:          1513056 kB\nSwapCached:         1220 kB\nActive:          3460552 kB\nInactive:        2050800 kB\nActive(anon):    2970508 kB\nInactive(anon):  1765272 kB\nActive(file):     490044 kB\nInactive(file):   285528 kB\nUnevictable:      638436 kB\nMlocked:             136 kB\nSwapTotal:      33094924 kB\nSwapFree:       31371412 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:             12352 kB\nWriteback:             0 kB\nAnonPages:       4588328 kB\nMapped:           713524 kB\nShmem:            744876 kB\nKReclaimable:     366308 kB\nSlab:             476336 kB\nSReclaimable:     366308 kB\nSUnreclaim:       110028 kB\nKernelStack:       21792 kB\nPageTables:        86888 kB\nSecPageTables:       120 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   25335132 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      332300 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:            1544 kB\n",
+    "cpu": [
+      "cpu  3843559 14795 622750 10706602 27016 0 12227 0 0 0",
+      "cpu0 949041 3440 160400 2670257 7980 0 7591 0 0 0",
+      "cpu1 963006 4568 154448 2678896 6191 0 1524 0 0 0",
+      "cpu2 967793 3196 153291 2676761 6390 0 1546 0 0 0",
+      "cpu3 963718 3589 154610 2680686 6454 0 1565 0 0 0"
+    ],
+    "swap": [
+      "pswpin 6811613",
+      "pswpout 7283791",
+      "pgmajfault 442829"
+    ]
+  }
+}

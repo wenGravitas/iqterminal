@@ -1,0 +1,45 @@
+{
+  "case": "initial-current-footprint-5m",
+  "build": "6fc990f28fe9736d8b6270fd786996006da24702",
+  "backend": "f82abdfae06c61f8bccff9fea0778bbaac491b5e",
+  "samples": [
+    {
+      "run": 1,
+      "firstCurrentMs": 2520.7000000001863,
+      "error": null,
+      "environmentVerified": true
+    },
+    {
+      "run": 2,
+      "firstCurrentMs": 2579.4000000003725,
+      "error": null,
+      "environmentVerified": true
+    },
+    {
+      "run": 3,
+      "firstCurrentMs": 2590.9000000003725,
+      "error": null,
+      "environmentVerified": true
+    },
+    {
+      "run": 4,
+      "firstCurrentMs": 2532,
+      "error": null,
+      "environmentVerified": true
+    },
+    {
+      "run": 5,
+      "firstCurrentMs": 2808.5,
+      "error": null,
+      "environmentVerified": true
+    }
+  ],
+  "medianMs": 2579.4000000003725,
+  "maximumMs": 2808.5,
+  "targets": {
+    "medianMs": 2000,
+    "maximumMs": 3000
+  },
+  "pass": false,
+  "scope": "Initial current paint in one default footprint chart with history enabled; not current-only baseline, two-history-chart concurrency or foreground acceptance"
+}

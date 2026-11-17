@@ -1,0 +1,29 @@
+vite v8.3.4 building client environment for staging...
+transforming...
+✓ 200 modules transformed.
+
+(!) outDir /tmp/iqterminal-side-client-dist is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+rendering chunks...
+computing gzip size...
+../../../../tmp/iqterminal-side-client-dist/index.html                    13.00 kB │ gzip:   3.91 kB
+../../../../tmp/iqterminal-side-client-dist/assets/worker-BKSmN_Bs.js    319.80 kB
+../../../../tmp/iqterminal-side-client-dist/assets/worker-DaWyXJKB.js    362.17 kB
+../../../../tmp/iqterminal-side-client-dist/assets/worker-DWm98da9.js    525.20 kB
+../../../../tmp/iqterminal-side-client-dist/assets/main-DuadqPLo.css     288.39 kB │ gzip:  37.65 kB
+../../../../tmp/iqterminal-side-client-dist/assets/editor-Dh-sZf-S.js     16.16 kB │ gzip:   4.65 kB
+../../../../tmp/iqterminal-side-client-dist/assets/index-D6OA04Mi.js      50.44 kB │ gzip:  14.77 kB
+../../../../tmp/iqterminal-side-client-dist/assets/main-DANdmawt.js    2,361.21 kB │ gzip: 644.87 kB
+
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 3.32s
+[33m[PLUGIN_TIMINGS] [0mJavaScript callbacks ran for 2.2s of this 3.3s build (66%).
+1 callback is listed without a time. Its calls overlapped, so the time inside one call includes work from other calls. To find its cost, profile the build with `node --cpu-prof`:
+  - plugin vite:worker-import-meta-url transform (3 calls)
+See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
+

@@ -1,0 +1,312 @@
+{
+  "scope": "Raw scoped evidence including failed attempts and incomplete paint; hashes establish bytes, not release acceptance.",
+  "files": [
+    {
+      "path": "backend-322-tests.txt",
+      "bytes": 79168,
+      "sha256": "8b0f96e6d27fc1fdb00e9eec5528ffd375244a00d9be9a8e0adfa2721c64a588"
+    },
+    {
+      "path": "backend-build.txt",
+      "bytes": 1896,
+      "sha256": "4c1657c70e57654dbfa198f0e5c9fbddb7057ab22feee7c0825b8db318e2c5bf"
+    },
+    {
+      "path": "backend-typecheck.txt",
+      "bytes": 103,
+      "sha256": "27b65c4e80c0f846b47d9c39fc8fc3a6fce8ffe9def0395e1a51195f15910199"
+    },
+    {
+      "path": "benchmark-traces.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "compatibility-tests.txt",
+      "bytes": 366,
+      "sha256": "ef5509d204611c773d4af618d6e801854238916ee54c10743f26ef77af27e03a"
+    },
+    {
+      "path": "frontend-231-tests.txt",
+      "bytes": 432,
+      "sha256": "992a33374ae9de3adf1f66f8897b40b7c5f3f9e43e34983cee5dc48d7a5e6b08"
+    },
+    {
+      "path": "frontend-build.txt",
+      "bytes": 1425,
+      "sha256": "2c61ea43a69b567840901336496852d722d9084ba9abbd01dba587480db7c037"
+    },
+    {
+      "path": "frontend-typecheck.txt",
+      "bytes": 90,
+      "sha256": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961"
+    },
+    {
+      "path": "index.html",
+      "bytes": 13001,
+      "sha256": "9a4ace37ac5f0bd5c17ac2f6e246289343964a5445045df5a1cc6c7bef5be313"
+    },
+    {
+      "path": "initial-fixed-tests.txt",
+      "bytes": 448,
+      "sha256": "001d9c264b9fca9aedb0e6af522b102d408c88911227905074c94a5925cb210c"
+    },
+    {
+      "path": "initial-spy-test-failures.txt",
+      "bytes": 3284,
+      "sha256": "96637bd63fe51ade8a22a684425ff1d217f750a04e9e8cbe18b425a84630c9b2"
+    },
+    {
+      "path": "loading-summary.json",
+      "bytes": 10635,
+      "sha256": "deb839b4bd6760e81c33a618789482b432936bc99f57de6801abc5235440e070"
+    },
+    {
+      "path": "pi-history-report.py",
+      "bytes": 3234,
+      "sha256": "0d17c2b3ebb048b70677488a629eb7331c494ecb6dd2f430d1e4edc33f8bee3a"
+    },
+    {
+      "path": "pi-wall-reference.json",
+      "bytes": 815,
+      "sha256": "e188b65701f3e6443bc7fb47f01078ba7a8b8bc0646f30fec665327858a82420"
+    },
+    {
+      "path": "preview-stop.json",
+      "bytes": 357,
+      "sha256": "82b8b5c56953e8b0c841c112ca37422cd6bee6077c3d22a05855896e2e6a86da"
+    },
+    {
+      "path": "protected-check.json",
+      "bytes": 1632,
+      "sha256": "298196e840928fe7b59d959b37dd4a827cb82d4f9c330ec757c5f664f9813928"
+    },
+    {
+      "path": "proxied-health.json",
+      "bytes": 2613,
+      "sha256": "4d464acf41d073fbbb9d9b753ff403f0514a74cacc4f12cbf096b5e4f5d395df"
+    },
+    {
+      "path": "received-versus-painted-proof.json",
+      "bytes": 3256,
+      "sha256": "1927883f6db994c705391c4f850a288623e6cbdb85e3a9a69c5d6bb8f84bd2c7"
+    },
+    {
+      "path": "report-tests.txt",
+      "bytes": 103,
+      "sha256": "b8fcc5eef79ddb5d650f2a81e238bfb5f790521716ca592e90cff21b1aa8c30d"
+    },
+    {
+      "path": "resource-observer-executed.mjs",
+      "bytes": 2717,
+      "sha256": "0a83e6f8547939e5cdcfc770242627be8fa98f83fa25e025209cdaec29e01c65"
+    },
+    {
+      "path": "resource-window-summary.json",
+      "bytes": 526,
+      "sha256": "47a6c88960ecf49c11d34b15629e35d73f82dcc08b4e8784531d662705758d73"
+    },
+    {
+      "path": "runner-console.txt",
+      "bytes": 76433,
+      "sha256": "16408acb39c08b50ff875a20f58850408ed6f10a3ec966e300830051f7651722"
+    },
+    {
+      "path": "runtime-receipt.json",
+      "bytes": 1110,
+      "sha256": "864266393ae368c60fbcb089c0a4bdb40af77c56d7e35aaf0abf6c8314decc60"
+    },
+    {
+      "path": "server-resources-tail.jsonl",
+      "bytes": 116905,
+      "sha256": "296dc86cf9233d665c66079f63c108322e35d053fe9a5a5142615277c5c67866"
+    },
+    {
+      "path": "serving-postcheck.txt",
+      "bytes": 4260,
+      "sha256": "306e64f0664e0fb1a4b10d703ed3e27b1fd836c8dd27f9ba62f84c828d27c853"
+    },
+    {
+      "path": "serving-precheck.txt",
+      "bytes": 4402,
+      "sha256": "f7ca845431ad95f7e08519490944146ac9ea111e69c890e618a85498f60133c8"
+    },
+    {
+      "path": "test-browser-i3-setup.mjs",
+      "bytes": 759,
+      "sha256": "501b7f5c0c908be76a95ea45cac4e97f6cc43afc30b396ed8928978f59cfb3f9"
+    },
+    {
+      "path": "test-browser-launch.mjs",
+      "bytes": 503,
+      "sha256": "f324ff7ce845f7e5900ef52b8c283c3644a54ab6008ea4d22f234ece3045affb"
+    },
+    {
+      "path": "test_pi_history_report.py",
+      "bytes": 3584,
+      "sha256": "1b53c96f4668ddf0e4244cc23fd8824be471585452e5f4ba4389c35961b6f326"
+    },
+    {
+      "path": "wall-coop-c60-r1-browser-environment.json.sha256",
+      "bytes": 107,
+      "sha256": "345ed2b4173616dab7992dce0e7ff7c287d06d6781c9f09a4a693343ebffd27f"
+    },
+    {
+      "path": "wall-coop-c60-r1-executed.mjs.sha256",
+      "bytes": 95,
+      "sha256": "478e879c3d20aced8122a86c5798020c1a06fd8a2a0a8184ffdda34ef52f06c2"
+    },
+    {
+      "path": "wall-coop-c60-r1-observations.jsonl.sha256",
+      "bytes": 101,
+      "sha256": "41f62ab64970f64459eba5d1b7175c0ba9026e95d8ef7190c49d8521f21700fe"
+    },
+    {
+      "path": "wall-coop-c60-r1-samples.jsonl.sha256",
+      "bytes": 96,
+      "sha256": "324222df5828439c5e8f060fe32f800516959fec485efd98be1f1a2851b84bc8"
+    },
+    {
+      "path": "wall-coop-c60-r1-trace-helper-executed.mjs.sha256",
+      "bytes": 108,
+      "sha256": "5bb2dc3206a0a226480a4c78ee5c4ffbc080233fb9e2b08de785a24d271f4980"
+    },
+    {
+      "path": "wall-coop-c60-r1-walls-30h-perp-15m-1.png.sha256",
+      "bytes": 107,
+      "sha256": "bbefd01ed98c278b379059db36e4eac23986cde4e133bd0b64c760a2d3907a52"
+    },
+    {
+      "path": "wall-coop-c60-r1-walls-30h-perp-15m-2.png.sha256",
+      "bytes": 107,
+      "sha256": "b4ddd47297c24c360298ec747051f78e741b8396218a3bb5d51c3ebf595733ef"
+    },
+    {
+      "path": "wall-coop-c60-r1-walls-30h-perp-15m-3.png.sha256",
+      "bytes": 107,
+      "sha256": "33887c45b56f355519cb83e27bd067bad1c547fc084ab6e5e075a932ee75e453"
+    },
+    {
+      "path": "wall-coop-c60-r1-walls-30h-perp-15m-4.png.sha256",
+      "bytes": 107,
+      "sha256": "86d04d8756f2cecbcc02c083589eda6d7e31725a85dcbc07da1180d09f619adb"
+    },
+    {
+      "path": "wall-coop-c60-r1-walls-30h-perp-15m-5.png.sha256",
+      "bytes": 107,
+      "sha256": "115c14f5265c2fccc238e6ca5ec4b9d2dfd245814cc58f45836cd0a1399c2293"
+    },
+    {
+      "path": "wall-coop-c60-r1-walls-30h-spot-5m-1.png.sha256",
+      "bytes": 106,
+      "sha256": "a07b2e4e48d9e6fec17d4ad22be70c8e734c1174b7e2ff644da80a73da32a191"
+    },
+    {
+      "path": "wall-coop-c60-r1-walls-30h-spot-5m-2.png.sha256",
+      "bytes": 106,
+      "sha256": "0e96b50477539fe21d3edb04b26e190b50d6190621c93795bf27e2bfa1267054"
+    },
+    {
+      "path": "wall-coop-c60-r1-walls-30h-spot-5m-3.png.sha256",
+      "bytes": 106,
+      "sha256": "497ca09d64596c81d3b62ffc24753192f9049ae34a2bb2c1522b7222d27f4ca7"
+    },
+    {
+      "path": "wall-coop-c60-r1-walls-30h-spot-5m-4.png.sha256",
+      "bytes": 106,
+      "sha256": "f7e8527dec825fc2e72f55acea23b57def5b199d5fd02405498e77f03e19f6c7"
+    },
+    {
+      "path": "wall-coop-c60-r1-walls-30h-spot-5m-5.png.sha256",
+      "bytes": 106,
+      "sha256": "d4ce49afbad18459d043777d051a539cfc68e7e4cffc1c3f0f3c7776bf77b14b"
+    },
+    {
+      "path": "wall-loading-gate.mjs",
+      "bytes": 7251,
+      "sha256": "9309489987e878f61c1622040c84b645d2f031d3b3f364e34af85e359b02ef54"
+    },
+    {
+      "path": "wall-loading-gate.test.mjs",
+      "bytes": 5646,
+      "sha256": "d52846d21a8eb12edd10ac1a8fecf8d262b2c1422e8c5b5a2394626d36ba6f91"
+    }
+  ],
+  "externalFiles": [
+    {
+      "path": "../wall-coop-c60-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "0584732cc30422b151e8310c0d809f8d4e913a89a62d6344f958a434a6895a46"
+    },
+    {
+      "path": "../wall-coop-c60-r1-executed.mjs",
+      "bytes": 22487,
+      "sha256": "61edb8d039cb0a47d75fabcadb5088d35208e4014d3a500d9b307c02b424532b"
+    },
+    {
+      "path": "../wall-coop-c60-r1-observations.jsonl",
+      "bytes": 493699,
+      "sha256": "9379ea8a5fed86b473e804f915d060a8daf0ea68b5ebd5cb19be44670b1e6351"
+    },
+    {
+      "path": "../wall-coop-c60-r1-samples.jsonl",
+      "bytes": 644653,
+      "sha256": "debe06b2f9d267ca2751dbac06aa9050c58bc513e31a798c0427f4d15d0679bb"
+    },
+    {
+      "path": "../wall-coop-c60-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "../wall-coop-c60-r1-walls-30h-perp-15m-1.png",
+      "bytes": 127193,
+      "sha256": "2116b6c2cee7aaa2badf5ece5e40ee9c8c3001ed0177abc7d7fe6516de6a22aa"
+    },
+    {
+      "path": "../wall-coop-c60-r1-walls-30h-perp-15m-2.png",
+      "bytes": 127279,
+      "sha256": "13244d4414db40911167753d38156dffda44d46535e1c389b83755747b051d57"
+    },
+    {
+      "path": "../wall-coop-c60-r1-walls-30h-perp-15m-3.png",
+      "bytes": 127196,
+      "sha256": "983e7c5ffb8be4fe7f84d910defb5f339625ec03ddb07df73e5fc0995292fd04"
+    },
+    {
+      "path": "../wall-coop-c60-r1-walls-30h-perp-15m-4.png",
+      "bytes": 127376,
+      "sha256": "1fcc075d991d9455267fc189de36bc4c2533081ce76374559b92ff65f899211c"
+    },
+    {
+      "path": "../wall-coop-c60-r1-walls-30h-perp-15m-5.png",
+      "bytes": 75705,
+      "sha256": "b9df399326e8132fe2586186d82e684f9e8b89331b004d1c530f3f345d9d1226"
+    },
+    {
+      "path": "../wall-coop-c60-r1-walls-30h-spot-5m-1.png",
+      "bytes": 93798,
+      "sha256": "fa67db4729b57c0a9d8d261cabf5346ebd66f2af07344f71352e17b65ee6079b"
+    },
+    {
+      "path": "../wall-coop-c60-r1-walls-30h-spot-5m-2.png",
+      "bytes": 93710,
+      "sha256": "3b7d9e7ae547a3ce18ef0d0d939d5be270de9dbb1581736c543f2013ac0c0db3"
+    },
+    {
+      "path": "../wall-coop-c60-r1-walls-30h-spot-5m-3.png",
+      "bytes": 93730,
+      "sha256": "8a643d594374f062cfb88e9fce8b732417409d28819d8bfc09da5900e62611f9"
+    },
+    {
+      "path": "../wall-coop-c60-r1-walls-30h-spot-5m-4.png",
+      "bytes": 93701,
+      "sha256": "68592b3e582bb0abfb55d6cb917aa76d2863624e5160b055815bb6ee5b060442"
+    },
+    {
+      "path": "../wall-coop-c60-r1-walls-30h-spot-5m-5.png",
+      "bytes": 93722,
+      "sha256": "9482f880f915cdb39294962f760683236eaf63581fb3e942592babb3b61153ec"
+    }
+  ]
+}

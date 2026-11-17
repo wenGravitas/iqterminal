@@ -1,0 +1,13 @@
+diff --git a/home/daz/workarea/iqterminal-perf-native-price-control/src/feed/staging-service.ts b/home/daz/workarea/iqterminal-perf-history/src/feed/staging-service.ts
+index a02e07e..7ffb161 100644
+--- a/home/daz/workarea/iqterminal-perf-native-price-control/src/feed/staging-service.ts
++++ b/home/daz/workarea/iqterminal-perf-history/src/feed/staging-service.ts
+@@ -71,7 +71,7 @@ export class StagingFeedService {
+       }
+       if(group.native&&!group.native.history){
+         const g=group;
+-        group.native.history=new NativeCandleHistory(group.series,{request:this.request,now:this.now,nativeBars:()=>g.candles,
++        group.native.history=new NativeCandleHistory(group.series,{request:this.request,now:this.now,presentation:this.nativePresentation,nativeBars:()=>g.candles,
+           version:()=>({stream:g.native!.sequence,request:++g.native!.readOrder}),
+           apply:(id,bars,version,at)=>this.applyNativeHistory(g,id,bars,version,at),
+           changed:()=>{if(!this.dead&&this.groups.get(g.key)===g)this.nativeStatus(g);}});

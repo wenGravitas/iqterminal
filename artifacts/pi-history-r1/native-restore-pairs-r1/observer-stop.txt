@@ -1,0 +1,1 @@
+{"pid": 1243028, "args": ["/home/daz/.nvm/versions/node/v22.23.4/bin/node", "--input-type=module", "-", "native-restore-pairs-r1", "300"], "action": "SIGTERM"}

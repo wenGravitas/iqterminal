@@ -5,7 +5,7 @@ import {resolve} from 'node:path';
 import os from 'node:os';
 import {topLevelsFixture} from '../tests/fixtures/top-levels-depth';
 const {chromium}=createRequire(resolve('package.json'))('@playwright/test');
-const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH??'/usr/bin/chromium',headless:true,args:['--class=IQTerminalPerf', '--no-sandbox','--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH??'/usr/bin/chromium',headless:true,args: ['--class=IQTerminalPerf','--no-sandbox','--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const page=await browser.newPage({viewport:{width:1600,height:1000}}),errors:string[]=[];page.on('pageerror',(e:Error)=>errors.push(e.message));
 const started=performance.now();
 try{

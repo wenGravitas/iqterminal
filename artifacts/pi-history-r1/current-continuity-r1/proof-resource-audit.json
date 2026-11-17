@@ -1,0 +1,2033 @@
+{
+  "scope": "Constant-size worker proof and separate callback clocks. Explicit pan/restore cancels footprint demand; additional native history aborts are retained without individual causal attribution. No current/health request failure. Custom live-profile progress is not cold backfill. Release before context close is not heap plateau.",
+  "samples": [
+    {
+      "build": "b219fb215941347e7304db8ae90fff04a2e59057",
+      "scenario": "current-only",
+      "run": 1,
+      "baselineProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 6,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 3.400000002235174,
+        "maxReceiptGapMs": 638.7000000029802,
+        "lastReceiptMonoMs": 5270.800000000745,
+        "lastAfter": 3513516284,
+        "lastAppliedCursor": 3513516286,
+        "lastConfirmedAckCursor": 3513516284
+      },
+      "finalProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 37,
+        "appliedExecutions": 345,
+        "acksSent": 37,
+        "confirmedAckBatches": 36,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 3.400000002235174,
+        "maxReceiptGapMs": 806.8999999985099,
+        "lastReceiptMonoMs": 25019.300000000745,
+        "lastAfter": 3513516620,
+        "lastAppliedCursor": 3513516625,
+        "lastConfirmedAckCursor": 3513516620
+      },
+      "callbackMaxReceiveGapMs": 820.8000000007451,
+      "historicalAborts": [],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 45,
+        "cursor": 23851494,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 81,
+        "cursor": 23851755,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 37,
+            "appliedExecutions": 345,
+            "acksSent": 37,
+            "confirmedAckBatches": 36,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 3.400000002235174,
+            "maxReceiptGapMs": 806.8999999985099,
+            "lastReceiptMonoMs": 25019.300000000745,
+            "lastAfter": 3513516620,
+            "lastAppliedCursor": 3513516625,
+            "lastConfirmedAckCursor": 3513516620
+          }
+        }
+      ]
+    },
+    {
+      "build": "b219fb215941347e7304db8ae90fff04a2e59057",
+      "scenario": "concurrent-history",
+      "run": 1,
+      "baselineProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 12,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 9.899999998509884,
+        "maxReceiptGapMs": 789.3000000007451,
+        "lastReceiptMonoMs": 4459.60000000149,
+        "lastAfter": 3513516824,
+        "lastAppliedCursor": 3513516825,
+        "lastConfirmedAckCursor": 3513516824
+      },
+      "finalProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 36,
+        "appliedExecutions": 403,
+        "acksSent": 36,
+        "confirmedAckBatches": 35,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 9.899999998509884,
+        "maxReceiptGapMs": 1096,
+        "lastReceiptMonoMs": 24645.800000000745,
+        "lastAfter": 3513517201,
+        "lastAppliedCursor": 3513517216,
+        "lastConfirmedAckCursor": 3513517201
+      },
+      "callbackMaxReceiveGapMs": 1574.9000000022352,
+      "historicalAborts": [
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        }
+      ],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 36,
+        "cursor": 23851791,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 80,
+        "cursor": 23852058,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 36,
+            "appliedExecutions": 403,
+            "acksSent": 36,
+            "confirmedAckBatches": 35,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 9.899999998509884,
+            "maxReceiptGapMs": 1096,
+            "lastReceiptMonoMs": 24645.800000000745,
+            "lastAfter": 3513517201,
+            "lastAppliedCursor": 3513517216,
+            "lastConfirmedAckCursor": 3513517201
+          }
+        },
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:1h:p25",
+          "connected": true,
+          "proof": {
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 31,
+            "appliedExecutions": 385,
+            "acksSent": 31,
+            "confirmedAckBatches": 30,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 6.700000002980232,
+            "maxReceiptGapMs": 1134.1000000014901,
+            "lastReceiptMonoMs": 24492.60000000149,
+            "lastAfter": 3513517201,
+            "lastAppliedCursor": 3513517216,
+            "lastConfirmedAckCursor": 3513517201
+          }
+        }
+      ]
+    },
+    {
+      "build": "b219fb215941347e7304db8ae90fff04a2e59057",
+      "scenario": "concurrent-history",
+      "run": 2,
+      "baselineProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 45,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 3,
+        "maxReceiptGapMs": 406,
+        "lastReceiptMonoMs": 3871.800000000745,
+        "lastAfter": 3513517422,
+        "lastAppliedCursor": 3513517425,
+        "lastConfirmedAckCursor": 3513517422
+      },
+      "finalProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 37,
+        "appliedExecutions": 314,
+        "acksSent": 37,
+        "confirmedAckBatches": 36,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 12.299999997019768,
+        "maxReceiptGapMs": 1542.5,
+        "lastReceiptMonoMs": 24336.39999999851,
+        "lastAfter": 3513517692,
+        "lastAppliedCursor": 3513517694,
+        "lastConfirmedAckCursor": 3513517692
+      },
+      "callbackMaxReceiveGapMs": 1539.0999999977648,
+      "historicalAborts": [
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        }
+      ],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 44,
+        "cursor": 23852102,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 44,
+        "cursor": 23852391,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 37,
+            "appliedExecutions": 314,
+            "acksSent": 37,
+            "confirmedAckBatches": 36,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 12.299999997019768,
+            "maxReceiptGapMs": 1542.5,
+            "lastReceiptMonoMs": 24336.39999999851,
+            "lastAfter": 3513517692,
+            "lastAppliedCursor": 3513517694,
+            "lastConfirmedAckCursor": 3513517692
+          }
+        },
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:1h:p25",
+          "connected": true,
+          "proof": {
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 32,
+            "appliedExecutions": 250,
+            "acksSent": 32,
+            "confirmedAckBatches": 31,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 7.199999999254942,
+            "maxReceiptGapMs": 1552.8999999985099,
+            "lastReceiptMonoMs": 24332.699999999255,
+            "lastAfter": 3513517692,
+            "lastAppliedCursor": 3513517694,
+            "lastConfirmedAckCursor": 3513517692
+          }
+        }
+      ]
+    },
+    {
+      "build": "b219fb215941347e7304db8ae90fff04a2e59057",
+      "scenario": "current-only",
+      "run": 2,
+      "baselineProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 4,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 7.5,
+        "maxReceiptGapMs": 266.6000000014901,
+        "lastReceiptMonoMs": 3462.39999999851,
+        "lastAfter": 3513517789,
+        "lastAppliedCursor": 3513517790,
+        "lastConfirmedAckCursor": 3513517789
+      },
+      "finalProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 36,
+        "appliedExecutions": 217,
+        "acksSent": 36,
+        "confirmedAckBatches": 35,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 9.700000002980232,
+        "maxReceiptGapMs": 1266.0999999977648,
+        "lastReceiptMonoMs": 23124,
+        "lastAfter": 3513518001,
+        "lastAppliedCursor": 3513518003,
+        "lastConfirmedAckCursor": 3513518001
+      },
+      "callbackMaxReceiveGapMs": 1267.800000000745,
+      "historicalAborts": [],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 44,
+        "cursor": 23852391,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 22,
+        "cursor": 23852681,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 36,
+            "appliedExecutions": 217,
+            "acksSent": 36,
+            "confirmedAckBatches": 35,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 9.700000002980232,
+            "maxReceiptGapMs": 1266.0999999977648,
+            "lastReceiptMonoMs": 23124,
+            "lastAfter": 3513518001,
+            "lastAppliedCursor": 3513518003,
+            "lastConfirmedAckCursor": 3513518001
+          }
+        }
+      ]
+    },
+    {
+      "build": "b219fb215941347e7304db8ae90fff04a2e59057",
+      "scenario": "current-only",
+      "run": 3,
+      "baselineProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 2,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 8.100000001490116,
+        "maxReceiptGapMs": 273.6000000014901,
+        "lastReceiptMonoMs": 3498.2000000029802,
+        "lastAfter": 3513518099,
+        "lastAppliedCursor": 3513518100,
+        "lastConfirmedAckCursor": 3513518099
+      },
+      "finalProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 38,
+        "appliedExecutions": 221,
+        "acksSent": 38,
+        "confirmedAckBatches": 37,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 8.100000001490116,
+        "maxReceiptGapMs": 908.1999999992549,
+        "lastReceiptMonoMs": 23433.800000000745,
+        "lastAfter": 3513518316,
+        "lastAppliedCursor": 3513518319,
+        "lastConfirmedAckCursor": 3513518316
+      },
+      "callbackMaxReceiveGapMs": 882,
+      "historicalAborts": [],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 22,
+        "cursor": 23852681,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 43,
+        "cursor": 23852963,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 38,
+            "appliedExecutions": 221,
+            "acksSent": 38,
+            "confirmedAckBatches": 37,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 8.100000001490116,
+            "maxReceiptGapMs": 908.1999999992549,
+            "lastReceiptMonoMs": 23433.800000000745,
+            "lastAfter": 3513518316,
+            "lastAppliedCursor": 3513518319,
+            "lastConfirmedAckCursor": 3513518316
+          }
+        }
+      ]
+    },
+    {
+      "build": "b219fb215941347e7304db8ae90fff04a2e59057",
+      "scenario": "concurrent-history",
+      "run": 3,
+      "baselineProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 8,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 2.5,
+        "maxReceiptGapMs": 383.5999999977648,
+        "lastReceiptMonoMs": 3299.2999999970198,
+        "lastAfter": 3513518346,
+        "lastAppliedCursor": 3513518349,
+        "lastConfirmedAckCursor": 3513518346
+      },
+      "finalProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 37,
+        "appliedExecutions": 186,
+        "acksSent": 37,
+        "confirmedAckBatches": 36,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 6.300000000745058,
+        "maxReceiptGapMs": 876.5,
+        "lastReceiptMonoMs": 23362.79999999702,
+        "lastAfter": 3513518526,
+        "lastAppliedCursor": 3513518527,
+        "lastConfirmedAckCursor": 3513518526
+      },
+      "callbackMaxReceiveGapMs": 975.1999999992549,
+      "historicalAborts": [
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        }
+      ],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 43,
+        "cursor": 23852963,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 73,
+        "cursor": 23853212,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 37,
+            "appliedExecutions": 186,
+            "acksSent": 37,
+            "confirmedAckBatches": 36,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 6.300000000745058,
+            "maxReceiptGapMs": 876.5,
+            "lastReceiptMonoMs": 23362.79999999702,
+            "lastAfter": 3513518526,
+            "lastAppliedCursor": 3513518527,
+            "lastConfirmedAckCursor": 3513518526
+          }
+        },
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:1h:p25",
+          "connected": true,
+          "proof": {
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 32,
+            "appliedExecutions": 178,
+            "acksSent": 32,
+            "confirmedAckBatches": 31,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 4.799999997019768,
+            "maxReceiptGapMs": 864.2999999970198,
+            "lastReceiptMonoMs": 23368.099999997765,
+            "lastAfter": 3513518526,
+            "lastAppliedCursor": 3513518527,
+            "lastConfirmedAckCursor": 3513518526
+          }
+        }
+      ]
+    },
+    {
+      "build": "b219fb215941347e7304db8ae90fff04a2e59057",
+      "scenario": "concurrent-history",
+      "run": 4,
+      "baselineProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 26,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 4.800000000745058,
+        "maxReceiptGapMs": 288.6000000014901,
+        "lastReceiptMonoMs": 4084.300000000745,
+        "lastAfter": 3513518625,
+        "lastAppliedCursor": 3513518627,
+        "lastConfirmedAckCursor": 3513518625
+      },
+      "finalProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 39,
+        "appliedExecutions": 371,
+        "acksSent": 39,
+        "confirmedAckBatches": 38,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 7.899999998509884,
+        "maxReceiptGapMs": 793.8000000007451,
+        "lastReceiptMonoMs": 24411.89999999851,
+        "lastAfter": 3513518967,
+        "lastAppliedCursor": 3513518972,
+        "lastConfirmedAckCursor": 3513518967
+      },
+      "callbackMaxReceiveGapMs": 793.7000000029802,
+      "historicalAborts": [
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        }
+      ],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 44,
+        "cursor": 23853256,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 65,
+        "cursor": 23853505,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 39,
+            "appliedExecutions": 371,
+            "acksSent": 39,
+            "confirmedAckBatches": 38,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 7.899999998509884,
+            "maxReceiptGapMs": 793.8000000007451,
+            "lastReceiptMonoMs": 24411.89999999851,
+            "lastAfter": 3513518967,
+            "lastAppliedCursor": 3513518972,
+            "lastConfirmedAckCursor": 3513518967
+          }
+        },
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:1h:p25",
+          "connected": true,
+          "proof": {
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 35,
+            "appliedExecutions": 344,
+            "acksSent": 35,
+            "confirmedAckBatches": 34,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 17,
+            "maxReceiptGapMs": 915.6999999992549,
+            "lastReceiptMonoMs": 24410.300000000745,
+            "lastAfter": 3513518967,
+            "lastAppliedCursor": 3513518972,
+            "lastConfirmedAckCursor": 3513518967
+          }
+        }
+      ]
+    },
+    {
+      "build": "b219fb215941347e7304db8ae90fff04a2e59057",
+      "scenario": "current-only",
+      "run": 4,
+      "baselineProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 4,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 5.300000000745058,
+        "maxReceiptGapMs": 323.69999999925494,
+        "lastReceiptMonoMs": 3423.39999999851,
+        "lastAfter": 3513519066,
+        "lastAppliedCursor": 3513519068,
+        "lastConfirmedAckCursor": 3513519066
+      },
+      "finalProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 37,
+        "appliedExecutions": 344,
+        "acksSent": 37,
+        "confirmedAckBatches": 36,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 5.300000000745058,
+        "maxReceiptGapMs": 1010.1000000014901,
+        "lastReceiptMonoMs": 23330.800000000745,
+        "lastAfter": 3513519383,
+        "lastAppliedCursor": 3513519408,
+        "lastConfirmedAckCursor": 3513519383
+      },
+      "callbackMaxReceiveGapMs": 1009.1999999992549,
+      "historicalAborts": [],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 37,
+        "cursor": 23853542,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 54,
+        "cursor": 23853768,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 37,
+            "appliedExecutions": 344,
+            "acksSent": 37,
+            "confirmedAckBatches": 36,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 5.300000000745058,
+            "maxReceiptGapMs": 1010.1000000014901,
+            "lastReceiptMonoMs": 23330.800000000745,
+            "lastAfter": 3513519383,
+            "lastAppliedCursor": 3513519408,
+            "lastConfirmedAckCursor": 3513519383
+          }
+        }
+      ]
+    },
+    {
+      "build": "b219fb215941347e7304db8ae90fff04a2e59057",
+      "scenario": "current-only",
+      "run": 5,
+      "baselineProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 4,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 3.699999999254942,
+        "maxReceiptGapMs": 380,
+        "lastReceiptMonoMs": 3857,
+        "lastAfter": 3513519492,
+        "lastAppliedCursor": 3513519493,
+        "lastConfirmedAckCursor": 3513519492
+      },
+      "finalProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 36,
+        "appliedExecutions": 209,
+        "acksSent": 36,
+        "confirmedAckBatches": 35,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 3.699999999254942,
+        "maxReceiptGapMs": 1123.300000000745,
+        "lastReceiptMonoMs": 23858.89999999851,
+        "lastAfter": 3513519697,
+        "lastAppliedCursor": 3513519698,
+        "lastConfirmedAckCursor": 3513519697
+      },
+      "callbackMaxReceiveGapMs": 1123.6000000014901,
+      "historicalAborts": [],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 54,
+        "cursor": 23853768,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 36,
+        "cursor": 23854029,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 36,
+            "appliedExecutions": 209,
+            "acksSent": 36,
+            "confirmedAckBatches": 35,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 3.699999999254942,
+            "maxReceiptGapMs": 1123.300000000745,
+            "lastReceiptMonoMs": 23858.89999999851,
+            "lastAfter": 3513519697,
+            "lastAppliedCursor": 3513519698,
+            "lastConfirmedAckCursor": 3513519697
+          }
+        }
+      ]
+    },
+    {
+      "build": "b219fb215941347e7304db8ae90fff04a2e59057",
+      "scenario": "concurrent-history",
+      "run": 5,
+      "baselineProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 5,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 3.300000000745058,
+        "maxReceiptGapMs": 274.20000000298023,
+        "lastReceiptMonoMs": 3532,
+        "lastAfter": 3513519808,
+        "lastAppliedCursor": 3513519811,
+        "lastConfirmedAckCursor": 3513519808
+      },
+      "finalProof": {
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 37,
+        "appliedExecutions": 205,
+        "acksSent": 37,
+        "confirmedAckBatches": 36,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 9.599999997764826,
+        "maxReceiptGapMs": 865.5,
+        "lastReceiptMonoMs": 23749.199999999255,
+        "lastAfter": 3513519993,
+        "lastAppliedCursor": 3513520011,
+        "lastConfirmedAckCursor": 3513519993
+      },
+      "callbackMaxReceiveGapMs": 874.3999999985099,
+      "historicalAborts": [
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:4187/market-data/v1/native-candles?interval=5m&from=1794207600000",
+          "error": "net::ERR_ABORTED"
+        }
+      ],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 45,
+        "cursor": 23854074,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 38,
+        "cursor": 23854317,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 37,
+            "appliedExecutions": 205,
+            "acksSent": 37,
+            "confirmedAckBatches": 36,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 9.599999997764826,
+            "maxReceiptGapMs": 865.5,
+            "lastReceiptMonoMs": 23749.199999999255,
+            "lastAfter": 3513519993,
+            "lastAppliedCursor": 3513520011,
+            "lastConfirmedAckCursor": 3513519993
+          }
+        },
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:1h:p25",
+          "connected": true,
+          "proof": {
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 33,
+            "appliedExecutions": 196,
+            "acksSent": 33,
+            "confirmedAckBatches": 32,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 6.399999998509884,
+            "maxReceiptGapMs": 873.1999999992549,
+            "lastReceiptMonoMs": 23739.699999999255,
+            "lastAfter": 3513519993,
+            "lastAppliedCursor": 3513520011,
+            "lastConfirmedAckCursor": 3513519993
+          }
+        }
+      ]
+    },
+    {
+      "build": "8aaab36a2e4c305633877de7438f6b0883f5b4c1",
+      "scenario": "current-only",
+      "run": 1,
+      "baselineProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 6,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 7.300000000745058,
+        "maxReceiptGapMs": 405.1000000014901,
+        "lastReceiptMonoMs": 4303.60000000149,
+        "lastAfter": 3513523216,
+        "lastAppliedCursor": 3513523219,
+        "lastConfirmedAckCursor": 3513523216
+      },
+      "finalProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 37,
+        "appliedExecutions": 443,
+        "acksSent": 37,
+        "confirmedAckBatches": 36,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 7.300000000745058,
+        "maxReceiptGapMs": 859.3999999985099,
+        "lastReceiptMonoMs": 24173.10000000149,
+        "lastAfter": 3513523653,
+        "lastAppliedCursor": 3513523656,
+        "lastConfirmedAckCursor": 3513523653
+      },
+      "callbackMaxReceiveGapMs": 870.3000000007451,
+      "historicalAborts": [
+        {
+          "url": "http://127.0.0.1:4187/market-data/v1/native-candles?interval=5m&from=1794153000000",
+          "error": "net::ERR_ABORTED"
+        }
+      ],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 39,
+        "cursor": 23857043,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 53,
+        "cursor": 23857316,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "generation": 2,
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 37,
+            "appliedExecutions": 443,
+            "acksSent": 37,
+            "confirmedAckBatches": 36,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 7.300000000745058,
+            "maxReceiptGapMs": 859.3999999985099,
+            "lastReceiptMonoMs": 24173.10000000149,
+            "lastAfter": 3513523653,
+            "lastAppliedCursor": 3513523656,
+            "lastConfirmedAckCursor": 3513523653
+          }
+        }
+      ]
+    },
+    {
+      "build": "8aaab36a2e4c305633877de7438f6b0883f5b4c1",
+      "scenario": "concurrent-history",
+      "run": 1,
+      "baselineProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 18,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 6.899999998509884,
+        "maxReceiptGapMs": 275.0999999977648,
+        "lastReceiptMonoMs": 3956.5,
+        "lastAfter": 3513523894,
+        "lastAppliedCursor": 3513523899,
+        "lastConfirmedAckCursor": 3513523894
+      },
+      "finalProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 37,
+        "appliedExecutions": 2220,
+        "acksSent": 37,
+        "confirmedAckBatches": 36,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 20.600000001490116,
+        "maxReceiptGapMs": 1982.3999999985099,
+        "lastReceiptMonoMs": 24598,
+        "lastAfter": 3513526053,
+        "lastAppliedCursor": 3513526101,
+        "lastConfirmedAckCursor": 3513526053
+      },
+      "callbackMaxReceiveGapMs": 1900.6000000014901,
+      "historicalAborts": [
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        }
+      ],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 54,
+        "cursor": 23857370,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 59,
+        "cursor": 23857597,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "generation": 2,
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 37,
+            "appliedExecutions": 2220,
+            "acksSent": 37,
+            "confirmedAckBatches": 36,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 20.600000001490116,
+            "maxReceiptGapMs": 1982.3999999985099,
+            "lastReceiptMonoMs": 24598,
+            "lastAfter": 3513526053,
+            "lastAppliedCursor": 3513526101,
+            "lastConfirmedAckCursor": 3513526053
+          }
+        },
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:1h:p25",
+          "connected": true,
+          "proof": {
+            "generation": 4,
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 32,
+            "appliedExecutions": 2198,
+            "acksSent": 32,
+            "confirmedAckBatches": 31,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 9.099999997764826,
+            "maxReceiptGapMs": 2581.60000000149,
+            "lastReceiptMonoMs": 24633.60000000149,
+            "lastAfter": 3513526053,
+            "lastAppliedCursor": 3513526101,
+            "lastConfirmedAckCursor": 3513526053
+          }
+        }
+      ]
+    },
+    {
+      "build": "8aaab36a2e4c305633877de7438f6b0883f5b4c1",
+      "scenario": "concurrent-history",
+      "run": 2,
+      "baselineProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 109,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 8.699999999254942,
+        "maxReceiptGapMs": 373.69999999925494,
+        "lastReceiptMonoMs": 3666.199999999255,
+        "lastAfter": 3513526544,
+        "lastAppliedCursor": 3513526574,
+        "lastConfirmedAckCursor": 3513526544
+      },
+      "finalProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 39,
+        "appliedExecutions": 863,
+        "acksSent": 39,
+        "confirmedAckBatches": 38,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 10.399999998509884,
+        "maxReceiptGapMs": 634.3999999985099,
+        "lastReceiptMonoMs": 24449.699999999255,
+        "lastAfter": 3513527300,
+        "lastAppliedCursor": 3513527328,
+        "lastConfirmedAckCursor": 3513527300
+      },
+      "callbackMaxReceiveGapMs": 995.8999999985099,
+      "historicalAborts": [
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        }
+      ],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 47,
+        "cursor": 23857644,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 54,
+        "cursor": 23857939,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "generation": 2,
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 39,
+            "appliedExecutions": 863,
+            "acksSent": 39,
+            "confirmedAckBatches": 38,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 10.399999998509884,
+            "maxReceiptGapMs": 634.3999999985099,
+            "lastReceiptMonoMs": 24449.699999999255,
+            "lastAfter": 3513527300,
+            "lastAppliedCursor": 3513527328,
+            "lastConfirmedAckCursor": 3513527300
+          }
+        },
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:1h:p25",
+          "connected": true,
+          "proof": {
+            "generation": 4,
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 34,
+            "appliedExecutions": 737,
+            "acksSent": 34,
+            "confirmedAckBatches": 33,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 11.099999997764826,
+            "maxReceiptGapMs": 657.3999999985099,
+            "lastReceiptMonoMs": 24418.60000000149,
+            "lastAfter": 3513527300,
+            "lastAppliedCursor": 3513527328,
+            "lastConfirmedAckCursor": 3513527300
+          }
+        }
+      ]
+    },
+    {
+      "build": "8aaab36a2e4c305633877de7438f6b0883f5b4c1",
+      "scenario": "current-only",
+      "run": 2,
+      "baselineProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 97,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 4,
+        "maxReceiptGapMs": 321.5,
+        "lastReceiptMonoMs": 3726.7999999970198,
+        "lastAfter": 3513527582,
+        "lastAppliedCursor": 3513527607,
+        "lastConfirmedAckCursor": 3513527582
+      },
+      "finalProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 38,
+        "appliedExecutions": 526,
+        "acksSent": 38,
+        "confirmedAckBatches": 37,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 7.800000000745058,
+        "maxReceiptGapMs": 720.1000000014901,
+        "lastReceiptMonoMs": 23888.099999997765,
+        "lastAfter": 3513528029,
+        "lastAppliedCursor": 3513528036,
+        "lastConfirmedAckCursor": 3513528029
+      },
+      "callbackMaxReceiveGapMs": 719.5999999977648,
+      "historicalAborts": [],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 54,
+        "cursor": 23857939,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 29,
+        "cursor": 23858217,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "generation": 2,
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 38,
+            "appliedExecutions": 526,
+            "acksSent": 38,
+            "confirmedAckBatches": 37,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 7.800000000745058,
+            "maxReceiptGapMs": 720.1000000014901,
+            "lastReceiptMonoMs": 23888.099999997765,
+            "lastAfter": 3513528029,
+            "lastAppliedCursor": 3513528036,
+            "lastConfirmedAckCursor": 3513528029
+          }
+        }
+      ]
+    },
+    {
+      "build": "8aaab36a2e4c305633877de7438f6b0883f5b4c1",
+      "scenario": "current-only",
+      "run": 3,
+      "baselineProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 28,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 5.299999997019768,
+        "maxReceiptGapMs": 243.29999999701977,
+        "lastReceiptMonoMs": 2873.2999999970198,
+        "lastAfter": 3513528354,
+        "lastAppliedCursor": 3513528359,
+        "lastConfirmedAckCursor": 3513528354
+      },
+      "finalProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 38,
+        "appliedExecutions": 383,
+        "acksSent": 38,
+        "confirmedAckBatches": 37,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 5.299999997019768,
+        "maxReceiptGapMs": 791.2999999970198,
+        "lastReceiptMonoMs": 22791.699999999255,
+        "lastAfter": 3513528709,
+        "lastAppliedCursor": 3513528714,
+        "lastConfirmedAckCursor": 3513528709
+      },
+      "callbackMaxReceiveGapMs": 789.1000000014901,
+      "historicalAborts": [],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 46,
+        "cursor": 23858263,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 44,
+        "cursor": 23858535,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "generation": 2,
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 38,
+            "appliedExecutions": 383,
+            "acksSent": 38,
+            "confirmedAckBatches": 37,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 5.299999997019768,
+            "maxReceiptGapMs": 791.2999999970198,
+            "lastReceiptMonoMs": 22791.699999999255,
+            "lastAfter": 3513528709,
+            "lastAppliedCursor": 3513528714,
+            "lastConfirmedAckCursor": 3513528709
+          }
+        }
+      ]
+    },
+    {
+      "build": "8aaab36a2e4c305633877de7438f6b0883f5b4c1",
+      "scenario": "concurrent-history",
+      "run": 3,
+      "baselineProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 32,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 5.800000000745058,
+        "maxReceiptGapMs": 446.4000000022352,
+        "lastReceiptMonoMs": 3655.5,
+        "lastAfter": 3513528964,
+        "lastAppliedCursor": 3513528987,
+        "lastConfirmedAckCursor": 3513528964
+      },
+      "finalProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 37,
+        "appliedExecutions": 300,
+        "acksSent": 37,
+        "confirmedAckBatches": 36,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 20.400000002235174,
+        "maxReceiptGapMs": 2232.5,
+        "lastReceiptMonoMs": 23801.39999999851,
+        "lastAfter": 3513529250,
+        "lastAppliedCursor": 3513529255,
+        "lastConfirmedAckCursor": 3513529250
+      },
+      "callbackMaxReceiveGapMs": 2394.89999999851,
+      "historicalAborts": [
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        }
+      ],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 52,
+        "cursor": 23858587,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 46,
+        "cursor": 23858811,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "generation": 2,
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 37,
+            "appliedExecutions": 300,
+            "acksSent": 37,
+            "confirmedAckBatches": 36,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 20.400000002235174,
+            "maxReceiptGapMs": 2232.5,
+            "lastReceiptMonoMs": 23801.39999999851,
+            "lastAfter": 3513529250,
+            "lastAppliedCursor": 3513529255,
+            "lastConfirmedAckCursor": 3513529250
+          }
+        },
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:1h:p25",
+          "connected": true,
+          "proof": {
+            "generation": 4,
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 33,
+            "appliedExecutions": 265,
+            "acksSent": 33,
+            "confirmedAckBatches": 32,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 10.700000002980232,
+            "maxReceiptGapMs": 1706.199999999255,
+            "lastReceiptMonoMs": 23805,
+            "lastAfter": 3513529250,
+            "lastAppliedCursor": 3513529255,
+            "lastConfirmedAckCursor": 3513529250
+          }
+        }
+      ]
+    },
+    {
+      "build": "8aaab36a2e4c305633877de7438f6b0883f5b4c1",
+      "scenario": "concurrent-history",
+      "run": 4,
+      "baselineProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 49,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 14.900000002235174,
+        "maxReceiptGapMs": 265.69999999925494,
+        "lastReceiptMonoMs": 3293.39999999851,
+        "lastAfter": 3513529529,
+        "lastAppliedCursor": 3513529532,
+        "lastConfirmedAckCursor": 3513529529
+      },
+      "finalProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 36,
+        "appliedExecutions": 2328,
+        "acksSent": 36,
+        "confirmedAckBatches": 35,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 18,
+        "maxReceiptGapMs": 1615.7000000029802,
+        "lastReceiptMonoMs": 24093,
+        "lastAfter": 3513531802,
+        "lastAppliedCursor": 3513531811,
+        "lastConfirmedAckCursor": 3513531802
+      },
+      "callbackMaxReceiveGapMs": 1601.5999999977648,
+      "historicalAborts": [
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        }
+      ],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 64,
+        "cursor": 23858914,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 48,
+        "cursor": 23859151,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "generation": 2,
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 36,
+            "appliedExecutions": 2328,
+            "acksSent": 36,
+            "confirmedAckBatches": 35,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 18,
+            "maxReceiptGapMs": 1615.7000000029802,
+            "lastReceiptMonoMs": 24093,
+            "lastAfter": 3513531802,
+            "lastAppliedCursor": 3513531811,
+            "lastConfirmedAckCursor": 3513531802
+          }
+        },
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:1h:p25",
+          "connected": true,
+          "proof": {
+            "generation": 4,
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 32,
+            "appliedExecutions": 2244,
+            "acksSent": 32,
+            "confirmedAckBatches": 31,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 10.300000000745058,
+            "maxReceiptGapMs": 2240.199999999255,
+            "lastReceiptMonoMs": 24094.5,
+            "lastAfter": 3513531802,
+            "lastAppliedCursor": 3513531811,
+            "lastConfirmedAckCursor": 3513531802
+          }
+        }
+      ]
+    },
+    {
+      "build": "8aaab36a2e4c305633877de7438f6b0883f5b4c1",
+      "scenario": "current-only",
+      "run": 4,
+      "baselineProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 3,
+        "appliedExecutions": 53,
+        "acksSent": 3,
+        "confirmedAckBatches": 2,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 4.300000000745058,
+        "maxReceiptGapMs": 390.3999999985099,
+        "lastReceiptMonoMs": 4553,
+        "lastAfter": 3513532644,
+        "lastAppliedCursor": 3513532648,
+        "lastConfirmedAckCursor": 3513532644
+      },
+      "finalProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 39,
+        "appliedExecutions": 706,
+        "acksSent": 39,
+        "confirmedAckBatches": 38,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 5,
+        "maxReceiptGapMs": 884.6000000014901,
+        "lastReceiptMonoMs": 24512.89999999851,
+        "lastAfter": 3513533295,
+        "lastAppliedCursor": 3513533301,
+        "lastConfirmedAckCursor": 3513533295
+      },
+      "callbackMaxReceiveGapMs": 880.9000000022352,
+      "historicalAborts": [],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 74,
+        "cursor": 23859225,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 53,
+        "cursor": 23859448,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "generation": 2,
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 39,
+            "appliedExecutions": 706,
+            "acksSent": 39,
+            "confirmedAckBatches": 38,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 5,
+            "maxReceiptGapMs": 884.6000000014901,
+            "lastReceiptMonoMs": 24512.89999999851,
+            "lastAfter": 3513533295,
+            "lastAppliedCursor": 3513533301,
+            "lastConfirmedAckCursor": 3513533295
+          }
+        }
+      ]
+    },
+    {
+      "build": "8aaab36a2e4c305633877de7438f6b0883f5b4c1",
+      "scenario": "current-only",
+      "run": 5,
+      "baselineProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 56,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 19.5,
+        "maxReceiptGapMs": 406.1000000014901,
+        "lastReceiptMonoMs": 5288.5,
+        "lastAfter": 3513533619,
+        "lastAppliedCursor": 3513533622,
+        "lastConfirmedAckCursor": 3513533619
+      },
+      "finalProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 39,
+        "appliedExecutions": 335,
+        "acksSent": 39,
+        "confirmedAckBatches": 38,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 19.5,
+        "maxReceiptGapMs": 853.6999999992549,
+        "lastReceiptMonoMs": 25573.099999997765,
+        "lastAfter": 3513533896,
+        "lastAppliedCursor": 3513533901,
+        "lastConfirmedAckCursor": 3513533896
+      },
+      "callbackMaxReceiveGapMs": 901.8000000007451,
+      "historicalAborts": [],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 67,
+        "cursor": 23859515,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 54,
+        "cursor": 23859767,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "generation": 2,
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 39,
+            "appliedExecutions": 335,
+            "acksSent": 39,
+            "confirmedAckBatches": 38,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 19.5,
+            "maxReceiptGapMs": 853.6999999992549,
+            "lastReceiptMonoMs": 25573.099999997765,
+            "lastAfter": 3513533896,
+            "lastAppliedCursor": 3513533901,
+            "lastConfirmedAckCursor": 3513533896
+          }
+        }
+      ]
+    },
+    {
+      "build": "8aaab36a2e4c305633877de7438f6b0883f5b4c1",
+      "scenario": "concurrent-history",
+      "run": 5,
+      "baselineProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 113,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 3.899999998509884,
+        "maxReceiptGapMs": 428.5,
+        "lastReceiptMonoMs": 4363.60000000149,
+        "lastAfter": 3513534288,
+        "lastAppliedCursor": 3513534338,
+        "lastConfirmedAckCursor": 3513534288
+      },
+      "finalProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 40,
+        "appliedExecutions": 492,
+        "acksSent": 40,
+        "confirmedAckBatches": 39,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 7.100000001490116,
+        "maxReceiptGapMs": 1185.300000000745,
+        "lastReceiptMonoMs": 24321.5,
+        "lastAfter": 3513534715,
+        "lastAppliedCursor": 3513534717,
+        "lastConfirmedAckCursor": 3513534715
+      },
+      "callbackMaxReceiveGapMs": 1608.699999999255,
+      "historicalAborts": [
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:4187/market-data/v2/history/footprints-batch",
+          "error": "net::ERR_ABORTED"
+        }
+      ],
+      "releasedExecutionStreams": 0,
+      "releasedSchedulerActive": 0,
+      "releasedSchedulerQueued": 0,
+      "customBefore": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 73,
+        "cursor": 23859840,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "customAfter": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 58,
+        "cursor": 23860112,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "allFinalExecutionStreams": [
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+          "connected": true,
+          "proof": {
+            "generation": 2,
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 40,
+            "appliedExecutions": 492,
+            "acksSent": 40,
+            "confirmedAckBatches": 39,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 7.100000001490116,
+            "maxReceiptGapMs": 1185.300000000745,
+            "lastReceiptMonoMs": 24321.5,
+            "lastAfter": 3513534715,
+            "lastAppliedCursor": 3513534717,
+            "lastConfirmedAckCursor": 3513534715
+          }
+        },
+        {
+          "key": "binance:perpetual:BTCUSDT:footprint:1h:p25",
+          "connected": true,
+          "proof": {
+            "generation": 4,
+            "socketStarts": 1,
+            "disconnects": 0,
+            "errors": 0,
+            "resets": 0,
+            "appliedBatches": 34,
+            "appliedExecutions": 371,
+            "acksSent": 34,
+            "confirmedAckBatches": 33,
+            "sourceCursorJumps": 0,
+            "maxApplyMs": 14.100000001490116,
+            "maxReceiptGapMs": 861.3999999985099,
+            "lastReceiptMonoMs": 24322.699999999255,
+            "lastAfter": 3513534715,
+            "lastAppliedCursor": 3513534717,
+            "lastConfirmedAckCursor": 3513534715
+          }
+        }
+      ]
+    }
+  ]
+}

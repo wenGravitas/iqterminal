@@ -1,0 +1,5 @@
+{"run":1,"base":"http://127.0.0.1:4181/market-data","parts":5,"firstVerifiedPartMs":2892.498357,"completeMs":7436.762898999999,"errors":[]}
+{"run":2,"base":"http://127.0.0.1:4181/market-data","parts":5,"firstVerifiedPartMs":4815.392404000001,"completeMs":9319.397385,"errors":[]}
+{"run":3,"base":"http://127.0.0.1:4181/market-data","parts":5,"firstVerifiedPartMs":1252.7318940000005,"completeMs":5482.0745050000005,"errors":[]}
+{"run":4,"base":"http://127.0.0.1:4181/market-data","parts":5,"firstVerifiedPartMs":1718.6632189999982,"completeMs":7121.338250999997,"errors":[]}
+{"run":5,"base":"http://127.0.0.1:4181/market-data","parts":4,"firstVerifiedPartMs":4870.177798999997,"completeMs":null,"errors":[{"part":2,"message":"AbortError: The operation was aborted"}]}

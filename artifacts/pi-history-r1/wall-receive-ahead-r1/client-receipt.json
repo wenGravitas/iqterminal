@@ -1,0 +1,16 @@
+{
+  "clientBuild": "87e46367e28bec68c4d310b8bb5e42f22b640767",
+  "indexSha256": "eaf2e6283c8967d7d83035b29a2e1c658b5bb14c19290e4af1d3edc2ac25866e",
+  "assets": {
+    "worker-BKSmN_Bs.js": "a4a6ce6a89338368aae66ca167f53ee803f95d70c7d89c555eaae9c5aa2f9b6e",
+    "editor-BEKVwvxV.js": "feb01e00d76e983a4d1196e78b634f487ebc8b916d70fc4294a8dbd0dbfa66ad",
+    "index-BDdFwHPw.js": "de7b828c4e702c0a0c194375ac63069cefeb35a4d518f2efbcdbbea02d37a621",
+    "main-Hmn26aDm.js": "1fb45dea2b300be887a760471f508ed347bedab538f3473e36581fc6f782aaff",
+    "worker-DaWyXJKB.js": "fe771eaf11363d6e8085639c9d4cd9172c5a0475016d73c3f595aeb2667f56b9",
+    "worker-BDrBSiaT.js": "bfb6a096537e1c9e9448c8ae90b080c0030055a55c7b117667457357e2079281"
+  },
+  "previewPID": 263125,
+  "previewCwd": "/home/daz/workarea/iqterminal-perf-history",
+  "proxyConfigSha256": "48b3c2d2661be12f4c33b02e779bcd7ead7caeb7af70de0bdd849731fed2a00f",
+  "scope": "Production staging/prepared/diagnostics; same owned preview and unchanged proxy config. No server deployment."
+}

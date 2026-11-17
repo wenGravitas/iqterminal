@@ -1,0 +1,878 @@
+[
+  {
+    "interval": "5m",
+    "from": 1793790000000,
+    "to": 1793804400000,
+    "expected": 48,
+    "state": "ready",
+    "slots": 48,
+    "jobs": [],
+    "elapsedMs": 4152.859845000421,
+    "coverage": [
+      {
+        "from": 1793790000000,
+        "revision": 1793795493108000,
+        "bar": true,
+        "coverage": {
+          "from": 1793790000000,
+          "to": 1793790300000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793790300000,
+        "revision": 1793795493108000,
+        "bar": true,
+        "coverage": {
+          "from": 1793790300000,
+          "to": 1793790600000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793790600000,
+        "revision": 1793795486277000,
+        "bar": true,
+        "coverage": {
+          "from": 1793790600000,
+          "to": 1793790900000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793790900000,
+        "revision": 1793795486277000,
+        "bar": true,
+        "coverage": {
+          "from": 1793790900000,
+          "to": 1793791200000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793791200000,
+        "revision": 1793795486277000,
+        "bar": true,
+        "coverage": {
+          "from": 1793791200000,
+          "to": 1793791500000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793791500000,
+        "revision": 1793795484531000,
+        "bar": true,
+        "coverage": {
+          "from": 1793791500000,
+          "to": 1793791800000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793791800000,
+        "revision": 1793795484531000,
+        "bar": true,
+        "coverage": {
+          "from": 1793791800000,
+          "to": 1793792100000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793792100000,
+        "revision": 1793795484531000,
+        "bar": true,
+        "coverage": {
+          "from": 1793792100000,
+          "to": 1793792400000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793792400000,
+        "revision": 1793795484531000,
+        "bar": true,
+        "coverage": {
+          "from": 1793792400000,
+          "to": 1793792700000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793792700000,
+        "revision": 1793795481605000,
+        "bar": true,
+        "coverage": {
+          "from": 1793792700000,
+          "to": 1793793000000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793793000000,
+        "revision": 1793795481605000,
+        "bar": true,
+        "coverage": {
+          "from": 1793793000000,
+          "to": 1793793300000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793793300000,
+        "revision": 1793795481605000,
+        "bar": true,
+        "coverage": {
+          "from": 1793793300000,
+          "to": 1793793600000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793793600000,
+        "revision": 1793795481605000,
+        "bar": true,
+        "coverage": {
+          "from": 1793793600000,
+          "to": 1793793900000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793793900000,
+        "revision": 1793795481605000,
+        "bar": true,
+        "coverage": {
+          "from": 1793793900000,
+          "to": 1793794200000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793794200000,
+        "revision": 1793795481605000,
+        "bar": true,
+        "coverage": {
+          "from": 1793794200000,
+          "to": 1793794500000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793794500000,
+        "revision": 1793795482557000,
+        "bar": true,
+        "coverage": {
+          "from": 1793794500000,
+          "to": 1793794800000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793794800000,
+        "revision": 1793795482557000,
+        "bar": true,
+        "coverage": {
+          "from": 1793794800000,
+          "to": 1793795100000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793795100000,
+        "revision": 1793795482557000,
+        "bar": true,
+        "coverage": {
+          "from": 1793795100000,
+          "to": 1793795400000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793795400000,
+        "revision": 1793796457531000,
+        "bar": true,
+        "coverage": {
+          "from": 1793795400000,
+          "to": 1793795700000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793795700000,
+        "revision": 1793796457531000,
+        "bar": true,
+        "coverage": {
+          "from": 1793795700000,
+          "to": 1793796000000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793796000000,
+        "revision": 1793796457531000,
+        "bar": true,
+        "coverage": {
+          "from": 1793796000000,
+          "to": 1793796300000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793796300000,
+        "revision": 1793796601784000,
+        "bar": true,
+        "coverage": {
+          "from": 1793796300000,
+          "to": 1793796600000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793796600000,
+        "revision": 1793797451438000,
+        "bar": true,
+        "coverage": {
+          "from": 1793796600000,
+          "to": 1793796900000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793796900000,
+        "revision": 1793797451438000,
+        "bar": true,
+        "coverage": {
+          "from": 1793796900000,
+          "to": 1793797200000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793797200000,
+        "revision": 1793810795321000,
+        "bar": true,
+        "coverage": {
+          "from": 1793797200000,
+          "to": 1793797500000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793797500000,
+        "revision": 1793810795321000,
+        "bar": true,
+        "coverage": {
+          "from": 1793797500000,
+          "to": 1793797800000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793797800000,
+        "revision": 1793810795321000,
+        "bar": true,
+        "coverage": {
+          "from": 1793797800000,
+          "to": 1793798100000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793798100000,
+        "revision": 1793810795321000,
+        "bar": true,
+        "coverage": {
+          "from": 1793798100000,
+          "to": 1793798400000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793798400000,
+        "revision": 1793810795321000,
+        "bar": true,
+        "coverage": {
+          "from": 1793798400000,
+          "to": 1793798700000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793798700000,
+        "revision": 1793810795321000,
+        "bar": true,
+        "coverage": {
+          "from": 1793798700000,
+          "to": 1793799000000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793799000000,
+        "revision": 1793810796894000,
+        "bar": true,
+        "coverage": {
+          "from": 1793799000000,
+          "to": 1793799300000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793799300000,
+        "revision": 1793810796894000,
+        "bar": true,
+        "coverage": {
+          "from": 1793799300000,
+          "to": 1793799600000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793799600000,
+        "revision": 1793810796894000,
+        "bar": true,
+        "coverage": {
+          "from": 1793799600000,
+          "to": 1793799900000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793799900000,
+        "revision": 1793810796894000,
+        "bar": true,
+        "coverage": {
+          "from": 1793799900000,
+          "to": 1793800200000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793800200000,
+        "revision": 1793810796894000,
+        "bar": true,
+        "coverage": {
+          "from": 1793800200000,
+          "to": 1793800500000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793800500000,
+        "revision": 1793810796894000,
+        "bar": true,
+        "coverage": {
+          "from": 1793800500000,
+          "to": 1793800800000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793800800000,
+        "revision": 1793810798750000,
+        "bar": true,
+        "coverage": {
+          "from": 1793800800000,
+          "to": 1793801100000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793801100000,
+        "revision": 1793810798750000,
+        "bar": true,
+        "coverage": {
+          "from": 1793801100000,
+          "to": 1793801400000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793801400000,
+        "revision": 1793810798750000,
+        "bar": true,
+        "coverage": {
+          "from": 1793801400000,
+          "to": 1793801700000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793801700000,
+        "revision": 1793810798750000,
+        "bar": true,
+        "coverage": {
+          "from": 1793801700000,
+          "to": 1793802000000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793802000000,
+        "revision": 1793810798750000,
+        "bar": true,
+        "coverage": {
+          "from": 1793802000000,
+          "to": 1793802300000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793802300000,
+        "revision": 1793810798750000,
+        "bar": true,
+        "coverage": {
+          "from": 1793802300000,
+          "to": 1793802600000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793802600000,
+        "revision": 1793810800281000,
+        "bar": true,
+        "coverage": {
+          "from": 1793802600000,
+          "to": 1793802900000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793802900000,
+        "revision": 1793810800281000,
+        "bar": true,
+        "coverage": {
+          "from": 1793802900000,
+          "to": 1793803200000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793803200000,
+        "revision": 1793810800281000,
+        "bar": true,
+        "coverage": {
+          "from": 1793803200000,
+          "to": 1793803500000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793803500000,
+        "revision": 1793810800281000,
+        "bar": true,
+        "coverage": {
+          "from": 1793803500000,
+          "to": 1793803800000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793803800000,
+        "revision": 1793810800281000,
+        "bar": true,
+        "coverage": {
+          "from": 1793803800000,
+          "to": 1793804100000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793804100000,
+        "revision": 1793810800281000,
+        "bar": true,
+        "coverage": {
+          "from": 1793804100000,
+          "to": 1793804400000,
+          "complete": true,
+          "gaps": []
+        }
+      }
+    ]
+  },
+  {
+    "interval": "1h",
+    "from": 1793718000000,
+    "to": 1793732400000,
+    "expected": 4,
+    "state": "ready",
+    "slots": 4,
+    "jobs": [],
+    "elapsedMs": 2880.9776340003737,
+    "coverage": [
+      {
+        "from": 1793718000000,
+        "revision": 1793798296294000,
+        "bar": true,
+        "coverage": {
+          "from": 1793718000000,
+          "to": 1793721600000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793721600000,
+        "revision": 1793798297873000,
+        "bar": true,
+        "coverage": {
+          "from": 1793721600000,
+          "to": 1793725200000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793725200000,
+        "revision": 1793798299724000,
+        "bar": true,
+        "coverage": {
+          "from": 1793725200000,
+          "to": 1793728800000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793728800000,
+        "revision": 1793798301024000,
+        "bar": true,
+        "coverage": {
+          "from": 1793728800000,
+          "to": 1793732400000,
+          "complete": true,
+          "gaps": []
+        }
+      }
+    ]
+  },
+  {
+    "interval": "1h",
+    "from": 1793732400000,
+    "to": 1793746800000,
+    "expected": 4,
+    "state": "ready",
+    "slots": 4,
+    "jobs": [],
+    "elapsedMs": 2938.232324000637,
+    "coverage": [
+      {
+        "from": 1793732400000,
+        "revision": 1793798302584000,
+        "bar": true,
+        "coverage": {
+          "from": 1793732400000,
+          "to": 1793736000000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793736000000,
+        "revision": 1793798304491000,
+        "bar": true,
+        "coverage": {
+          "from": 1793736000000,
+          "to": 1793739600000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793739600000,
+        "revision": 1793798305988000,
+        "bar": true,
+        "coverage": {
+          "from": 1793739600000,
+          "to": 1793743200000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793743200000,
+        "revision": 1793798307784000,
+        "bar": true,
+        "coverage": {
+          "from": 1793743200000,
+          "to": 1793746800000,
+          "complete": true,
+          "gaps": []
+        }
+      }
+    ]
+  },
+  {
+    "interval": "1h",
+    "from": 1793746800000,
+    "to": 1793761200000,
+    "expected": 4,
+    "state": "ready",
+    "slots": 4,
+    "jobs": [],
+    "elapsedMs": 2776.8211620004877,
+    "coverage": [
+      {
+        "from": 1793746800000,
+        "revision": 1793798309686000,
+        "bar": true,
+        "coverage": {
+          "from": 1793746800000,
+          "to": 1793750400000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793750400000,
+        "revision": 1793798311809000,
+        "bar": true,
+        "coverage": {
+          "from": 1793750400000,
+          "to": 1793754000000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793754000000,
+        "revision": 1793798313929000,
+        "bar": true,
+        "coverage": {
+          "from": 1793754000000,
+          "to": 1793757600000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793757600000,
+        "revision": 1793798315290000,
+        "bar": true,
+        "coverage": {
+          "from": 1793757600000,
+          "to": 1793761200000,
+          "complete": true,
+          "gaps": []
+        }
+      }
+    ]
+  },
+  {
+    "interval": "1h",
+    "from": 1793761200000,
+    "to": 1793775600000,
+    "expected": 4,
+    "state": "ready",
+    "slots": 4,
+    "jobs": [],
+    "elapsedMs": 6233.141811999303,
+    "coverage": [
+      {
+        "from": 1793761200000,
+        "revision": 1793798317381000,
+        "bar": true,
+        "coverage": {
+          "from": 1793761200000,
+          "to": 1793764800000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793764800000,
+        "revision": 1793798319102000,
+        "bar": true,
+        "coverage": {
+          "from": 1793764800000,
+          "to": 1793768400000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793768400000,
+        "revision": 1793798321001000,
+        "bar": true,
+        "coverage": {
+          "from": 1793768400000,
+          "to": 1793772000000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793772000000,
+        "revision": 1793798322711000,
+        "bar": true,
+        "coverage": {
+          "from": 1793772000000,
+          "to": 1793775600000,
+          "complete": true,
+          "gaps": []
+        }
+      }
+    ]
+  },
+  {
+    "interval": "1h",
+    "from": 1793775600000,
+    "to": 1793790000000,
+    "expected": 4,
+    "state": "ready",
+    "slots": 4,
+    "jobs": [],
+    "elapsedMs": 4957.08422899952,
+    "coverage": [
+      {
+        "from": 1793775600000,
+        "revision": 1793798323943000,
+        "bar": true,
+        "coverage": {
+          "from": 1793775600000,
+          "to": 1793779200000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793779200000,
+        "revision": 1793798325850000,
+        "bar": true,
+        "coverage": {
+          "from": 1793779200000,
+          "to": 1793782800000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793782800000,
+        "revision": 1793798327236000,
+        "bar": true,
+        "coverage": {
+          "from": 1793782800000,
+          "to": 1793786400000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793786400000,
+        "revision": 1793798275905000,
+        "bar": true,
+        "coverage": {
+          "from": 1793786400000,
+          "to": 1793790000000,
+          "complete": true,
+          "gaps": []
+        }
+      }
+    ]
+  },
+  {
+    "interval": "1h",
+    "from": 1793790000000,
+    "to": 1793804400000,
+    "expected": 4,
+    "state": "ready",
+    "slots": 4,
+    "jobs": [],
+    "elapsedMs": 2439.7613979999733,
+    "coverage": [
+      {
+        "from": 1793790000000,
+        "revision": 1793798277770000,
+        "bar": true,
+        "coverage": {
+          "from": 1793790000000,
+          "to": 1793793600000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793793600000,
+        "revision": 1793798279300000,
+        "bar": true,
+        "coverage": {
+          "from": 1793793600000,
+          "to": 1793797200000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793797200000,
+        "revision": 1793810865521000,
+        "bar": true,
+        "coverage": {
+          "from": 1793797200000,
+          "to": 1793800800000,
+          "complete": true,
+          "gaps": []
+        }
+      },
+      {
+        "from": 1793800800000,
+        "revision": 1793810868100000,
+        "bar": true,
+        "coverage": {
+          "from": 1793800800000,
+          "to": 1793804400000,
+          "complete": true,
+          "gaps": []
+        }
+      }
+    ]
+  }
+]

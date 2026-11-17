@@ -1,0 +1,28 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/trading-vault.test.ts (8 tests | 1 failed) 15450ms
+   ❯ local Hyperliquid agent vault (8)
+     × writes scoped p=3 records and requires that account scope and passphrase to unlock 5090ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/trading-vault.test.ts > local Hyperliquid agent vault > writes scoped p=3 records and requires that account scope and passphrase to unlock
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/trading-vault.test.ts:97:3
+     95|
+     96| describe('local Hyperliquid agent vault', () => {
+     97|   it('writes scoped p=3 records and requires that account scope and pa…
+       |   ^
+     98|     await expect(vault.encryptAgentPrivateKey(PRIVATE_KEY, PASSPHRASE,…
+     99|     const key = await scopedRecordKey();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 32 passed (33)
+   Start at  10:16:58
+   Duration  18.23s (tests 80%, transform 14%, import 6%)
+

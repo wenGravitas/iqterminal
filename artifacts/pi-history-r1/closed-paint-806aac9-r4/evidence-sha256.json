@@ -1,0 +1,15 @@
+{
+  "compile.log": "2ec609998ce235304f1ad6349751ff172d6b042da39e0da338fa78eeabe57004",
+  "environment.json": "c8afea28acca5cd46c84d3e978f0cc7ceaf267d17f313ff6f1a834e52fe6f5ff",
+  "executed.mjs": "0f84820cdbd08f858f5fd218ae7bd94537c0d7d7c44b9fe14a4737870b80d106",
+  "perpetual-input.json.gz": "009e99df830eee28cad58b12646d9fc50e16afb99c6b42b40e0993c3e450b31c",
+  "perpetual-samples.json": "994762c698569b9084ee4fe6d9aff957808f65bd58cb1866530660b7323999bb",
+  "primitive.js": "6225cf08602d570b831c261a0b03b0f14f50b461e89c93d135a04e709a29ae67",
+  "primitive.js.map": "dc90b47990e772b004d80b037493cc544f2816d67bf61e9834c39a7baf89c839",
+  "resource-summary.json": "50d16dd74d856021ae65a61dc7ff86cf447715f366c832e3fe0922fa85474384",
+  "resources.jsonl": "c1aea30dcdac6e7e62618b2b8c69afdb420c76f52659efb15e011b60817ce5e7",
+  "results.json": "ee527b683b420bd5a49bc985e576696a481fe2b5c1b730a25c67d7b36138aaf1",
+  "spot-input.json.gz": "0e0068f67b9ef8921b856095b515d2b5efac244490dfff5392730a5665cf1ac3",
+  "spot-samples.json": "3b3b1b46c82ba76009b97a14ad1827de975ad5726ebba91ba7c65d6ede0023db",
+  "timing-summary.json": "d598a1e7cc2d2357d4641cda10963dd7fd3ff5fe5e9bb0c50e1f8fc8755b7b67"
+}

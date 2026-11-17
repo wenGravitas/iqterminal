@@ -1,0 +1,12 @@
+{
+  "status": 200,
+  "bytes": 1613,
+  "sha256": "493c9f7ebed6cdc948310e0171fcb3e61f3603305bf714a5b1107a7fde665ff0",
+  "headers": {
+    "x-iq-request-id": "a0c1e196-89ed-4a87-9f13-27dc20b8fb2e",
+    "server-timing": "admission;dur=0, db;dur=1.61, dbdecode;dur=0.00, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=0.03, total;dur=1.66, legacy;dur=2.25, proxyqueue;dur=10.82, proxyheader;dur=563.43",
+    "x-iq-proxy-queue-ms": "10.82",
+    "x-iq-proxy-header-ms": "563.43"
+  },
+  "scope": "Read-only readiness; watch bodies/definitions/session values are not retained."
+}

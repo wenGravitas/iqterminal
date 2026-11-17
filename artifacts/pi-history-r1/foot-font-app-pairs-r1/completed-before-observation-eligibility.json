@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "control": {
+      "build": "8aaab36a2e4c305633877de7438f6b0883f5b4c1",
+      "route": "http://127.0.0.1:4188"
+    },
+    "candidate": {
+      "build": "c170b4be24696bb6f58c9b3de27b522f818c3757",
+      "route": "http://127.0.0.1:4187"
+    }
+  },
+  "backend": "dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51",
+  "rounds": 5,
+  "observations": 20,
+  "scope": "Five alternating app-build pairs; each raw child has current-only and concurrent footprint history scenarios. Aggregate run is the independently recorded pair round, with originalRun and raw-source SHA preserved. Actual loading/paint latency is not inferred from callback/bootstrap timing. Headless Pi only."
+}

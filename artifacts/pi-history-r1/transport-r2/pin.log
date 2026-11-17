@@ -1,0 +1,7 @@
+{"phase": "renewed", "turn": 1, "elapsedMs": 15.302451327443123, "consumers": ["stage691-point-perpetual"]}
+{"phase": "renewed", "turn": 9, "elapsedMs": 32030.352460220456, "consumers": ["stage691-point-perpetual"]}
+{"phase": "renewed", "turn": 17, "elapsedMs": 64045.79998925328, "consumers": ["stage691-point-perpetual"]}
+{"phase": "renewed", "turn": 25, "elapsedMs": 96221.92530706525, "consumers": ["stage691-point-perpetual"]}
+{"phase": "renewed", "turn": 33, "elapsedMs": 128241.97349883616, "consumers": ["stage691-point-perpetual"]}
+{"phase": "renewed", "turn": 41, "elapsedMs": 160254.4555766508, "consumers": ["stage691-point-perpetual"]}
+{"phase": "released", "elapsedMs": 180265.00287279487, "consumers": ["stage691-point-perpetual"]}

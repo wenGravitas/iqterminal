@@ -1,0 +1,9 @@
+{
+  "source": {
+    "path": "artifacts/wall-history-latency-route/fresh-current/parent-chart-financial.json",
+    "scope": "Previously captured real ordinary chart"
+  },
+  "fileSha256": "a33331b717c4e32bfeca7111d93378ae5bf2f68a6a2b6a0d7c3c36d46a956dfe",
+  "segments": 10383,
+  "runs": 70858
+}

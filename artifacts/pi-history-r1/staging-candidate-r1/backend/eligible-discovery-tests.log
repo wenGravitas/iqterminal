@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: polling an admitted building job renews interest without repeating source discovery/hash work
+ok 1 - polling an admitted building job renews interest without repeating source discovery/hash work
+  ---
+  duration_ms: 7.24177
+  type: 'test'
+  ...
+# Subtest: ordinary discovery admits a consumer-scoped exact request without waiting for a source build
+ok 2 - ordinary discovery admits a consumer-scoped exact request without waiting for a source build
+  ---
+  duration_ms: 3.147846
+  type: 'test'
+  ...
+# Subtest: disabled, older clients and explicitly ineligible source do not enqueue
+ok 3 - disabled, older clients and explicitly ineligible source do not enqueue
+  ---
+  duration_ms: 0.670373
+  type: 'test'
+  ...
+# Subtest: only a missing compatible selected projection queues work when canonical data is ready
+ok 4 - only a missing compatible selected projection queues work when canonical data is ready
+  ---
+  duration_ms: 0.6888
+  type: 'test'
+  ...
+# Subtest: explicit Retry tokens pass through while malformed consumer identity never reaches admission
+ok 5 - explicit Retry tokens pass through while malformed consumer identity never reaches admission
+  ---
+  duration_ms: 1.11606
+  type: 'test'
+  ...
+# Subtest: cancelled discovery releases only its consumer even when admission completed before the reply
+ok 6 - cancelled discovery releases only its consumer even when admission completed before the reply
+  ---
+  duration_ms: 16.28301
+  type: 'test'
+  ...
+# Subtest: explicit shared derived root maps canonical and selected files without changing disabled defaults
+ok 7 - explicit shared derived root maps canonical and selected files without changing disabled defaults
+  ---
+  duration_ms: 1.676062
+  type: 'test'
+  ...
+# Subtest: eligible discovery clamps only the future end and preserves exact prepared proof/discovery behavior
+ok 8 - eligible discovery clamps only the future end and preserves exact prepared proof/discovery behavior
+  ---
+  duration_ms: 2.982845
+  type: 'test'
+  ...
+# Subtest: different future whitespace resolves to identical past requests without consuming retained left coverage
+ok 9 - different future whitespace resolves to identical past requests without consuming retained left coverage
+  ---
+  duration_ms: 2.351213
+  type: 'test'
+  ...
+# Subtest: wholly future requests return explicit ineligible time without admitting a job or claiming covered empty source
+ok 10 - wholly future requests return explicit ineligible time without admitting a job or claiming covered empty source
+  ---
+  duration_ms: 3.194364
+  type: 'test'
+  ...
+# Subtest: resolved building polls pin the eligible request and do not repeat horizon or source work
+ok 11 - resolved building polls pin the eligible request and do not repeat horizon or source work
+  ---
+  duration_ms: 3.925386
+  type: 'test'
+  ...
+# Subtest: cancellation after metadata cannot enqueue obsolete eligible work
+ok 12 - cancellation after metadata cannot enqueue obsolete eligible work
+  ---
+  duration_ms: 1.724933
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1742.91466

@@ -1,0 +1,36 @@
+
+> terminal-t0@0.1.0 test /home/daz/workarea/iqterminal-perf-history
+> vitest run
+
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/trading-vault.test.ts (8 tests | 1 failed) 24866ms
+   ❯ local Hyperliquid agent vault (8)
+     × explicitly decrypts legacy p=1, prepares scoped p=3, then atomically moves the record 5037ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/trading-vault.test.ts > local Hyperliquid agent vault > explicitly decrypts legacy p=1, prepares scoped p=3, then atomically moves the record
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/trading-vault.test.ts:149:3
+    147|   });
+    148|
+    149|   it('explicitly decrypts legacy p=1, prepares scoped p=3, then atomic…
+       |   ^
+    150|     const legacy = await legacyFixture();
+    151|     await writeRaw(LEGACY_KEY_ID, legacy);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 140 passed | 2 skipped (143)
+      Tests  1 failed | 1225 passed | 2 skipped (1228)
+   Start at  10:14:45
+   Duration  119.44s (tests 59%, import 25%, transform 14%, worker 2%)
+
+    Isolate  143 workers spawned · ~657ms startup each (spawn + environment, per file)
+             at least ~30.67s faster with isolate: false — reuses workers across files instead of one per file
+
+ ELIFECYCLE  Test failed. See above for more details.

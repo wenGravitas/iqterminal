@@ -1,0 +1,4 @@
+import{build}from'../node_modules/.pnpm/rolldown@1.2.13/node_modules/rolldown/dist/index.mjs';import{execFileSync}from'node:child_process';import{relative}from'node:path';
+const root='artifacts/watch-ack-warm-acceptance',define={'import.meta.env.VITE_WALL_SELECTED_MAX_BYTES':'"134217728"','import.meta.env.VITE_HISTORY_TILES':'"1"'};
+await build({input:'src/feed/prepared-wall-projection.ts',platform:'node',transform:{define},output:{file:root+'/baseline-importer.mjs',format:'esm'},plugins:[{name:'unchanged-task-baseline',load(id){if(/\/src\/.*\.ts$/.test(id))return{code:execFileSync('git',['show','0ff6b61439a12fdc572aeae1996f66bac1516fa8:'+relative(process.cwd(),id)],{encoding:'utf8'}),moduleType:'ts'};}}]});
+await build({input:'scripts/watch-warm-real-equality.ts',platform:'node',transform:{define},output:{file:root+'/real-equality.mjs',format:'esm'}});

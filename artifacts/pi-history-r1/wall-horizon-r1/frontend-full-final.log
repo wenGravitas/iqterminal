@@ -1,0 +1,92 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/footprint-batch.test.ts (8 tests | 6 failed) 20337ms
+   × progressive 24h history paints every ready member but cannot complete before the verified footer and EOF 178ms
+   × identical consumers share transport; one cancellation retains the peer and releases upstream only after the last interest 10ms
+   × only explicit unsupported status permits legacy fallback; invalid advertised streams remain failures 5005ms
+   × truncated prepared response retains all earlier good bars and never reports complete 5004ms
+   × a building member polls independently after ready siblings and retains their bars 5005ms
+   × a failed batch member exposes only its unavailable slots while every ready sibling stays validated 5009ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/footprint-batch.test.ts > progressive 24h history paints every ready member but cannot complete before the verified footer and EOF
+AssertionError: expected [ { time: 1800028800, …(3) }, …(15) ] to have a length of 20 but got 16
+
+- Expected
++ Received
+
+- 20
++ 16
+
+ ❯ tests/footprint-batch.test.ts:17:102
+     16|  const work=new PreparedFootprints(request,cache).load(from,from+24*ho…
+     17|  try{
+     18|  await vi.waitFor(()=>expect(controller).toBeDefined());for(let i=0;i<…
+       |                                                                                                ^
+     19|  await vi.waitFor(()=>expect(events.at(-1)?.bars).toHaveLength(20));ex…
+     20|  controller.enqueue(encoder.encode(line(end)));await new Promise(resol…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  tests/footprint-batch.test.ts > identical consumers share transport; one cancellation retains the peer and releases upstream only after the last interest
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/footprint-batch.test.ts:36:92
+     35|  const request:any=async(_url:string,init:RequestInit)=>{calls++;signa…
+     36|  const a=new AbortController(),b=new AbortController(),seen:number[]=[…
+     37|  const first=readFootprintBatch(request,urls,a.signal,async()=>{},'a')…
+       |                   ^
+     38|  const second=readFootprintBatch(request,urls,b.signal,async index=>{s…
+     39|  await new Promise(resolve=>setTimeout(resolve,5));a.abort();await can…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  tests/footprint-batch.test.ts > only explicit unsupported status permits legacy fallback; invalid advertised streams remain failures
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/footprint-batch.test.ts:40:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  tests/footprint-batch.test.ts > truncated prepared response retains all earlier good bars and never reports complete
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/footprint-batch.test.ts:46:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  tests/footprint-batch.test.ts > a building member polls independently after ready siblings and retains their bars
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/footprint-batch.test.ts:52:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  tests/footprint-batch.test.ts > a failed batch member exposes only its unavailable slots while every ready sibling stays validated
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/footprint-batch.test.ts:62:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed | 147 passed | 2 skipped (150)
+      Tests  6 failed | 1316 passed | 2 skipped (1324)
+   Start at  09:53:04
+   Duration  224.21s (tests 68%, import 20%, transform 10%, worker 2%)
+
+    Isolate  150 workers spawned · ~394ms startup each (spawn + environment, per file)
+             at least ~58.66s faster with isolate: false — reuses workers across files instead of one per file
+

@@ -1,0 +1,14 @@
+{
+  "utc": 1794544522.5874543,
+  "architecture": "aarch64",
+  "chromium": "Chromium 155.0.8059.79 built on Debian GNU/Linux 12 (bookworm)",
+  "model": "Raspberry Pi 5 Model B Rev 1.0",
+  "memory": {
+    "MemTotal": "8142664 kB",
+    "MemAvailable": "2082696 kB",
+    "SwapTotal": "33094924 kB",
+    "SwapFree": "32422184 kB"
+  },
+  "timingScope": "Publication snapshot, not simultaneous performance sample",
+  "browserMode": "headless; dedicated wrapper forbids foreground; chart backend canvas2d; hardware acceleration not certified"
+}

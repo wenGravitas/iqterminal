@@ -1,0 +1,31 @@
+services:
+  app:
+    image: iqterminal-perf-rollback:3e23410d83ea-app
+    pull_policy: never
+    environment:
+      IQ_BUILD_COMMIT: fa7807a2f68df9affe4bde00be9c592b15b221db
+  materializer:
+    image: iqterminal-perf-rollback:3e23410d83ea-materializer
+    pull_policy: never
+    environment:
+      IQ_BUILD_COMMIT: fa7807a2f68df9affe4bde00be9c592b15b221db
+  spot-materializer:
+    image: iqterminal-perf-rollback:3e23410d83ea-spot-materializer
+    pull_policy: never
+    environment:
+      IQ_BUILD_COMMIT: fa7807a2f68df9affe4bde00be9c592b15b221db
+  footprint-materializer:
+    image: iqterminal-perf-rollback:3e23410d83ea-footprint-materializer
+    pull_policy: never
+    environment:
+      IQ_BUILD_COMMIT: fa7807a2f68df9affe4bde00be9c592b15b221db
+  spot-footprint-materializer:
+    image: iqterminal-perf-rollback:3e23410d83ea-spot-footprint-materializer
+    pull_policy: never
+    environment:
+      IQ_BUILD_COMMIT: fa7807a2f68df9affe4bde00be9c592b15b221db
+  sql-admission:
+    image: iqterminal-perf-rollback:3e23410d83ea-sql-admission
+    pull_policy: never
+    environment:
+      IQ_BUILD_COMMIT: fa7807a2f68df9affe4bde00be9c592b15b221db

@@ -1,0 +1,10 @@
+{
+  "candidate": "188cee9",
+  "completion": false,
+  "failureCategory": "optional-resource-sampler",
+  "failurePath": "/proc/pressure/cpu",
+  "failureCode": "ENOENT",
+  "sourceOrRendererFailureProven": false,
+  "progressOnly": "First Spot initial stage reported equalPixels; no complete market/run acceptance",
+  "driverExit": 1
+}

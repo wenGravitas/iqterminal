@@ -1,0 +1,34 @@
+TAP version 13
+# Subtest: prepared HTTP delivery reuses gzip, validates independent ETags and preserves exact canonical pages without database reads
+ok 1 - prepared HTTP delivery reuses gzip, validates independent ETags and preserves exact canonical pages without database reads
+  ---
+  duration_ms: 517.667841
+  type: 'test'
+  ...
+# Subtest: prepared wall chunks resume bounded pages, retain good parts after failure and publish only terminal coverage
+ok 2 - prepared wall chunks resume bounded pages, retain good parts after failure and publish only terminal coverage
+  ---
+  duration_ms: 315.206809
+  type: 'test'
+  ...
+# Subtest: wall preparation rejects unpinned geometry and a non-advancing canonical page
+ok 3 - wall preparation rejects unpinned geometry and a non-advancing canonical page
+  ---
+  duration_ms: 20.122522
+  type: 'test'
+  ...
+# Subtest: changed fixed heads and oversized parts retain the prior validated checkpoint
+ok 4 - changed fixed heads and oversized parts retain the prior validated checkpoint
+  ---
+  duration_ms: 187.967263
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2421.93504

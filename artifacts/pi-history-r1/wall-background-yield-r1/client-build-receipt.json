@@ -1,0 +1,11 @@
+{
+  "build": "4efc5d0595ea77c8c6dedc11ac981a34462e0f34",
+  "url": "http://127.0.0.1:4187",
+  "indexSha256": "e4bd31b10615a859018bc7a1885f234ead4d71f1245d8769f7c2da61e4fd07ba",
+  "mainAsset": "/theme-init.js",
+  "mainSha256": "ee0ad566d7fcb052323fccff72e6abb2bdb6c5a0dcff2e45fa4e565146371cae",
+  "dataMode": "staging",
+  "historyTiles": true,
+  "expectedHistoryTaskYield": "background-post-task",
+  "scope": "Served index/main equal production dist; each sample must also verify worker runtime config and selected continuation."
+}

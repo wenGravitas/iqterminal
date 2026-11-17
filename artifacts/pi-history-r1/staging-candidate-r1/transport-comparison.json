@@ -1,0 +1,87 @@
+{
+  "scope": "Supplemental controlled capability interception; same later full30h pinned USD-M snapshot, five runs per arm; both have one incomplete observation; no change of default transport; navigation timings not exclusive CPU phases",
+  "samples": [
+    {
+      "mode": "product",
+      "applicationBuild": "9a526dcbe5495405205b10da78c4328a6e3d6831",
+      "sampleCount": 5,
+      "firstHistoryMs": [
+        4728.900000002235,
+        3839.2000000029802,
+        3422.300000000745,
+        3391.300000000745,
+        3408.10000000149
+      ],
+      "completeMs": [
+        null,
+        10444.5,
+        8600.60000000149,
+        10045.900000002235,
+        8893.699999999255
+      ],
+      "completeMedianMs": null,
+      "referenceVerified": [
+        false,
+        true,
+        true,
+        true,
+        true
+      ],
+      "projectionWireBytes": [
+        1497991,
+        1497991,
+        1497991,
+        1497991,
+        1497991
+      ],
+      "projectionRequestCounts": [
+        4,
+        4,
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "mode": "canonical",
+      "applicationBuild": "9a526dcbe5495405205b10da78c4328a6e3d6831",
+      "sampleCount": 5,
+      "firstHistoryMs": [
+        3623.800000000745,
+        3325.300000000745,
+        3665.300000000745,
+        3183.400000002235,
+        3381.199999999255
+      ],
+      "completeMs": [
+        8867.60000000149,
+        8009.10000000149,
+        8118.39999999851,
+        8748.70000000298,
+        null
+      ],
+      "completeMedianMs": null,
+      "referenceVerified": [
+        true,
+        true,
+        true,
+        true,
+        false
+      ],
+      "projectionWireBytes": [
+        2079776,
+        2079776,
+        2079776,
+        2079776,
+        2079776
+      ],
+      "projectionRequestCounts": [
+        4,
+        4,
+        4,
+        4,
+        4
+      ]
+    }
+  ]
+}

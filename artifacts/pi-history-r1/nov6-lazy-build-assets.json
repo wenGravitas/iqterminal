@@ -1,0 +1,40 @@
+{
+  "servedClientBuild": "fa1764330c30b440bb78a5d603f381f94c6529e7",
+  "assets": [
+    {
+      "file": "editor-BX1TM-u5.js",
+      "bytes": 16164,
+      "sha256": "b7f75c2558123f6dbef5c63677d7e009e3e32412ddf181c1523626590f35bf13"
+    },
+    {
+      "file": "index-BCBnJa5A.js",
+      "bytes": 49838,
+      "sha256": "14289572ded31592dec6ce428a155619d0ff1599fb50414a4004f3fbe3b33afb"
+    },
+    {
+      "file": "main-CsIDbZ_P.js",
+      "bytes": 2339941,
+      "sha256": "d3ace9ade2eccf89c3351b803e061727902edf6f21e78e927ea3ce1a0704572c"
+    },
+    {
+      "file": "main-DuadqPLo.css",
+      "bytes": 288397,
+      "sha256": "5caf8d6e3ccd3ef234c5ab99dfea43b02956db4856703f631771e9ac864e94ac"
+    },
+    {
+      "file": "worker-BKSmN_Bs.js",
+      "bytes": 319806,
+      "sha256": "a4a6ce6a89338368aae66ca167f53ee803f95d70c7d89c555eaae9c5aa2f9b6e"
+    },
+    {
+      "file": "worker-C38fKgyT.js",
+      "bytes": 448466,
+      "sha256": "732986b54cb4d2bdf81c46e44308739943a02d2bc96d1c5b5e0aae566e01cf9f"
+    },
+    {
+      "file": "worker-DaWyXJKB.js",
+      "bytes": 362171,
+      "sha256": "fe771eaf11363d6e8085639c9d4cd9172c5a0475016d73c3f595aeb2667f56b9"
+    }
+  ]
+}

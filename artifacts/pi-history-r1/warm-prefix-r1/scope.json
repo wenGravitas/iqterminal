@@ -1,0 +1,17 @@
+{
+  "applicationCommit": "a6e253b0663e5829d3078f537ae51e1de0251fca",
+  "backendChanged": false,
+  "source": "deterministic service tests and explicit native-chart browser fixtures",
+  "fullSuite": {
+    "passed": 1341,
+    "failed": 1,
+    "skipped": 2,
+    "failure": "trading-vault 5-second timeout; isolated eight-test rerun passed"
+  },
+  "browser": {
+    "headless": true,
+    "testsPassed": 6,
+    "foregroundAcceptance": false
+  },
+  "latencyAcceptance": "Not measured by these fixtures; cold-wall gate remains failed."
+}

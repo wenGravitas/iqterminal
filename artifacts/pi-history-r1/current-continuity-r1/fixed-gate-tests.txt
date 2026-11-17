@@ -1,0 +1,148 @@
+TAP version 13
+# Subtest: a canceled response with an unresolved trace cannot prevent sample finalization
+ok 1 - a canceled response with an unresolved trace cannot prevent sample finalization
+  ---
+  duration_ms: 37.257775
+  type: 'test'
+  ...
+# Subtest: completed and failed traces finish without retaining a cleanup timer
+ok 2 - completed and failed traces finish without retaining a cleanup timer
+  ---
+  duration_ms: 1.133386
+  type: 'test'
+  ...
+# Subtest: ready closed history cannot end a current-display observation before healthy current paint
+ok 3 - ready closed history cannot end a current-display observation before healthy current paint
+  ---
+  duration_ms: 0.436203
+  type: 'test'
+  ...
+# Subtest: extended current observation remains active after both current and history paint
+ok 4 - extended current observation remains active after both current and history paint
+  ---
+  duration_ms: 0.364795
+  type: 'test'
+  ...
+# Subtest: wall history observation stays open until native closed coverage is inspected
+ok 5 - wall history observation stays open until native closed coverage is inspected
+  ---
+  duration_ms: 0.924035
+  type: 'test'
+  ...
+# Subtest: native coverage cannot hide a missing interior candle behind endpoints, extra bars or a forming bar
+ok 6 - native coverage cannot hide a missing interior candle behind endpoints, extra bars or a forming bar
+  ---
+  duration_ms: 0.760239
+  type: 'test'
+  ...
+# Subtest: advancing same-socket validated execution and confirmed ACK chain passes
+ok 7 - advancing same-socket validated execution and confirmed ACK chain passes
+  ---
+  duration_ms: 4.745435
+  type: 'test'
+  ...
+# Subtest: live status alone, stale cursors or counters cannot certify progress
+ok 8 - live status alone, stale cursors or counters cannot certify progress
+  ---
+  duration_ms: 3.998825
+  type: 'test'
+  ...
+# Subtest: reset/reconnect/error, source jump and a regressed counter remain explicit failures
+ok 9 - reset/reconnect/error, source jump and a regressed counter remain explicit failures
+  ---
+  duration_ms: 4.601397
+  type: 'test'
+  ...
+# Subtest: non-live observation status and unconfirmed baseline cannot pass
+ok 10 - non-live observation status and unconfirmed baseline cannot pass
+  ---
+  duration_ms: 1.483775
+  type: 'test'
+  ...
+# Subtest: forming candle is reported separately from every eligible closed slot
+ok 11 - forming candle is reported separately from every eligible closed slot
+  ---
+  duration_ms: 5.770284
+  type: 'test'
+  ...
+# Subtest: extra painted data cannot hide a missing/duplicate/unvalidated requested closed slot
+ok 12 - extra painted data cannot hide a missing/duplicate/unvalidated requested closed slot
+  ---
+  duration_ms: 0.556462
+  type: 'test'
+  ...
+# Subtest: connected durable catch-up is reported separately and never substitutes for ACK progress
+ok 13 - connected durable catch-up is reported separately and never substitutes for ACK progress
+  ---
+  duration_ms: 0.576684
+  type: 'test'
+  ...
+# Subtest: all five exact paints pass unchanged targets
+ok 14 - all five exact paints pass unchanged targets
+  ---
+  duration_ms: 13.962508
+  type: 'test'
+  ...
+# Subtest: missing run is never a finite-subset completion median
+ok 15 - missing run is never a finite-subset completion median
+  ---
+  duration_ms: 5.013285
+  type: 'test'
+  ...
+# Subtest: 45 second observation never widens latency targets
+ok 16 - 45 second observation never widens latency targets
+  ---
+  duration_ms: 2.951975
+  type: 'test'
+  ...
+# Subtest: metadata completion cannot hide missing walls or native slots
+ok 17 - metadata completion cannot hide missing walls or native slots
+  ---
+  duration_ms: 6.702615
+  type: 'test'
+  ...
+# Subtest: different future whitespace/range/profile/source cannot pass
+ok 18 - different future whitespace/range/profile/source cannot pass
+  ---
+  duration_ms: 9.699461
+  type: 'test'
+  ...
+# Subtest: mixed cohorts and duplicate/missing runs are refused
+ok 19 - mixed cohorts and duplicate/missing runs are refused
+  ---
+  duration_ms: 7.553373
+  type: 'test'
+  ...
+# Subtest: first-useful failure is independent of completed coverage
+ok 20 - first-useful failure is independent of completed coverage
+  ---
+  duration_ms: 1.746515
+  type: 'test'
+  ...
+# Subtest: fixture or wrong-profile paint cannot certify first useful history
+ok 21 - fixture or wrong-profile paint cannot certify first useful history
+  ---
+  duration_ms: 3.401993
+  type: 'test'
+  ...
+# Subtest: native flags cannot hide a missing raw slot and source flags cannot hide a wrong response revision
+ok 22 - native flags cannot hide a missing raw slot and source flags cannot hide a wrong response revision
+  ---
+  duration_ms: 6.924634
+  type: 'test'
+  ...
+# Subtest: main or worker CPU profiling cannot certify loading latency
+ok 23 - main or worker CPU profiling cannot certify loading latency
+  ---
+  duration_ms: 4.176992
+  type: 'test'
+  ...
+1..23
+# tests 23
+# suites 0
+# pass 23
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 343.918845

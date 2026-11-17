@@ -1,0 +1,56 @@
+{
+  "kind": "prepared-wall-hour-independent-reference",
+  "market": "spot",
+  "from": 1793800800000,
+  "to": 1793804400000,
+  "watermark": 17191325,
+  "sourceRevision": "371aff9ef141f914c3a931e54442e3adce00f215c14d0924c08eb801f4744385",
+  "parts": 5,
+  "patches": 5316,
+  "rawBytes": 8556464,
+  "preparedGzipBytes": 389983,
+  "ratio": 0.04557758906015382,
+  "decodeMs": 20.72461100000146,
+  "buildMs": 4619.701416999999,
+  "coverage": {
+    "availableFrom": 1793521565645,
+    "requestedFrom": 1793800800000,
+    "requestedTo": 1793804400000,
+    "confirmedTo": 1793804400000,
+    "gaps": [
+      {
+        "cursor": 15651406,
+        "epoch": 1793800433863,
+        "at": 1793801910045,
+        "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+      },
+      {
+        "cursor": 15658723,
+        "epoch": 1793801914537,
+        "at": 1793802645644,
+        "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+      },
+      {
+        "cursor": 15670061,
+        "epoch": 1793802647268,
+        "at": 1793803779344,
+        "reason": "Observed book capacity: epoch invalidated"
+      },
+      {
+        "cursor": 15674765,
+        "epoch": 1793803781053,
+        "at": 1793804251942,
+        "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+      }
+    ],
+    "gapsTruncated": false,
+    "partial": true,
+    "status": "partial",
+    "reason": "Depth continuity gaps are present in the requested range",
+    "bookScope": null,
+    "midpoint": null
+  },
+  "complete": true,
+  "result": "exact-canonical-page-match",
+  "scope": "one bounded real hour; no rendered or 30h latency claim"
+}

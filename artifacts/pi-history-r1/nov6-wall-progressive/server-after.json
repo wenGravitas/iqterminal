@@ -1,0 +1,295 @@
+{
+  "at": "2026-11-06T15:04:06.175653+00:00",
+  "history": {
+    "enabled": true,
+    "build": "18a68da4d87b059bfeb57529e4b7bdb2573d2983",
+    "metrics": {
+      "requests": 96,
+      "rejected": 0,
+      "bytes": 11200902,
+      "serializeMs": 9.713880000316344,
+      "legacyHeatmap": 0,
+      "legacyFootprint": 0,
+      "closedTileReads": 0,
+      "manifests": 0,
+      "orderWallPages": 31,
+      "peakRss": 129482752,
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4,
+      "rss": 130080768
+    },
+    "materializer": {
+      "version": 1,
+      "head": {
+        "cursor": 21399280,
+        "at": 1793977444328,
+        "epoch": 1793958859810
+      },
+      "live": {
+        "cursor": 21399280,
+        "at": 1793977444328,
+        "from": 1793977200000,
+        "widths": [
+          10,
+          25,
+          50,
+          100,
+          250,
+          1000
+        ]
+      },
+      "archive": {
+        "pinned": {
+          "pages": 1,
+          "processed": 30,
+          "cursor": 21399250,
+          "lag": 0,
+          "caughtUp": true
+        },
+        "current": [
+          {
+            "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+            "lane": "pinned",
+            "pages": 1,
+            "processed": 30,
+            "cursor": 21399250,
+            "lag": 0,
+            "caughtUp": true
+          },
+          {
+            "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+            "lane": "pinned",
+            "pages": 1,
+            "processed": 30,
+            "cursor": 17409401,
+            "lag": 0,
+            "caughtUp": true
+          }
+        ],
+        "custom": [],
+        "customWorker": "perpetual-materializer"
+      },
+      "metrics": {
+        "startedAt": 1793975374558,
+        "lastPoll": 1793977444831,
+        "lastPersist": 1793977202311,
+        "records": 20384,
+        "closedBuckets": 42,
+        "liveLagMs": 0,
+        "derivedBytes": 1241997528,
+        "freeBytes": 193925488640,
+        "paused": false,
+        "error": "",
+        "pages": 690,
+        "pageMs": 51999.24627900262,
+        "accumulateMs": 49148.66171100041,
+        "persistMs": 3359.925900000002,
+        "peakRss": 403742720,
+        "sourceHeadAgeMs": 1849,
+        "liveAgeMs": 1849,
+        "rss": 376729600
+      },
+      "backlog": []
+    },
+    "sqlAdmission": {
+      "enabled": true,
+      "version": 1,
+      "build": "18a68da4d87b059bfeb57529e4b7bdb2573d2983",
+      "completed": 43264,
+      "cancelled": 1,
+      "rejected": 0,
+      "peakActive": 2,
+      "peakQueued": 3,
+      "waitMs": 1281607.3505050053,
+      "maxWaitMs": 639.0563510002103,
+      "active": 1,
+      "history": 1,
+      "queued": 1,
+      "waiting": {
+        "current": 0,
+        "visible": 0,
+        "background": 1
+      },
+      "limit": 2,
+      "reservedCurrent": 1,
+      "oldestWaitMs": 106.85255499999039,
+      "rss": 96423936
+    }
+  },
+  "perpetual": {
+    "version": 1,
+    "market": "perpetual",
+    "instrument": "binance:perpetual:BTCUSDT",
+    "collector": {
+      "state": "live",
+      "message": "Durable WebSocket aggregate executions",
+      "lastUpdate": 1793977445904,
+      "retries": 0
+    },
+    "depth": {
+      "head": {
+        "cursor": 21399295,
+        "at": 1793977445858,
+        "epoch": 1793958859810
+      },
+      "status": {
+        "state": "live",
+        "message": "Durable standard diff-depth \u00b7 RPI excluded \u00b7 partial outer regions",
+        "epoch": 1793958859810,
+        "lastUpdate": 1793977446165,
+        "bidFloor": 75926.5,
+        "askCeiling": 76205.8,
+        "sequence": 12035911378930
+      },
+      "metrics": {
+        "events": 10278140,
+        "changes": 1252501138,
+        "wireBytes": 27983286061,
+        "storedPayloadBytes": 92100371117,
+        "overflows": 0,
+        "reconnects": 159,
+        "queue": 3,
+        "levels": 106959,
+        "startAt": 1792925907805
+      },
+      "retention": {
+        "lastRun": 1793977108298,
+        "error": null
+      }
+    },
+    "metrics": {
+      "transport": "websocket",
+      "queue": 31,
+      "overflows": 0,
+      "recoveries": 246,
+      "exchangeToReceiveMs": 139,
+      "receiveToDurableMs": 882,
+      "ingestionLagMs": 756
+    },
+    "disk": {
+      "bytes": 5813666980,
+      "free": 193930452992,
+      "paused": false
+    },
+    "watermark": {
+      "id": 3511125372,
+      "timeMs": 1793977445425
+    },
+    "tickSize": 0.1,
+    "oi": {
+      "lastObservedAt": 1793977427610,
+      "error": null,
+      "stale": false
+    },
+    "netPositioning": {
+      "version": 1,
+      "pendingIntervals": 0,
+      "feeds": {
+        "binance": {
+          "state": "live",
+          "source": "binance:fapi/v1/openInterest",
+          "lastObservedAt": 1793977427610,
+          "lastError": null,
+          "epoch": 1793958861657,
+          "sourceTimeQuality": "exchange-event"
+        },
+        "hyperliquid": {
+          "state": "stale",
+          "source": "hyperliquid:metaAndAssetCtxs",
+          "lastObservedAt": 1793977397936,
+          "lastError": "Hyperliquid BTC open interest unavailable",
+          "epoch": 1793973034890,
+          "lastTradeAt": 1793977445289,
+          "overflows": 28,
+          "reconnects": 117,
+          "sourceTimeQuality": "collector-sampled"
+        }
+      },
+      "bufferedHyperliquidTrades": 4921,
+      "bufferCapacity": 10000
+    }
+  },
+  "spot": {
+    "version": 1,
+    "market": "spot",
+    "instrument": "binance:spot:BTCUSDT",
+    "collector": {
+      "state": "live",
+      "message": "Durable WebSocket aggregate executions",
+      "lastUpdate": 1793977445862,
+      "retries": 0
+    },
+    "depth": {
+      "head": {
+        "cursor": 17409438,
+        "at": 1793977445843,
+        "epoch": 1793975597286
+      },
+      "status": {
+        "state": "live",
+        "message": "Durable Binance Spot diff-depth \u00b7 snapshot-bounded interior; outer levels partial",
+        "epoch": 1793975597286,
+        "lastUpdate": 1793977446144,
+        "bidFloor": 74743.04,
+        "askCeiling": 76729.86,
+        "sequence": 102427333057
+      },
+      "metrics": {
+        "events": 10469966,
+        "changes": 296558682,
+        "wireBytes": 10509500251,
+        "storedPayloadBytes": 146851596678,
+        "overflows": 0,
+        "reconnects": 163,
+        "queue": 3,
+        "levels": 195888,
+        "startAt": 1792925933460
+      },
+      "retention": {
+        "lastRun": 1793977133937,
+        "error": null
+      }
+    },
+    "metrics": {
+      "transport": "websocket",
+      "queue": 9,
+      "overflows": 0,
+      "recoveries": 78,
+      "exchangeToReceiveMs": 131,
+      "receiveToDurableMs": 862,
+      "ingestionLagMs": 797
+    },
+    "disk": {
+      "bytes": 5819635993,
+      "free": 193924407296,
+      "paused": false
+    },
+    "watermark": {
+      "id": 4108885579,
+      "timeMs": 1793977445386
+    },
+    "tickSize": 0.01
+  },
+  "collectors": {
+    "exit": 0,
+    "stdout": "/iqterminal-server 65471260a0cf64311ed57f9b17f1e1daf6de26f073192e292cd07bfb1e193ece 2026-10-25T10:58:27.590796454Z\n/iqterminal-spot-server a4be8d3c68a52de305fd9e2eaa101f50b592b8b108aaf850ddfbc1b2f53428bb 2026-10-25T10:58:53.322433531Z\n",
+    "stderr": ""
+  },
+  "stats": {
+    "exit": 0,
+    "stdout": "{\"BlockIO\":\"0B / 0B\",\"CPUPerc\":\"0.21%\",\"Container\":\"iqterminal-history-api\",\"ID\":\"2ed3f0b2bacb\",\"MemPerc\":\"14.84%\",\"MemUsage\":\"75.98MiB / 512MiB\",\"Name\":\"iqterminal-history-api\",\"NetIO\":\"0B / 0B\",\"PIDs\":\"11\"}\n{\"BlockIO\":\"0B / 5.97GB\",\"CPUPerc\":\"17.37%\",\"Container\":\"iqterminal-history-materializer\",\"ID\":\"3ae05c8981dc\",\"MemPerc\":\"29.51%\",\"MemUsage\":\"302.2MiB / 1GiB\",\"Name\":\"iqterminal-history-materializer\",\"NetIO\":\"0B / 0B\",\"PIDs\":\"11\"}\n{\"BlockIO\":\"8.19kB / 4.47GB\",\"CPUPerc\":\"2.38%\",\"Container\":\"iqterminal-spot-history-materializer\",\"ID\":\"939cd057c442\",\"MemPerc\":\"23.01%\",\"MemUsage\":\"235.6MiB / 1GiB\",\"Name\":\"iqterminal-spot-history-materializer\",\"NetIO\":\"0B / 0B\",\"PIDs\":\"11\"}\n{\"BlockIO\":\"0B / 941MB\",\"CPUPerc\":\"2.15%\",\"Container\":\"iqterminal-footprint-materializer\",\"ID\":\"5567eeddc9aa\",\"MemPerc\":\"12.22%\",\"MemUsage\":\"46.93MiB / 384MiB\",\"Name\":\"iqterminal-footprint-materializer\",\"NetIO\":\"0B / 0B\",\"PIDs\":\"11\"}\n{\"BlockIO\":\"0B / 905MB\",\"CPUPerc\":\"2.56%\",\"Container\":\"iqterminal-spot-footprint-materializer\",\"ID\":\"f1ee83f9da12\",\"MemPerc\":\"10.86%\",\"MemUsage\":\"41.71MiB / 384MiB\",\"Name\":\"iqterminal-spot-footprint-materializer\",\"NetIO\":\"0B / 0B\",\"PIDs\":\"11\"}\n{\"BlockIO\":\"0B / 0B\",\"CPUPerc\":\"1.78%\",\"Container\":\"iqterminal-sql-admission\",\"ID\":\"984d295a446f\",\"MemPerc\":\"34.09%\",\"MemUsage\":\"43.64MiB / 128MiB\",\"Name\":\"iqterminal-sql-admission\",\"NetIO\":\"0B / 0B\",\"PIDs\":\"7\"}\n",
+    "stderr": ""
+  },
+  "uptime": {
+    "exit": 0,
+    "stdout": " 16:04:08 up 66 days, 10:32, 26 users,  load average: 5.63, 5.95, 5.82\n",
+    "stderr": ""
+  },
+  "memory": {
+    "exit": 0,
+    "stdout": "               total        used        free      shared  buff/cache   available\nMem:     67194404864 15787929600  3827269632  3888926720 52328116224 51406475264\nSwap:    34325131264  5771100160 28554031104\n",
+    "stderr": ""
+  }
+}

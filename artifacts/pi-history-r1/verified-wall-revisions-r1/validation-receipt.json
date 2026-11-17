@@ -1,0 +1,26 @@
+{
+  "sourceCommit": "4615dcf62533690654dc094529b4c3956356d74a",
+  "fullSuiteSourceCommit": "a20a1986d7d1ddb1b51ce16b9eb87be0ce0ea28f",
+  "sourceUnchangedAfterFullSuite": true,
+  "fullUnit": {
+    "command": "pnpm exec vitest run --maxWorkers=1",
+    "passed": 1315,
+    "skipped": 2,
+    "failed": 0
+  },
+  "focused": {
+    "passed": 138
+  },
+  "typecheckExit": 0,
+  "buildExit": 0,
+  "nativeUi": {
+    "latestPassed": 3,
+    "latestFailed": 0,
+    "earlier022cPassed": 10,
+    "headless": true,
+    "rendering": "SwiftShader software",
+    "fixture": true
+  },
+  "sharedCoreSha256": "101dfc7cf817d6c0a4b28fa264842100053f507b2d5e41f98fa917700a073383",
+  "scope": "Derived receipt from successful command exits and retained raw logs; no staging-history, venue, foreground, frame-rate or latency acceptance. Goal remains incomplete."
+}

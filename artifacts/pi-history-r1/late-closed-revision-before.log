@@ -1,0 +1,32 @@
+TAP version 13
+# Subtest: a later execution for the preceding closed candle revises that candle without duplicating the forming bar
+not ok 1 - a later execution for the preceding closed candle revises that candle without duplicating the forming bar
+  ---
+  duration_ms: 63.199788
+  type: 'test'
+  location: '/home/daz/workarea/iqterminal-server-perf-history/tests/footprint-jobs.test.ts:1:11306'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    1 !== 2
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/home/daz/workarea/iqterminal-server-perf-history/tests/footprint-jobs.test.ts:135:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 884.451413

@@ -1,0 +1,8 @@
+{
+  "oldSourceCommit": "c68989c5ed1ca6b8f6ebe1e873df7cc1f64b225b",
+  "oldSourceSha256": "adb7de8ff7d337da9525144861321bf7629d1d15ee6f003e12231122fdaff000",
+  "candidateSourceSha256": "0ef77226dee399cbeb154350332db93df990086475e80a36136cb2784cd9fded",
+  "oldExitCode": 1,
+  "candidateRestored": true,
+  "scope": "Deterministic gated fixture; old eager second batch blocks visible native read. Not a Pi latency sample."
+}

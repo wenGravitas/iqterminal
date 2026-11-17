@@ -1,0 +1,143 @@
+{
+  "build": "472f8ac83ff2b024583c54024e023a9135970e7c",
+  "results": [
+    {
+      "kind": "exact-canonical-overlap",
+      "market": "spot",
+      "request": {
+        "market": "spot",
+        "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794097500000,
+        "to": 1794206100000
+      },
+      "oldSourceKey": "b306e8ba5060dc20b1051f855f15ff900cba57f317fc8892ba6785747b81f599",
+      "newSourceKey": "a2ad810f1f0f1c96f0458e0b47687e3c41ea80d002b657580babc240fde028b8",
+      "oldSourceToken": "da388bdbed990f387f0c06ec541403fc5b569385fb072ba815117dbef290f5c0",
+      "newSourceToken": "2dbcf5fdc3f704fc45c55a50a51d910beaecf9333b00147c12e0162d543ada6a",
+      "oldWatermark": 19689198,
+      "newWatermark": 20030556,
+      "pages": 17,
+      "financialHash": "340dddd5957bc1de8e89adc06fc241043f16817d62c58bedfbadf84efdb73111",
+      "selectedHash": "5cc29c293b91e5133d89356084cf0cb3129ef0cd361cb01c84f83f10777288a1",
+      "segments": 3202,
+      "valueRuns": 24533,
+      "coverage": {
+        "availableFrom": 1793521565645,
+        "requestedFrom": 1794097500000,
+        "requestedTo": 1794206100000,
+        "confirmedTo": 1794206100000,
+        "gaps": [
+          {
+            "cursor": 18753165,
+            "epoch": 1794058509223,
+            "at": 1794112010851,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "cursor": 19228189,
+            "epoch": 1794112042493,
+            "at": 1794159681152,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "cursor": 19379648,
+            "epoch": 1794159682961,
+            "at": 1794174883949,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19384515,
+            "epoch": 1794174885753,
+            "at": 1794175373442,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19425673,
+            "epoch": 1794175375577,
+            "at": 1794179481442,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19451023,
+            "epoch": 1794179483104,
+            "at": 1794182010954,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19492652,
+            "epoch": 1794182013063,
+            "at": 1794186164248,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19546455,
+            "epoch": 1794186166116,
+            "at": 1794191532448,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19638026,
+            "epoch": 1794191534598,
+            "at": 1794200696134,
+            "reason": "Observed book capacity: epoch invalidated"
+          }
+        ],
+        "gapsTruncated": false,
+        "partial": true,
+        "status": "partial",
+        "reason": "Depth continuity gaps are present in the requested range",
+        "bookScope": null,
+        "midpoint": null
+      },
+      "scope": "One real-source reference/reuse materialization per market; includes fresh source proofs, exact canonical bytes, closed-wall financial and selected state. Not five-run chart latency/current/foreground acceptance."
+    },
+    {
+      "kind": "exact-canonical-overlap",
+      "market": "perpetual",
+      "request": {
+        "market": "perpetual",
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794096900000,
+        "to": 1794206700000
+      },
+      "oldSourceKey": "5693eea94728f5e64c472d2d1cd5e8970a0cbc40f5f643bd12ecc21bc9fb14b8",
+      "newSourceKey": "4f7e28b1bff713525694cc526347ddd24beb316e3169ed914cc9b85c32e9661b",
+      "oldSourceToken": "fe5d732218842654f50e38560b39525b36f7829cc11425f046c145c7e8903520",
+      "newSourceToken": "2a1f1b2dbd32a15be400a82640d720a6fffe6a012c666eeea9120e3e93cb9098",
+      "oldWatermark": 23644878,
+      "newWatermark": 23980128,
+      "pages": 39,
+      "financialHash": "d0a9b4e40b03427c102f2e931cfcd34e14655e8d102cb32b7f9da773b8d7934c",
+      "selectedHash": "313e05016f9c29cf6cee2aa4310f0e814658f5d7dfe4ef1f0f469283618fe99b",
+      "segments": 8317,
+      "valueRuns": 65425,
+      "coverage": {
+        "availableFrom": 1793506604584,
+        "requestedFrom": 1794096900000,
+        "requestedTo": 1794206700000,
+        "confirmedTo": 1794206700000,
+        "gaps": [
+          {
+            "cursor": 23034368,
+            "epoch": 1794074271599,
+            "at": 1794143691132,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "cursor": 23454802,
+            "epoch": 1794143722831,
+            "at": 1794186475153,
+            "reason": "Observed book capacity: epoch invalidated"
+          }
+        ],
+        "gapsTruncated": false,
+        "partial": true,
+        "status": "partial",
+        "reason": "Depth continuity gaps are present in the requested range",
+        "bookScope": null,
+        "midpoint": null
+      },
+      "scope": "One real-source reference/reuse materialization per market; includes fresh source proofs, exact canonical bytes, closed-wall financial and selected state. Not five-run chart latency/current/foreground acceptance."
+    }
+  ]
+}

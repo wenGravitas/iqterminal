@@ -1,0 +1,18 @@
+{
+  "driverPid": 307983,
+  "currentNodePid": 381136,
+  "signal": "SIGSTOP driver only",
+  "at": 1794129301.7882545,
+  "reason": "USD-M bootstrap can satisfy native history before a history-page response; presentation cache remains unseeded. Preserve current child to normal completion, then terminate paused prototype driver and implement authoritative bootstrap seeding. Unrun samples are not acceptance evidence.",
+  "currentCase": {
+    "sample": 4,
+    "market": "spot",
+    "variant": "control",
+    "phase": "start",
+    "at": 1794129289.8257225
+  },
+  "currentResult": "artifacts/pi-history-r1/warm-route-native-cache-matched-4-spot-control/run-1.json",
+  "observedChildState": "Z",
+  "driverTermination": "SIGTERM then SIGCONT after child terminal",
+  "terminatedAt": 1794129374.411608
+}

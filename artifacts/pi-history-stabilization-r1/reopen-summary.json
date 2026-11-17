@@ -1,0 +1,206 @@
+{
+  "scope": "One initial open plus five dependent same-page reopens; natural GC; not sustained memory plateau or five-run latency certification",
+  "opened": [
+    {
+      "cycle": 0,
+      "firstMs": 7537,
+      "completeMs": null,
+      "paintFailure": "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded.",
+      "nativeCoverage": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794299400000,
+        "to": 1794407400000,
+        "requestedSlots": 120,
+        "loadedSlots": 120,
+        "missing": []
+      },
+      "settledReadVerified": true,
+      "workerUsedBytes": [
+        26374576
+      ],
+      "warmEntries": 1,
+      "historyActiveJobs": 0,
+      "warmBuilds": 0,
+      "warmBytes": 2580404,
+      "projections": 0
+    },
+    {
+      "cycle": 1,
+      "firstMs": 243.79999999701977,
+      "completeMs": 9079.69999999553,
+      "paintFailure": null,
+      "nativeCoverage": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794299400000,
+        "to": 1794407400000,
+        "requestedSlots": 120,
+        "loadedSlots": 120,
+        "missing": []
+      },
+      "settledReadVerified": true,
+      "workerUsedBytes": [
+        44690948
+      ],
+      "warmEntries": 1,
+      "historyActiveJobs": 0,
+      "warmBuilds": 0,
+      "warmBytes": 2580404,
+      "projections": 0
+    },
+    {
+      "cycle": 2,
+      "firstMs": 226,
+      "completeMs": 3408,
+      "paintFailure": null,
+      "nativeCoverage": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794299400000,
+        "to": 1794407400000,
+        "requestedSlots": 120,
+        "loadedSlots": 120,
+        "missing": []
+      },
+      "settledReadVerified": true,
+      "workerUsedBytes": [
+        40413264
+      ],
+      "warmEntries": 1,
+      "historyActiveJobs": 0,
+      "warmBuilds": 0,
+      "warmBytes": 2580404,
+      "projections": 0
+    },
+    {
+      "cycle": 3,
+      "firstMs": 270.90000000596046,
+      "completeMs": 2980.2000000029802,
+      "paintFailure": null,
+      "nativeCoverage": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794299400000,
+        "to": 1794407400000,
+        "requestedSlots": 120,
+        "loadedSlots": 120,
+        "missing": []
+      },
+      "settledReadVerified": true,
+      "workerUsedBytes": [
+        38807672
+      ],
+      "warmEntries": 1,
+      "historyActiveJobs": 0,
+      "warmBuilds": 0,
+      "warmBytes": 2580404,
+      "projections": 0
+    },
+    {
+      "cycle": 4,
+      "firstMs": 242.69999999552965,
+      "completeMs": 4011.1999999955297,
+      "paintFailure": null,
+      "nativeCoverage": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794299400000,
+        "to": 1794407400000,
+        "requestedSlots": 120,
+        "loadedSlots": 120,
+        "missing": []
+      },
+      "settledReadVerified": true,
+      "workerUsedBytes": [
+        35467824
+      ],
+      "warmEntries": 1,
+      "historyActiveJobs": 0,
+      "warmBuilds": 0,
+      "warmBytes": 2580404,
+      "projections": 0
+    },
+    {
+      "cycle": 5,
+      "firstMs": 241.69999999552965,
+      "completeMs": 3223.60000000149,
+      "paintFailure": null,
+      "nativeCoverage": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794299400000,
+        "to": 1794407400000,
+        "requestedSlots": 120,
+        "loadedSlots": 120,
+        "missing": []
+      },
+      "settledReadVerified": true,
+      "workerUsedBytes": [
+        50130748
+      ],
+      "warmEntries": 1,
+      "historyActiveJobs": 0,
+      "warmBuilds": 0,
+      "warmBytes": 2580404,
+      "projections": 0
+    }
+  ],
+  "closed": [
+    {
+      "cycle": 0,
+      "historyActiveJobs": 0,
+      "warmBuilds": 0,
+      "projections": 0,
+      "workerUsedBytes": [
+        26849424
+      ]
+    },
+    {
+      "cycle": 1,
+      "historyActiveJobs": 0,
+      "warmBuilds": 0,
+      "projections": 0,
+      "workerUsedBytes": [
+        45167584
+      ]
+    },
+    {
+      "cycle": 2,
+      "historyActiveJobs": 0,
+      "warmBuilds": 0,
+      "projections": 0,
+      "workerUsedBytes": [
+        40884608
+      ]
+    },
+    {
+      "cycle": 3,
+      "historyActiveJobs": 0,
+      "warmBuilds": 0,
+      "projections": 0,
+      "workerUsedBytes": [
+        39285424
+      ]
+    },
+    {
+      "cycle": 4,
+      "historyActiveJobs": 0,
+      "warmBuilds": 0,
+      "projections": 0,
+      "workerUsedBytes": [
+        35942704
+      ]
+    },
+    {
+      "cycle": 5,
+      "historyActiveJobs": 0,
+      "warmBuilds": 0,
+      "projections": 0,
+      "workerUsedBytes": [
+        50600016
+      ]
+    }
+  ],
+  "initialOpenValidationTimeoutPreserved": "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."
+}

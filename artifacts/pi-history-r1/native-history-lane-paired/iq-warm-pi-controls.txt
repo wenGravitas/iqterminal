@@ -1,0 +1,4 @@
+{"kind":"native","route":"pi-ssh","header":7.970857,"total":8.357238,"bytes":38230}
+fb5f0cddc16689601f73f66f36eba24e2a34d3deea7a3a9ee40d58245b9a461d  /tmp/iq-warm-pi-native.gz
+{"kind":"projection","route":"pi-ssh","header":2.403893,"total":19.335319,"bytes":924807}
+0132ac6889d228afc7e9e1bc6b6522a269da52c5b1a7291141c684af596e4493  /tmp/iq-warm-pi-projection.gz

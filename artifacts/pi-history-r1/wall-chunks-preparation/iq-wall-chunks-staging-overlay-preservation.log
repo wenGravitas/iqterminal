@@ -1,0 +1,36 @@
+From https://github.com/wenGravitas/iqterminal-server
+ * branch            perf/pi-history-r1 -> FETCH_HEAD
+Updating 7256fd4..536f25d
+Fast-forward
+ docs/PI-HISTORY-OPEN-CORRECTNESS.md     |   7 +-
+ docs/PI-HISTORY-PERFORMANCE-R1.md       | 152 +++++++++++++++++++++++++++++++-
+ ops/pi-current-footprint-reference.mjs  |  11 +++
+ ops/pi-footprint-default-readiness.py   |  13 +--
+ ops/pi-footprint-revision-reference.mjs |  14 +++
+ ops/pi-footprint-rollover-proof.mjs     |  12 +++
+ ops/pi-history-r1-rollout.sh            |  28 +++---
+ ops/pi-history-rollback-plan.ts         |  28 ++++++
+ ops/pi-prepare-footprint-windows.mjs    |  27 ++++++
+ ops/pi-repair-perf-rollback.mjs         |  21 +++++
+ ops/pi-wall-chunk-reference.mjs         |  21 +++++
+ src/footprint-jobs.ts                   |   2 +-
+ src/history-gateway.ts                  |   2 +-
+ src/history-state.ts                    |   2 +-
+ src/order-walls-archive.ts              |  39 +++++++-
+ src/wall-history-chunks.ts              |  87 ++++++++++++++++++
+ tests/footprint-jobs.test.ts            |   2 +-
+ tests/order-walls-archive.test.ts       |  39 ++++++++
+ tests/rollback-plan.test.ts             |  13 +++
+ tests/wall-history-chunks.test.ts       |  59 +++++++++++++
+ 20 files changed, 550 insertions(+), 29 deletions(-)
+ create mode 100644 ops/pi-current-footprint-reference.mjs
+ create mode 100644 ops/pi-footprint-revision-reference.mjs
+ create mode 100644 ops/pi-footprint-rollover-proof.mjs
+ create mode 100644 ops/pi-history-rollback-plan.ts
+ create mode 100644 ops/pi-prepare-footprint-windows.mjs
+ create mode 100644 ops/pi-repair-perf-rollback.mjs
+ create mode 100644 ops/pi-wall-chunk-reference.mjs
+ create mode 100644 src/wall-history-chunks.ts
+ create mode 100644 tests/rollback-plan.test.ts
+ create mode 100644 tests/wall-history-chunks.test.ts
+{"target": "536f25d9e63c4ce622b8140c3c5223a72ce927f2", "backup": "/home/daz/iqterminal-perf-history/artifacts/pi-history-r1/pre-rollout-536f25d-overlays", "preserved": [{"path": "ops/pi-current-footprint-reference.mjs", "sha256": "72a5950616a0b1f16877db0be83df88af2703ca11ea44794265c651d882175f3", "reason": "owned probe overlay preserved before fast-forward"}, {"path": "ops/pi-footprint-default-readiness.py", "sha256": "51a87e0c3eaa06452eebde116a0e1f49e8bbe80aae28c0d967be57c295b4bd30", "reason": "owned probe overlay preserved before fast-forward"}, {"path": "ops/pi-footprint-revision-reference.mjs", "sha256": "e62c53dec432a12d60be5eb5edcf14444876f05ca792b4bbd7b00a713b48068d", "reason": "owned probe overlay preserved before fast-forward"}, {"path": "ops/pi-footprint-rollover-proof.mjs", "sha256": "b307526730a96b5f5c3dc686f89ea9e0d93a69c7fba51c9c115430c5f0d58625", "reason": "owned probe overlay preserved before fast-forward"}, {"path": "ops/pi-history-rollback-plan.ts", "sha256": "7bf7fea2fd8144038d5584af40a9747176545bba772b763a4f50c0fd291d578f", "reason": "owned probe overlay preserved before fast-forward"}, {"path": "ops/pi-prepare-footprint-windows.mjs", "sha256": "fd5fc60fddaf1195ed19aac8cdc930e798bdee1e170e7b403dc215f65f9de3e0", "reason": "owned probe overlay preserved before fast-forward"}, {"path": "ops/pi-repair-perf-rollback.mjs", "sha256": "bf9fcdcf8d56ba1592955ad1f0a9bf0e4b3624162508664b25577342cc52d72c", "reason": "owned probe overlay preserved before fast-forward"}, {"path": "ops/pi-wall-chunk-reference.mjs", "sha256": "6dd1dc4fd53d365f933bb81c1fbb31c5bd3f1ad2789520f86d4b618dc683f021", "reason": "owned probe overlay preserved before fast-forward"}, {"path": "src/history-state.ts", "sha256": "1157de994bdc1379b2d7f0a0444eb431b3a54e00878c9a5ffe6c96c0a3736504", "reason": "owned probe overlay preserved before fast-forward"}, {"path": "src/wall-history-chunks.ts", "sha256": "b86788b018a4cb707561a5e9ce1905d73c7612f84ab36b27f4fd85cbe0ab4872", "reason": "owned probe overlay preserved before fast-forward"}, {"path": "src/wall-display-codec.ts", "sha256": "beb19d05fc53eb4c170c23056f2a89402307faa481b95d30f0985084532be160", "reason": "owned probe overlay preserved before fast-forward"}]}

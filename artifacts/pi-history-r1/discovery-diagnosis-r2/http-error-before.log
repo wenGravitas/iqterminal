@@ -1,0 +1,43 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-admission.test.ts (8 tests | 1 failed | 7 skipped) 105ms
+   × failed discovery preserves the bounded server reason and releases shared history admission 101ms
+ ❯ tests/prepared-wall-history.test.ts (34 tests | 1 failed | 33 skipped) 150ms
+   × failed final source validation retains the good prefix and exposes the specific server failure 146ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-admission.test.ts > failed discovery preserves the bounded server reason and releases shared history admission
+AssertionError: expected [Function] to throw error including 'Prepared wall discovery HTTP 503: Cli…' but got 'Prepared wall discovery HTTP 503'
+
+Expected: "Prepared wall discovery HTTP 503: ClickHouse 500: source query exceeded its time budget"
+Received: "Prepared wall discovery HTTP 503"
+
+ ❯ tests/prepared-wall-admission.test.ts:11:44
+      9| test('failed discovery preserves the bounded server reason and release…
+     10|  const fetcher=vi.fn(async()=>new Response(JSON.stringify({error:'Clic…
+     11|  await expect(run(fetcher as typeof fetch)).rejects.toThrow('Prepared …
+       |                                            ^
+     12|  expect(fetcher).toHaveBeenCalledOnce();expect(historyScheduler.diagno…
+     13| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/prepared-wall-history.test.ts > failed final source validation retains the good prefix and exposes the specific server failure
+AssertionError: expected [Function] to throw error including 'Prepared wall source validation HTTP …' but got 'Prepared wall source validation HTTP …'
+
+Expected: "Prepared wall source validation HTTP 503: ClickHouse 500: source query time budget"
+Received: "Prepared wall source validation HTTP 503"
+
+ ❯ tests/prepared-wall-history.test.ts:138:125
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 40 skipped (42)
+   Start at  08:58:58
+   Duration  2.06s (transform 73%, import 16%, tests 10%, worker 1%)
+

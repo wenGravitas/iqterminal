@@ -1,0 +1,14 @@
+{
+  "capturedAt": "2026-11-04T16:08:14.902951+00:00",
+  "frontendBase": "7aedc1896805be507382b8f5feb0e00775a4aa00",
+  "host": "Linux pi 6.12.109+rpt-rpi-v8 #1 SMP PREEMPT Debian 1:6.12.109-1+rpt1 (2026-09-11) aarch64 GNU/Linux",
+  "model": "Raspberry Pi 5 Model B Rev 1.0",
+  "memory": "               total        used        free      shared  buff/cache   available\nMem:      8338087936  7481016320   186363904   665845760  1777930240   857071616\nSwap:    33889202176   826974208 33062227968\n",
+  "uptime": " 19:08:14 up  6:20,  1 user,  load average: 2.89, 3.10, 3.46\n",
+  "runningViteFlags": {
+    "VITE_DATA_MODE": "staging"
+  },
+  "runningViteCwd": "/home/daz/workarea/iqterminal",
+  "historyTilesDefault": "enabled unless VITE_HISTORY_TILES=0",
+  "perfBuildMode": "not built yet"
+}

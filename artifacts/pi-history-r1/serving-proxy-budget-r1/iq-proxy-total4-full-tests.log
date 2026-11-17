@@ -1,0 +1,16 @@
+
+> terminal-t0@0.1.0 test /home/daz/workarea/iqterminal-perf-history
+> vitest run
+
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+
+ Test Files  138 passed | 2 skipped (140)
+      Tests  1185 passed | 2 skipped (1187)
+   Start at  14:09:54
+   Duration  77.17s (tests 58%, import 26%, transform 14%, worker 2%)
+
+    Isolate  140 workers spawned · ~482ms startup each (spawn + environment, per file)
+             at least ~22.03s faster with isolate: false — reuses workers across files instead of one per file
+

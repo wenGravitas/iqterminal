@@ -1,0 +1,56 @@
+
+Running 2 tests using 1 worker
+
+(node:191802) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/native-candle-history.spec.ts:12:36 › saved 5m wall view one candle back survives closed bootstrap then first forming candle (6.8s)
+(node:192344) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 tests/browser/native-candle-history.spec.ts:12:36 › saved 15m wall view one candle back survives closed bootstrap then first forming candle (6.5s)
+
+
+  1) tests/browser/native-candle-history.spec.ts:12:36 › saved 5m wall view one candle back survives closed bootstrap then first forming candle 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    Expected: {"from": 1794286800, "to": 1794394800}
+    Received: null
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      25 |  try{
+      26 |   await page.goto('/',{waitUntil:'domcontentloaded'});
+    > 27 |   await expect.poll(()=>page.evaluate(id=>(window as any).__terminal?.panels.get(id)?.engine.visibleTimeRange(),id)).toEqual({from:from/1000,to:to/1000});
+         |                                                                                                                      ^
+      28 |   release();await expect.poll(()=>page.evaluate(({id,current,step})=>(window as any).__terminal.panels.get(id).candles.some((c:any)=>c.t===current-step),{id,current,step})).toBe(true);
+      29 |   await page.workers()[0].evaluate(()=>{(globalThis as any).__stagingNativeFixture.emitCandles=true;});
+      30 |   await expect.poll(()=>page.evaluate(({id,current})=>(window as any).__terminal.panels.get(id).candles.some((c:any)=>c.t===current&&!c.closed),{id,current})).toBe(true);
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/native-candle-history.spec.ts:27:118
+
+    Error Context: test-results/native-candle-history-save-e6c19-p-then-first-forming-candle/error-context.md
+
+  2) tests/browser/native-candle-history.spec.ts:12:36 › saved 15m wall view one candle back survives closed bootstrap then first forming candle 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    Expected: {"from": 1794285900, "to": 1794393900}
+    Received: null
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      25 |  try{
+      26 |   await page.goto('/',{waitUntil:'domcontentloaded'});
+    > 27 |   await expect.poll(()=>page.evaluate(id=>(window as any).__terminal?.panels.get(id)?.engine.visibleTimeRange(),id)).toEqual({from:from/1000,to:to/1000});
+         |                                                                                                                      ^
+      28 |   release();await expect.poll(()=>page.evaluate(({id,current,step})=>(window as any).__terminal.panels.get(id).candles.some((c:any)=>c.t===current-step),{id,current,step})).toBe(true);
+      29 |   await page.workers()[0].evaluate(()=>{(globalThis as any).__stagingNativeFixture.emitCandles=true;});
+      30 |   await expect.poll(()=>page.evaluate(({id,current})=>(window as any).__terminal.panels.get(id).candles.some((c:any)=>c.t===current&&!c.closed),{id,current})).toBe(true);
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/native-candle-history.spec.ts:27:118
+
+    Error Context: test-results/native-candle-history-save-521d6-p-then-first-forming-candle/error-context.md
+
+  2 failed
+    tests/browser/native-candle-history.spec.ts:12:36 › saved 5m wall view one candle back survives closed bootstrap then first forming candle 
+    tests/browser/native-candle-history.spec.ts:12:36 › saved 15m wall view one candle back survives closed bootstrap then first forming candle 

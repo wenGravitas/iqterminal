@@ -1,0 +1,5 @@
+{
+  "reason": "The retention run was mistakenly started before the final build handle was terminal. It saw a transient preview HTTP failure before any source validation, seed or heap cycle. Preserve as invalid setup; do not count as a loading or repeated-use sample.",
+  "buildLog": "/tmp/iq-wall-idle-release-build.log",
+  "laterRootStatus": 200
+}

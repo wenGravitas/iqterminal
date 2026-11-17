@@ -1,0 +1,4 @@
+{
+  "codecSha256": "0d6b44450afbd598d4160638eedf7a7546cd15cda0e8932d9c647ee92a66c9ab",
+  "scope": "Same immutable captured frames as r1; candidate caches parsed price per segment and at most one previous quantity product. No serving deployment."
+}

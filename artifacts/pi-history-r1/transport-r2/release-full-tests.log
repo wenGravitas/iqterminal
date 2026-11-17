@@ -1,0 +1,12 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+
+ Test Files  148 passed | 2 skipped (150)
+      Tests  1333 passed | 2 skipped (1335)
+   Start at  12:30:02
+   Duration  113.66s (tests 70%, import 19%, transform 10%, worker 2%)
+
+    Isolate  150 workers spawned · ~193ms startup each (spawn + environment, per file)
+             at least ~28.80s faster with isolate: false — reuses workers across files instead of one per file
+

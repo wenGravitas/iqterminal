@@ -1,0 +1,23 @@
+HTTP/1.1 200 OK
+X-IQ-Request-Id: 540630da-7945-484a-9c8b-bae92f7ea9a6
+Content-Type: application/x-ndjson
+Cache-Control: private, max-age=31536000, immutable
+Vary: Accept-Encoding
+ETag: "0132ac6889d228afc7e9e1bc6b6522a269da52c5b1a7291141c684af596e4493"
+X-IQ-Batch-Cache: miss
+X-IQ-Decoded-Bytes: 8276300
+X-IQ-Wall-Start: 0
+X-IQ-Wall-Next: 22
+X-IQ-Wall-Parts: 22
+X-IQ-Source-Revision: d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394
+X-IQ-Chunk-Key: efa5629adec8fcb0e7ffc93297bd273d178fae996fad4bae79b30862872863b0
+X-IQ-DB-Queries: 0
+X-IQ-DB-Read-Rows: 0
+X-IQ-DB-Read-Bytes: 0
+Content-Encoding: gzip
+Content-Length: 924807
+Server-Timing: preparedread;dur=147.42, db;dur=0
+Date: Mon, 09 Nov 2026 09:58:47 GMT
+Connection: keep-alive
+Keep-Alive: timeout=60
+

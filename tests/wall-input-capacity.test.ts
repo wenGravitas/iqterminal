@@ -1,0 +1,4 @@
+import{test,expect}from'vitest';import{wallInputCapacity}from'../src/feed/wall-input-capacity';
+test('advertised total server input may grow without increasing browser body or cache limits',()=>{for(const n of[256,1024,4096])expect(wallInputCapacity({version:1,canonicalParts:n,metadataBytes:16*1024**2}).canonicalParts).toBe(n);for(const raw of[{}, {version:2,canonicalParts:256,metadataBytes:2097152},{version:1,canonicalParts:Infinity,metadataBytes:2097152},{version:1,canonicalParts:1024,metadataBytes:12}])expect(()=>wallInputCapacity(raw)).toThrow(/capacity/);});
+import{wallPreparationReason}from'../src/feed/prepared-wall-admission';
+test('input progress and selected output counts are labelled independently',()=>{expect(wallPreparationReason({id:'a',phase:'projection',state:'building',pages:132,projectionPages:130,selectedParts:55})).toContain('132 canonical / 130 projected input pages / 55 selected parts');});

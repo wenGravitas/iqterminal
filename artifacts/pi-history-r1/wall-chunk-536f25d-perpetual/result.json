@@ -1,0 +1,56 @@
+{
+  "kind": "prepared-wall-hour-independent-reference",
+  "market": "perpetual",
+  "from": 1793800800000,
+  "to": 1793804400000,
+  "watermark": 21185503,
+  "sourceRevision": "6aadfe02a562d435cdc584ef8f7b978cd9a3df2234dcbc56d7e929a90ef40b64",
+  "parts": 6,
+  "patches": 6051,
+  "rawBytes": 8879480,
+  "preparedGzipBytes": 429712,
+  "ratio": 0.04839382486361814,
+  "decodeMs": 18.998286999998527,
+  "buildMs": 6574.071069999999,
+  "coverage": {
+    "availableFrom": 1793506604584,
+    "requestedFrom": 1793800800000,
+    "requestedTo": 1793804400000,
+    "confirmedTo": 1793804400000,
+    "gaps": [
+      {
+        "cursor": 19684265,
+        "epoch": 1793800727656,
+        "at": 1793801475954,
+        "reason": "Shared disk watermark"
+      },
+      {
+        "cursor": 19694254,
+        "epoch": 1793801507479,
+        "at": 1793802526072,
+        "reason": "Shared disk watermark"
+      },
+      {
+        "cursor": 19698158,
+        "epoch": 1793802557685,
+        "at": 1793802957168,
+        "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+      },
+      {
+        "cursor": 19701548,
+        "epoch": 1793802958738,
+        "at": 1793803306020,
+        "reason": "Shared disk watermark"
+      }
+    ],
+    "gapsTruncated": false,
+    "partial": true,
+    "status": "partial",
+    "reason": "Depth continuity gaps are present in the requested range",
+    "bookScope": null,
+    "midpoint": null
+  },
+  "complete": true,
+  "result": "exact-canonical-page-match",
+  "scope": "one bounded real hour; no rendered or 30h latency claim"
+}

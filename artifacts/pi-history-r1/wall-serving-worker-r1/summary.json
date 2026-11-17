@@ -1,0 +1,139 @@
+{
+  "worker": {
+    "id": "9287d66d0e75a71571f1e5c9826b82fa96fc693c8379c4defdfc347b5e3626bd",
+    "startedAt": "2026-11-10T05:29:29.289407387Z",
+    "image": "sha256:3a67ff312a4924289717685b2c7aa53328e80f0dfd3af8e896bd347a3b848d43",
+    "memory": 402653184,
+    "cpus": 500000000,
+    "runtime": {
+      "node": "v22.22.0",
+      "bundleSha256": "5232f8b2fecc82e78b1174034514c5bcef3e7c26503a7332e1f4192782f6154e"
+    }
+  },
+  "gateway": {
+    "id": "fca1269083b4504944dccf1d3a6e387844700cf7545b958002ecc4eb29777dd5",
+    "startedAt": "2026-11-10T05:22:31.877003616Z",
+    "image": "sha256:3a67ff312a4924289717685b2c7aa53328e80f0dfd3af8e896bd347a3b848d43"
+  },
+  "originalApiBuild": "dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51",
+  "sideApiBuild": "71f62d2efceb8a4ac0fadb9c8a1495bcf1eb4efa",
+  "workerBuild": "0811e742b74c1898f6c885bdd75fa50cdbba22c5",
+  "counts": {
+    "building": 0,
+    "ready": 4,
+    "failed": 0,
+    "paused": 0
+  },
+  "jobs": [
+    {
+      "id": "32b5931b75c579c5fe13bb17b7db07b0982ce6deffad56951f7cdebd681d7692",
+      "request": {
+        "market": "spot",
+        "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794179100000,
+        "to": 1794287700000
+      },
+      "state": "ready",
+      "phase": "ready",
+      "sourceKey": "fe5869c72d22f1d3125d3655fc132943e63dbc0f9c0dd43cf7b93a5c590fbb43",
+      "projectionKey": "e03acad9c809577b38d1075e8488b5c9badc3f296f5d0beeb67ff5e450864979",
+      "requestedAt": 1794287948420,
+      "doneAt": 1794288035339,
+      "pages": 25,
+      "projectionPages": 25,
+      "coverage": {
+        "status": "partial",
+        "partial": true,
+        "availableFrom": 1793521565645,
+        "confirmedTo": 1794287700000,
+        "gapCount": 16,
+        "gapsTruncated": false,
+        "reason": "Depth continuity gaps are present in the requested range"
+      }
+    },
+    {
+      "id": "ff9dcf5c68f98cff41f7555a6981f89625e7305fb43854d9148b0c1d405c07b7",
+      "request": {
+        "market": "perpetual",
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794177900000,
+        "to": 1794287700000
+      },
+      "state": "ready",
+      "phase": "ready",
+      "sourceKey": "c3cbdbe0c0fab22511e6de909fe9d7fb7eae2003539b6d2b4c1a982e31b6922c",
+      "projectionKey": "8e3854512dcb74202a600afd244df8978eed2a1f0522042b99b093042e13db55",
+      "requestedAt": 1794287948448,
+      "doneAt": 1794288123027,
+      "pages": 76,
+      "projectionPages": 76,
+      "coverage": {
+        "status": "partial",
+        "partial": true,
+        "availableFrom": 1793506604584,
+        "confirmedTo": 1794287700000,
+        "gapCount": 4,
+        "gapsTruncated": false,
+        "reason": "Depth continuity gaps are present in the requested range"
+      }
+    },
+    {
+      "id": "b43702eeb86036ec760433f556d8759f0ed13326f966a4a486b3a52b8ad35c66",
+      "request": {
+        "market": "spot",
+        "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794179400000,
+        "to": 1794288000000
+      },
+      "state": "ready",
+      "phase": "ready",
+      "sourceKey": "acebfd1d83ab979e0682d417f1df46bad2d306a3614e99263491776f2bab8ef2",
+      "projectionKey": "ca0864388df24be67be74ed1fc8c8a03a86e91ab12c8c92f37dfa8873330980c",
+      "requestedAt": 1794288010330,
+      "doneAt": 1794288082660,
+      "pages": 25,
+      "projectionPages": 25,
+      "coverage": {
+        "status": "partial",
+        "partial": true,
+        "availableFrom": 1793521565645,
+        "confirmedTo": 1794288000000,
+        "gapCount": 16,
+        "gapsTruncated": false,
+        "reason": "Depth continuity gaps are present in the requested range"
+      }
+    },
+    {
+      "id": "9cf9072212d1dae31fd9c03fb5ef6f84c8b6becbb474db9796094c5a7bfb456e",
+      "request": {
+        "market": "spot",
+        "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794179700000,
+        "to": 1794288300000
+      },
+      "state": "ready",
+      "phase": "ready",
+      "sourceKey": "07658be18547d53af580b4662a5bf420e4df17445b58114f7c06e42014a5baa1",
+      "projectionKey": "1d032d2268fdbf9f352d3452c0edb712bb3ea6328e83b1b414166781fb853e40",
+      "requestedAt": 1794288303527,
+      "doneAt": 1794288347247,
+      "pages": 24,
+      "projectionPages": 24,
+      "coverage": {
+        "status": "partial",
+        "partial": true,
+        "availableFrom": 1793521565645,
+        "confirmedTo": 1794288300000,
+        "gapCount": 15,
+        "gapsTruncated": false,
+        "reason": "Depth continuity gaps are present in the requested range"
+      }
+    }
+  ],
+  "capacity": {
+    "paused": false,
+    "derivedBytes": null
+  },
+  "ownedServicesRemainRunning": true,
+  "scope": "Isolated staging worker and side gateway. No original API replacement or production deployment. Times requestedAt/doneAt are server wall-clock; per-turn elapsedMs/cpu are separately recorded. No browser/ACK/latency acceptance."
+}

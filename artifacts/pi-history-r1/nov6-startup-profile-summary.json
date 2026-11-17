@@ -1,0 +1,132 @@
+{
+  "scope": "supplemental CPU profiling, not acceptance",
+  "build": "42db2e8845c71bc0d3bb32fb8ccdf32189c230bc",
+  "scriptHash": "10ec0efbed5cc0439b063ec9005088217d1c12c4490aea13f38dc561ccbf1b20",
+  "paint": {
+    "firstHistoryAt": null,
+    "completeAt": null,
+    "firstCurrentAt": 5009.3
+  },
+  "selfSamples": [
+    {
+      "selfSampleMs": 1364.18,
+      "function": "(program)",
+      "asset": "",
+      "line": -1
+    },
+    {
+      "selfSampleMs": 1286.26,
+      "function": "(idle)",
+      "asset": "",
+      "line": -1
+    },
+    {
+      "selfSampleMs": 92.8,
+      "function": "",
+      "asset": "index-Bqz1WIfc.js",
+      "line": 0
+    },
+    {
+      "selfSampleMs": 91.44,
+      "function": "_syncFloatingOverlayHost",
+      "asset": "index-Bqz1WIfc.js",
+      "line": 33
+    },
+    {
+      "selfSampleMs": 86.58,
+      "function": "appendChild",
+      "asset": "",
+      "line": -1
+    },
+    {
+      "selfSampleMs": 77.03,
+      "function": "syncNativeIndicators",
+      "asset": "index-Bqz1WIfc.js",
+      "line": 32
+    },
+    {
+      "selfSampleMs": 67.93,
+      "function": "_cell",
+      "asset": "index-Bqz1WIfc.js",
+      "line": 30
+    },
+    {
+      "selfSampleMs": 65.99,
+      "function": "",
+      "asset": "index-Bqz1WIfc.js",
+      "line": 33
+    },
+    {
+      "selfSampleMs": 58.72,
+      "function": "VP",
+      "asset": "index-Bqz1WIfc.js",
+      "line": 32
+    },
+    {
+      "selfSampleMs": 51.83,
+      "function": "pP",
+      "asset": "index-Bqz1WIfc.js",
+      "line": 32
+    },
+    {
+      "selfSampleMs": 49.63,
+      "function": "wH",
+      "asset": "index-Bqz1WIfc.js",
+      "line": 56
+    },
+    {
+      "selfSampleMs": 48.68,
+      "function": "nH",
+      "asset": "index-Bqz1WIfc.js",
+      "line": 56
+    },
+    {
+      "selfSampleMs": 47.95,
+      "function": "renderDrawingObjects",
+      "asset": "index-Bqz1WIfc.js",
+      "line": 32
+    },
+    {
+      "selfSampleMs": 47.48,
+      "function": "_flushIndicators",
+      "asset": "index-Bqz1WIfc.js",
+      "line": 12
+    },
+    {
+      "selfSampleMs": 46.61,
+      "function": "close",
+      "asset": "index-Bqz1WIfc.js",
+      "line": 32
+    },
+    {
+      "selfSampleMs": 45.13,
+      "function": "init",
+      "asset": "index-Bqz1WIfc.js",
+      "line": 32
+    },
+    {
+      "selfSampleMs": 43.78,
+      "function": "draw",
+      "asset": "index-Bqz1WIfc.js",
+      "line": 30
+    },
+    {
+      "selfSampleMs": 37.59,
+      "function": "set",
+      "asset": "index-Bqz1WIfc.js",
+      "line": 31
+    },
+    {
+      "selfSampleMs": 35.49,
+      "function": "reconcileIndicators",
+      "asset": "index-Bqz1WIfc.js",
+      "line": 32
+    },
+    {
+      "selfSampleMs": 34.8,
+      "function": "sync",
+      "asset": "index-Bqz1WIfc.js",
+      "line": 30
+    }
+  ]
+}

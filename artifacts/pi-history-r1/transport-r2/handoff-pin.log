@@ -1,0 +1,10 @@
+{"phase": "renewed", "turn": 1, "elapsedMs": 7.121996022760868, "consumers": ["stage039-handoff-perpetual"]}
+{"phase": "renewed", "turn": 9, "elapsedMs": 32027.33957860619, "consumers": ["stage039-handoff-perpetual"]}
+{"phase": "renewed", "turn": 17, "elapsedMs": 64226.41636710614, "consumers": ["stage039-handoff-perpetual"]}
+{"phase": "renewed", "turn": 25, "elapsedMs": 96337.43898104876, "consumers": ["stage039-handoff-perpetual"]}
+{"phase": "renewed", "turn": 33, "elapsedMs": 128554.91882003844, "consumers": ["stage039-handoff-perpetual"]}
+{"phase": "renewed", "turn": 41, "elapsedMs": 160854.39765919, "consumers": ["stage039-handoff-perpetual"]}
+{"phase": "renewed", "turn": 49, "elapsedMs": 193256.94583635777, "consumers": ["stage039-handoff-perpetual"]}
+{"phase": "renewed", "turn": 57, "elapsedMs": 225276.12561360002, "consumers": ["stage039-handoff-perpetual"]}
+{"phase": "renewed", "turn": 65, "elapsedMs": 257354.43075932562, "consumers": ["stage039-handoff-perpetual"]}
+{"phase": "released", "elapsedMs": 272901.36958565563, "consumers": ["stage039-handoff-perpetual"]}

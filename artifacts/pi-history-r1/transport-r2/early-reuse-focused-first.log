@@ -1,0 +1,53 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-projection.test.ts (30 tests | 2 failed) 3638ms
+   × identical complete prepared manifest validates warm rows without a second presentation snapshot 167ms
+   × an unfinished warm replay cannot certify complete presentation from a matching revision 1059ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > identical complete prepared manifest validates warm rows without a second presentation snapshot
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/prepared-wall-projection.test.ts:388:117
+    386|    expect(events.at(-1).status.archive.requestComplete).toBe(false);re…
+    387|    await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm'…
+    388|    expect(events.slice(before).filter(e=>e.ids?.includes('warm')).ever…
+       |                                                                                                                     ^
+    389|    expect(events.filter(e=>e.ids?.includes('warm')&&e.kind==='snapshot…
+    390|    expect([...displayedWalls(events,'warm').values()]).toEqual(display…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > an unfinished warm replay cannot certify complete presentation from a matching revision
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/prepared-wall-projection.test.ts:418:147
+    416|   service.subscribe('seed',request);await vi.waitFor(()=>expect(servic…
+    417|   spy=vi.spyOn(compactCodec,'replayCompactWallPresentation').mockImple…
+    418|   service.subscribe('warm',request);await vi.waitFor(()=>expect(events…
+       |                                                                                                                                                   ^
+    419|   expect(service.diagnostics().warmValidatedReuses).toBe(0);const refe…
+    420|   expect([...displayedWalls(events,'warm').values()].sort((a,b)=>a.id.…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 84 passed (86)
+   Start at  12:48:52
+   Duration  5.80s (tests 78%, transform 16%, import 5%)
+

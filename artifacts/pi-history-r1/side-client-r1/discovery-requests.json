@@ -1,0 +1,14 @@
+[
+  {
+    "market": "spot",
+    "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+    "from": 1794180300000,
+    "to": 1794288900000
+  },
+  {
+    "market": "perpetual",
+    "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+    "from": 1794178800000,
+    "to": 1794288600000
+  }
+]

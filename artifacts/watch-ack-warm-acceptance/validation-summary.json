@@ -1,0 +1,681 @@
+{
+  "final-current": {
+    "completion": [
+      {
+        "phase": "parent",
+        "actionToPaintMs": 41878.5,
+        "navigationToPaintMs": 42072.90000000037,
+        "witnessLagMs": 8.900000000372529,
+        "paintedRevision": 85,
+        "inputRevision": 85,
+        "from": 1794781800000,
+        "to": 1794891119664,
+        "loadedThrough": 1794891119664
+      },
+      {
+        "phase": "extension-1",
+        "actionToPaintMs": 11816.099999999627,
+        "navigationToPaintMs": null,
+        "witnessLagMs": 186.5,
+        "paintedRevision": 130,
+        "inputRevision": 130,
+        "from": 1794781800000,
+        "to": 1794891161523,
+        "loadedThrough": 1794891160231
+      },
+      {
+        "phase": "extension-2",
+        "actionToPaintMs": 19168.39999999851,
+        "navigationToPaintMs": null,
+        "witnessLagMs": 27.200000001117587,
+        "paintedRevision": 177,
+        "inputRevision": 177,
+        "from": 1794781800000,
+        "to": 1794891175632,
+        "loadedThrough": 1794891174104
+      },
+      {
+        "phase": "reopen",
+        "actionToPaintMs": 15556.299999998882,
+        "navigationToPaintMs": null,
+        "witnessLagMs": 24,
+        "paintedRevision": 53,
+        "inputRevision": 53,
+        "from": 1794781800000,
+        "to": 1794891199408,
+        "loadedThrough": 1794891195221
+      }
+    ],
+    "firstUsefulPaintWitnesses": [
+      {
+        "phase": "parent",
+        "kind": "current",
+        "witnessMono": 6075.200000001118,
+        "paintedMono": 5758.700000001118,
+        "actionMono": 194.40000000037253,
+        "elapsedMs": 5880.800000000745,
+        "paintedRevision": 8,
+        "inputRevision": 8,
+        "from": 1794781800000,
+        "to": 1794891119664
+      },
+      {
+        "phase": "parent",
+        "kind": "history",
+        "witnessMono": 37862.20000000112,
+        "paintedMono": 37446.800000000745,
+        "actionMono": 194.40000000037253,
+        "elapsedMs": 37667.800000000745,
+        "paintedRevision": 53,
+        "inputRevision": 56,
+        "from": 1794781800000,
+        "to": 1794891119664,
+        "loadedThrough": 1794781800000
+      },
+      {
+        "phase": "extension-1",
+        "kind": "current",
+        "witnessMono": 44598.70000000112,
+        "paintedMono": 44094,
+        "actionMono": 44583.300000000745,
+        "elapsedMs": 15.400000000372529,
+        "paintedRevision": 89,
+        "inputRevision": 89,
+        "from": 1794781800000,
+        "to": 1794891119664,
+        "loadedThrough": 1794891119664
+      },
+      {
+        "phase": "extension-1",
+        "kind": "history",
+        "witnessMono": 44598.70000000112,
+        "paintedMono": 44094,
+        "actionMono": 44583.300000000745,
+        "elapsedMs": 15.400000000372529,
+        "paintedRevision": 89,
+        "inputRevision": 89,
+        "from": 1794781800000,
+        "to": 1794891119664,
+        "loadedThrough": 1794891119664
+      },
+      {
+        "phase": "extension-2",
+        "kind": "current",
+        "witnessMono": 58627.40000000037,
+        "paintedMono": 56637.59999999963,
+        "actionMono": 58621.70000000112,
+        "elapsedMs": 5.699999999254942,
+        "paintedRevision": 130,
+        "inputRevision": 130,
+        "from": 1794781800000,
+        "to": 1794891161523,
+        "loadedThrough": 1794891160231
+      },
+      {
+        "phase": "extension-2",
+        "kind": "history",
+        "witnessMono": 58627.40000000037,
+        "paintedMono": 56637.59999999963,
+        "actionMono": 58621.70000000112,
+        "elapsedMs": 5.699999999254942,
+        "paintedRevision": 130,
+        "inputRevision": 130,
+        "from": 1794781800000,
+        "to": 1794891161523,
+        "loadedThrough": 1794891160231
+      },
+      {
+        "phase": "reopen",
+        "kind": "current",
+        "witnessMono": 84440.80000000075,
+        "paintedMono": 0,
+        "actionMono": 81844.70000000112,
+        "elapsedMs": 2596.0999999996275,
+        "paintedRevision": -1,
+        "inputRevision": 8,
+        "from": 1794781800000,
+        "to": 1794891199408,
+        "loadedThrough": 1794891174104
+      },
+      {
+        "phase": "reopen",
+        "kind": "history",
+        "witnessMono": 84440.80000000075,
+        "paintedMono": 0,
+        "actionMono": 81844.70000000112,
+        "elapsedMs": 2596.0999999996275,
+        "paintedRevision": -1,
+        "inputRevision": 8,
+        "from": 1794781800000,
+        "to": 1794891199408,
+        "loadedThrough": 1794891174104
+      }
+    ],
+    "phaseEvidence": [
+      {
+        "phase": "parent",
+        "from": 1794781800000,
+        "requestedTo": 1794891119664,
+        "eligibleTo": 1794891119664,
+        "horizonAt": 1794891119928,
+        "loadedThrough": 1794891119664,
+        "gaps": 1,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 87,
+        "inputRevision": 87,
+        "apply": {
+          "messages": 122,
+          "snapshots": 4,
+          "segments": 64,
+          "patches": 4306,
+          "runs": 38965,
+          "ms": 653.300000006333,
+          "maxMs": 94.40000000037253
+        },
+        "preparedDeltaPublications": 0,
+        "warmPrefixHits": 0,
+        "warmValidatedReuses": 0,
+        "warmTimings": [],
+        "cache": {
+          "hits": 0,
+          "misses": 25,
+          "reusedCanonicalBytes": 0,
+          "admissions": 25,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 25,
+          "accountedBytes": 13231954,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794781800000,
+              "to": 1794891119664
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 25,
+              "fetchedParts": 25,
+              "reusedParts": 0,
+              "reusedCanonicalBytes": 0,
+              "assemblyRecords": 3810,
+              "checkpointOrderElapsedMs": 34.5,
+              "validationElapsedMs": 236,
+              "validationYieldMs": 17.09999999590218,
+              "presentationOrderElapsedMs": 40.20000000111759,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 54.40000000037253
+            },
+            "eligibleRange": {
+              "to": 1794891119664,
+              "horizonAt": 1794891119928
+            }
+          }
+        ],
+        "heap": {
+          "used": 30029185,
+          "total": 51952917
+        },
+        "chartPreparation": {
+          "slices": 188,
+          "steps": 18566,
+          "cancelled": 0,
+          "activeMs": 870.1000000089407,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 29.59999999962747,
+          "backgroundMs": 637.4999999888241,
+          "maxBackgroundMs": 26.299999998882413,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "extension-1",
+        "from": 1794781800000,
+        "requestedTo": 1794891161523,
+        "eligibleTo": 1794891160232,
+        "horizonAt": 1794891160231,
+        "loadedThrough": 1794891160231,
+        "gaps": 1,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 130,
+        "inputRevision": 130,
+        "apply": {
+          "messages": 177,
+          "snapshots": 4,
+          "segments": 64,
+          "patches": 4514,
+          "runs": 51173,
+          "ms": 788.5000000093132,
+          "maxMs": 94.40000000037253
+        },
+        "preparedDeltaPublications": 1,
+        "warmPrefixHits": 0,
+        "warmValidatedReuses": 0,
+        "warmTimings": [],
+        "cache": {
+          "hits": 25,
+          "misses": 25,
+          "reusedCanonicalBytes": 6588636,
+          "admissions": 25,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 25,
+          "accountedBytes": 13231954,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794781800000,
+              "to": 1794891161523
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 25,
+              "fetchedParts": 0,
+              "reusedParts": 25,
+              "reusedCanonicalBytes": 6588636,
+              "assemblyRecords": 3810,
+              "checkpointOrderElapsedMs": 3.5,
+              "validationElapsedMs": 100.09999999962747,
+              "validationYieldMs": 7.300000004470348,
+              "presentationOrderElapsedMs": 3.200000001117587,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 22.199999999254942
+            },
+            "preparedDelta": {
+              "baseRevision": "d72959eb9856bd68eca6fc99f47b554395e68293f1185cbbeb310642f470e0db",
+              "baseCount": 3810,
+              "baseThrough": 1794891119664,
+              "patches": 16,
+              "comparedSegments": 3810,
+              "comparedValueRuns": 26392,
+              "elapsedMs": 99,
+              "yieldMs": 3.399999998509884
+            },
+            "eligibleRange": {
+              "to": 1794891160232,
+              "horizonAt": 1794891160231
+            }
+          }
+        ],
+        "heap": {
+          "used": 27750204,
+          "total": 67772824
+        },
+        "chartPreparation": {
+          "slices": 290,
+          "steps": 35612,
+          "cancelled": 1,
+          "activeMs": 1452.6000000052154,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0.09999999962747097,
+          "lastSliceMs": 0.09999999962747097,
+          "maxSliceMs": 29.59999999962747,
+          "backgroundMs": 1137.9999999850988,
+          "maxBackgroundMs": 26.299999998882413,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "extension-2",
+        "from": 1794781800000,
+        "requestedTo": 1794891175632,
+        "eligibleTo": 1794891174105,
+        "horizonAt": 1794891174104,
+        "loadedThrough": 1794891174104,
+        "gaps": 1,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 177,
+        "inputRevision": 177,
+        "apply": {
+          "messages": 240,
+          "snapshots": 4,
+          "segments": 64,
+          "patches": 4724,
+          "runs": 63383,
+          "ms": 1008.3000000100583,
+          "maxMs": 94.40000000037253
+        },
+        "preparedDeltaPublications": 2,
+        "warmPrefixHits": 0,
+        "warmValidatedReuses": 0,
+        "warmTimings": [],
+        "cache": {
+          "hits": 50,
+          "misses": 25,
+          "reusedCanonicalBytes": 13177272,
+          "admissions": 25,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 25,
+          "accountedBytes": 13231954,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794781800000,
+              "to": 1794891175632
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 25,
+              "fetchedParts": 0,
+              "reusedParts": 25,
+              "reusedCanonicalBytes": 6588636,
+              "assemblyRecords": 3810,
+              "checkpointOrderElapsedMs": 15.900000000372529,
+              "validationElapsedMs": 184.09999999962747,
+              "validationYieldMs": 43.69999999552965,
+              "presentationOrderElapsedMs": 19.90000000037253,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 45.09999999962747
+            },
+            "preparedDelta": {
+              "baseRevision": "943e4221450dae466576bdfd39a760508118566655115b0b7329da88560c282f",
+              "baseCount": 3810,
+              "baseThrough": 1794891160231,
+              "patches": 16,
+              "comparedSegments": 3810,
+              "comparedValueRuns": 26392,
+              "elapsedMs": 82.09999999962747,
+              "yieldMs": 17.999999998137355
+            },
+            "eligibleRange": {
+              "to": 1794891174105,
+              "horizonAt": 1794891174104
+            }
+          }
+        ],
+        "heap": {
+          "used": 47201565,
+          "total": 75511593
+        },
+        "chartPreparation": {
+          "slices": 427,
+          "steps": 53782,
+          "cancelled": 3,
+          "activeMs": 2518.0000000074506,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 29.59999999962747,
+          "backgroundMs": 2074.4999999776483,
+          "maxBackgroundMs": 26.59999999962747,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "reopen",
+        "from": 1794781800000,
+        "requestedTo": 1794891199408,
+        "eligibleTo": 1794891195221,
+        "horizonAt": 1794891195220,
+        "loadedThrough": 1794891174104,
+        "gaps": 1,
+        "gapsTruncated": false,
+        "requestComplete": false,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 8,
+        "inputRevision": 8,
+        "apply": {
+          "messages": 260,
+          "snapshots": 9,
+          "segments": 7684,
+          "patches": 4836,
+          "runs": 140315,
+          "ms": 1813.3000000026077,
+          "maxMs": 577.2999999988824
+        },
+        "preparedDeltaPublications": 2,
+        "warmPrefixHits": 2,
+        "warmValidatedReuses": 0,
+        "warmTimings": [],
+        "cache": {
+          "hits": 50,
+          "misses": 25,
+          "reusedCanonicalBytes": 13177272,
+          "admissions": 25,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 25,
+          "accountedBytes": 13231954,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794781800000,
+              "to": 1794891199408
+            },
+            "settled": false,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "eligibleRange": {
+              "to": 1794891195221,
+              "horizonAt": 1794891195220
+            }
+          }
+        ],
+        "heap": {
+          "used": 27042700,
+          "total": 99492836
+        },
+        "chartPreparation": {
+          "slices": 36,
+          "steps": 7493,
+          "cancelled": 2,
+          "activeMs": 325.7999999932945,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 64.90000000037253,
+          "backgroundMs": 320.6999999973923,
+          "maxBackgroundMs": 65,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "reopen-complete",
+        "from": 1794781800000,
+        "requestedTo": 1794891199408,
+        "eligibleTo": 1794891195221,
+        "horizonAt": 1794891195220,
+        "loadedThrough": 1794891195221,
+        "gaps": 1,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 55,
+        "inputRevision": 55,
+        "apply": {
+          "messages": 323,
+          "snapshots": 9,
+          "segments": 7684,
+          "patches": 5046,
+          "runs": 152535,
+          "ms": 1986.5000000037253,
+          "maxMs": 577.2999999988824
+        },
+        "preparedDeltaPublications": 3,
+        "warmPrefixHits": 2,
+        "warmValidatedReuses": 0,
+        "warmTimings": [],
+        "cache": {
+          "hits": 74,
+          "misses": 26,
+          "reusedCanonicalBytes": 19737021,
+          "admissions": 26,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 26,
+          "accountedBytes": 13295496,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794781800000,
+              "to": 1794891199408
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 25,
+              "fetchedParts": 1,
+              "reusedParts": 24,
+              "reusedCanonicalBytes": 6559749,
+              "assemblyRecords": 3812,
+              "checkpointOrderElapsedMs": 1.900000000372529,
+              "validationElapsedMs": 259.40000000037253,
+              "validationYieldMs": 45.09999999590218,
+              "presentationOrderElapsedMs": 5.199999999254942,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 37
+            },
+            "preparedDelta": {
+              "baseRevision": "46519c13003efbf833327e3b350c5b54d51afbd8e5aa196f92c159f162975204",
+              "baseCount": 3810,
+              "baseThrough": 1794891174104,
+              "patches": 18,
+              "comparedSegments": 3812,
+              "comparedValueRuns": 26392,
+              "elapsedMs": 158.5,
+              "yieldMs": 5.400000000372529
+            },
+            "eligibleRange": {
+              "to": 1794891195221,
+              "horizonAt": 1794891195220
+            }
+          }
+        ],
+        "heap": {
+          "used": 30328124,
+          "total": 88482708
+        },
+        "chartPreparation": {
+          "slices": 121,
+          "steps": 22041,
+          "cancelled": 3,
+          "activeMs": 941.5999999847263,
+          "lastProjectionElapsedMs": 0.19999999925494194,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0.09999999962747097,
+          "maxSliceMs": 64.90000000037253,
+          "backgroundMs": 835.3999999985099,
+          "maxBackgroundMs": 65,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      }
+    ],
+    "ack": {
+      "advancingExactConfirmations": 99,
+      "longestConfirmedGapMs": 7426.800000000745,
+      "first": [
+        {
+          "socket": 2,
+          "mono": 6084.0999999996275,
+          "cursor": 3528845592
+        }
+      ],
+      "last": [
+        {
+          "socket": 2,
+          "mono": 97763.09999999963,
+          "cursor": 3528846534
+        }
+      ],
+      "resets": [],
+      "closes": [
+        {
+          "seq": 536,
+          "event": "close",
+          "mono": 81037.59999999963,
+          "id": 0,
+          "code": 1005,
+          "reason": ""
+        }
+      ]
+    },
+    "health": {
+      "samples": 24,
+      "failures": [],
+      "cleanupCancellations": [],
+      "maxBodyMs": 6554.092517000005,
+      "maxObserverLoopMs": 100.532223
+    },
+    "errors": []
+  }
+}

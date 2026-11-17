@@ -1,4 +1,4 @@
-export type HistoryLayer = 'footprint' | 'heatmap' | 'cvd' | 'liquidations' | 'comparison';
+export type HistoryLayer = 'candles' | 'footprint' | 'heatmap' | 'cvd' | 'liquidations' | 'comparison' | 'order-walls';
 type Consumer<T> = {resolve:(value:T)=>void;reject:(reason:unknown)=>void;signal:AbortSignal;cancel:()=>void};
 type Work<T> = {key:string;layer:HistoryLayer;priority:number;queued:number;abort:AbortController;run:(signal:AbortSignal)=>Promise<T>;consumers:Set<Consumer<T>>;started?:number};
 /** Shared admission for history reads. Equal-priority layers alternate; cancelling
@@ -17,7 +17,7 @@ export class HistoryScheduler {
   this.pump();return promise;
  }
  private pump(){while(this.active<this.concurrency){const candidates=[...this.work.values()].filter(w=>w.started===undefined&&w.consumers.size).sort((a,b)=>a.priority-b.priority||Number(a.layer===this.last)-Number(b.layer===this.last)||a.queued-b.queued);const w=candidates[0];if(!w)return;w.started=this.clock();this.last=w.layer;this.active++;this.metrics.peakActive=Math.max(this.metrics.peakActive,this.active);this.metrics.queueMs+=w.started-w.queued;
-  void Promise.resolve().then(()=>w.run(w.abort.signal)).then(value=>{this.metrics.completed++;for(const c of w.consumers)c.resolve(value);},error=>{this.metrics.failed++;for(const c of w.consumers)c.reject(error);}).finally(()=>{for(const c of w.consumers)c.signal.removeEventListener('abort',c.cancel);this.metrics.runMs+=this.clock()-w.started!;if(this.work.get(w.key)===w)this.work.delete(w.key);this.active--;this.pump();});
+  void Promise.resolve().then(()=>w.run(w.abort.signal)).then(value=>{this.metrics.completed++;if(this.work.get(w.key)===w)this.work.delete(w.key);for(const c of w.consumers)c.resolve(value);},error=>{this.metrics.failed++;if(this.work.get(w.key)===w)this.work.delete(w.key);for(const c of w.consumers)c.reject(error);}).finally(()=>{for(const c of w.consumers)c.signal.removeEventListener('abort',c.cancel);this.metrics.runMs+=this.clock()-w.started!;if(this.work.get(w.key)===w)this.work.delete(w.key);this.active--;this.pump();});
  }}
  diagnostics(){return {...this.metrics,active:this.active,queued:[...this.work.values()].filter(w=>w.started===undefined).length};}
 }

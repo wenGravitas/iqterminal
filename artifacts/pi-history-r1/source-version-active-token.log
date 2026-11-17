@@ -1,0 +1,184 @@
+TAP version 13
+# Subtest: execution-only preparation has no depth dependency, survives restart, and publishes pinned revisions once
+ok 1 - execution-only preparation has no depth dependency, survives restart, and publishes pinned revisions once
+  ---
+  duration_ms: 146.305912
+  type: 'test'
+  ...
+# Subtest: ordinary polling preserves failed jobs; explicit retry resumes its cursor and success clears the error
+ok 2 - ordinary polling preserves failed jobs; explicit retry resumes its cursor and success clears the error
+  ---
+  duration_ms: 95.875672
+  type: 'test'
+  ...
+# Subtest: default rollover reuses ready slots rather than repeatedly rebuilding full default windows
+ok 3 - default rollover reuses ready slots rather than repeatedly rebuilding full default windows
+  ---
+  duration_ms: 56.379856
+  type: 'test'
+  ...
+# Subtest: current state includes the final old-candle tail before publishing rollover, with exact extrema
+ok 4 - current state includes the final old-candle tail before publishing rollover, with exact extrema
+  ---
+  duration_ms: 56.22211
+  type: 'test'
+  ...
+# Subtest: progressive overlapping polls and defaults share already queued candle work
+ok 5 - progressive overlapping polls and defaults share already queued candle work
+  ---
+  duration_ms: 61.051631
+  type: 'test'
+  ...
+# Subtest: a multi-candle build publishes nearest history first and resumes the older candle at the same horizon
+ok 6 - a multi-candle build publishes nearest history first and resumes the older candle at the same horizon
+  ---
+  duration_ms: 55.845754
+  type: 'test'
+  ...
+# Subtest: completed-job retention cannot evict active current or historical progress
+ok 7 - completed-job retention cannot evict active current or historical progress
+  ---
+  duration_ms: 1821.056046
+  type: 'test'
+  ...
+# Subtest: explicit current bootstrap retry resumes failed progress without resetting healthy builds
+ok 8 - explicit current bootstrap retry resumes failed progress without resetting healthy builds
+  ---
+  duration_ms: 130.874387
+  type: 'test'
+  ...
+# Subtest: current bootstrap never returns an old candle or an unbounded raw replay tail as ready
+ok 9 - current bootstrap never returns an old candle or an unbounded raw replay tail as ready
+  ---
+  duration_ms: 47.449546
+  type: 'test'
+  ...
+# Subtest: current execution preparation uses reserved current SQL admission; history keeps its fair lane
+ok 10 - current execution preparation uses reserved current SQL admission; history keeps its fair lane
+  ---
+  duration_ms: 70.234169
+  type: 'test'
+  ...
+# Subtest: a later execution for the preceding closed candle revises that candle without duplicating the forming bar
+ok 11 - a later execution for the preceding closed candle revises that candle without duplicating the forming bar
+  ---
+  duration_ms: 83.55098
+  type: 'test'
+  ...
+# Subtest: late repair intent survives restart and a full history queue without pausing current preparation
+ok 12 - late repair intent survives restart and a full history queue without pausing current preparation
+  ---
+  duration_ms: 480.86945
+  type: 'test'
+  ...
+# Subtest: a higher-ID old timestamp cannot rewind current bootstrap or prevent its closed-candle repair
+ok 13 - a higher-ID old timestamp cannot rewind current bootstrap or prevent its closed-candle repair
+  ---
+  duration_ms: 78.654339
+  type: 'test'
+  ...
+# Subtest: a correction arriving during a pinned repair schedules the newer horizon without resetting its page cursor
+ok 14 - a correction arriving during a pinned repair schedules the newer horizon without resetting its page cursor
+  ---
+  duration_ms: 225.619259
+  type: 'test'
+  ...
+# Subtest: multi-hour current recovery retains its ID cursor and repairs older closed slots instead of jumping past them
+ok 15 - multi-hour current recovery retains its ID cursor and repairs older closed slots instead of jumping past them
+  ---
+  duration_ms: 97.091701
+  type: 'test'
+  ...
+# Subtest: source revision tokens coalesce polls, defer actual changes until a page completes, and refresh completed jobs once
+ok 16 - source revision tokens coalesce polls, defer actual changes until a page completes, and refresh completed jobs once
+  ---
+  duration_ms: 212.686205
+  type: 'test'
+  ...
+# Subtest: Retry after a transport failure reads ready history without starting a new materialization
+ok 17 - Retry after a transport failure reads ready history without starting a new materialization
+  ---
+  duration_ms: 16.752875
+  type: 'test'
+  ...
+# Subtest: a completed resumed job re-reads tiles and recomputes missing slots before returning ready
+ok 18 - a completed resumed job re-reads tiles and recomputes missing slots before returning ready
+  ---
+  duration_ms: 49.910937
+  type: 'test'
+  ...
+# Subtest: explicit retry resumes the failed job range rather than re-enqueuing the whole viewport
+ok 19 - explicit retry resumes the failed job range rather than re-enqueuing the whole viewport
+  ---
+  duration_ms: 7.671929
+  type: 'test'
+  ...
+# Subtest: ordinary polling neither resets a healthy build nor retries absent source
+ok 20 - ordinary polling neither resets a healthy build nor retries absent source
+  ---
+  duration_ms: 5.715724
+  type: 'test'
+  ...
+# Subtest: an independently maintained current cursor never suppresses missing historical preparation
+ok 21 - an independently maintained current cursor never suppresses missing historical preparation
+  ---
+  duration_ms: 16.295121
+  type: 'test'
+  ...
+# Subtest: a queued closed-candle revision keeps good tiles visible without claiming ready
+ok 22 - a queued closed-candle revision keeps good tiles visible without claiming ready
+  ---
+  duration_ms: 5.335204
+  type: 'test'
+  ...
+# Subtest: a correction committing around a tile read forces a bounded revision re-read
+ok 23 - a correction committing around a tile read forces a bounded revision re-read
+  ---
+  duration_ms: 2.645826
+  type: 'test'
+  ...
+# Subtest: a completed correction observed through worker health also re-reads stale tiles
+ok 24 - a completed correction observed through worker health also re-reads stale tiles
+  ---
+  duration_ms: 7.330906
+  type: 'test'
+  ...
+# Subtest: failed revision recovery retains good tiles when its worker is unreachable
+ok 25 - failed revision recovery retains good tiles when its worker is unreachable
+  ---
+  duration_ms: 3.223902
+  type: 'test'
+  ...
+# Subtest: an inactive unusual configuration discovers a same-count canonical correction and reuses its healthy repair
+ok 26 - an inactive unusual configuration discovers a same-count canonical correction and reuses its healthy repair
+  ---
+  duration_ms: 9.831579
+  type: 'test'
+  ...
+# Subtest: a legacy tile remains visible but cannot claim current canonical validation
+ok 27 - a legacy tile remains visible but cannot claim current canonical validation
+  ---
+  duration_ms: 9.518553
+  type: 'test'
+  ...
+# Subtest: absent retained source keeps old tiles explicitly unavailable without launching a futile rebuild
+ok 28 - absent retained source keeps old tiles explicitly unavailable without launching a futile rebuild
+  ---
+  duration_ms: 2.840947
+  type: 'test'
+  ...
+# Subtest: an unconfirmed closed boundary stays building independently of a healthy live source
+ok 29 - an unconfirmed closed boundary stays building independently of a healthy live source
+  ---
+  duration_ms: 3.061787
+  type: 'test'
+  ...
+1..29
+# tests 29
+# suites 0
+# pass 29
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4617.211589

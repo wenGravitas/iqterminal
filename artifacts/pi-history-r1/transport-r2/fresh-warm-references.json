@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "cases": {
+    "walls-30h-perp-15m": {
+      "from": 1794281400000,
+      "to": 1794389400000,
+      "sourceFrom": 1794280500000,
+      "sourceTo": 1794390300000,
+      "sourceToken": "ceed41342616ff4f300901f35c89e765040a45dc079279785dde4bf791308544",
+      "segments": 21261,
+      "valueRuns": 87018,
+      "gaps": 1,
+      "financialHash": "7dd11c29296b501af0fe73bb0fc0b2fd413ebbd6b614fa0d737d104b0dd7fe6e",
+      "evidence": "transport-r2/fresh-reference.jsonl exact canonical fold and independent source proofs"
+    }
+  }
+}

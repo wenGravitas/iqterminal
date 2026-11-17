@@ -1,0 +1,202 @@
+{
+  "chart-c907-a33-spot": {
+    "samples": 5,
+    "firstHistoryMs": [
+      3484.900000002235,
+      6280.099999997765,
+      6692.79999999702,
+      6688,
+      6764
+    ],
+    "completeMs": [
+      5473.300000000745,
+      7280.5,
+      7693,
+      7682.599999997765,
+      6764.10000000149
+    ],
+    "coverageValidated": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "environmentValidated": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "exception": [
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "firstHistoryMsCompletedMedian": 6688,
+    "firstHistoryMsCompletedMax": 6764,
+    "completeMsCompletedMedian": 7280.5,
+    "completeMsCompletedMax": 7693,
+    "gate": "FAIL (median completion >5000ms or coverage incomplete)",
+    "firstUsefulHistoryGate": "FAIL or incomplete"
+  },
+  "chart-c907-a33-perp": {
+    "samples": 5,
+    "firstHistoryMs": [
+      7599,
+      null,
+      null,
+      null,
+      null
+    ],
+    "completeMs": [
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "coverageValidated": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "environmentValidated": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "exception": [
+      null,
+      null,
+      "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded.",
+      null,
+      "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."
+    ],
+    "firstHistoryMsCompletedMedian": 7599,
+    "firstHistoryMsCompletedMax": 7599,
+    "completeMsCompletedMedian": null,
+    "completeMsCompletedMax": null,
+    "gate": "FAIL (median completion >5000ms or coverage incomplete)",
+    "firstUsefulHistoryGate": "FAIL or incomplete"
+  },
+  "chart-c907-a33-perp-route-b": {
+    "samples": 5,
+    "firstHistoryMs": [
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "completeMs": [
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "coverageValidated": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "environmentValidated": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "exception": [
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "firstHistoryMsCompletedMedian": null,
+    "firstHistoryMsCompletedMax": null,
+    "completeMsCompletedMedian": null,
+    "completeMsCompletedMax": null,
+    "gate": "FAIL (median completion >5000ms or coverage incomplete)",
+    "firstUsefulHistoryGate": "FAIL or incomplete"
+  },
+  "chart-c907-a33-spot-profile": {
+    "samples": 1,
+    "firstHistoryMs": [
+      1825
+    ],
+    "completeMs": [
+      5258.39999999851
+    ],
+    "coverageValidated": [
+      true
+    ],
+    "environmentValidated": [
+      true
+    ],
+    "exception": [
+      null
+    ],
+    "firstHistoryMsCompletedMedian": 1825,
+    "firstHistoryMsCompletedMax": 1825,
+    "completeMsCompletedMedian": 5258.39999999851,
+    "completeMsCompletedMax": 5258.39999999851,
+    "gate": "SUPPLEMENTAL profiled single run; no acceptance",
+    "firstUsefulHistoryGate": "SUPPLEMENTAL single profiled run; no acceptance"
+  },
+  "chart-f602-a33-spot": {
+    "samples": 5,
+    "firstHistoryMs": [
+      2921.10000000149,
+      1773.6000000014901,
+      2381.89999999851,
+      2409.5,
+      2238.599999997765
+    ],
+    "completeMs": [
+      5617.10000000149,
+      4644.300000000745,
+      8377.199999999255,
+      5320,
+      6019.699999999255
+    ],
+    "coverageValidated": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "environmentValidated": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "exception": [
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "firstHistoryMsCompletedMedian": 2381.89999999851,
+    "firstHistoryMsCompletedMax": 2921.10000000149,
+    "completeMsCompletedMedian": 5617.10000000149,
+    "completeMsCompletedMax": 8377.199999999255,
+    "gate": "FAIL (median completion >5000ms or coverage incomplete)",
+    "firstUsefulHistoryGate": "PASS all5 within3000ms"
+  }
+}

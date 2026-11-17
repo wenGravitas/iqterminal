@@ -1,0 +1,23 @@
+{
+  "scope": "Observer start confirmed before browser launch; exact process identity checked and graceful stop requested after browser cohort completed. No cross-host clock subtraction; health is not current execution-confirmation proof.",
+  "samples": 52,
+  "errors": [],
+  "maximumSampleElapsedMs": 2078.769669000001,
+  "apiBuilds": [
+    "dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51"
+  ],
+  "start": {
+    "kind": "start",
+    "pid": 1173796,
+    "label": "wall-native-5039-r1",
+    "seconds": 300,
+    "at": "2026-11-09T14:56:41.921Z",
+    "scope": "Read-only serving observer started before client cohort. Actual process boundaries determine coverage; no cross-host phase subtraction or current execution-confirmation claim."
+  },
+  "end": {
+    "kind": "end",
+    "label": "wall-native-5039-r1",
+    "elapsedMs": 260032.01245200002,
+    "stopping": true
+  }
+}

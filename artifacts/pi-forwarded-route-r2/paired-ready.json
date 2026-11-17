@@ -1,0 +1,10 @@
+{
+  "controlSshPid": 193359,
+  "remote": {
+    "ready": true,
+    "pid": 1367602,
+    "path": "/home/daz/iq-pi-forwarded-route-r2",
+    "sshTermination": "TailscaleSSH userspace, RunSSH=true; kernel server TCP22 sockets unavailable"
+  },
+  "mode": "One persistent control connection for both phases. Server results written locally, retrieved after measurements."
+}

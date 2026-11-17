@@ -1,0 +1,346 @@
+{
+  "protectedIdentitiesPreserved": [
+    {
+      "name": "/iqterminal-history-api",
+      "id": "8b087d255b7262ff5b1543475c8c26610758ca8b37f0f99af8b54f3e0848336d",
+      "startedAt": "2026-11-09T10:14:21.244270641Z"
+    },
+    {
+      "name": "/iqterminal-server",
+      "id": "65471260a0cf64311ed57f9b17f1e1daf6de26f073192e292cd07bfb1e193ece",
+      "startedAt": "2026-10-25T10:58:27.590796454Z"
+    },
+    {
+      "name": "/iqterminal-spot-server",
+      "id": "a4be8d3c68a52de305fd9e2eaa101f50b592b8b108aaf850ddfbc1b2f53428bb",
+      "startedAt": "2026-10-25T10:58:53.322433531Z"
+    },
+    {
+      "name": "/iqterminal-history-materializer",
+      "id": "d7f786d6c833ee776fc620b8f02209a1e1b1ed5fc3235968272631f3c4cc6a34",
+      "startedAt": "2026-11-06T16:53:52.644213859Z"
+    },
+    {
+      "name": "/iqterminal-spot-history-materializer",
+      "id": "12489deea96a7d5918661f792e91bd819238696bc62b912308becbaa1bcb1763",
+      "startedAt": "2026-11-06T16:53:52.682114009Z"
+    },
+    {
+      "name": "/iqterminal-footprint-materializer",
+      "id": "1df92fdc2ce05c4113df9ecd8cb99fbabcf101b3fa04447561116ba929d93698",
+      "startedAt": "2026-11-06T16:53:52.623715016Z"
+    },
+    {
+      "name": "/iqterminal-spot-footprint-materializer",
+      "id": "8257c2c80dbcae7add967cb4571983e7639c8f96695e3d5d6302ec9b87ef6447",
+      "startedAt": "2026-11-06T16:53:52.693763579Z"
+    },
+    {
+      "name": "/iqterminal-sql-admission",
+      "id": "625825aa977bcf8e18264ed69e3ed4ca1a9290c5c14416db797a8bf11999032b",
+      "startedAt": "2026-11-06T16:53:48.880958761Z"
+    }
+  ],
+  "active": [
+    {
+      "id": "26bf7a8d9d8a281c74ae8544d18c220edb61a85dec3a6bd20dd305a303307510",
+      "name": "iqterminal-wall-serving-0811e74-r2",
+      "args": [
+        "docker",
+        "run",
+        "--log-driver",
+        "json-file",
+        "--log-opt",
+        "max-size=10m",
+        "--log-opt",
+        "max-file=3",
+        "-d",
+        "--name",
+        "iqterminal-wall-serving-0811e74-r2",
+        "--network",
+        "host",
+        "--read-only",
+        "--cap-drop",
+        "ALL",
+        "--security-opt",
+        "no-new-privileges",
+        "--cpus",
+        "0.5",
+        "--memory",
+        "384m",
+        "--user",
+        "1000:1000",
+        "--restart",
+        "no",
+        "--stop-timeout",
+        "45",
+        "-v",
+        "/home/daz/iqterminal-wall-serving-71f62d2-r1:/wall-preparation",
+        "-v",
+        "/home/daz/iq-wall-serving-0811e74-r1.mjs:/app/wall-preparations-perf.mjs:ro",
+        "-v",
+        "/home/daz/iq-wall-serving-71f62d2-r1-input.json:/app/perf-requests.json:ro",
+        "-e",
+        "CH_PASSWORD",
+        "-e",
+        "CH_URL=http://127.0.0.1:18790",
+        "-e",
+        "IQ_WALL_PREPARATION_COORDINATOR=1",
+        "-e",
+        "IQ_WALL_PREPARATION_CONTROL=1",
+        "-e",
+        "IQ_WALL_QUEUE_FOLLOW=1",
+        "-e",
+        "IQ_WALL_ROLLING_DEFAULTS=1",
+        "-e",
+        "WALL_DERIVED_GC=1",
+        "-e",
+        "IQ_BUILD_COMMIT=0811e742b74c1898f6c885bdd75fa50cdbba22c5",
+        "sha256:3a67ff312a4924289717685b2c7aa53328e80f0dfd3af8e896bd347a3b848d43",
+        "node",
+        "--max-old-space-size=256",
+        "/app/wall-preparations-perf.mjs",
+        "/wall-preparation",
+        "/app/perf-requests.json"
+      ],
+      "logConfig": {
+        "Type": "json-file",
+        "Config": {
+          "max-file": "3",
+          "max-size": "10m"
+        }
+      },
+      "health": {
+        "version": 1,
+        "turn": 508,
+        "busy": false,
+        "counts": {
+          "building": 0,
+          "ready": 6,
+          "failed": 0,
+          "paused": 0
+        },
+        "limits": {
+          "pending": 32,
+          "tracked": 128,
+          "metadataBytes": 1048576
+        },
+        "capacityPaused": false,
+        "consumers": 0,
+        "readers": 0,
+        "pins": 0,
+        "cancelledPins": 0,
+        "consumerLimit": 128,
+        "leaseMs": 15000,
+        "build": "0811e742b74c1898f6c885bdd75fa50cdbba22c5"
+      }
+    },
+    {
+      "id": "569422becf7c417d91b2ca6eb90a6a8264a0c10ae49421f352e94ccd225e60ae",
+      "name": "iqterminal-wall-gateway-71f62d2-r2",
+      "args": [
+        "docker",
+        "run",
+        "--log-driver",
+        "json-file",
+        "--log-opt",
+        "max-size=10m",
+        "--log-opt",
+        "max-file=3",
+        "-d",
+        "--name",
+        "iqterminal-wall-gateway-71f62d2-r2",
+        "--network",
+        "host",
+        "--read-only",
+        "--cap-drop",
+        "ALL",
+        "--security-opt",
+        "no-new-privileges",
+        "--cpus",
+        "1",
+        "--memory",
+        "512m",
+        "--user",
+        "1000:1000",
+        "--restart",
+        "no",
+        "--stop-timeout",
+        "45",
+        "-v",
+        "/home/daz/iqterminal-wall-product-proof/state:/state:ro",
+        "-v",
+        "/home/daz/iqterminal-wall-serving-71f62d2-r1:/wall-preparation:ro",
+        "-v",
+        "/home/daz/iq-wall-gateway-71f62d2-r1.mjs:/app/history-gateway-perf.mjs:ro",
+        "-e",
+        "CH_PASSWORD",
+        "-e",
+        "CH_URL=http://127.0.0.1:18790",
+        "-e",
+        "API_PORT=18880",
+        "-e",
+        "COLLECTOR_PORT=18784",
+        "-e",
+        "SPOT_COLLECTOR_PORT=18785",
+        "-e",
+        "HISTORY_PORT=18782",
+        "-e",
+        "HISTORY_INTERNAL_SPOT=http://127.0.0.1:18783",
+        "-e",
+        "HISTORY_TILES_ENABLED=1",
+        "-e",
+        "WALL_PREPARATION_ENABLED=1",
+        "-e",
+        "WALL_PREPARATION_STATE=/wall-preparation",
+        "-e",
+        "WALL_DERIVED_GC=1",
+        "-e",
+        "IQ_BUILD_COMMIT=71f62d2efceb8a4ac0fadb9c8a1495bcf1eb4efa",
+        "sha256:3a67ff312a4924289717685b2c7aa53328e80f0dfd3af8e896bd347a3b848d43",
+        "node",
+        "/app/history-gateway-perf.mjs"
+      ],
+      "logConfig": {
+        "Type": "json-file",
+        "Config": {
+          "max-file": "3",
+          "max-size": "10m"
+        }
+      },
+      "health": {
+        "enabled": true,
+        "build": "71f62d2efceb8a4ac0fadb9c8a1495bcf1eb4efa",
+        "metrics": {
+          "requests": 1,
+          "rejected": 0,
+          "bytes": 0,
+          "serializeMs": 0,
+          "legacyHeatmap": 0,
+          "legacyFootprint": 0,
+          "closedTileReads": 0,
+          "manifests": 0,
+          "orderWallPages": 0,
+          "peakRss": 0,
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4,
+          "rss": 56844288
+        },
+        "wallProjectionEncoding": {
+          "active": 0,
+          "limit": 3,
+          "cacheEntries": 0,
+          "cacheBytes": 0
+        },
+        "materializer": {
+          "version": 1,
+          "head": {
+            "cursor": 24461284,
+            "at": 1794288819582,
+            "epoch": 1794264774789
+          },
+          "live": {
+            "cursor": 24461284,
+            "at": 1794288819582,
+            "from": 1794288600000,
+            "widths": [
+              10,
+              25,
+              50,
+              100,
+              250,
+              1000
+            ]
+          },
+          "archive": {
+            "pinned": {
+              "pages": 1,
+              "processed": 79,
+              "cursor": 24461284,
+              "lag": 0,
+              "caughtUp": true
+            },
+            "current": [
+              {
+                "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+                "lane": "pinned",
+                "pages": 1,
+                "processed": 79,
+                "cursor": 24461284,
+                "lag": 0,
+                "caughtUp": true
+              },
+              {
+                "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+                "lane": "pinned",
+                "pages": 1,
+                "processed": 74,
+                "cursor": 20519495,
+                "lag": 0,
+                "caughtUp": true
+              },
+              {
+                "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+                "lane": "custom",
+                "pages": 1,
+                "processed": 79,
+                "cursor": 24461284,
+                "lag": 0,
+                "caughtUp": true
+              }
+            ],
+            "custom": [
+              {
+                "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+                "state": "ready",
+                "progressCursor": 24461284,
+                "sourceHeadCursor": 24461284,
+                "lagCursors": 0,
+                "currentCursor": 24461284,
+                "currentAt": 1794288819582,
+                "currentValid": true
+              }
+            ],
+            "customWork": {
+              "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+              "pages": 1,
+              "processed": 79,
+              "cursor": 24461284,
+              "lag": 0,
+              "caughtUp": true
+            },
+            "customWorker": "perpetual-materializer"
+          },
+          "metrics": {
+            "startedAt": 1793984035129,
+            "lastPoll": 1794288819956,
+            "lastPersist": 1794288605486,
+            "records": 2987288,
+            "closedBuckets": 6096,
+            "liveLagMs": 0,
+            "derivedBytes": 1146291328,
+            "freeBytes": 192195153920,
+            "paused": false,
+            "error": "",
+            "pages": 130101,
+            "pageMs": 4307006.424626359,
+            "accumulateMs": 2889387.3063371195,
+            "persistMs": 419154.74548030307,
+            "peakRss": 615284736,
+            "sourceHeadAgeMs": 3229,
+            "liveAgeMs": 3229,
+            "rss": 455196672
+          },
+          "backlog": []
+        },
+        "sqlAdmission": {
+          "enabled": false
+        }
+      }
+    }
+  ],
+  "rootPreserved": "/home/daz/iqterminal-wall-serving-71f62d2-r1",
+  "scope": "Owned isolated services recreated with bounded logs; original API/collectors never stopped."
+}

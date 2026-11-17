@@ -1,0 +1,34 @@
+{
+  "closed": [
+    {
+      "pid": 176212,
+      "port": 4197,
+      "entry": "artifacts/pi-history-r1/transport-r2/preview-guard.mjs",
+      "action": "stopped-idle-owned-test-preview"
+    },
+    {
+      "pid": 206866,
+      "port": 4198,
+      "entry": "artifacts/pi-history-r1/transport-r2/preview-range-fix.mjs",
+      "action": "stopped-idle-owned-test-preview"
+    },
+    {
+      "pid": 236263,
+      "port": 4200,
+      "entry": "artifacts/pi-history-r1/warm-prefix-r1/preview.mjs",
+      "action": "stopped-idle-owned-test-preview"
+    }
+  ],
+  "retainedBaseline": {
+    "pid": 214428,
+    "port": 4199,
+    "build": "474f0660953b5fe6c7e48955eab264691adcff4c"
+  },
+  "retainedCandidate": {
+    "pid": 252676,
+    "port": 4201,
+    "build": "7eb4a00b60daf344188eebc0659a8a82862113e8"
+  },
+  "user5173": "untouched",
+  "sshForwards": "untouched"
+}

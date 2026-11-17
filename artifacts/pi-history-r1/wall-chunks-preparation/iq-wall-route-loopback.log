@@ -1,0 +1,5 @@
+{"run":1,"base":"http://127.0.0.1:18780","parts":5,"firstVerifiedPartMs":15.756100999999997,"completeMs":59.18856699999999,"errors":[]}
+{"run":2,"base":"http://127.0.0.1:18780","parts":5,"firstVerifiedPartMs":8.641875999999996,"completeMs":49.54012800000001,"errors":[]}
+{"run":3,"base":"http://127.0.0.1:18780","parts":5,"firstVerifiedPartMs":6.948416000000009,"completeMs":48.40293700000001,"errors":[]}
+{"run":4,"base":"http://127.0.0.1:18780","parts":5,"firstVerifiedPartMs":6.195530999999988,"completeMs":36.823396,"errors":[]}
+{"run":5,"base":"http://127.0.0.1:18780","parts":5,"firstVerifiedPartMs":5.604680000000002,"completeMs":38.16767899999999,"errors":[]}

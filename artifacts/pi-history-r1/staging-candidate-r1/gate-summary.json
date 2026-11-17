@@ -1,0 +1,2933 @@
+[
+  {
+    "label": "stage33-footprint24-five",
+    "case": "footprint-24h-1h",
+    "build": [
+      "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+    ],
+    "gate": "FAIL",
+    "firstHistory3sGate": null,
+    "assertionExitCode": 2,
+    "current": {
+      "samplesMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null
+    },
+    "firstHistory": {
+      "samplesMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null
+    },
+    "complete": {
+      "samplesMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null
+    },
+    "requested": {
+      "from": 1794294000000,
+      "to": 1794380400000
+    },
+    "coverage": [
+      {
+        "run": 1,
+        "requested": {
+          "from": 1794294000000,
+          "to": 1794380400000
+        },
+        "viewport": null,
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {},
+        "exception": "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."
+      },
+      {
+        "run": 2,
+        "requested": {
+          "from": 1794294000000,
+          "to": 1794380400000
+        },
+        "viewport": null,
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {},
+        "exception": "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."
+      },
+      {
+        "run": 3,
+        "requested": {
+          "from": 1794294000000,
+          "to": 1794380400000
+        },
+        "viewport": null,
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {},
+        "exception": "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."
+      },
+      {
+        "run": 4,
+        "requested": {
+          "from": 1794294000000,
+          "to": 1794380400000
+        },
+        "viewport": null,
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {},
+        "exception": "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."
+      },
+      {
+        "run": 5,
+        "requested": {
+          "from": 1794294000000,
+          "to": 1794380400000
+        },
+        "viewport": null,
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {},
+        "exception": "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."
+      }
+    ],
+    "footprintCoverage": [
+      {
+        "valid": false,
+        "reason": "Missing or changed requested/eligible interval"
+      },
+      {
+        "valid": false,
+        "reason": "Missing or changed requested/eligible interval"
+      },
+      {
+        "valid": false,
+        "reason": "Missing or changed requested/eligible interval"
+      },
+      {
+        "valid": false,
+        "reason": "Missing or changed requested/eligible interval"
+      },
+      {
+        "valid": false,
+        "reason": "Missing or changed requested/eligible interval"
+      }
+    ],
+    "wallReferenceVerified": null,
+    "financialHashes": [],
+    "routes": [
+      {
+        "run": 1,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 2,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 3,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 4,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 5,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      }
+    ]
+  },
+  {
+    "label": "stage33-footprint24-supervised",
+    "case": "footprint-24h-1h",
+    "build": [
+      "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+    ],
+    "gate": "PASS",
+    "firstHistory3sGate": null,
+    "assertionExitCode": 0,
+    "current": {
+      "samplesMs": [
+        8148.699999999255,
+        3912.7000000011176,
+        3982.300000000745,
+        2537.9000000003725,
+        2976
+      ],
+      "medianMs": 3912.7000000011176,
+      "maximumMs": 8148.699999999255
+    },
+    "firstHistory": {
+      "samplesMs": [
+        8148.5999999996275,
+        3912.5,
+        3982.0999999996275,
+        2537.9000000003725,
+        2976
+      ],
+      "medianMs": 3912.5,
+      "maximumMs": 8148.5999999996275
+    },
+    "complete": {
+      "samplesMs": [
+        8148.699999999255,
+        4216.200000001118,
+        3982.300000000745,
+        2673.5,
+        3351.2000000011176
+      ],
+      "medianMs": 3982.300000000745,
+      "maximumMs": 8148.699999999255
+    },
+    "requested": {
+      "from": 1794294000000,
+      "to": 1794380400000
+    },
+    "coverage": [
+      {
+        "run": 1,
+        "requested": {
+          "from": 1794294000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794294000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 24,
+        "formingPainted": true,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 2,
+        "requested": {
+          "from": 1794294000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794294000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 24,
+        "formingPainted": true,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 3,
+        "requested": {
+          "from": 1794294000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794294000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 24,
+        "formingPainted": true,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 4,
+        "requested": {
+          "from": 1794294000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794294000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 24,
+        "formingPainted": true,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 5,
+        "requested": {
+          "from": 1794294000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794294000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 24,
+        "formingPainted": true,
+        "archive": {},
+        "exception": null
+      }
+    ],
+    "footprintCoverage": [
+      {
+        "valid": true,
+        "from": 1794294000000,
+        "to": 1794380400000,
+        "requestedSlots": 24,
+        "paintedSlots": 24,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794294000000,
+        "to": 1794380400000,
+        "requestedSlots": 24,
+        "paintedSlots": 24,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794294000000,
+        "to": 1794380400000,
+        "requestedSlots": 24,
+        "paintedSlots": 24,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794294000000,
+        "to": 1794380400000,
+        "requestedSlots": 24,
+        "paintedSlots": 24,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794294000000,
+        "to": 1794380400000,
+        "requestedSlots": 24,
+        "paintedSlots": 24,
+        "knownEmptySlots": 0,
+        "missing": []
+      }
+    ],
+    "wallReferenceVerified": null,
+    "financialHashes": [
+      "55c8162bc9c5bde71dda29c7b7ed14b82da48042289556b0e2d4a86bbe81e2cf"
+    ],
+    "routes": [
+      {
+        "run": 1,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 2,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 3,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 4,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 5,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      }
+    ]
+  },
+  {
+    "label": "stage33-footprint4-supervised",
+    "case": "footprint-4h-5m",
+    "build": [
+      "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+    ],
+    "gate": "PASS",
+    "firstHistory3sGate": null,
+    "assertionExitCode": 0,
+    "current": {
+      "samplesMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null
+    },
+    "firstHistory": {
+      "samplesMs": [
+        2242.800000000745,
+        2665.5,
+        2341.5,
+        2313.5999999996275,
+        3346.9000000003725
+      ],
+      "medianMs": 2341.5,
+      "maximumMs": 3346.9000000003725
+    },
+    "complete": {
+      "samplesMs": [
+        2243,
+        2665.800000000745,
+        2341.7000000011176,
+        2313.9000000003725,
+        3347.10000000149
+      ],
+      "medianMs": 2341.7000000011176,
+      "maximumMs": 3347.10000000149
+    },
+    "requested": {
+      "from": 1794366000000,
+      "to": 1794380400000
+    },
+    "coverage": [
+      {
+        "run": 1,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 48,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 2,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 48,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 3,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 48,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 4,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 48,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 5,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 48,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      }
+    ],
+    "footprintCoverage": [
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794380400000,
+        "requestedSlots": 48,
+        "paintedSlots": 48,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794380400000,
+        "requestedSlots": 48,
+        "paintedSlots": 48,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794380400000,
+        "requestedSlots": 48,
+        "paintedSlots": 48,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794380400000,
+        "requestedSlots": 48,
+        "paintedSlots": 48,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794380400000,
+        "requestedSlots": 48,
+        "paintedSlots": 48,
+        "knownEmptySlots": 0,
+        "missing": []
+      }
+    ],
+    "wallReferenceVerified": null,
+    "financialHashes": [
+      "83d3a809f130cad93de79ce59a4045d21494b14aef28c669f50cfdf892456a1a"
+    ],
+    "routes": [
+      {
+        "run": 1,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 2,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 3,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 4,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 5,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      }
+    ]
+  },
+  {
+    "label": "stage33-current-footprint-supervised",
+    "case": "current-footprint-5m",
+    "build": [
+      "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+    ],
+    "gate": "FAIL",
+    "firstHistory3sGate": null,
+    "assertionExitCode": 2,
+    "current": {
+      "samplesMs": [
+        3413,
+        3338.89999999851,
+        3283.699999999255,
+        2902.0999999996275,
+        4312.9000000003725
+      ],
+      "medianMs": 3338.89999999851,
+      "maximumMs": 4312.9000000003725
+    },
+    "firstHistory": {
+      "samplesMs": [
+        3413,
+        3338.7999999988824,
+        3283.5999999996275,
+        2902.0999999996275,
+        4312.9000000003725
+      ],
+      "medianMs": 3338.7999999988824,
+      "maximumMs": 4312.9000000003725
+    },
+    "complete": {
+      "samplesMs": [
+        3413.2000000011176,
+        3339.0999999996275,
+        3283.9000000003725,
+        2902.7999999988824,
+        4313.300000000745
+      ],
+      "medianMs": 3339.0999999996275,
+      "maximumMs": 4313.300000000745
+    },
+    "requested": {
+      "from": 1794369300000,
+      "to": 1794383700000
+    },
+    "coverage": [
+      {
+        "run": 1,
+        "requested": {
+          "from": 1794369300000,
+          "to": 1794383700000
+        },
+        "viewport": {
+          "from": 1794369300,
+          "to": 1794383700
+        },
+        "paintedClosedBars": 47,
+        "formingPainted": true,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 2,
+        "requested": {
+          "from": 1794369300000,
+          "to": 1794383700000
+        },
+        "viewport": {
+          "from": 1794369300,
+          "to": 1794383700
+        },
+        "paintedClosedBars": 47,
+        "formingPainted": true,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 3,
+        "requested": {
+          "from": 1794369300000,
+          "to": 1794383700000
+        },
+        "viewport": {
+          "from": 1794369300,
+          "to": 1794383700
+        },
+        "paintedClosedBars": 47,
+        "formingPainted": true,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 4,
+        "requested": {
+          "from": 1794369300000,
+          "to": 1794383700000
+        },
+        "viewport": {
+          "from": 1794369300,
+          "to": 1794383700
+        },
+        "paintedClosedBars": 47,
+        "formingPainted": true,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 5,
+        "requested": {
+          "from": 1794369300000,
+          "to": 1794383700000
+        },
+        "viewport": {
+          "from": 1794369300,
+          "to": 1794383700
+        },
+        "paintedClosedBars": 47,
+        "formingPainted": true,
+        "archive": {},
+        "exception": null
+      }
+    ],
+    "footprintCoverage": null,
+    "wallReferenceVerified": null,
+    "financialHashes": [
+      "37639518c1c14d95a1ceaee548a2898440b46abc67b32c9e04c09a4bca01b547",
+      "5bad783f471421d4acbd9637fbaa8e9910b2181bf15f4cafe4d199278779b787",
+      "68da7024320b777c2ca31bef13552823aa8183f16c8bfdbe1c84c30dde8290de",
+      "cf584124f52fe6ea6475d68f24bd65f4fdcc6546df48e632c6fb3bc160eaf334",
+      "d02d7cd0c09591f2dffc0368d056a1f1f6d4885cfd48248f7b89c96dab9aafd6"
+    ],
+    "routes": [
+      {
+        "run": 1,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 2,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 3,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 4,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 5,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      }
+    ]
+  },
+  {
+    "label": "stage33-spot-supervised",
+    "case": "walls-30h-spot-5m",
+    "build": [
+      "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+    ],
+    "gate": "FAIL",
+    "firstHistory3sGate": "FAIL",
+    "assertionExitCode": 2,
+    "current": {
+      "samplesMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null
+    },
+    "firstHistory": {
+      "samplesMs": [
+        3963,
+        4459.5,
+        3749.0999999996275,
+        4543.9000000003725,
+        3660.0999999996275
+      ],
+      "medianMs": 3963,
+      "maximumMs": 4543.9000000003725
+    },
+    "complete": {
+      "samplesMs": [
+        7494.299999998882,
+        7320.4000000003725,
+        6985.9000000003725,
+        8814.400000000373,
+        7299.5999999996275
+      ],
+      "medianMs": 7320.4000000003725,
+      "maximumMs": 8814.400000000373
+    },
+    "requested": {
+      "from": 1794273000000,
+      "to": 1794381000000
+    },
+    "coverage": [
+      {
+        "run": 1,
+        "requested": {
+          "from": 1794273000000,
+          "to": 1794381000000
+        },
+        "viewport": {
+          "from": 1794273000,
+          "to": 1794381000
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794272700000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      },
+      {
+        "run": 2,
+        "requested": {
+          "from": 1794273000000,
+          "to": 1794381000000
+        },
+        "viewport": {
+          "from": 1794273000,
+          "to": 1794381000
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794272700000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      },
+      {
+        "run": 3,
+        "requested": {
+          "from": 1794273000000,
+          "to": 1794381000000
+        },
+        "viewport": {
+          "from": 1794273000,
+          "to": 1794381000
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794272700000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      },
+      {
+        "run": 4,
+        "requested": {
+          "from": 1794273000000,
+          "to": 1794381000000
+        },
+        "viewport": {
+          "from": 1794273000,
+          "to": 1794381000
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794272700000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      },
+      {
+        "run": 5,
+        "requested": {
+          "from": 1794273000000,
+          "to": 1794381000000
+        },
+        "viewport": {
+          "from": 1794273000,
+          "to": 1794381000
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794272700000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      }
+    ],
+    "footprintCoverage": null,
+    "wallReferenceVerified": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "financialHashes": [],
+    "routes": [
+      {
+        "run": 1,
+        "discover": 1,
+        "horizon": 1,
+        "source": 1,
+        "projectionBatches": 1
+      },
+      {
+        "run": 2,
+        "discover": 1,
+        "horizon": 1,
+        "source": 1,
+        "projectionBatches": 1
+      },
+      {
+        "run": 3,
+        "discover": 1,
+        "horizon": 1,
+        "source": 1,
+        "projectionBatches": 1
+      },
+      {
+        "run": 4,
+        "discover": 1,
+        "horizon": 1,
+        "source": 1,
+        "projectionBatches": 1
+      },
+      {
+        "run": 5,
+        "discover": 1,
+        "horizon": 1,
+        "source": 1,
+        "projectionBatches": 1
+      }
+    ]
+  },
+  {
+    "label": "stage33-perp-supervised",
+    "case": "walls-30h-perp-15m",
+    "build": [
+      "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+    ],
+    "gate": "FAIL",
+    "firstHistory3sGate": "FAIL",
+    "assertionExitCode": 2,
+    "current": {
+      "samplesMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null
+    },
+    "firstHistory": {
+      "samplesMs": [
+        4058.5,
+        4525,
+        6735.300000000745,
+        3391.4000000003725,
+        3362.5
+      ],
+      "medianMs": 4058.5,
+      "maximumMs": 6735.300000000745
+    },
+    "complete": {
+      "samplesMs": [
+        null,
+        null,
+        null,
+        9685.10000000149,
+        9905.299999998882
+      ],
+      "medianMs": null,
+      "maximumMs": null
+    },
+    "requested": {
+      "from": 1794272400000,
+      "to": 1794380400000
+    },
+    "coverage": [
+      {
+        "run": 1,
+        "requested": {
+          "from": 1794272400000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794272400,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "loading",
+          "from": 1794271500000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": false,
+          "loadedThrough": 1794271500000
+        },
+        "exception": null
+      },
+      {
+        "run": 2,
+        "requested": {
+          "from": 1794272400000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794272400,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794271500000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      },
+      {
+        "run": 3,
+        "requested": {
+          "from": 1794272400000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794272400,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "loading",
+          "from": 1794271500000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": false,
+          "loadedThrough": 1794271500000
+        },
+        "exception": null
+      },
+      {
+        "run": 4,
+        "requested": {
+          "from": 1794272400000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794272400,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794271500000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      },
+      {
+        "run": 5,
+        "requested": {
+          "from": 1794272400000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794272400,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794271500000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      }
+    ],
+    "footprintCoverage": null,
+    "wallReferenceVerified": [
+      false,
+      false,
+      false,
+      true,
+      true
+    ],
+    "financialHashes": [],
+    "routes": [
+      {
+        "run": 1,
+        "discover": 1,
+        "horizon": 1,
+        "source": 1,
+        "projectionBatches": 4
+      },
+      {
+        "run": 2,
+        "discover": 1,
+        "horizon": 1,
+        "source": 1,
+        "projectionBatches": 4
+      },
+      {
+        "run": 3,
+        "discover": 1,
+        "horizon": 1,
+        "source": 1,
+        "projectionBatches": 4
+      },
+      {
+        "run": 4,
+        "discover": 1,
+        "horizon": 1,
+        "source": 1,
+        "projectionBatches": 4
+      },
+      {
+        "run": 5,
+        "discover": 1,
+        "horizon": 1,
+        "source": 1,
+        "projectionBatches": 4
+      }
+    ]
+  },
+  {
+    "label": "stage112-spot-combined",
+    "case": "walls-30h-spot-5m",
+    "build": [
+      "9a526dcbe5495405205b10da78c4328a6e3d6831"
+    ],
+    "gate": "FAIL",
+    "firstHistory3sGate": "FAIL",
+    "assertionExitCode": 2,
+    "current": {
+      "samplesMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null
+    },
+    "firstHistory": {
+      "samplesMs": [
+        4700.4000000003725,
+        4309.0999999996275,
+        3169.0999999996275,
+        3657.7999999988824,
+        4270.39999999851
+      ],
+      "medianMs": 4270.39999999851,
+      "maximumMs": 4700.4000000003725
+    },
+    "complete": {
+      "samplesMs": [
+        9648.400000000373,
+        6359.5999999996275,
+        5144.5,
+        5639.5,
+        5374.5999999996275
+      ],
+      "medianMs": 5639.5,
+      "maximumMs": 9648.400000000373
+    },
+    "requested": {
+      "from": 1794273000000,
+      "to": 1794381000000
+    },
+    "coverage": [
+      {
+        "run": 1,
+        "requested": {
+          "from": 1794273000000,
+          "to": 1794381000000
+        },
+        "viewport": {
+          "from": 1794273000,
+          "to": 1794381000
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794272700000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      },
+      {
+        "run": 2,
+        "requested": {
+          "from": 1794273000000,
+          "to": 1794381000000
+        },
+        "viewport": {
+          "from": 1794273000,
+          "to": 1794381000
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794272700000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      },
+      {
+        "run": 3,
+        "requested": {
+          "from": 1794273000000,
+          "to": 1794381000000
+        },
+        "viewport": {
+          "from": 1794273000,
+          "to": 1794381000
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794272700000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      },
+      {
+        "run": 4,
+        "requested": {
+          "from": 1794273000000,
+          "to": 1794381000000
+        },
+        "viewport": {
+          "from": 1794273000,
+          "to": 1794381000
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794272700000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      },
+      {
+        "run": 5,
+        "requested": {
+          "from": 1794273000000,
+          "to": 1794381000000
+        },
+        "viewport": {
+          "from": 1794273000,
+          "to": 1794381000
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794272700000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      }
+    ],
+    "footprintCoverage": null,
+    "wallReferenceVerified": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "financialHashes": [],
+    "routes": [
+      {
+        "run": 1,
+        "discover": 1,
+        "horizon": 0,
+        "source": 1,
+        "projectionBatches": 1
+      },
+      {
+        "run": 2,
+        "discover": 1,
+        "horizon": 0,
+        "source": 1,
+        "projectionBatches": 1
+      },
+      {
+        "run": 3,
+        "discover": 1,
+        "horizon": 0,
+        "source": 1,
+        "projectionBatches": 1
+      },
+      {
+        "run": 4,
+        "discover": 1,
+        "horizon": 0,
+        "source": 1,
+        "projectionBatches": 1
+      },
+      {
+        "run": 5,
+        "discover": 1,
+        "horizon": 0,
+        "source": 1,
+        "projectionBatches": 1
+      }
+    ]
+  },
+  {
+    "label": "stage112-perp-combined",
+    "case": "walls-30h-perp-15m",
+    "build": [
+      "9a526dcbe5495405205b10da78c4328a6e3d6831"
+    ],
+    "gate": "FAIL",
+    "firstHistory3sGate": "FAIL",
+    "assertionExitCode": 2,
+    "current": {
+      "samplesMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null
+    },
+    "firstHistory": {
+      "samplesMs": [
+        3628.5999999996275,
+        4334.4000000003725,
+        4023.5999999996275,
+        2988.60000000149,
+        3975.699999999255
+      ],
+      "medianMs": 3975.699999999255,
+      "maximumMs": 4334.4000000003725
+    },
+    "complete": {
+      "samplesMs": [
+        11850.699999999255,
+        11618.900000000373,
+        11664.300000000745,
+        10132.200000001118,
+        10088.599999999627
+      ],
+      "medianMs": 11618.900000000373,
+      "maximumMs": 11850.699999999255
+    },
+    "requested": {
+      "from": 1794272400000,
+      "to": 1794380400000
+    },
+    "coverage": [
+      {
+        "run": 1,
+        "requested": {
+          "from": 1794272400000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794272400,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794271500000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      },
+      {
+        "run": 2,
+        "requested": {
+          "from": 1794272400000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794272400,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794271500000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      },
+      {
+        "run": 3,
+        "requested": {
+          "from": 1794272400000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794272400,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794271500000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      },
+      {
+        "run": 4,
+        "requested": {
+          "from": 1794272400000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794272400,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794271500000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      },
+      {
+        "run": 5,
+        "requested": {
+          "from": 1794272400000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794272400,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794271500000,
+          "to": 1794381300000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794381300000
+        },
+        "exception": null
+      }
+    ],
+    "footprintCoverage": null,
+    "wallReferenceVerified": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "financialHashes": [],
+    "routes": [
+      {
+        "run": 1,
+        "discover": 1,
+        "horizon": 0,
+        "source": 1,
+        "projectionBatches": 4
+      },
+      {
+        "run": 2,
+        "discover": 1,
+        "horizon": 0,
+        "source": 1,
+        "projectionBatches": 4
+      },
+      {
+        "run": 3,
+        "discover": 1,
+        "horizon": 0,
+        "source": 1,
+        "projectionBatches": 4
+      },
+      {
+        "run": 4,
+        "discover": 1,
+        "horizon": 0,
+        "source": 1,
+        "projectionBatches": 4
+      },
+      {
+        "run": 5,
+        "discover": 1,
+        "horizon": 0,
+        "source": 1,
+        "projectionBatches": 4
+      }
+    ]
+  },
+  {
+    "label": "stage112-footprint24-final",
+    "case": "footprint-24h-1h",
+    "build": [
+      "9a526dcbe5495405205b10da78c4328a6e3d6831"
+    ],
+    "gate": "PASS",
+    "firstHistory3sGate": null,
+    "assertionExitCode": 0,
+    "current": {
+      "samplesMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null
+    },
+    "firstHistory": {
+      "samplesMs": [
+        4280.10000000149,
+        4629.70000000298,
+        3110.5,
+        3691,
+        3177.60000000149
+      ],
+      "medianMs": 3691,
+      "maximumMs": 4629.70000000298
+    },
+    "complete": {
+      "samplesMs": [
+        4637.900000002235,
+        4630,
+        3254.10000000149,
+        3691.300000000745,
+        3643.699999999255
+      ],
+      "medianMs": 3691.300000000745,
+      "maximumMs": 4637.900000002235
+    },
+    "requested": {
+      "from": 1794294000000,
+      "to": 1794380400000
+    },
+    "coverage": [
+      {
+        "run": 1,
+        "requested": {
+          "from": 1794294000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794294000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 24,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 2,
+        "requested": {
+          "from": 1794294000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794294000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 24,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 3,
+        "requested": {
+          "from": 1794294000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794294000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 24,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 4,
+        "requested": {
+          "from": 1794294000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794294000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 24,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 5,
+        "requested": {
+          "from": 1794294000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794294000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 24,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      }
+    ],
+    "footprintCoverage": [
+      {
+        "valid": true,
+        "from": 1794294000000,
+        "to": 1794380400000,
+        "requestedSlots": 24,
+        "paintedSlots": 24,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794294000000,
+        "to": 1794380400000,
+        "requestedSlots": 24,
+        "paintedSlots": 24,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794294000000,
+        "to": 1794380400000,
+        "requestedSlots": 24,
+        "paintedSlots": 24,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794294000000,
+        "to": 1794380400000,
+        "requestedSlots": 24,
+        "paintedSlots": 24,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794294000000,
+        "to": 1794380400000,
+        "requestedSlots": 24,
+        "paintedSlots": 24,
+        "knownEmptySlots": 0,
+        "missing": []
+      }
+    ],
+    "wallReferenceVerified": null,
+    "financialHashes": [
+      "55c8162bc9c5bde71dda29c7b7ed14b82da48042289556b0e2d4a86bbe81e2cf"
+    ],
+    "routes": [
+      {
+        "run": 1,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 2,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 3,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 4,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 5,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      }
+    ]
+  },
+  {
+    "label": "stage112-footprint4-final",
+    "case": "footprint-4h-5m",
+    "build": [
+      "9a526dcbe5495405205b10da78c4328a6e3d6831"
+    ],
+    "gate": "PASS",
+    "firstHistory3sGate": null,
+    "assertionExitCode": 0,
+    "current": {
+      "samplesMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null
+    },
+    "firstHistory": {
+      "samplesMs": [
+        3495.400000002235,
+        3128.800000000745,
+        3285.099999997765,
+        3997.5,
+        3863.199999999255
+      ],
+      "medianMs": 3495.400000002235,
+      "maximumMs": 3997.5
+    },
+    "complete": {
+      "samplesMs": [
+        3495.60000000149,
+        3129.10000000149,
+        3285.5,
+        3997.800000000745,
+        3863.39999999851
+      ],
+      "medianMs": 3495.60000000149,
+      "maximumMs": 3997.800000000745
+    },
+    "requested": {
+      "from": 1794366000000,
+      "to": 1794380400000
+    },
+    "coverage": [
+      {
+        "run": 1,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 48,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 2,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 48,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 3,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 48,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 4,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 48,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 5,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 48,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      }
+    ],
+    "footprintCoverage": [
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794380400000,
+        "requestedSlots": 48,
+        "paintedSlots": 48,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794380400000,
+        "requestedSlots": 48,
+        "paintedSlots": 48,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794380400000,
+        "requestedSlots": 48,
+        "paintedSlots": 48,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794380400000,
+        "requestedSlots": 48,
+        "paintedSlots": 48,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794380400000,
+        "requestedSlots": 48,
+        "paintedSlots": 48,
+        "knownEmptySlots": 0,
+        "missing": []
+      }
+    ],
+    "wallReferenceVerified": null,
+    "financialHashes": [
+      "83d3a809f130cad93de79ce59a4045d21494b14aef28c669f50cfdf892456a1a"
+    ],
+    "routes": [
+      {
+        "run": 1,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 2,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 3,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 4,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 5,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      }
+    ]
+  },
+  {
+    "label": "stage112-future-space-final",
+    "case": "footprint-future-space-1h",
+    "build": [
+      "9a526dcbe5495405205b10da78c4328a6e3d6831"
+    ],
+    "gate": "PASS",
+    "firstHistory3sGate": null,
+    "assertionExitCode": 0,
+    "current": {
+      "samplesMs": [
+        4296.5,
+        3124.10000000149,
+        3765.800000000745,
+        3403.89999999851,
+        3262
+      ],
+      "medianMs": 3403.89999999851,
+      "maximumMs": 4296.5
+    },
+    "firstHistory": {
+      "samplesMs": [
+        4296.5,
+        3124.10000000149,
+        3765.7000000029802,
+        3403.800000000745,
+        3261.89999999851
+      ],
+      "medianMs": 3403.800000000745,
+      "maximumMs": 4296.5
+    },
+    "complete": {
+      "samplesMs": [
+        4296.5,
+        3124.89999999851,
+        3765.900000002235,
+        3404,
+        3262.300000000745
+      ],
+      "medianMs": 3404,
+      "maximumMs": 4296.5
+    },
+    "requested": {
+      "from": 1794366000000,
+      "to": 1794394800000
+    },
+    "coverage": [
+      {
+        "run": 1,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794394800000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794394800
+        },
+        "paintedClosedBars": 5,
+        "formingPainted": true,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 2,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794394800000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794394800
+        },
+        "paintedClosedBars": 5,
+        "formingPainted": true,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 3,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794394800000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794394800
+        },
+        "paintedClosedBars": 5,
+        "formingPainted": true,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 4,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794394800000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794394800
+        },
+        "paintedClosedBars": 5,
+        "formingPainted": true,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 5,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794394800000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794394800
+        },
+        "paintedClosedBars": 5,
+        "formingPainted": true,
+        "archive": {},
+        "exception": null
+      }
+    ],
+    "footprintCoverage": [
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794384000000,
+        "requestedSlots": 5,
+        "paintedSlots": 5,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794384000000,
+        "requestedSlots": 5,
+        "paintedSlots": 5,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794384000000,
+        "requestedSlots": 5,
+        "paintedSlots": 5,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794384000000,
+        "requestedSlots": 5,
+        "paintedSlots": 5,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794384000000,
+        "requestedSlots": 5,
+        "paintedSlots": 5,
+        "knownEmptySlots": 0,
+        "missing": []
+      }
+    ],
+    "wallReferenceVerified": null,
+    "financialHashes": [
+      "0c7ce5c47902f7c55ad0201a4e15c80de28437111a7755278046e16779336bfb",
+      "2f27e538f45ba040480cf518cb95bfe93f333a72ea81e2e8d0b9e132d21d7a6e",
+      "a3436fdd2d25dd05bbe21606892aa01c5ea213ce80978bf92d90d40be818ad19",
+      "a917be4e830a0e72266d48c6ed4838174eb81f283a6471d1b19d26f29a48b053",
+      "adc92fcf440cb7668ad4b3eeabeda1bc91006a2e5c89f03222c411edd91af1a7"
+    ],
+    "routes": [
+      {
+        "run": 1,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 2,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 3,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 4,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      },
+      {
+        "run": 5,
+        "discover": 0,
+        "horizon": 0,
+        "source": 0,
+        "projectionBatches": 0
+      }
+    ]
+  },
+  {
+    "label": "stage112-spot-footprint-regression",
+    "case": "footprint-spot-4h-5m",
+    "gate": "PASS",
+    "firstHistory3sGate": null,
+    "assertionExitCode": 0,
+    "complete": {
+      "samplesMs": [
+        3904.199999999255,
+        3666.5,
+        3223.7000000029802,
+        4119.60000000149,
+        3063
+      ],
+      "medianMs": 3666.5,
+      "maximumMs": 4119.60000000149
+    },
+    "coverage": [
+      {
+        "run": 1,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 48,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 2,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 48,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 3,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 48,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 4,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 48,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      },
+      {
+        "run": 5,
+        "requested": {
+          "from": 1794366000000,
+          "to": 1794380400000
+        },
+        "viewport": {
+          "from": 1794366000,
+          "to": 1794380400
+        },
+        "paintedClosedBars": 48,
+        "formingPainted": false,
+        "archive": {},
+        "exception": null
+      }
+    ],
+    "footprintCoverage": [
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794380400000,
+        "requestedSlots": 48,
+        "paintedSlots": 48,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794380400000,
+        "requestedSlots": 48,
+        "paintedSlots": 48,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794380400000,
+        "requestedSlots": 48,
+        "paintedSlots": 48,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794380400000,
+        "requestedSlots": 48,
+        "paintedSlots": 48,
+        "knownEmptySlots": 0,
+        "missing": []
+      },
+      {
+        "valid": true,
+        "from": 1794366000000,
+        "to": 1794380400000,
+        "requestedSlots": 48,
+        "paintedSlots": 48,
+        "knownEmptySlots": 0,
+        "missing": []
+      }
+    ],
+    "qualification": "Spot retained-source regression"
+  },
+  {
+    "label": "stage112-current-walls-final",
+    "case": "current-walls-15m",
+    "gate": "FAIL",
+    "firstHistory3sGate": null,
+    "assertionExitCode": 2,
+    "complete": {
+      "samplesMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null
+    },
+    "coverage": [
+      {
+        "run": 1,
+        "requested": {
+          "from": 1794384000000,
+          "to": 1794387600000
+        },
+        "viewport": {
+          "from": 1794382661.25,
+          "to": 1794387600
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "building",
+          "from": 1794383100000,
+          "to": 1794387322277,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": false,
+          "loadedThrough": 1794383100000
+        },
+        "exception": null
+      },
+      {
+        "run": 2,
+        "requested": {
+          "from": 1794384000000,
+          "to": 1794387600000
+        },
+        "viewport": {
+          "from": 1794382661.25,
+          "to": 1794387600
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "requestComplete": false,
+          "rangeComplete": false,
+          "from": 1794383100000,
+          "to": 1794387337260,
+          "exact": true
+        },
+        "exception": null
+      },
+      {
+        "run": 3,
+        "requested": {
+          "from": 1794384000000,
+          "to": 1794387600000
+        },
+        "viewport": {
+          "from": 1794382661.25,
+          "to": 1794387600
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "requestComplete": false,
+          "rangeComplete": false,
+          "from": 1794383100000,
+          "to": 1794387352302,
+          "exact": true
+        },
+        "exception": null
+      },
+      {
+        "run": 4,
+        "requested": {
+          "from": 1794384000000,
+          "to": 1794387600000
+        },
+        "viewport": {
+          "from": 1794382661.25,
+          "to": 1794387600
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "loading",
+          "from": 1794383100000,
+          "to": 1794387366611,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": false,
+          "loadedThrough": 1794383100000
+        },
+        "exception": null
+      },
+      {
+        "run": 5,
+        "requested": {
+          "from": 1794384000000,
+          "to": 1794387600000
+        },
+        "viewport": {
+          "from": 1794382661.25,
+          "to": 1794387600
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "requestComplete": false,
+          "rangeComplete": false,
+          "from": 1794383100000,
+          "to": 1794387382484,
+          "exact": true
+        },
+        "exception": null
+      }
+    ],
+    "footprintCoverage": null,
+    "qualification": "No selected current wall price in viewport; current paint gate UNVERIFIED"
+  },
+  {
+    "label": "stage112-transport-product",
+    "case": "walls-30h-perp-15m",
+    "gate": "SUPPLEMENTAL",
+    "firstHistory3sGate": "SUPPLEMENTAL",
+    "assertionExitCode": 2,
+    "complete": {
+      "samplesMs": [
+        null,
+        10444.5,
+        8600.60000000149,
+        10045.900000002235,
+        8893.699999999255
+      ],
+      "medianMs": null,
+      "maximumMs": null
+    },
+    "coverage": [
+      {
+        "run": 1,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "loading",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": false,
+          "loadedThrough": 1794276000000
+        },
+        "exception": null
+      },
+      {
+        "run": 2,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      },
+      {
+        "run": 3,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      },
+      {
+        "run": 4,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      },
+      {
+        "run": 5,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      }
+    ],
+    "footprintCoverage": null,
+    "qualification": "Controlled transport experiment; cannot certify a release gate"
+  },
+  {
+    "label": "stage112-transport-canonical",
+    "case": "walls-30h-perp-15m",
+    "gate": "SUPPLEMENTAL",
+    "firstHistory3sGate": "SUPPLEMENTAL",
+    "assertionExitCode": 2,
+    "complete": {
+      "samplesMs": [
+        8867.60000000149,
+        8009.10000000149,
+        8118.39999999851,
+        8748.70000000298,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null
+    },
+    "coverage": [
+      {
+        "run": 1,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      },
+      {
+        "run": 2,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      },
+      {
+        "run": 3,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      },
+      {
+        "run": 4,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      },
+      {
+        "run": 5,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      }
+    ],
+    "footprintCoverage": null,
+    "qualification": "Controlled transport experiment; cannot certify a release gate"
+  },
+  {
+    "label": "stage691-transport-product",
+    "case": "walls-30h-perp-15m",
+    "gate": "SUPPLEMENTAL",
+    "firstHistory3sGate": "SUPPLEMENTAL",
+    "assertionExitCode": 2,
+    "complete": {
+      "samplesMs": [
+        9766.89999999851,
+        9736.89999999851,
+        10441.39999999851,
+        10859.10000000149,
+        10217.60000000149
+      ],
+      "medianMs": 10217.60000000149,
+      "maximumMs": 10859.10000000149
+    },
+    "coverage": [
+      {
+        "run": 1,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      },
+      {
+        "run": 2,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      },
+      {
+        "run": 3,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      },
+      {
+        "run": 4,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      },
+      {
+        "run": 5,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      }
+    ],
+    "qualification": "Supplemental exact pinned-window experiment; all five complete, median/max still fail release thresholds; no speed improvement claimed"
+  }
+]

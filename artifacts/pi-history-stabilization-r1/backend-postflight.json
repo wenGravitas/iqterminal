@@ -1,0 +1,510 @@
+{
+  "kind": "stabilization-rc-postflight",
+  "candidate": "pi-history-stabilization-r1",
+  "build": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb",
+  "atUtcMs": 1794410495972,
+  "identities": [
+    {
+      "name": "iqterminal-wall-serving-rc-477b2f9-r1",
+      "id": "4fae18b4a7cd30a0984cb8d2c56f8953f13478fbeefe0c1d74397bcb34b5625b",
+      "running": true,
+      "startedAt": "2026-11-11T15:02:56.653443179Z",
+      "image": "sha256:3a67ff312a4924289717685b2c7aa53328e80f0dfd3af8e896bd347a3b848d43",
+      "restartCount": 0,
+      "oomKilled": false,
+      "flags": {
+        "IQ_BUILD_COMMIT": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb",
+        "IQ_WALL_PROJECTION_SOURCES": "0",
+        "IQ_WALL_ROLLING_DEFAULTS": "1",
+        "IQ_WALL_PREPARATION_CONTROL": "1",
+        "IQ_WALL_RESERVED_DERIVED_BYTES": "1153433600",
+        "IQ_WALL_QUEUE_FOLLOW": "1",
+        "WALL_DERIVED_GC": "1"
+      },
+      "memoryLimit": 402653184,
+      "nanoCpus": 500000000,
+      "readOnlyRootfs": true,
+      "network": "host"
+    },
+    {
+      "name": "iqterminal-wall-gateway-rc-477b2f9-r1",
+      "id": "f8a49cef3a2289b08d5bdc9e08d03e34a8251b5026794650a394a3f25090fbcf",
+      "running": true,
+      "startedAt": "2026-11-11T15:02:57.5400254Z",
+      "image": "sha256:3a67ff312a4924289717685b2c7aa53328e80f0dfd3af8e896bd347a3b848d43",
+      "restartCount": 0,
+      "oomKilled": false,
+      "flags": {
+        "IQ_BUILD_COMMIT": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb",
+        "IQ_WALL_PROJECTION_SOURCES": "0",
+        "WALL_PREPARATION_ENABLED": "1",
+        "WALL_PREPARATION_STATE": "/wall-preparation",
+        "WALL_DERIVED_GC": "1"
+      },
+      "memoryLimit": 536870912,
+      "nanoCpus": 1000000000,
+      "readOnlyRootfs": true,
+      "network": "host"
+    },
+    {
+      "name": "iqterminal-history-api",
+      "id": "8b087d255b7262ff5b1543475c8c26610758ca8b37f0f99af8b54f3e0848336d",
+      "running": true,
+      "startedAt": "2026-11-09T10:14:21.244270641Z",
+      "image": "sha256:3a67ff312a4924289717685b2c7aa53328e80f0dfd3af8e896bd347a3b848d43",
+      "restartCount": 0,
+      "oomKilled": false,
+      "flags": {
+        "IQ_BUILD_COMMIT": "dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51"
+      },
+      "memoryLimit": 536870912,
+      "nanoCpus": 1000000000,
+      "readOnlyRootfs": true,
+      "network": "host"
+    },
+    {
+      "name": "iqterminal-server",
+      "id": "65471260a0cf64311ed57f9b17f1e1daf6de26f073192e292cd07bfb1e193ece",
+      "running": true,
+      "startedAt": "2026-10-25T10:58:27.590796454Z",
+      "image": "sha256:326ebdb8f50e61f1f87a43134d8dca8803aa84ab5b824a50920e471d407c6f6a",
+      "restartCount": 0,
+      "oomKilled": false,
+      "flags": {},
+      "memoryLimit": 1073741824,
+      "nanoCpus": 1000000000,
+      "readOnlyRootfs": true,
+      "network": "host"
+    },
+    {
+      "name": "iqterminal-spot-server",
+      "id": "a4be8d3c68a52de305fd9e2eaa101f50b592b8b108aaf850ddfbc1b2f53428bb",
+      "running": true,
+      "startedAt": "2026-10-25T10:58:53.322433531Z",
+      "image": "sha256:474e135196dcb68166e3d7cf6573f35fc57aa285f3483663fc5a1918e501f819",
+      "restartCount": 0,
+      "oomKilled": false,
+      "flags": {},
+      "memoryLimit": 1073741824,
+      "nanoCpus": 1000000000,
+      "readOnlyRootfs": true,
+      "network": "host"
+    },
+    {
+      "name": "iqterminal-history-materializer",
+      "id": "d7f786d6c833ee776fc620b8f02209a1e1b1ed5fc3235968272631f3c4cc6a34",
+      "running": true,
+      "startedAt": "2026-11-06T16:53:52.644213859Z",
+      "image": "sha256:326af2b760862d84f03e50f1a55a5829d64630307c499e5cf1a4f939c55ec6ec",
+      "restartCount": 0,
+      "oomKilled": false,
+      "flags": {
+        "IQ_BUILD_COMMIT": "18579d938364e5fd5a9c7631bb19681a043f1b66"
+      },
+      "memoryLimit": 1073741824,
+      "nanoCpus": 1000000000,
+      "readOnlyRootfs": true,
+      "network": "host"
+    },
+    {
+      "name": "iqterminal-spot-history-materializer",
+      "id": "12489deea96a7d5918661f792e91bd819238696bc62b912308becbaa1bcb1763",
+      "running": true,
+      "startedAt": "2026-11-06T16:53:52.682114009Z",
+      "image": "sha256:326af2b760862d84f03e50f1a55a5829d64630307c499e5cf1a4f939c55ec6ec",
+      "restartCount": 0,
+      "oomKilled": false,
+      "flags": {
+        "IQ_BUILD_COMMIT": "18579d938364e5fd5a9c7631bb19681a043f1b66"
+      },
+      "memoryLimit": 1073741824,
+      "nanoCpus": 1000000000,
+      "readOnlyRootfs": true,
+      "network": "host"
+    },
+    {
+      "name": "iqterminal-footprint-materializer",
+      "id": "1df92fdc2ce05c4113df9ecd8cb99fbabcf101b3fa04447561116ba929d93698",
+      "running": true,
+      "startedAt": "2026-11-06T16:53:52.623715016Z",
+      "image": "sha256:326af2b760862d84f03e50f1a55a5829d64630307c499e5cf1a4f939c55ec6ec",
+      "restartCount": 0,
+      "oomKilled": false,
+      "flags": {
+        "IQ_BUILD_COMMIT": "18579d938364e5fd5a9c7631bb19681a043f1b66"
+      },
+      "memoryLimit": 402653184,
+      "nanoCpus": 500000000,
+      "readOnlyRootfs": true,
+      "network": "host"
+    },
+    {
+      "name": "iqterminal-spot-footprint-materializer",
+      "id": "8257c2c80dbcae7add967cb4571983e7639c8f96695e3d5d6302ec9b87ef6447",
+      "running": true,
+      "startedAt": "2026-11-06T16:53:52.693763579Z",
+      "image": "sha256:326af2b760862d84f03e50f1a55a5829d64630307c499e5cf1a4f939c55ec6ec",
+      "restartCount": 0,
+      "oomKilled": false,
+      "flags": {
+        "IQ_BUILD_COMMIT": "18579d938364e5fd5a9c7631bb19681a043f1b66"
+      },
+      "memoryLimit": 402653184,
+      "nanoCpus": 500000000,
+      "readOnlyRootfs": true,
+      "network": "host"
+    },
+    {
+      "name": "iqterminal-sql-admission",
+      "id": "625825aa977bcf8e18264ed69e3ed4ca1a9290c5c14416db797a8bf11999032b",
+      "running": true,
+      "startedAt": "2026-11-06T16:53:48.880958761Z",
+      "image": "sha256:326af2b760862d84f03e50f1a55a5829d64630307c499e5cf1a4f939c55ec6ec",
+      "restartCount": 0,
+      "oomKilled": false,
+      "flags": {
+        "IQ_BUILD_COMMIT": "18579d938364e5fd5a9c7631bb19681a043f1b66"
+      },
+      "memoryLimit": 134217728,
+      "nanoCpus": 250000000,
+      "readOnlyRootfs": true,
+      "network": "host"
+    }
+  ],
+  "protectedUnchanged": true,
+  "worker": {
+    "version": 1,
+    "turn": 40026,
+    "busy": false,
+    "counts": {
+      "building": 0,
+      "ready": 19,
+      "failed": 0,
+      "paused": 1
+    },
+    "limits": {
+      "pending": 32,
+      "tracked": 128,
+      "metadataBytes": 1048576
+    },
+    "capacityPaused": false,
+    "consumers": 0,
+    "readers": 0,
+    "pins": 0,
+    "cancelledPins": 0,
+    "consumerLimit": 128,
+    "leaseMs": 15000,
+    "build": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb"
+  },
+  "health": {
+    "gateway": {
+      "enabled": true,
+      "build": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb",
+      "metrics": {
+        "requests": 117,
+        "rejected": 0,
+        "bytes": 4405154,
+        "serializeMs": 71.53874300057942,
+        "legacyHeatmap": 0,
+        "legacyFootprint": 0,
+        "closedTileReads": 0,
+        "manifests": 0,
+        "orderWallPages": 3,
+        "peakRss": 142028800,
+        "active": 1,
+        "history": 0,
+        "reservedCurrent": 1,
+        "limit": 4,
+        "rss": 141766656
+      },
+      "wallProjectionEncoding": {
+        "active": 0,
+        "limit": 3,
+        "cacheEntries": 5,
+        "cacheBytes": 1877325
+      },
+      "materializer": {
+        "version": 1,
+        "head": {
+          "cursor": 25657393,
+          "at": 1794410489173,
+          "epoch": 1794400199400
+        },
+        "live": {
+          "cursor": 25657393,
+          "at": 1794410489173,
+          "from": 1794410400000,
+          "widths": [
+            10,
+            25,
+            50,
+            100,
+            250,
+            1000
+          ]
+        },
+        "archive": {
+          "pinned": {
+            "pages": 1,
+            "processed": 44,
+            "cursor": 25657350,
+            "lag": 0,
+            "caughtUp": true
+          },
+          "current": [
+            {
+              "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+              "lane": "pinned",
+              "pages": 1,
+              "processed": 44,
+              "cursor": 25657350,
+              "lag": 0,
+              "caughtUp": true
+            },
+            {
+              "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+              "lane": "pinned",
+              "pages": 1,
+              "processed": 44,
+              "cursor": 21736626,
+              "lag": 0,
+              "caughtUp": true
+            },
+            {
+              "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+              "lane": "custom",
+              "pages": 1,
+              "processed": 44,
+              "cursor": 25657350,
+              "lag": 0,
+              "caughtUp": true
+            }
+          ],
+          "custom": [
+            {
+              "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+              "state": "backfilling",
+              "progressCursor": 24726605,
+              "sourceHeadCursor": 25657350,
+              "lagCursors": 930745,
+              "currentCursor": 25657350,
+              "currentAt": 1794410484788,
+              "currentValid": true
+            }
+          ],
+          "customWork": {
+            "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+            "pages": 1,
+            "processed": 256,
+            "cursor": 24726605,
+            "lag": 930745,
+            "caughtUp": false
+          },
+          "customWorker": "perpetual-materializer"
+        },
+        "metrics": {
+          "startedAt": 1793984035129,
+          "lastPoll": 1794410490181,
+          "lastPersist": 1794410401507,
+          "records": 4179396,
+          "closedBuckets": 8532,
+          "liveLagMs": 0,
+          "derivedBytes": 1168558712,
+          "freeBytes": 188762144768,
+          "paused": false,
+          "error": "",
+          "pages": 180160,
+          "pageMs": 6562451.836809584,
+          "accumulateMs": 4433339.231222512,
+          "persistMs": 630948.8994395178,
+          "peakRss": 615284736,
+          "sourceHeadAgeMs": 6413,
+          "liveAgeMs": 6413,
+          "rss": 425611264
+        },
+        "backlog": []
+      },
+      "sqlAdmission": {
+        "enabled": false
+      }
+    },
+    "perpetual": {
+      "version": 1,
+      "market": "perpetual",
+      "instrument": "binance:perpetual:BTCUSDT",
+      "collector": {
+        "state": "live",
+        "message": "Durable WebSocket aggregate executions",
+        "lastUpdate": 1794410495331,
+        "retries": 0
+      },
+      "depth": {
+        "head": {
+          "cursor": 25657448,
+          "at": 1794410494682,
+          "epoch": 1794400199400
+        },
+        "status": {
+          "state": "live",
+          "message": "Durable standard diff-depth \u00b7 RPI excluded \u00b7 partial outer regions",
+          "epoch": 1794400199400,
+          "lastUpdate": 1794410495500,
+          "bidFloor": 73779.4,
+          "askCeiling": 74045.6,
+          "sequence": 12080108536347
+        },
+        "metrics": {
+          "events": 14522038,
+          "changes": 1735601277,
+          "wireBytes": 38819924577,
+          "storedPayloadBytes": 134470184815,
+          "overflows": 0,
+          "reconnects": 169,
+          "queue": 8,
+          "levels": 82275,
+          "startAt": 1792925907805
+        },
+        "retention": {
+          "lastRun": 1794409108447,
+          "error": null
+        }
+      },
+      "metrics": {
+        "transport": "websocket",
+        "queue": 2,
+        "overflows": 0,
+        "recoveries": 253,
+        "exchangeToReceiveMs": 138,
+        "receiveToDurableMs": 733,
+        "ingestionLagMs": 1006
+      },
+      "disk": {
+        "bytes": 6512225840,
+        "free": 188768407552,
+        "paused": false
+      },
+      "watermark": {
+        "id": 3516409839,
+        "timeMs": 1794410494584
+      },
+      "tickSize": 0.1,
+      "oi": {
+        "lastObservedAt": 1794410486600,
+        "error": null,
+        "stale": false
+      },
+      "netPositioning": {
+        "version": 1,
+        "pendingIntervals": 0,
+        "feeds": {
+          "binance": {
+            "state": "live",
+            "source": "binance:fapi/v1/openInterest",
+            "lastObservedAt": 1794410486600,
+            "lastError": null,
+            "epoch": 1794400201459,
+            "sourceTimeQuality": "exchange-event"
+          },
+          "hyperliquid": {
+            "state": "live",
+            "source": "hyperliquid:metaAndAssetCtxs",
+            "lastObservedAt": 1794410487575,
+            "lastError": null,
+            "epoch": 1794409406578,
+            "lastTradeAt": 1794410495101,
+            "overflows": 37,
+            "reconnects": 164,
+            "sourceTimeQuality": "collector-sampled"
+          }
+        },
+        "bufferedHyperliquidTrades": 960,
+        "bufferCapacity": 10000
+      }
+    },
+    "spot": {
+      "version": 1,
+      "market": "spot",
+      "instrument": "binance:spot:BTCUSDT",
+      "collector": {
+        "state": "live",
+        "message": "Durable WebSocket aggregate executions",
+        "lastUpdate": 1794410494735,
+        "retries": 0
+      },
+      "depth": {
+        "head": {
+          "cursor": 21736720,
+          "at": 1794410494551,
+          "epoch": 1794398817809
+        },
+        "status": {
+          "state": "live",
+          "message": "Durable Binance Spot diff-depth \u00b7 snapshot-bounded interior; outer levels partial",
+          "epoch": 1794398817809,
+          "lastUpdate": 1794410495551,
+          "bidFloor": 72733.23,
+          "askCeiling": 75047.84,
+          "sequence": 102637153357
+        },
+        "metrics": {
+          "events": 14782908,
+          "changes": 407928142,
+          "wireBytes": 14493268773,
+          "storedPayloadBytes": 208166909256,
+          "overflows": 0,
+          "reconnects": 199,
+          "queue": 10,
+          "levels": 189570,
+          "startAt": 1792925933460
+        },
+        "retention": {
+          "lastRun": 1794409134076,
+          "error": null
+        }
+      },
+      "metrics": {
+        "transport": "websocket",
+        "queue": 2,
+        "overflows": 0,
+        "recoveries": 87,
+        "exchangeToReceiveMs": 137,
+        "receiveToDurableMs": 717,
+        "ingestionLagMs": 1511
+      },
+      "disk": {
+        "bytes": 6514783477,
+        "free": 188765667328,
+        "paused": false
+      },
+      "watermark": {
+        "id": 4112333293,
+        "timeMs": 1794410494081
+      },
+      "tickSize": 0.01
+    }
+  },
+  "root": "/home/daz/iqterminal-wall-serving-v4-35d7947-r1",
+  "queueProtocol": 4,
+  "queueJobs": 20,
+  "pendingExperimentalJobs": [],
+  "rootBytes": {
+    "/home/daz/iqterminal-wall-serving-71f62d2-r1": 199468980,
+    "/home/daz/iqterminal-wall-serving-pre-v3-restored-r1": 196972029,
+    "/home/daz/iqterminal-wall-serving-pre-v3-snapshot-r1": 196972029,
+    "/home/daz/iqterminal-wall-serving-pre-v4-35d7947-restored-r1": 162262844,
+    "/home/daz/iqterminal-wall-serving-pre-v4-35d7947-snapshot-r1": 162262844,
+    "/home/daz/iqterminal-wall-serving-v3-33c7e3a-r1": 162514773,
+    "/home/daz/iqterminal-wall-serving-v4-35d7947-r1": 217760396
+  },
+  "allRetainedServingRootBytes": 1298213895,
+  "reservedBytes": 1153433600,
+  "activePlusReservedAndStepHeadroom": 1538966156,
+  "totalCapBytes": 2147483648,
+  "freeBytes": 188758437888,
+  "rollbackProtocol3RootUnchanged": true,
+  "snapshotAndRestoredCopiesUnchanged": true,
+  "workerNodeVersion": "v22.22.0",
+  "stats": "{\"BlockIO\":\"573kB / 595MB\",\"CPUPerc\":\"0.06%\",\"Container\":\"iqterminal-wall-serving-rc-477b2f9-r1\",\"ID\":\"4fae18b4a7cd\",\"MemPerc\":\"24.25%\",\"MemUsage\":\"93.12MiB / 384MiB\",\"Name\":\"iqterminal-wall-serving-rc-477b2f9-r1\",\"NetIO\":\"0B / 0B\",\"PIDs\":\"11\"}\n{\"BlockIO\":\"1.47MB / 0B\",\"CPUPerc\":\"0.02%\",\"Container\":\"iqterminal-wall-gateway-rc-477b2f9-r1\",\"ID\":\"f8a49cef3a22\",\"MemPerc\":\"17.12%\",\"MemUsage\":\"87.68MiB / 512MiB\",\"Name\":\"iqterminal-wall-gateway-rc-477b2f9-r1\",\"NetIO\":\"0B / 0B\",\"PIDs\":\"11\"}\n",
+  "load": "5.07 5.58 5.56 3/1991 2838284\n",
+  "scope": "Read-only postflight; current timeout remains an unresolved reliability observation, not cleared by health snapshots"
+}

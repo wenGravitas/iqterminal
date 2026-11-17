@@ -1,0 +1,41 @@
+{
+  "probes": 38,
+  "late4s": 20,
+  "deadlineFailures": [
+    "pi-route-r2-baseline-8-forward",
+    "pi-route-r2-baseline-9-forward",
+    "pi-route-r2-baseline-9-preview",
+    "pi-route-r2-baseline-11-forward",
+    "pi-route-r2-baseline-12-forward",
+    "pi-route-r2-baseline-12-preview",
+    "pi-route-r2-baseline-13-forward",
+    "pi-route-r2-baseline-13-preview",
+    "pi-route-r2-baseline-14-forward",
+    "pi-route-r2-baseline-15-forward",
+    "pi-route-r2-baseline-15-preview"
+  ],
+  "localSamples": 300,
+  "ssh": {
+    "132347": {
+      "majorFaultDelta": 0,
+      "schedWaitTotalMs": 3666.719243,
+      "maxSampleSchedWaitMs": 598.857311,
+      "cpuSeconds": 0.48,
+      "rssPagesMax": 1549
+    },
+    "132348": {
+      "majorFaultDelta": 0,
+      "schedWaitTotalMs": 24998.713695,
+      "maxSampleSchedWaitMs": 14131.269465,
+      "cpuSeconds": 0.04,
+      "rssPagesMax": 1454
+    },
+    "193359": {
+      "majorFaultDelta": 0,
+      "schedWaitTotalMs": 0.0,
+      "maxSampleSchedWaitMs": 0.0,
+      "cpuSeconds": 0.0,
+      "rssPagesMax": 1801
+    }
+  }
+}

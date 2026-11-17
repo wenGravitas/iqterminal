@@ -1,0 +1,12 @@
+{
+  "commit": "2b6ebedff4250ced4cbb265271404dcca2cc5852",
+  "exitCode": 0,
+  "outDir": "artifacts/configurable-history-capacity/dist",
+  "flags": {
+    "VITE_BUILD_COMMIT": "2b6ebedff4250ced4cbb265271404dcca2cc5852",
+    "VITE_DATA_MODE": "staging",
+    "VITE_HISTORY_TILES": "1",
+    "VITE_DIAGNOSTICS": "1",
+    "VITE_WALL_SELECTED_MAX_BYTES": "134217728"
+  }
+}

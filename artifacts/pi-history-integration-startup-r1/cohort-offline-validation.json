@@ -1,0 +1,12 @@
+{
+  "samples": 10,
+  "healthReads": 40,
+  "result": "pass",
+  "assertions": [
+    "all recorded starts reached confirmed live",
+    "all health reads HTTP200 within existing12s deadline",
+    "all confirmed ACK cursors advanced",
+    "no new execution disconnects/errors"
+  ],
+  "scope": "Offline assertions over preserved original cohort records; not another start cohort or a transport-fault resolution"
+}

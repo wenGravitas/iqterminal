@@ -1,0 +1,15 @@
+{
+  "clientBuild": "1ef788c439499b815fa2328e88b7712f9da9335d",
+  "scriptSha256": "275303156e2d17797bdca04b1835e6c9df80caf2c3a241300d024fe36819a4cf",
+  "samplesPerMarket": 5,
+  "markets": [
+    "spot5m",
+    "perpetual15m"
+  ],
+  "route": "http://127.0.0.1:4185",
+  "sourceReference": "scripts/pi-wall-reference.json",
+  "scope": "Headless actual Pi SSH/Vite route. Empty browser cache over prepared server, then same-worker reopen. Not normal foreground acceptance. Preserve every sample; no substitution. Fixed source and full requested30h.",
+  "cache": "two exact native entries/1000rows/1MiB; max128 active key/token leases;60s idle TTL; fresh validation independent",
+  "before": "../native-cache-validation-r2/staging-before-corrected-route.txt",
+  "order": "Alternating markets per pair; heavy checks completed before cohort. Existing two SSH transports, four aggregate historical sockets, current reserve unchanged."
+}

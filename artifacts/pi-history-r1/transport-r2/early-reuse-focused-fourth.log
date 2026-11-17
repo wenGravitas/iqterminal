@@ -1,0 +1,26 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-projection.test.ts (32 tests | 1 failed) 3316ms
+   × cached manifest reuse retains exact rows through failed source proof and a successful explicit Retry 158ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > cached manifest reuse retains exact rows through failed source proof and a successful explicit Retry
+TypeError: .toMatch() expects to receive a string, but got undefined
+ ❯ tests/prepared-wall-projection.test.ts:411:79
+    409|   await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')…
+    410|   expect([...displayedWalls(events,'warm').values()]).toEqual(before);
+    411|   expect(events.filter(e=>e.ids?.includes('warm')).at(-1).status.messa…
+       |                                                                               ^
+    412|   expect(recovered.calls.some(path=>path.endsWith('/projection-batch')…
+    413|  }finally{service.dispose();}
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 87 passed (88)
+   Start at  12:52:35
+   Duration  6.34s (tests 79%, transform 17%, import 3%)
+

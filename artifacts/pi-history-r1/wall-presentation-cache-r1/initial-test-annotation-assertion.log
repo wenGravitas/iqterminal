@@ -1,0 +1,54 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-projection.test.ts (12 tests | 1 failed) 989ms
+   × prepared warm revisits retain detached presentation without a second mutable projector or history clone 75ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > prepared warm revisits retain detached presentation without a second mutable projector or history clone
+AssertionError: expected [ …(2) ] to deeply equal [ …(2) ]
+
+- Expected
++ Received
+
+@@ -1,9 +1,10 @@
+  [
+    {
+      "archiveEntryId": "A",
+      "censoredReason": "Observed disconnect",
++     "currentSelection": false,
+      "detectionMode": "top-levels",
+      "durationMs": 2000,
+      "end": 1800000001000,
+      "endKnown": false,
+      "endReason": "censored",
+@@ -41,10 +42,11 @@
+      ],
+      "valueRunsTruncated": false,
+    },
+    {
+      "archiveEntryId": "B",
++     "currentSelection": false,
+      "detectionMode": "top-levels",
+      "durationMs": 107996000,
+      "end": null,
+      "endKnown": false,
+      "endReason": null,
+
+ ❯ tests/prepared-wall-projection.test.ts:170:73
+    168|   phase=1;service.subscribe('revisit',subscription);
+    169|   const cached=events.filter(event=>event.ids?.includes('revisit')&&ev…
+    170|   expect(cached.segments.sort((a:any,b:any)=>a.id.localeCompare(b.id))…
+       |                                                                         ^
+    171|   expect(cached.status.archive).toMatchObject({state:'loading',request…
+    172|   await vi.waitFor(()=>expect(validation.calls.at(-1)).toMatch(/\/sour…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 55 passed (56)
+   Start at  09:22:32
+   Duration  5.42s (tests 78%, transform 18%, import 3%)
+

@@ -1,0 +1,192 @@
+{
+  "buildPair": {
+    "client": "5a09b80039af79051c21310a48d9fe4715f4674e",
+    "backend": "63ce16c5383fb343d2b793a2c404a38f6901abdd"
+  },
+  "scope": "One genuine headless compiled-client cohort, normal settings/zoom/workspace controls; ready server parent, empty browser cache at navigation. No intercepted data responses. Reopen restores saved parent range, not last candle zoom.",
+  "samples": 173,
+  "phases": [
+    {
+      "phase": "parent",
+      "startObservedMs": 3736.8116639999994,
+      "firstPaintObservedMs": 11472.774622,
+      "completeObservedMs": 33289.609264,
+      "firstRequestedRange": [
+        1794541500000,
+        1794651300000
+      ],
+      "lastLoadedThrough": 1794651300000,
+      "retainedCounts": [
+        0,
+        16,
+        430,
+        1097,
+        1609,
+        2099,
+        3473,
+        6128,
+        8042,
+        9085,
+        11734,
+        14256,
+        15687,
+        18834,
+        26687,
+        28366,
+        30713,
+        32374,
+        35789,
+        39683,
+        42821,
+        45415,
+        46225
+      ]
+    },
+    {
+      "phase": "extension-1",
+      "startObservedMs": 34595.866928,
+      "firstPaintObservedMs": 37811.406205,
+      "completeObservedMs": 86710.444517,
+      "firstRequestedRange": [
+        1794541500000,
+        1794653100000
+      ],
+      "lastLoadedThrough": 1794653100000,
+      "retainedCounts": [
+        46225,
+        46309
+      ]
+    },
+    {
+      "phase": "extension-2",
+      "startObservedMs": 87337.899449,
+      "firstPaintObservedMs": 89443.507253,
+      "completeObservedMs": 146582.141473,
+      "firstRequestedRange": [
+        1794541500000,
+        1794654000000
+      ],
+      "lastLoadedThrough": 1794654000000,
+      "retainedCounts": [
+        46309,
+        46354
+      ]
+    },
+    {
+      "phase": "reopen",
+      "startObservedMs": 148202.808059,
+      "firstPaintObservedMs": 153361.139393,
+      "completeObservedMs": null,
+      "firstRequestedRange": [
+        1794541500000,
+        1794651300000
+      ],
+      "lastLoadedThrough": 1794541500000,
+      "retainedCounts": [
+        0,
+        16,
+        2099,
+        8042
+      ]
+    },
+    {
+      "phase": "reopen-validation",
+      "startObservedMs": 153387.758745,
+      "firstPaintObservedMs": 153387.758745,
+      "completeObservedMs": null,
+      "firstRequestedRange": [
+        1794541500000,
+        1794651300000
+      ],
+      "lastLoadedThrough": 1794651300000,
+      "retainedCounts": [
+        8042,
+        8450,
+        10533,
+        10922,
+        12654,
+        13600,
+        14781,
+        17352,
+        21699,
+        23267,
+        25337,
+        27669,
+        29646,
+        32374,
+        33588,
+        34200,
+        35789,
+        36902,
+        39190,
+        41387,
+        43133,
+        44413,
+        46225
+      ]
+    }
+  ],
+  "confirmedExecutionAcks": 252,
+  "firstConfirmed": 3525758947,
+  "lastConfirmed": 3525760922,
+  "longestConfirmationGapMs": 3304.60000000149,
+  "currentWallsFirstPaintUpperBoundMs": 5901.861178000001,
+  "currentWallsLastConfirmed": [
+    1794740783176,
+    1794740965246
+  ],
+  "currentWallsSamples": 168,
+  "closes": [
+    {
+      "seq": 23,
+      "event": "close",
+      "mono": 4556.400000002235,
+      "id": 1,
+      "code": 1008,
+      "reason": "Invalid command"
+    },
+    {
+      "seq": 45,
+      "event": "close",
+      "mono": 7358.900000002235,
+      "id": 3,
+      "code": 1008,
+      "reason": "Invalid command"
+    },
+    {
+      "seq": 1220,
+      "event": "close",
+      "mono": 146641.1000000015,
+      "id": 0,
+      "code": 1005,
+      "reason": ""
+    }
+  ],
+  "pageErrors": [],
+  "reopenFreshValidationUpperBoundMs": 38482.04238299999,
+  "reopenFreshValidationAtMs": 186684.850442,
+  "reopenFullyPaintedAtValidationSample": false,
+  "reopenRestoredSavedParent": true,
+  "warmPaintCacheAttribution": "Not independently established by captured cache counters; warm first paint is explicitly distinct from fresh validation.",
+  "extensions": [
+    {
+      "number": 1,
+      "controlStartMonoMs": 34215.715263000006,
+      "completedPaintMonoMs": 86710.444517,
+      "controlToCompletePaintMs": 52494.72925399999,
+      "oldValidatedThrough": 1794651300000,
+      "newValidatedThrough": 1794653100000,
+      "historyRetainedWhilePending": true
+    },
+    {
+      "number": 2,
+      "controlStartMonoMs": 86993.988642,
+      "completedPaintMonoMs": 146582.141473,
+      "controlToCompletePaintMs": 59588.152831,
+      "oldValidatedThrough": 1794653100000,
+      "newValidatedThrough": 1794654000000,
+      "historyRetainedWhilePending": true
+    }
+  ],
+  "reopenWarmFirstPaintMs": 5768.910577999981
+}

@@ -1,0 +1,11 @@
+{
+  "commit": "5a09b80039af79051c21310a48d9fe4715f4674e",
+  "exitCode": 0,
+  "outDir": "artifacts/archive-capacity-recovery-and-live-validation/dist-fixed",
+  "flags": {
+    "VITE_BUILD_COMMIT": "5a09b80039af79051c21310a48d9fe4715f4674e",
+    "VITE_DATA_MODE": "staging",
+    "VITE_HISTORY_TILES": "1",
+    "VITE_DIAGNOSTICS": "1"
+  }
+}

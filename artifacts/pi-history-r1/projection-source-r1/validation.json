@@ -1,0 +1,25 @@
+{
+  "frontendApplicationCommit": "7eb4a00b60daf344188eebc0659a8a82862113e8",
+  "backendApplicationCommit": "d33a878cb23bc50bb979153164397fdb8919985c",
+  "frontendEnvironment": {
+    "historyTaskYield": "user-visible-post-task",
+    "historyBackgroundYield": "background-post-task",
+    "dataMode": "staging",
+    "historyTiles": true,
+    "build": "7eb4a00b60daf344188eebc0659a8a82862113e8"
+  },
+  "sharedFinancialKernelSha256": "1a86cb47e20943c9c71f4614e267abe22ae507c84834cd184559ff97df041c73",
+  "frontendTests": {
+    "focusedPassed": 105,
+    "fullPassed": 1354,
+    "skipped": 2,
+    "browserPassed": 7
+  },
+  "backendTests": {
+    "fullPassed": 379
+  },
+  "scope": "Deterministic fixtures, source contract and actual compiled headless chart correctness. No live financial source or latency acceptance.",
+  "deployedBackend": false,
+  "producer": "Still canonical-backed; independent bounded tail construction/publication remains required.",
+  "releaseAcceptance": "Incomplete; existing cold-wall latency gate remains failed."
+}

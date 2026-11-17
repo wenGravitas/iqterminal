@@ -1,0 +1,323 @@
+{
+  "profileBuild": "87e46367e28bec68c4d310b8bb5e42f22b640767",
+  "loadingBuild": "de67453580c7c7cf1ecfa29405e288454fc55503",
+  "apiBuild": "dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51",
+  "scope": "One explicitly CPU-profiled diagnostic, then ten unprofiled exact-coverage real-chart observations; latency gates fail. No current/foreground/heap acceptance or causal sequential-cohort speedup. Protected services unchanged.",
+  "files": [
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-perp-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "a2e4bfbe6514c021510fd2ac636e43194f8798e4df3cf15f492ac1781a0478ff"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-perp-r1-executed.mjs",
+      "bytes": 22487,
+      "sha256": "61edb8d039cb0a47d75fabcadb5088d35208e4014d3a500d9b307c02b424532b"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-perp-r1-observations.jsonl",
+      "bytes": 249133,
+      "sha256": "adf3f787eccc430b59d8ab277a6d2898832557aa92c60f0e90df57d7e5b85d83"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-perp-r1-samples.jsonl",
+      "bytes": 324956,
+      "sha256": "d9b61add0ac83617548ef6f428d55ab76cd74156a454a476b1213b2d46ca3064"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-perp-r1-summary.json",
+      "bytes": 2726,
+      "sha256": "fd9fa11e9af522086d1884f3b13e78fb947e31b7d64478d9c079334d89e69a6f"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-perp-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-perp-r1-walls-30h-perp-15m-1.png",
+      "bytes": 127387,
+      "sha256": "18c796b86305c636164ba7b32c233868f6e738745183d5b59d4051914eec62b2"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-perp-r1-walls-30h-perp-15m-2.png",
+      "bytes": 127343,
+      "sha256": "579deb045561b0c29fdc36d6d43933fdf63ae1ef43aa3a7645489644786182a0"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-perp-r1-walls-30h-perp-15m-3.png",
+      "bytes": 127462,
+      "sha256": "e5431d0ca0f6adc10b649e498915dd51be04ad2111503d1c4af5c1ec79e88570"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-perp-r1-walls-30h-perp-15m-4.png",
+      "bytes": 127382,
+      "sha256": "e5dea80e764e28258b918c302ea8e9c3acd27e9d8041e9ba835fcda39cdaf616"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-perp-r1-walls-30h-perp-15m-5.png",
+      "bytes": 127371,
+      "sha256": "acab5d351bcbc49061ae1080d9c99124fa00e20e0856f32fb829e09defa1a545"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-spot-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "ff53099a6effad7b30db5a64bf41a372c5bee14a49164c5c22020084b6745056"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-spot-r1-executed.mjs",
+      "bytes": 22487,
+      "sha256": "61edb8d039cb0a47d75fabcadb5088d35208e4014d3a500d9b307c02b424532b"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-spot-r1-observations.jsonl",
+      "bytes": 232769,
+      "sha256": "ca5dcf337bdb9fdc071e7191fb2e2b3678cc409b405a7acef9c3fe0b24ce1c3e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-spot-r1-samples.jsonl",
+      "bytes": 308546,
+      "sha256": "c974925013be897151760bc8736c5ca641860bb70081a80e99a1634acd0061fc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-spot-r1-summary.json",
+      "bytes": 2675,
+      "sha256": "104013e5049833ba5ccd855d75fad2d1f1d872747fcbe5f3dd8293919f51a777"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-spot-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-spot-r1-walls-30h-spot-5m-1.png",
+      "bytes": 93829,
+      "sha256": "345875db3039d2ca5db354660e984c8ae9e4fc08bafbb2759b06ed5c3f5fd2e7"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-spot-r1-walls-30h-spot-5m-2.png",
+      "bytes": 93900,
+      "sha256": "6a5af71b021f440ab1acf2f8f7941de0a8a28dcb973d0a8ce530dcdef8367dd0"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-spot-r1-walls-30h-spot-5m-3.png",
+      "bytes": 93903,
+      "sha256": "3b87b433a89ff18cf5963201787500b86eaddf0a2b7ac57688d4b6bd8aa1b33e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-spot-r1-walls-30h-spot-5m-4.png",
+      "bytes": 93877,
+      "sha256": "e3322fd76bbec1ca43584c9745ebb936b841d21d96b00e42e59a6212f5a83119"
+    },
+    {
+      "path": "artifacts/pi-history-r1/priority-de674-dca-spot-r1-walls-30h-spot-5m-5.png",
+      "bytes": 93835,
+      "sha256": "012b8134f5716b796f86a71d02851b65d888175f6748b69d455b9b70b6b5afd9"
+    },
+    {
+      "path": "artifacts/pi-history-r1/profile87e-dca-perp-r1-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "1402c1f14fe77b2e72a7f5d41a8b5dba154836eb5dc2d92fbd7f8155be7b70ea"
+    },
+    {
+      "path": "artifacts/pi-history-r1/profile87e-dca-perp-r1-executed.mjs",
+      "bytes": 22411,
+      "sha256": "2d275ce4f973fd8fd075bf2020417de2f67416f58c60bf37dd3fecfe51b82f63"
+    },
+    {
+      "path": "artifacts/pi-history-r1/profile87e-dca-perp-r1-observations.jsonl",
+      "bytes": 54741,
+      "sha256": "ad33cc13accecb67a92c8556d65edb3f455f0b89b1246c5be14506835a84ddac"
+    },
+    {
+      "path": "artifacts/pi-history-r1/profile87e-dca-perp-r1-samples.jsonl",
+      "bytes": 70811,
+      "sha256": "0788f5da456455761d6de0e3567540f798d31c2d1d3dcc38b036c6be6161e0d4"
+    },
+    {
+      "path": "artifacts/pi-history-r1/profile87e-dca-perp-r1-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/profile87e-dca-perp-r1-walls-30h-perp-15m-1-workers.json",
+      "bytes": 148610,
+      "sha256": "e25d2a32b6490c026388deda8937a8c53774479102a45c82fc9f95b139511bbf"
+    },
+    {
+      "path": "artifacts/pi-history-r1/profile87e-dca-perp-r1-walls-30h-perp-15m-1.cpuprofile",
+      "bytes": 377978,
+      "sha256": "2bbf342837c7860077f2e2d8a741d41611c61c8e1c9a9ca0c77b9ab17dce66f7"
+    },
+    {
+      "path": "artifacts/pi-history-r1/profile87e-dca-perp-r1-walls-30h-perp-15m-1.png",
+      "bytes": 127343,
+      "sha256": "4fc293f9d64ac86db641454d9b1b7f58fa85c9cad76a0519193aa2ddd4a04e82"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/client-build.txt",
+      "bytes": 1314,
+      "sha256": "38f2780714009891425e7aadda8fbd445ee3fa6449c843f99f7156d325a6d02e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/client-receipt.json",
+      "bytes": 944,
+      "sha256": "3d3c0085c61711523e908e5795953533874b109b073f421d8e720ef8f6015059"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/current-readiness.json",
+      "bytes": 1651,
+      "sha256": "c1ca03a61eb505d3048168c4888656582e9c37dd7aa6b0f6b8d4e29d5b7b0d29"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/focused-tests.txt",
+      "bytes": 462,
+      "sha256": "cf345967d7c0bc92d7cde2843828b3fa9d42a08ce2c2f427f261116420de5ea1"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/gate-trace-tests.txt",
+      "bytes": 3458,
+      "sha256": "56ea25776bc7660fec452ef6fb962b48be2ff1a47f1677a10b6b4803538ea833"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/hardware-model.json",
+      "bytes": 113,
+      "sha256": "e470579d2d185e5b11f32ca80f57d5b650bf6022a91b2a2df63cb73066d4ba2e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/i3-after.json",
+      "bytes": 148,
+      "sha256": "2a8e4ccb680e9bae058d0b2b6241c92a9a5d915c594ac52be22654aa342c07d4"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/perp-console.txt",
+      "bytes": 38796,
+      "sha256": "93c56297306d64bc61140de2215dfe303ff35ec151bd7fe10c1f8f1653437c66"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/phase-evidence.json",
+      "bytes": 372135,
+      "sha256": "a86230857da6430fab68fb5480510058147332fca04a0fc5df5ffe89dc0a1f1c"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/postcheck.txt",
+      "bytes": 3558,
+      "sha256": "42ae07fd699c9662c5cd9ead49d8d75ca40f6954eb5201ac29c3f27a89dcc773"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/precheck.txt",
+      "bytes": 3530,
+      "sha256": "2e537538dbc87bc9b17e41bcc72814e920bf00d33deedcc3a644c21e3ffa04cf"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/protected-check.json",
+      "bytes": 1115,
+      "sha256": "b97bb57ecae0779042914d21aacc6a5a44bb1fc9626030b2d17ec83df1ff7c59"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/resource-window-summary.json",
+      "bytes": 456,
+      "sha256": "a7714c6a368196f27ad2bd25049283f8ed17a6d499122a1624715bb777a1a109"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/server-perp-resources.jsonl",
+      "bytes": 168619,
+      "sha256": "2fe23076c6df4ea596bbdba5368706cbdac33d0ca8bf14839760aa567045bf6b"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/server-spot-resources.jsonl",
+      "bytes": 116792,
+      "sha256": "553cbbceed425c95b7aeda23be303ac051ddc3757472f0463e0e57cba0996613"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/spot-console.txt",
+      "bytes": 37699,
+      "sha256": "a4218c35ac356fc77a1597a951076193052aac44aa1a506c11bdc30553245069"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/spot-observer-stop.txt",
+      "bytes": 26,
+      "sha256": "c689450e65bfc361f9be002307e15a96036f3611d14e2ca59edbce1fd5ae158f"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/staging-warm-regressions.txt",
+      "bytes": 459,
+      "sha256": "a9078a0bdd75298324e9dfab3fd9521aadcb08fa1a9f24e441f194a2f9c81367"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/test-browser-i3-setup.mjs",
+      "bytes": 759,
+      "sha256": "501b7f5c0c908be76a95ea45cac4e97f6cc43afc30b396ed8928978f59cfb3f9"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/test-browser-launch.mjs",
+      "bytes": 503,
+      "sha256": "f324ff7ce845f7e5900ef52b8c283c3644a54ab6008ea4d22f234ece3045affb"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/typecheck.txt",
+      "bytes": 90,
+      "sha256": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/wall-loading-gate.mjs",
+      "bytes": 7251,
+      "sha256": "9309489987e878f61c1622040c84b645d2f031d3b3f364e34af85e359b02ef54"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/wall-loading-gate.test.mjs",
+      "bytes": 5646,
+      "sha256": "d52846d21a8eb12edd10ac1a8fecf8d262b2c1422e8c5b5a2394626d36ba6f91"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-worker-profile-r1/console.txt",
+      "bytes": 7749,
+      "sha256": "454f0a4014cd6a47f9a619a5891d058364a7012479d865b8f5d48d4f6a7d5a1d"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-worker-profile-r1/current-readiness.json",
+      "bytes": 1612,
+      "sha256": "1b89d9189c9215ca7bc560ea9aa93815ca1c1cb975e23abe5c2f2b063432a686"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-worker-profile-r1/pi-history-bench.mjs",
+      "bytes": 22411,
+      "sha256": "2d275ce4f973fd8fd075bf2020417de2f67416f58c60bf37dd3fecfe51b82f63"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-worker-profile-r1/precheck.json",
+      "bytes": 2609,
+      "sha256": "e3262807805ec75403db9c0083e293f8d656896749072dd538dc20f3180af280"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-worker-profile-r1/profile-browser-workers.mjs",
+      "bytes": 2573,
+      "sha256": "41b8110d314aa3c68d2a13be3e9c7f1c6862182d1cc02590ca33859b78f720f7"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-worker-profile-r1/summary.json",
+      "bytes": 5197,
+      "sha256": "6941677e7a63cde3854f21ff29405f05b230f72869ee2134f16a991702027e58"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-worker-profile-r1/worker-BDrBSiaT.js",
+      "bytes": 521571,
+      "sha256": "bfb6a096537e1c9e9448c8ae90b080c0030055a55c7b117667457357e2079281"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-worker-profile-r1/worker-BKSmN_Bs.js",
+      "bytes": 319806,
+      "sha256": "a4a6ce6a89338368aae66ca167f53ee803f95d70c7d89c555eaae9c5aa2f9b6e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-worker-profile-r1/worker-DaWyXJKB.js",
+      "bytes": 362171,
+      "sha256": "fe771eaf11363d6e8085639c9d4cd9172c5a0475016d73c3f595aeb2667f56b9"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/local-process-check.json",
+      "bytes": 2151,
+      "sha256": "c441492c34206912a2ecc0d4060819c2ee7d73c8cf3ee115ef136098782e17c3"
+    }
+  ]
+}

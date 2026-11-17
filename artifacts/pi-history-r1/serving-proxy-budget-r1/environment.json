@@ -1,0 +1,21 @@
+{
+  "clientBuild": "638caabff4d4a441c3706898dc8602274a4d41d6",
+  "controlBuild": "bf1d8425525306848cd9bc741c647fc3f1ba5054",
+  "stagingApiBuild": "95114d0cb236e9de54fb535d58b901d5ac4a2d79",
+  "workerBuild": "18579d938364e5fd5a9c7631bb19681a043f1b66",
+  "scope": "Proxy contract checks and headless native-history fixture regressions; no new five-sample loading gate or foreground acceptance. Previous e69/951Spot pilot retained separately.",
+  "proxy": {
+    "total": 4,
+    "historical": 3,
+    "nativeMaximum": 2,
+    "bulkMaximum": 2,
+    "currentAgentMaximum": 4,
+    "waitingHistorical": 128,
+    "waitingCurrent": 16,
+    "streamRoutes": "unchanged; bypass HTTP admission"
+  },
+  "routes": {
+    "candidate": "http://127.0.0.1:4185",
+    "control": "http://127.0.0.1:4186"
+  }
+}

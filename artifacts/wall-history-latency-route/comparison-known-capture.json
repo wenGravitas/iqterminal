@@ -1,0 +1,40 @@
+[
+  {
+    "role": "gateway",
+    "id": "3c93a481b2b72bc7dbe17bdb91992bd5cfdc9d4f04a1ff823a1c7c6e50c55ae2",
+    "build": "480d6dc8c181c5ff948f4af97854d2a670ba733f",
+    "trace": "1",
+    "returncode": 0,
+    "running": true,
+    "startedAt": "2026-11-16T14:32:16.838345283Z",
+    "logConfig": {
+      "Type": "json-file",
+      "Config": {
+        "max-file": "2",
+        "max-size": "10m"
+      }
+    },
+    "traceRecords": 12,
+    "maxDropped": 0,
+    "atTraceLimit": false
+  },
+  {
+    "role": "worker",
+    "id": "4270b92a78437ef04d7cfa91a33e4afbea318ebb388ac64dc3cfd6ea42415636",
+    "build": "480d6dc8c181c5ff948f4af97854d2a670ba733f",
+    "trace": "1",
+    "returncode": 0,
+    "running": true,
+    "startedAt": "2026-11-16T14:07:40.818117722Z",
+    "logConfig": {
+      "Type": "json-file",
+      "Config": {
+        "max-file": "2",
+        "max-size": "10m"
+      }
+    },
+    "traceRecords": 0,
+    "maxDropped": 0,
+    "atTraceLimit": false
+  }
+]

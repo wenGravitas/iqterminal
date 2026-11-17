@@ -1,0 +1,34 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-history.test.ts (42 tests | 2 failed) 2761ms
+   × service Retry clears query build failure with stable command metadata 143ms
+   × service Retry clears source-changed build failure with stable command metadata 121ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-history.test.ts > service Retry clears query build failure with stable command metadata
+ FAIL  tests/prepared-wall-history.test.ts > service Retry clears source-changed build failure with stable command metadata
+AssertionError: expected 2 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ tests/prepared-wall-history.test.ts:89:146
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  2 failed | 71 passed (73)
+   Start at  10:44:11
+   Duration  6.13s (tests 61%, transform 34%, import 5%)
+
+  Transform  transforming modules took 3.86s · 34% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+

@@ -1,0 +1,33 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-projection.test.ts (12 tests | 1 failed) 891ms
+   × prepared warm revisits retain detached presentation without a second mutable projector or history clone 126ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > prepared warm revisits retain detached presentation without a second mutable projector or history clone
+AssertionError: expected [ …(2) ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ tests/prepared-wall-projection.test.ts:173:89
+    171|   expect(cached.status.archive).toMatchObject({state:'loading',request…
+    172|   await vi.waitFor(()=>expect(validation.calls.at(-1)).toMatch(/\/sour…
+    173|   expect(events.filter(event=>event.ids?.includes('revisit')&&event.ki…
+       |                                                                                         ^
+    174|   release();await vi.waitFor(()=>expect(events.at(-1)?.status.archive.…
+    175|   expect(clone).not.toHaveBeenCalled();service.unsubscribe('revisit');…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 55 passed (56)
+   Start at  09:23:13
+   Duration  5.72s (tests 80%, transform 17%, import 3%)
+

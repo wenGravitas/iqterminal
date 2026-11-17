@@ -1,0 +1,10 @@
+{
+  "task": "rolling-history-reuse-r4",
+  "measurementStoppedUtc": "2026-11-13T09:11:13.564461+00:00",
+  "publicationStartedUtc": "2026-11-13T09:16:09.302298+00:00",
+  "scope": "Experiment budget not renewed. Headless browser closed; helpers complete; remaining work is evidence, commits and publication. Idle owned preview and split tunnels retained for manual check.",
+  "observedClient": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+  "observedGatewayAndWorker": "f1fb0d696312a6019f9194edba61a2dc225bc6c3",
+  "outcome": "MEASURED IMPROVEMENT",
+  "releaseRecommendation": "BLOCKED"
+}

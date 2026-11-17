@@ -1,0 +1,1 @@
+{"pid": 1233865, "args": ["/home/daz/.nvm/versions/node/v22.23.4/bin/node", "--input-type=module", "-", "native-restore-e2fa-r1", "300"], "action": "SIGTERM"}

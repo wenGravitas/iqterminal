@@ -1,0 +1,32 @@
+{
+  "clientBuild": "e2fa254b818f7129b9b63ade93325d1ad0ea1cdd",
+  "servingBuild": "dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51",
+  "servedMainSha256": "17446563d7095ee2b26d6e00b3b1d690fee3a704b575fba9ef1c3796cb65dc09",
+  "preview": {
+    "pid": 365614,
+    "cwd": "/home/daz/workarea/iqterminal-perf-history",
+    "args": [
+      "node",
+      "./node_modules/.bin/../.pnpm/vite@8.3.4_@types+node@26.6.4/node_modules/vite/bin/vite.js",
+      "preview",
+      "--mode",
+      "staging",
+      "--outDir",
+      "/tmp/iqterminal-native-restore-dist",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "4189",
+      "--strictPort"
+    ]
+  },
+  "serverResourceStart": {
+    "kind": "start",
+    "pid": 1233865,
+    "label": "native-restore-e2fa-r1",
+    "seconds": 300,
+    "at": "2026-11-09T15:28:15.059Z",
+    "scope": "Read-only serving observer started before client cohort. Actual process boundaries determine coverage; no cross-host phase subtraction or current execution-confirmation claim."
+  },
+  "receiptNote": "Initial inventory matched both pnpm wrapper and Vite child and failed its single-process assertion. Verified actual Vite child explicitly while the original cohort continued; no benchmark restart."
+}

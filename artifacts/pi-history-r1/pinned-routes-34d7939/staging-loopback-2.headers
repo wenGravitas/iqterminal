@@ -1,0 +1,17 @@
+HTTP/1.1 200 OK
+x-iq-request-id: 483aa3f0-9bd9-4188-bc9e-b31b13c31968
+X-IQ-View-Id: staging-loopback-2
+content-type: application/json
+cache-control: no-store
+content-length: 81146
+x-iq-db-queries: 6
+x-iq-db-read-rows: 1532978
+x-iq-db-read-bytes: 63392752
+x-iq-decoded-bytes: 1974445
+server-timing: db;dur=739.03, sqlqueue;dur=574.32, dbdecode;dur=57.63, materializer;dur=821.38, legacy;dur=877.84
+content-encoding: gzip
+vary: Accept-Encoding
+date: Thu, 05 Nov 2026 12:54:42 GMT
+connection: keep-alive
+keep-alive: timeout=5
+

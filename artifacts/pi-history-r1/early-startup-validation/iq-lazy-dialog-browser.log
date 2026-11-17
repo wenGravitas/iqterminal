@@ -1,0 +1,35 @@
+
+Running 1 test using 1 worker
+
+(node:319258) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/lazy-settings.spec.ts:4:1 › optional settings construct on first open and keep current data/status (17.0s)
+
+
+  1) tests/browser/lazy-settings.spec.ts:4:1 › optional settings construct on first open and keep current data/status 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.candle-panel').first().locator('dialog.tpo-settings').getByRole('status')
+    Expected substring: "5,000 / 130,382 elapsed 1-minute candles observed · 125,382 minute(s) missing; naked levels across those gaps remain unknown"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" locator('.candle-panel').first().locator('dialog.tpo-settings').getByRole('status') with timeout 5000ms
+      - waiting for locator('.candle-panel').first().locator('dialog.tpo-settings').getByRole('status')
+
+
+      15 |  const status=await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].tpoStatus.message);
+      16 |  const tpoButton=panel.getByRole('button',{name:'UTC TPO Profile settings',exact:true});
+    > 17 |  await tpoButton.click();await expect(tpo).toBeVisible();await expect(tpo.getByRole('status')).toContainText(status);
+         |                                                                                                ^
+      18 |  await tpo.getByRole('button',{name:'Close',exact:true}).click();
+      19 |  await tpoButton.click();await expect(tpo).toHaveCount(1);await expect(tpo).toBeVisible();
+      20 |  await tpo.getByRole('button',{name:'Close',exact:true}).click();
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/lazy-settings.spec.ts:17:96
+
+    Error Context: test-results/lazy-settings-optional-set-75731-nd-keep-current-data-status/error-context.md
+
+  1 failed
+    tests/browser/lazy-settings.spec.ts:4:1 › optional settings construct on first open and keep current data/status 

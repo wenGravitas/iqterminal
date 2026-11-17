@@ -1,0 +1,53 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/order-walls-chart.test.ts (21 tests | 2 failed) 455ms
+   × does not rescan closed wall strength when a current value changes (visible=false) 65ms
+   × does not rescan closed wall strength when a current value changes (visible=true) 22ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/order-walls-chart.test.ts > does not rescan closed wall strength when a current value changes (visible=false)
+AssertionError: expected 100 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 100
+
+ ❯ tests/order-walls-chart.test.ts:380:25
+    378|  primitive.patch([{id:current.id,segment:{...current,peakUsd:400,meanU…
+    379|  primitive.draw(canvas(),context());
+    380|  expect(closedRunReads).toBe(0);expect(closedLineReads).toBe(paintRead…
+       |                         ^
+    381|  expect((primitive as any).reference).toEqual({min:1,max:400});
+    382| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/order-walls-chart.test.ts > does not rescan closed wall strength when a current value changes (visible=true)
+AssertionError: expected 300 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 300
+
+ ❯ tests/order-walls-chart.test.ts:380:57
+    378|  primitive.patch([{id:current.id,segment:{...current,peakUsd:400,meanU…
+    379|  primitive.draw(canvas(),context());
+    380|  expect(closedRunReads).toBe(0);expect(closedLineReads).toBe(paintRead…
+       |                                                         ^
+    381|  expect((primitive as any).reference).toEqual({min:1,max:400});
+    382| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 19 passed (21)
+   Start at  13:36:18
+   Duration  1.99s (transform 48%, tests 29%, worker 12%, import 11%)
+

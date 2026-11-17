@@ -1,0 +1,144 @@
+[
+  {
+    "kind": "exact-projection-prefix-extension",
+    "market": "spot",
+    "from": 1794097200000,
+    "to": 1794206100000,
+    "baseTo": 1794205800000,
+    "baseSourceKey": "84b9d7e2cd75fb507f061a3718859b499e0b99cfaf48f7922d317d3d0c87b283",
+    "baseProjectionKey": "3da59c8e0b2b7ea48ec03521f9afb22ac4e6908e095310dca31ad291e39fcbbf",
+    "sourceKey": "94fe99033a39cf071924fc3174082befc14efc952a8b53119486c2e50aac89cd",
+    "projectionKey": "6a342f60f92c38d1354e8d777f21bcb452c2c2a3181371f046bbfa23f5f9b296",
+    "sourceToken": "bbd120a0de2b8505db93190b21981208619c5aaa7212dc504d848485cb0d963b",
+    "baseWatermark": 20045540,
+    "targetWatermark": 20045540,
+    "baseEpoch": 1794239089384,
+    "targetEpoch": 1794239089384,
+    "canonicalPages": 17,
+    "reusedPrefixPages": 16,
+    "financialHash": "305aae26fa636c35dc3483436c8686a4bb7ae3d2043b3aa5f5584d57df220079",
+    "selectedHash": "2171997de3dd4ff45ca6932cfc969adbd3a8bde4d7d8802bedb6549f576771ba",
+    "segments": 3202,
+    "valueRuns": 24556,
+    "coverage": {
+      "availableFrom": 1793521565645,
+      "requestedFrom": 1794097200000,
+      "requestedTo": 1794206100000,
+      "confirmedTo": 1794206100000,
+      "gaps": [
+        {
+          "cursor": 18753165,
+          "epoch": 1794058509223,
+          "at": 1794112010851,
+          "reason": "Shared disk watermark"
+        },
+        {
+          "cursor": 19228189,
+          "epoch": 1794112042493,
+          "at": 1794159681152,
+          "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+        },
+        {
+          "cursor": 19379648,
+          "epoch": 1794159682961,
+          "at": 1794174883949,
+          "reason": "Observed book capacity: epoch invalidated"
+        },
+        {
+          "cursor": 19384515,
+          "epoch": 1794174885753,
+          "at": 1794175373442,
+          "reason": "Observed book capacity: epoch invalidated"
+        },
+        {
+          "cursor": 19425673,
+          "epoch": 1794175375577,
+          "at": 1794179481442,
+          "reason": "Observed book capacity: epoch invalidated"
+        },
+        {
+          "cursor": 19451023,
+          "epoch": 1794179483104,
+          "at": 1794182010954,
+          "reason": "Observed book capacity: epoch invalidated"
+        },
+        {
+          "cursor": 19492652,
+          "epoch": 1794182013063,
+          "at": 1794186164248,
+          "reason": "Observed book capacity: epoch invalidated"
+        },
+        {
+          "cursor": 19546455,
+          "epoch": 1794186166116,
+          "at": 1794191532448,
+          "reason": "Observed book capacity: epoch invalidated"
+        },
+        {
+          "cursor": 19638026,
+          "epoch": 1794191534598,
+          "at": 1794200696134,
+          "reason": "Observed book capacity: epoch invalidated"
+        }
+      ],
+      "gapsTruncated": false,
+      "partial": true,
+      "status": "partial",
+      "reason": "Depth continuity gaps are present in the requested range",
+      "bookScope": null,
+      "midpoint": null
+    },
+    "scope": "One actual default same-start/end-extended window per market. Canonical input matches independent DB pages; prefix output matches full fresh fold byte/identity/value/queue and selected state. No live cursor seeding, browser latency or five-run acceptance."
+  },
+  {
+    "attempt": 2,
+    "build": "2ff39ccadf90605bd18a8e17d4e5da146b17a57c",
+    "kind": "exact-projection-prefix-extension",
+    "market": "perpetual",
+    "from": 1794096000000,
+    "to": 1794206700000,
+    "baseTo": 1794205800000,
+    "baseSourceKey": "5a1dd18374ca394934a93c6fa6ba7eea320374b3914a6bf0da822b320d0297c6",
+    "baseProjectionKey": "7d749bbf8d0446a7dc01b7d74dd19e02dc5eaf6dace17fa34cec3f15aaec8842",
+    "sourceKey": "8027856c04d1b75a1eeda1109854286f683583226dc7d5f2a4a7ba27456dbcbb",
+    "projectionKey": "2ed53c8d5df6e7b22023b28472e117545927cee07e04a488c6c82656bac32f08",
+    "sourceToken": "5514364fc33bf4a8c53cc3412347f7d5d2de0151a3b90e7645758346d4e690f4",
+    "baseWatermark": 23994946,
+    "targetWatermark": 23999159,
+    "baseEpoch": 1794212514141,
+    "targetEpoch": 1794212514141,
+    "canonicalPages": 40,
+    "reusedPrefixPages": 38,
+    "financialHash": "fc1f49efb7a4b351295f6a451be705fbeaf4e2e4f5cba3ee5494be3921ad7ed0",
+    "selectedHash": "1d151bb20239c16792a0d1a13e32db81d08e0da81846bdef097c3ea493cd62b6",
+    "segments": 8380,
+    "valueRuns": 65865,
+    "coverage": {
+      "availableFrom": 1793506604584,
+      "requestedFrom": 1794096000000,
+      "requestedTo": 1794206700000,
+      "confirmedTo": 1794206700000,
+      "gaps": [
+        {
+          "cursor": 23034368,
+          "epoch": 1794074271599,
+          "at": 1794143691132,
+          "reason": "Shared disk watermark"
+        },
+        {
+          "cursor": 23454802,
+          "epoch": 1794143722831,
+          "at": 1794186475153,
+          "reason": "Observed book capacity: epoch invalidated"
+        }
+      ],
+      "gapsTruncated": false,
+      "partial": true,
+      "status": "partial",
+      "reason": "Depth continuity gaps are present in the requested range",
+      "bookScope": null,
+      "midpoint": null
+    },
+    "scope": "One actual default same-start/end-extended window per market. Canonical input matches independent DB pages; prefix output matches full fresh fold byte/identity/value/queue and selected state. No live cursor seeding, browser latency or five-run acceptance."
+  }
+]

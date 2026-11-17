@@ -1,0 +1,150 @@
+
+Running 25 tests using 1 worker
+
+(node:51277) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/footprint-history-lifecycle.spec.ts:8:1 › saved candle wall history starts before native candles and restores without an offscreen current bootstrap (2.0s)
+  ✓   2 tests/browser/footprint-history-lifecycle.spec.ts:26:58 › prepared footprint history paints while the authoritative live bootstrap is delayed (27.4s)
+  ✓   3 tests/browser/footprint-history-lifecycle.spec.ts:26:58 › prepared candle-totals history paints while the authoritative live bootstrap is delayed (23.0s)
+  ✘   4 tests/browser/footprint-history-lifecycle.spec.ts:61:1 › a late native candle snapshot cannot move a restored 24h footprint range (9.1s)
+(node:53674) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   5 tests/browser/footprint-history-lifecycle.spec.ts:83:34 › a delayed current bootstrap cannot expand a restored past footprint range (2.5s)
+  ✘   6 tests/browser/footprint-history-lifecycle.spec.ts:83:34 › a delayed current bootstrap retains five closed bars and future whitespace (6.9s)
+(node:54477) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   7 tests/browser/footprint-history-lifecycle.spec.ts:105:1 › candle-chart Footprint Totals follows the visible range instead of a saved footprint-only range (6.7s)
+  ✘   8 tests/browser/footprint-history-lifecycle.spec.ts:123:1 › failed live Totals exposes scoped Retry while healthy native candles and closed history remain (22.0s)
+(node:55626) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   9 tests/browser/footprint-history-lifecycle.spec.ts:142:35 › native candles paint before 3-bar history and history Retry preserves live state (2.5s)
+(node:56114) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  10 tests/browser/footprint-history-lifecycle.spec.ts:142:35 › native candles paint before 1000-bar history and history Retry preserves live state (8.0s)
+(node:57135) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 tests/browser/footprint-history-lifecycle.spec.ts:199:1 › saved footprint reads start before the delayed UI bundle and hand off one worker (8.7s)
+  ✓  12 tests/browser/lazy-settings.spec.ts:4:1 › optional settings construct on first open and keep current data/status (35.0s)
+  ✓  13 tests/browser/native-candle-history.spec.ts:12:1 › native30hpricecontext paints before bootstrap and retains current volume and newer historical reads (8.0s)
+  ✓  14 tests/browser/native-candle-history.spec.ts:41:1 › nativepricepan preserves the requested past and current bars within the5000barbudget (11.6s)
+{"kind":"realistic-synthetic-depth-not-live","theme":"dark","market":"binance-spot","timeframe":"5m","episodes":20,"active":16,"diagnostics":{"draws":4,"rebuilds":4,"patchProjects":80,"segments":20,"visible":480,"visibleHistorical":0,"visibleCurrent":0,"bytes":81440,"renderMs":48.20000000111759,"maxRenderMs":23.700000000186265,"strokes":7,"lastProjectMs":1.400000000372529,"lastReferenceMs":0.20000000018626451,"lastPaintMs":3.2999999998137355,"referenceRebuilds":4,"referenceSegments":16,"referenceValueScans":480,"paintCacheHits":0,"paintCacheBuilds":4,"paintStyleVisits":4800,"inputRevision":7,"paintedRevision":6,"pendingProjectionSegments":0,"retainedPaintPaths":7,"retainedSegments":20,"openSegments":16,"retainedReferenceSegments":16,"referenceExtentValues":32,"pendingReferenceSegments":0,"referenceMinimum":951651.261933837,"referenceMaximum":12416356.767302478,"retainedDrawables":480,"p95RenderMs":13.299999999813735,"mounted":true,"archiveSegments":0,"directSegments":20,"valueRuns":1940,"archiveValueRuns":0,"directValueRuns":1940,"valueHistoryLimited":false,"episodeHistoryLimited":false}}
+  ✓  15 tests/browser/order-wall-top-levels.spec.ts:4:37 › Top Levels Spot 5m has stable episodes, clear styles and persistent controls (dark) (48.0s)
+{"kind":"realistic-synthetic-depth-not-live","theme":"light","market":"binance-spot","timeframe":"5m","episodes":20,"active":16,"diagnostics":{"draws":2,"rebuilds":2,"patchProjects":40,"segments":20,"visible":1920,"visibleHistorical":0,"visibleCurrent":0,"bytes":81440,"renderMs":37.10000000055879,"maxRenderMs":22.200000000186265,"strokes":7,"lastProjectMs":5.5,"lastReferenceMs":1.3999999994412065,"lastPaintMs":7.800000000745058,"referenceRebuilds":2,"referenceSegments":20,"referenceValueScans":1920,"paintCacheHits":0,"paintCacheBuilds":2,"paintStyleVisits":3840,"inputRevision":5,"paintedRevision":5,"pendingProjectionSegments":0,"retainedPaintPaths":7,"retainedSegments":20,"openSegments":16,"retainedReferenceSegments":20,"referenceExtentValues":40,"pendingReferenceSegments":0,"referenceMinimum":951651.261933837,"referenceMaximum":12417359.409805223,"retainedDrawables":1920,"p95RenderMs":14.900000000372529,"mounted":true,"archiveSegments":0,"directSegments":20,"valueRuns":1940,"archiveValueRuns":0,"directValueRuns":1940,"valueHistoryLimited":false,"episodeHistoryLimited":false}}
+  ✓  16 tests/browser/order-wall-top-levels.spec.ts:4:37 › Top Levels Spot 5m has stable episodes, clear styles and persistent controls (light) (30.2s)
+  ✓  17 tests/browser/order-walls-ui.spec.ts:8:1 › Order Walls settings persist and remain a single viewport consumer alongside Heatmap (44.7s)
+  ✓  18 tests/browser/order-walls-ui.spec.ts:105:48 › Order Walls exposes scoped history retry with a resume cursor (24.9s)
+  ✓  19 tests/browser/order-walls-ui.spec.ts:105:48 › Order Walls exposes scoped history retry with a superseded revision (26.0s)
+  ✓  20 tests/browser/order-walls-ui.spec.ts:147:1 › Order Walls releases its current/history consumer while a Dockview panel is hidden and on destroy (23.0s)
+  ✓  21 tests/browser/order-walls-ui.spec.ts:183:1 › wall tooltip uses the historical hit value and labels unknown bounds (9.0s)
+  ✓  22 tests/browser/order-walls-ui.spec.ts:220:1 › Fit Walls changes only the primary vertical scale and keeps it manual through the next candle update (20.9s)
+  ✓  23 tests/browser/order-walls-ui.spec.ts:289:1 › Order Walls distinguishes pending replay from an empty finished history (20.0s)
+  ✓  24 tests/browser/order-walls-ui.spec.ts:309:1 › wall value patches preserve every point without rebuilding pane and indicator controls (16.1s)
+  ✓  25 tests/browser/pane-visibility-lifecycle.spec.ts:17:1 › combined positioning and native indicator panes restore without orphan panes (1.4m)
+
+
+  1) tests/browser/footprint-history-lifecycle.spec.ts:61:1 › a late native candle snapshot cannot move a restored 24h footprint range 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 24
+    Received: 0
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      73 |   return json({version:1,cursor:0,watches:[],events:[]});
+      74 |  });
+    > 75 |  await page.goto('/');await expect.poll(()=>page.evaluate(()=>{const p=(window as any).__terminal?.panels.get('chart-delayed-native');return p?.engine.footprintPaintDiagnostics()?.times.length??0;})).toBe(24);
+         |                                                                                                                                                                                                         ^
+      76 |  const view=()=>page.evaluate(()=>{const p=(window as any).__terminal.panels.get('chart-delayed-native');return p.engine.visibleTimeRange();});
+      77 |  expect(await view()).toEqual({from:from/1000,to:end/1000});releaseNative();
+      78 |  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.panels.get('chart-delayed-native').candles.length)).toBe(1000);
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/footprint-history-lifecycle.spec.ts:75:201
+
+    Error Context: test-results/footprint-history-lifecycl-5bb54-estored-24h-footprint-range/error-context.md
+
+  2) tests/browser/footprint-history-lifecycle.spec.ts:83:34 › a delayed current bootstrap retains five closed bars and future whitespace 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 5
+    Received: 0
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      94 |  });
+      95 |  await page.goto('/');
+    > 96 |  await expect.poll(()=>page.evaluate(()=>{const p=(window as any).__terminal?.panels.get('chart-delayed-current');return p?.engine.footprintPaintDiagnostics()?.times.length??0;})).toBe(future?5:24);
+         |                                                                                                                                                                                     ^
+      97 |  const view=()=>page.evaluate(()=>(window as any).__terminal.panels.get('chart-delayed-current').engine.visibleTimeRange());
+      98 |  expect(await view()).toEqual({from:from/1000,to:to/1000});releaseCurrent();
+      99 |  await expect.poll(()=>page.evaluate(current=>(window as any).__terminal.panels.get('chart-delayed-current').footprintBars.some((bar:any)=>bar.time===current/1000),current)).toBe(true);
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/footprint-history-lifecycle.spec.ts:96:181
+
+    Error Context: test-results/footprint-history-lifecycl-438d3--bars-and-future-whitespace/error-context.md
+
+  3) tests/browser/footprint-history-lifecycle.spec.ts:123:1 › failed live Totals exposes scoped Retry while healthy native candles and closed history remain 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "live"
+    Received: "failed"
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      135 |  await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].status.state)).toBe('live');
+      136 |  const before=nativeRequests;await expect(panel.getByRole('button',{name:'Retry market data',exact:true})).toBeVisible();await panel.getByRole('button',{name:'Retry market data',exact:true}).click();
+    > 137 |  await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].footprintStatus.state)).toBe('live');
+          |                                                                                                                     ^
+      138 |  expect(retries).toBe(1);expect(nativeRequests).toBe(before);await expect(panel.getByRole('button',{name:'Retry market data',exact:true})).toHaveCount(0);
+      139 |  expect(await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].footprintBars.length)).toBeGreaterThan(2);
+      140 | });
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/footprint-history-lifecycle.spec.ts:137:117
+
+    Error Context: test-results/footprint-history-lifecycl-adae2-s-and-closed-history-remain/error-context.md
+
+  4) tests/browser/footprint-history-lifecycle.spec.ts:142:35 › native candles paint before 3-bar history and history Retry preserves live state 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 2
+    Received: 3
+
+      192 |  await expect.poll(async()=>{const state=await read();return state?.status.nativeHistory?.state==='ready'&&state.barCount===(historyBars===1000?5000:3);}).toBe(true);
+      193 |  if(historyBars===1000){expect((await read())?.view).toEqual(retainedView);expect((await read())?.candles[0].c).toBe(80040);expect((await read())?.candles[4000].c).toBe(80010);expect((await read())?.bulk).toMatchObject({snapshots:1,multiBarPatches:0});}
+    > 194 |  expect((await read())?.candles.at(-1)?.c).toBe(80060);expect(socketCount).toBe(1);expect(historyRequests).toBe(2);
+          |                                                                                                            ^
+      195 |  await expect(page.getByText(/Candle history incomplete/)).toHaveCount(0);
+      196 |  await page.screenshot({path:`artifacts/pi-history-r1/native-history-recovered-live-retained-${historyBars}.png`});
+      197 | });
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/footprint-history-lifecycle.spec.ts:194:108
+
+    Error Context: test-results/footprint-history-lifecycl-fa028--Retry-preserves-live-state/error-context.md
+
+  5) tests/browser/footprint-history-lifecycle.spec.ts:142:35 › native candles paint before 1000-bar history and history Retry preserves live state 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 2
+    Received: 3
+
+      192 |  await expect.poll(async()=>{const state=await read();return state?.status.nativeHistory?.state==='ready'&&state.barCount===(historyBars===1000?5000:3);}).toBe(true);
+      193 |  if(historyBars===1000){expect((await read())?.view).toEqual(retainedView);expect((await read())?.candles[0].c).toBe(80040);expect((await read())?.candles[4000].c).toBe(80010);expect((await read())?.bulk).toMatchObject({snapshots:1,multiBarPatches:0});}
+    > 194 |  expect((await read())?.candles.at(-1)?.c).toBe(80060);expect(socketCount).toBe(1);expect(historyRequests).toBe(2);
+          |                                                                                                            ^
+      195 |  await expect(page.getByText(/Candle history incomplete/)).toHaveCount(0);
+      196 |  await page.screenshot({path:`artifacts/pi-history-r1/native-history-recovered-live-retained-${historyBars}.png`});
+      197 | });
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/footprint-history-lifecycle.spec.ts:194:108
+
+    Error Context: test-results/footprint-history-lifecycl-0fdb7--Retry-preserves-live-state/error-context.md
+
+  5 failed
+    tests/browser/footprint-history-lifecycle.spec.ts:61:1 › a late native candle snapshot cannot move a restored 24h footprint range 
+    tests/browser/footprint-history-lifecycle.spec.ts:83:34 › a delayed current bootstrap retains five closed bars and future whitespace 
+    tests/browser/footprint-history-lifecycle.spec.ts:123:1 › failed live Totals exposes scoped Retry while healthy native candles and closed history remain 
+    tests/browser/footprint-history-lifecycle.spec.ts:142:35 › native candles paint before 3-bar history and history Retry preserves live state 
+    tests/browser/footprint-history-lifecycle.spec.ts:142:35 › native candles paint before 1000-bar history and history Retry preserves live state 
+  20 passed (9.1m)

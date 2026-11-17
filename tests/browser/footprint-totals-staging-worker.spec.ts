@@ -81,7 +81,7 @@ async function installWorkerStagingFixture(context: BrowserContext) {
       await fulfillJson(route, { source: 'binance-native-kline', candles });
       return;
     }
-    if (url.pathname === '/market-data/v1/footprints') {
+    if (url.pathname === '/market-data/v1/footprints' || url.pathname === '/market-data/v2/history/footprint-current') {
       const interval = url.searchParams.get('interval') ?? '5m', step = intervalMs(interval);
       let now = Date.now(), start = Math.floor(now / step) * step;
       const boundaryDelay = start + 2500 - now;

@@ -1,0 +1,344 @@
+[
+  {
+    "file": "final-known-gateway.log",
+    "trace": [
+      {
+        "kind": "startup-gateway",
+        "id": "latency-final-known-proof",
+        "event": "arrival",
+        "ms": 0.02075900000636466,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.138495,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-final-known-proof",
+        "event": "admitted",
+        "ms": 0.3356610000191722,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.138495,
+        "dropped": 0,
+        "managed": true,
+        "operationId": "500b8974-d444-446e-9c9d-97f66eb726d9"
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-final-known-proof",
+        "event": "health-dependencies-start",
+        "ms": 0.6209960000123829,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.138495,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-final-known-proof",
+        "event": "health-dependencies-end",
+        "ms": 7.350533999997424,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.138495,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-final-known-proof",
+        "event": "response-finish",
+        "ms": 8.912715000013122,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.138495,
+        "dropped": 0,
+        "status": 200
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-final-known-proof",
+        "event": "response-close",
+        "ms": 9.016479000012623,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.138495,
+        "dropped": 0,
+        "finished": true,
+        "status": 200
+      }
+    ]
+  },
+  {
+    "file": "preview-final.log",
+    "trace": [
+      {
+        "kind": "startup-proxy",
+        "id": "latency-final-known-proof",
+        "event": "arrival",
+        "ms": 0.373663000005763,
+        "path": "/market-data/v2/history/health",
+        "counts": {
+          "active": 0,
+          "historicalActive": 0,
+          "currentActive": 0,
+          "nativeActive": 0,
+          "bulkActive": 0,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 88.539135,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-final-known-proof",
+        "event": "admitted",
+        "ms": 0.8359699999855366,
+        "path": "/market-data/v2/history/health",
+        "counts": {
+          "active": 1,
+          "historicalActive": 0,
+          "currentActive": 1,
+          "nativeActive": 0,
+          "bulkActive": 0,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 88.539135,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-final-known-proof",
+        "event": "proxy-start",
+        "ms": 1.2950539999874309,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "historicalActive": 0,
+          "currentActive": 1,
+          "nativeActive": 0,
+          "bulkActive": 0,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 88.539135,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-final-known-proof",
+        "event": "upstream-request",
+        "ms": 12.11710299999686,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "historicalActive": 0,
+          "currentActive": 1,
+          "nativeActive": 0,
+          "bulkActive": 0,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 88.539135,
+        "dropped": 0,
+        "reusedSocket": false
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-final-known-proof",
+        "event": "socket-assigned",
+        "ms": 12.391104999987874,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "historicalActive": 0,
+          "currentActive": 1,
+          "nativeActive": 0,
+          "bulkActive": 0,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 88.539135,
+        "dropped": 0,
+        "connecting": true,
+        "reusedSocket": false
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-final-known-proof",
+        "event": "socket-connected",
+        "ms": 19.39343500000541,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "historicalActive": 0,
+          "currentActive": 1,
+          "nativeActive": 0,
+          "bulkActive": 0,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 88.539135,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-final-known-proof",
+        "event": "upstream-request-finish",
+        "ms": 21.081853999989107,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "historicalActive": 0,
+          "currentActive": 1,
+          "nativeActive": 0,
+          "bulkActive": 0,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 88.539135,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-final-known-proof",
+        "event": "upstream-headers",
+        "ms": 903.7100379999902,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "historicalActive": 0,
+          "currentActive": 1,
+          "nativeActive": 0,
+          "bulkActive": 0,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 88.539135,
+        "dropped": 0,
+        "status": 200,
+        "queueMs": 12.01,
+        "headerMs": 891.48
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-final-known-proof",
+        "event": "upstream-response-end",
+        "ms": 904.9762599999958,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "historicalActive": 0,
+          "currentActive": 1,
+          "nativeActive": 0,
+          "bulkActive": 0,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 88.539135,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-final-known-proof",
+        "event": "upstream-close",
+        "ms": 910.7814929999877,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "historicalActive": 0,
+          "currentActive": 1,
+          "nativeActive": 0,
+          "bulkActive": 0,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 88.539135,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-final-known-proof",
+        "event": "response-finish",
+        "ms": 911.811155000003,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "historicalActive": 0,
+          "currentActive": 1,
+          "nativeActive": 0,
+          "bulkActive": 0,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 88.539135,
+        "dropped": 0,
+        "status": 200
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-final-known-proof",
+        "event": "response-close",
+        "ms": 912.7456550000061,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 0,
+          "historicalActive": 0,
+          "currentActive": 0,
+          "nativeActive": 0,
+          "bulkActive": 0,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 88.539135,
+        "dropped": 0,
+        "finished": true,
+        "status": 200
+      }
+    ]
+  }
+]

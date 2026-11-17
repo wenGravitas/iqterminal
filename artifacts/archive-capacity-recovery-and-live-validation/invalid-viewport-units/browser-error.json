@@ -1,0 +1,25 @@
+{
+  "error": "Error: page.waitForTimeout: Target page, context or browser has been closed",
+  "captures": [],
+  "requests": [
+    {
+      "at": 1844.497153,
+      "path": "/market-data/v2/history/walls/discover",
+      "from": 1792800000,
+      "to": 1796400000,
+      "consumer": "636c35b6-99e0-4391-a72d-aa10d21b30f7"
+    },
+    {
+      "at": 3808.299989,
+      "path": "/market-data/v2/history/walls/discover",
+      "from": 1792800000,
+      "to": 1796400000,
+      "consumer": "636c35b6-99e0-4391-a72d-aa10d21b30f7"
+    }
+  ],
+  "errors": [],
+  "consumers": [
+    "636c35b6-99e0-4391-a72d-aa10d21b30f7"
+  ],
+  "elapsedMs": 46919.567180000005
+}

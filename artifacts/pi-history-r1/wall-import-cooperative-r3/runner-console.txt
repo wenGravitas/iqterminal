@@ -1,0 +1,2 @@
+{"market":"spot","exactCheckpointAndQueue":true,"samples":10}
+{"market":"perpetual","exactCheckpointAndQueue":true,"samples":10}

@@ -1,0 +1,18 @@
+
+Running 11 tests using 1 worker
+
+(node:227040) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/footprint-history-lifecycle.spec.ts:25:1 › saved candle wall history starts before native candles and restores without an offscreen current bootstrap (2.6s)
+  ✓   2 tests/browser/footprint-history-lifecycle.spec.ts:43:58 › prepared footprint history paints while the authoritative live bootstrap is delayed (3.8s)
+  ✓   3 tests/browser/footprint-history-lifecycle.spec.ts:43:58 › prepared candle-totals history paints while the authoritative live bootstrap is delayed (3.5s)
+  ✓   4 tests/browser/footprint-history-lifecycle.spec.ts:78:1 › a late native candle snapshot cannot move a restored 24h footprint range (2.6s)
+  ✓   5 tests/browser/footprint-history-lifecycle.spec.ts:100:34 › a delayed current bootstrap cannot expand a restored past footprint range (2.9s)
+  ✓   6 tests/browser/footprint-history-lifecycle.spec.ts:100:34 › a delayed current bootstrap retains five closed bars and future whitespace (2.4s)
+  ✓   7 tests/browser/footprint-history-lifecycle.spec.ts:122:1 › candle-chart Footprint Totals follows the visible range instead of a saved footprint-only range (2.9s)
+  ✓   8 tests/browser/footprint-history-lifecycle.spec.ts:140:1 › failed live Totals exposes scoped Retry while healthy native candles and closed history remain (3.7s)
+  ✓   9 tests/browser/footprint-history-lifecycle.spec.ts:159:35 › native candles paint before 3-bar history and history Retry preserves live state (3.4s)
+  ✓  10 tests/browser/footprint-history-lifecycle.spec.ts:159:35 › native candles paint before 1000-bar history and history Retry preserves live state (9.8s)
+  ✓  11 tests/browser/footprint-history-lifecycle.spec.ts:216:1 › saved footprint reads start before the delayed UI bundle and hand off one worker (2.9s)
+
+  11 passed (42.6s)

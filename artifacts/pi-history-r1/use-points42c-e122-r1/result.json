@@ -1,0 +1,37 @@
+{
+  "build": "42c69a6e6d83a76f95daefafb9f2be5e8e440cff",
+  "phase": "cycle-1",
+  "error": "TimeoutError: page.waitForFunction: Timeout 30000ms exceeded.",
+  "failures": [
+    {
+      "phase": "seeding",
+      "url": "http://127.0.0.1:4185/market-data/v2/history/walls/discover?market=spot&profile=binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1&from=1793696100000&to=1793804700000",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "seed-spot",
+      "url": "http://127.0.0.1:4185/market-data/v2/history/walls/discover?market=spot&profile=binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1&from=1793696100000&to=1793804700000",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "seed-perpetual",
+      "url": "http://127.0.0.1:4185/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1793695500000&to=1793805300000",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "seed-perpetual",
+      "url": "http://127.0.0.1:4185/market-data/v1/native-candles?interval=15m&from=1793696400000",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "seed-perpetual",
+      "url": "http://127.0.0.1:4185/market-data/v1/level-watches",
+      "error": "net::ERR_ABORTED"
+    }
+  ],
+  "pageErrors": [],
+  "activeRequestsAtCleanup": 0,
+  "activeRequestUrls": [],
+  "independentGlobalRequestUrls": [],
+  "scope": "No plateau claim without all exact-coverage cycles and inspection of retained heap/queue trend."
+}

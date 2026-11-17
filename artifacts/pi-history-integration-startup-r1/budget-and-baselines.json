@@ -1,0 +1,17 @@
+{
+  "startUtc": "2026-11-12T05:54:25Z",
+  "checkpointUtc": "2026-11-12T07:39:25Z",
+  "deadlineUtc": "2026-11-12T07:54:25Z",
+  "budgetSeconds": 7200,
+  "cohortLimit": {
+    "diagnostic": 1,
+    "postFix": 1
+  },
+  "actualFrontendRC": "72f74cab783351865f7bcaf8d76da67eb380b40f",
+  "actualFrontendMain": "d2b519e3b5714ae4955647e80a8190c10f2511d9",
+  "comparisonControl": "bf1d8425525306848cd9bc741c647fc3f1ba5054",
+  "fetchPolicy": "One fetch per repository completed; upstream refs frozen for this goal",
+  "mergeCommit": "94ede84aee923870c18eaa97bfa10f7c8e495398",
+  "diagnosticClient": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+  "diagnosticCohortPolicy": "one start, stop on first failed sample; five fresh starts per scenario; saved histories present at concurrent startup; final concurrent observation120s"
+}

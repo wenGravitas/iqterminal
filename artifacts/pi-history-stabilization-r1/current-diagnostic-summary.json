@@ -1,0 +1,134 @@
+{
+  "scope": "One focused diagnostic pair after a startup timeout; not five-run acceptance or a causal resolution of the first failure",
+  "rows": [
+    {
+      "scenario": "current-only",
+      "error": null,
+      "complete": true,
+      "proof": {
+        "pass": true,
+        "failures": [],
+        "catchingUpStatuses": 0,
+        "appliedBatches": 28,
+        "appliedExecutions": 209,
+        "confirmedAckBatches": 28,
+        "fromCursor": 3516404535,
+        "toCursor": 3516404744,
+        "confirmedThrough": 3516404742,
+        "sourceCursorJumps": 0,
+        "maxWorkerApplyMs": 5.600000001490116,
+        "maxWorkerLifetimeReceiptGapMs": 1853.9000000059605
+      },
+      "bootstrapMs": 2029.7999999970198,
+      "updates": 27,
+      "maxReceiveGapMs": 1853.9000000059605,
+      "healthFailures": [],
+      "customBefore": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "backfilling",
+          "progressCursor": 24713293,
+          "sourceHeadCursor": 25654416,
+          "lagCursors": 941123,
+          "currentCursor": 25654416,
+          "currentAt": 1794410186420,
+          "currentValid": true
+        }
+      ],
+      "customAfter": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "backfilling",
+          "progressCursor": 24714317,
+          "sourceHeadCursor": 25654656,
+          "lagCursors": 940339,
+          "currentCursor": 25654656,
+          "currentAt": 1794410210797,
+          "currentValid": true
+        }
+      ],
+      "coverage": null,
+      "released": [
+        {
+          "key": "binance:perpetual:BTCUSDT:5m",
+          "connected": true
+        }
+      ]
+    },
+    {
+      "scenario": "concurrent-history",
+      "error": null,
+      "complete": true,
+      "proof": {
+        "pass": true,
+        "failures": [],
+        "catchingUpStatuses": 0,
+        "appliedBatches": 30,
+        "appliedExecutions": 161,
+        "confirmedAckBatches": 30,
+        "fromCursor": 3516404916,
+        "toCursor": 3516405077,
+        "confirmedThrough": 3516405076,
+        "sourceCursorJumps": 0,
+        "maxWorkerApplyMs": 2.9000000059604645,
+        "maxWorkerLifetimeReceiptGapMs": 2103.3000000044703
+      },
+      "bootstrapMs": 1497.6000000014901,
+      "updates": 30,
+      "maxReceiveGapMs": 2102.60000000149,
+      "healthFailures": [],
+      "customBefore": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "backfilling",
+          "progressCursor": 24714573,
+          "sourceHeadCursor": 25654699,
+          "lagCursors": 940126,
+          "currentCursor": 25654699,
+          "currentAt": 1794410215184,
+          "currentValid": true
+        }
+      ],
+      "customAfter": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "backfilling",
+          "progressCursor": 24715597,
+          "sourceHeadCursor": 25654957,
+          "lagCursors": 939360,
+          "currentCursor": 25654957,
+          "currentAt": 1794410241405,
+          "currentValid": true
+        }
+      ],
+      "coverage": [
+        {
+          "id": "chart-history-five",
+          "expectedSlots": 48,
+          "paintedSlots": 48,
+          "allPaintedSlots": 48,
+          "outsideRequestedTimes": [],
+          "validatedSlots": 48,
+          "exact": true
+        },
+        {
+          "id": "chart-history-hour",
+          "expectedSlots": 24,
+          "paintedSlots": 24,
+          "allPaintedSlots": 25,
+          "outsideRequestedTimes": [
+            1794409200
+          ],
+          "validatedSlots": 24,
+          "exact": true
+        }
+      ],
+      "released": [
+        {
+          "key": "binance:perpetual:BTCUSDT:5m",
+          "connected": true
+        }
+      ]
+    }
+  ]
+}

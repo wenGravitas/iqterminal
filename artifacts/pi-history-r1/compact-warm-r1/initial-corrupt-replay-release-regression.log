@@ -1,0 +1,38 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-projection.test.ts (17 tests | 1 failed) 2741ms
+   × a corrupt compact cache falls back to the good fresh prefix and recovers without resetting its job 1170ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > a corrupt compact cache falls back to the good fresh prefix and recovers without resetting its job
+AssertionError: expected { warmAdmissions: 1, …(41) } to match object { warmCompactEntries: 1, …(2) }
+(55 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "warmBuilds": 0,
+    "warmCompactEntries": 1,
+-   "warmReplayConsumers": 0,
++   "warmReplayConsumers": 1,
+  }
+
+ ❯ tests/prepared-wall-projection.test.ts:261:54
+    259|   expect(events.filter(e=>e.ids?.includes('retry')).at(-1).status.arch…
+    260|   release();await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includ…
+    261|   await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({wa…
+       |                                                      ^
+    262|  }finally{release();service.dispose();}
+    263| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 64 passed (65)
+   Start at  10:03:01
+   Duration  5.09s (tests 80%, transform 17%, import 2%)
+

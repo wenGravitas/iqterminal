@@ -1,0 +1,10 @@
+{
+  "task": "fresh-current-walls-and-incremental-client-delivery",
+  "startUtc": "2026-11-15T11:56:06Z",
+  "experimentCutoffUtc": "2026-11-15T13:36:06Z",
+  "deadlineUtc": "2026-11-15T13:56:06Z",
+  "frontendBaseline": "da971d972e52bd52cda447cf85058169a6983680",
+  "backendBaseline": "cd0017fe2828b7a522ed66ca1386bdb2c3f1aa17",
+  "experimentsEndedUtc": "2026-11-15T12:54:57Z",
+  "outcome": "Measured delivery improvement; fresh-current canonical 128-part capacity blocker"
+}

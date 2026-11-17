@@ -1,0 +1,1813 @@
+[
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "arrival",
+    "ms": 0.0032370000262744725,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "admitted",
+    "ms": 0.05367900000419468,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "managed": true,
+    "operationId": "4ea6a4f1-0359-4e85-9fac-e00ab4bca045"
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "downstream-dispatch",
+    "ms": 0.09296899999026209,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "targetPort": 18788,
+    "pathOverride": "/current"
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "downstream-socket",
+    "ms": 0.35578400001395494,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "targetPort": 18788,
+    "connecting": true,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "downstream-connected",
+    "ms": 0.5840740000130609,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "targetPort": 18788
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "downstream-request-finish",
+    "ms": 0.6308539999881759,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "downstream-headers",
+    "ms": 1.7028019999852404,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "targetPort": 18788,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "downstream-response-end",
+    "ms": 1.8905990000348538,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "response-finish",
+    "ms": 2.0105489999987185,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "response-close",
+    "ms": 2.051325000007637,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "finished": true,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "downstream-close",
+    "ms": 2.269326000008732,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "arrival",
+    "ms": 0.005971000005956739,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "admitted",
+    "ms": 0.10599100001854822,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "managed": true,
+    "operationId": "e74dd381-618a-4a75-bf86-60af4ed3e733"
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "downstream-dispatch",
+    "ms": 0.20314800000051036,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "targetPort": 18788,
+    "pathOverride": "/current"
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "downstream-socket",
+    "ms": 0.7802779999910854,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "targetPort": 18788,
+    "connecting": true,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "downstream-connected",
+    "ms": 1.3636100000003353,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "targetPort": 18788
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "downstream-request-finish",
+    "ms": 1.4372190000140108,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "response-close",
+    "ms": 1.789290999993682,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "finished": false,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "downstream-error",
+    "ms": 2.369057999982033,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "code": "ECONNRESET"
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "downstream-close",
+    "ms": 2.4628260000026785,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "arrival",
+    "ms": 0.005826000007800758,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "admitted",
+    "ms": 0.10813099995721132,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "managed": true,
+    "operationId": "2dd30e34-7e2b-419a-967e-a51846e363e9"
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "health-dependencies-start",
+    "ms": 0.1513610000256449,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "health-dependencies-end",
+    "ms": 1.2250090000452474,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "response-finish",
+    "ms": 1.5076099999714643,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "response-close",
+    "ms": 1.5359150000149384,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "finished": true,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-startup-21-577db590",
+    "event": "arrival",
+    "ms": 0.00826300005428493,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-startup-21-577db590",
+    "event": "admitted",
+    "ms": 0.14773300010710955,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "managed": true,
+    "operationId": "87d71e4f-cef9-4b38-a99a-35ae1089b67a"
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-startup-21-577db590",
+    "event": "health-dependencies-start",
+    "ms": 0.20426000002771616,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "arrival",
+    "ms": 0.007188999792560935,
+    "path": "/v1/health",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "admitted",
+    "ms": 0.09879299998283386,
+    "path": "/v1/health",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "managed": false,
+    "operationId": "e9cbfd5f-8900-45aa-9950-8dbce552bb09"
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "downstream-dispatch",
+    "ms": 0.14574299985542893,
+    "path": "/v1/health",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "targetPort": 18784
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "downstream-socket",
+    "ms": 0.6624419998843223,
+    "path": "/v1/health",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "targetPort": 18784,
+    "connecting": true,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "downstream-connected",
+    "ms": 2.2985009998083115,
+    "path": "/v1/health",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "targetPort": 18784
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "downstream-request-finish",
+    "ms": 2.4147529997862875,
+    "path": "/v1/health",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-startup-21-577db590",
+    "event": "health-dependencies-end",
+    "ms": 5.983291000127792,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-startup-21-577db590",
+    "event": "response-finish",
+    "ms": 8.732666000025347,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 2,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-startup-21-577db590",
+    "event": "response-close",
+    "ms": 8.814804000081494,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "finished": true,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "downstream-headers",
+    "ms": 7.856070999987423,
+    "path": "/v1/health",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "targetPort": 18784,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "downstream-response-end",
+    "ms": 8.082875999854878,
+    "path": "/v1/health",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "downstream-close",
+    "ms": 8.21448399988003,
+    "path": "/v1/health",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "response-finish",
+    "ms": 8.331588999833912,
+    "path": "/v1/health",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "status": 200
+  },
+  {
+    "kind": "startup-gateway",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "response-close",
+    "ms": 8.380796999903396,
+    "path": "/v1/health",
+    "counts": {
+      "active": 0,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4
+    },
+    "eventLoopMaxMs": 24.182783,
+    "dropped": 0,
+    "finished": true,
+    "status": 200
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "arrival",
+    "ms": 0.023443999991286546,
+    "path": "/market-data/v2/history/footprint-current",
+    "counts": {
+      "active": 0,
+      "historicalActive": 0,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "admitted",
+    "ms": 0.2745379999978468,
+    "path": "/market-data/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "proxy-start",
+    "ms": 0.6952610000153072,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "upstream-request",
+    "ms": 2.471082000003662,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "socket-assigned",
+    "ms": 2.638860000006389,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0,
+    "connecting": true,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "socket-connected",
+    "ms": 3.034749999991618,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "upstream-request-finish",
+    "ms": 3.2904550000093877,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "upstream-headers",
+    "ms": 9343.626537000004,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0,
+    "status": 200,
+    "queueMs": 2.45,
+    "headerMs": 9341.08
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "upstream-response-end",
+    "ms": 9344.866041000001,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "response-finish",
+    "ms": 9349.387592999963,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0,
+    "status": 200
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "response-close",
+    "ms": 9349.768891000014,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 0,
+      "historicalActive": 0,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0,
+    "finished": true,
+    "status": 200
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-6-preview",
+    "event": "upstream-close",
+    "ms": 9352.675400000007,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 0,
+      "historicalActive": 0,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "arrival",
+    "ms": 0.08951899997191504,
+    "path": "/market-data/v2/history/footprint-current",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "admitted",
+    "ms": 0.23900099995080382,
+    "path": "/market-data/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "historicalActive": 0,
+      "currentActive": 2,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "proxy-start",
+    "ms": 0.3630750000011176,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "historicalActive": 0,
+      "currentActive": 2,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "upstream-request",
+    "ms": 1.5214309999719262,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "historicalActive": 0,
+      "currentActive": 2,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "socket-assigned",
+    "ms": 1.7061910000047646,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "historicalActive": 0,
+      "currentActive": 2,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0,
+    "connecting": true,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "socket-connected",
+    "ms": 4.204475999984425,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "historicalActive": 0,
+      "currentActive": 2,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "upstream-request-finish",
+    "ms": 4.893775000004098,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "historicalActive": 0,
+      "currentActive": 2,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "upstream-timeout",
+    "ms": 12007.936317999964,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 3,
+      "historicalActive": 1,
+      "currentActive": 2,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "proxy-error",
+    "ms": 12008.484967999975,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 3,
+      "historicalActive": 1,
+      "currentActive": 2,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0,
+    "code": "ECONNRESET"
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "upstream-error",
+    "ms": 12014.878006999963,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 3,
+      "historicalActive": 1,
+      "currentActive": 2,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0,
+    "code": "ECONNRESET"
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "upstream-close",
+    "ms": 12015.18045299995,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 3,
+      "historicalActive": 1,
+      "currentActive": 2,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "response-finish",
+    "ms": 12015.697638999962,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 3,
+      "historicalActive": 1,
+      "currentActive": 2,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0,
+    "status": 502
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-baseline-9-preview",
+    "event": "response-close",
+    "ms": 12015.918787999952,
+    "path": "/v2/history/footprint-current",
+    "counts": {
+      "active": 2,
+      "historicalActive": 1,
+      "currentActive": 1,
+      "nativeActive": 1,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 134.873087,
+    "dropped": 0,
+    "finished": true,
+    "status": 502
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "arrival",
+    "ms": 0.03977799997664988,
+    "path": "/market-data/v2/history/health",
+    "counts": {
+      "active": 0,
+      "historicalActive": 0,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "admitted",
+    "ms": 0.2680560000007972,
+    "path": "/market-data/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "proxy-start",
+    "ms": 0.43212999997194856,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "upstream-request",
+    "ms": 2.7942659999243915,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0,
+    "reusedSocket": true
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "socket-assigned",
+    "ms": 3.0036189999664202,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0,
+    "connecting": false,
+    "reusedSocket": true
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "upstream-request-finish",
+    "ms": 3.6909349999623373,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "upstream-timeout",
+    "ms": 12004.04133399995,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "proxy-error",
+    "ms": 12004.402965000016,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0,
+    "code": "ECONNRESET"
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "upstream-error",
+    "ms": 12006.034283999936,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0,
+    "code": "ECONNRESET"
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "upstream-close",
+    "ms": 12006.153876999975,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "response-finish",
+    "ms": 12014.136249999981,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0,
+    "status": 502
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-verification-1-preview",
+    "event": "response-close",
+    "ms": 12014.794084999943,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 0,
+      "historicalActive": 0,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0,
+    "finished": true,
+    "status": 502
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-21-577db590",
+    "event": "arrival",
+    "ms": 0.03329599997960031,
+    "path": "/market-data/v2/history/health",
+    "counts": {
+      "active": 0,
+      "historicalActive": 0,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-21-577db590",
+    "event": "admitted",
+    "ms": 0.2534990001004189,
+    "path": "/market-data/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-21-577db590",
+    "event": "proxy-start",
+    "ms": 0.3999240000266582,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-21-577db590",
+    "event": "upstream-request",
+    "ms": 1.4780850000679493,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-21-577db590",
+    "event": "socket-assigned",
+    "ms": 1.5864550000987947,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0,
+    "connecting": true,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-21-577db590",
+    "event": "socket-connected",
+    "ms": 4.925845000194386,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-21-577db590",
+    "event": "upstream-request-finish",
+    "ms": 5.323991000186652,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-21-577db590",
+    "event": "response-close",
+    "ms": 12002.110658999998,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0,
+    "finished": false,
+    "status": 200
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-21-577db590",
+    "event": "upstream-error",
+    "ms": 12002.946432000026,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 0,
+      "historicalActive": 0,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0,
+    "code": "ECONNRESET"
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-21-577db590",
+    "event": "upstream-close",
+    "ms": 12003.039747000206,
+    "path": "/v2/history/health",
+    "counts": {
+      "active": 0,
+      "historicalActive": 0,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "arrival",
+    "ms": 0.049426000099629164,
+    "path": "/market-data/v1/health",
+    "counts": {
+      "active": 0,
+      "historicalActive": 0,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "admitted",
+    "ms": 0.24370200000703335,
+    "path": "/market-data/v1/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "proxy-start",
+    "ms": 0.4876270000822842,
+    "path": "/v1/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "upstream-request",
+    "ms": 4.859105000039563,
+    "path": "/v1/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "socket-assigned",
+    "ms": 5.036437000147998,
+    "path": "/v1/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0,
+    "connecting": true,
+    "reusedSocket": false
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "socket-connected",
+    "ms": 7.961645000148565,
+    "path": "/v1/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "upstream-request-finish",
+    "ms": 10.154208000050858,
+    "path": "/v1/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "response-close",
+    "ms": 11989.96465800004,
+    "path": "/v1/health",
+    "counts": {
+      "active": 1,
+      "historicalActive": 0,
+      "currentActive": 1,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0,
+    "finished": false,
+    "status": 200
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "upstream-error",
+    "ms": 11990.534100000048,
+    "path": "/v1/health",
+    "counts": {
+      "active": 0,
+      "historicalActive": 0,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0,
+    "code": "ECONNRESET"
+  },
+  {
+    "kind": "startup-proxy",
+    "id": "pi-route-r2-startup-22-1acd4d3c",
+    "event": "upstream-close",
+    "ms": 11990.945098000113,
+    "path": "/v1/health",
+    "counts": {
+      "active": 0,
+      "historicalActive": 0,
+      "currentActive": 0,
+      "nativeActive": 0,
+      "bulkActive": 0,
+      "waitingCurrent": 0,
+      "waitingHistorical": 0,
+      "closed": false
+    },
+    "eventLoopMaxMs": 190.578687,
+    "dropped": 0
+  }
+]

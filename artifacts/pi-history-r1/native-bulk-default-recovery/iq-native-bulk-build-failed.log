@@ -1,0 +1,10 @@
+
+> terminal-t0@0.1.0 build:staging:diagnostics
+> VITE_BUILD_COMMIT="$(git rev-parse HEAD)" VITE_DATA_MODE=staging VITE_HISTORY_TILES=1 VITE_DIAGNOSTICS=1 pnpm build --mode staging
+
+
+> terminal-t0@0.1.0 build /home/daz/workarea/iqterminal-perf-history
+> tsc --noEmit && vite build --mode staging
+
+tests/browser/footprint-history-lifecycle.spec.ts(179,149): error TS2345: Argument of type 'number' is not assignable to parameter of type 'never'.
+ ELIFECYCLE  Command failed with exit code 1.

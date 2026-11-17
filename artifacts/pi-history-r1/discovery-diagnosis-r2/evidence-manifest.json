@@ -1,0 +1,326 @@
+{
+  "clientBuild": "f25c76efeddb389fc9b7e7abe1ddf494d1d27665",
+  "priorClientBuild": "e12965d38f9dc584c8fdfe46b8817a249166259a",
+  "scope": "Bounded error receipt and failed shared-job late-consumer handoff; explicit HTTP fault UI checks, separate real diagnostics; not loading acceptance",
+  "files": [
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/browser-console.jsonl",
+      "bytes": 1128,
+      "sha256": "2060778985653a79e217c68c71bb97430a10644a74fcfca344643915b54035cd"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/browser.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/discovery-summary.json",
+      "bytes": 1240,
+      "sha256": "6d9114897fdcdabf3ec8f3d312386fd2654697dceba3c976ef773a722f33b1fc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/error-ui-check.mjs",
+      "bytes": 5513,
+      "sha256": "982d6e68833970b40db1f8e5eb097d2174a26c0359b25d395991238f7e6b74ce"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/error-ui.json",
+      "bytes": 13611,
+      "sha256": "070e5519ca2076fb63ac0e43688d5e82217b11ee834479bb1bfe649e01cb3afb"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/error-ui.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/error-ui.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/failure-ui.png",
+      "bytes": 67226,
+      "sha256": "2adb5fa7fb101b9bb56aff81020249555401a6a25d10232272c63f2ef24dbe3a"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/full-tests.log",
+      "bytes": 440,
+      "sha256": "924780539f42550b17f21216dc6e3aef119aaefbc44f5214e82f4a8a8bb2a048"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/http-error-before.log",
+      "bytes": 2193,
+      "sha256": "c4ab8d333ceab44aca2b3e68d2c3083e7ccf3ac26a06159ca49d17f5721aad60"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/http-error-build.log",
+      "bytes": 1892,
+      "sha256": "a7abe5004d87d005b845ad760edc2fb9d44ea2607d798ba44fca7a7a03589751"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/http-error-focused.log",
+      "bytes": 460,
+      "sha256": "86ede94adf003ed8fc505cc1a520b131fd5ea56e7355f861aee89594ab1117e4"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/http-error-typecheck.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/late-failure-before.log",
+      "bytes": 3447,
+      "sha256": "e2c4a8672deac6b351e7b94015d417cf62ee9c5094f27e0615bf53aabd002011"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/late-failure-build.log",
+      "bytes": 1479,
+      "sha256": "d25627b5b08fc60a56a307e47c5cdc8a5041a4eddf5cedd208ae576e13583c5a"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/late-failure-focused.log",
+      "bytes": 448,
+      "sha256": "4bbe71d1940939a77d402bff7edcfcebe4db9a7bd7b921f320391ff338943774"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/late-failure-typecheck.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/local-proxy-probe.mjs",
+      "bytes": 2669,
+      "sha256": "85bf3578cdcb6facc7e8b881c87e48e6e06823c10254520d91302cbf7f4eaf77"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/local-proxy.jsonl",
+      "bytes": 5763,
+      "sha256": "5d8b530407855a5f91941b36878025e98ff9e5d0c3890c6c848a08e629834b88"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/local-proxy.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/owned-preview-cleanup.json",
+      "bytes": 452,
+      "sha256": "506ddcfb437e7b2b0af64a77b35a4c7d28b9c0fa0aafb3568c4037e5ab76b8f5"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/pi-ssh-tcp.txt",
+      "bytes": 1770,
+      "sha256": "b653c9ea2b1654fc8257730e6ad0ae4b192190e098ef7b865200ad7c0c9439bc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/preview.log",
+      "bytes": 1256,
+      "sha256": "fe07b69f7d8a0ee5615bd7ad59b2041cae2b74d8947b50c83daa112269ca0ca9"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/probe.py",
+      "bytes": 1574,
+      "sha256": "1bb357ad9a029c474f5dccf62b33bd1b6d875ee1a1719c0ed86392a46fe3e37d"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/protected-check.json",
+      "bytes": 3620,
+      "sha256": "f050a48459cc4fa307ade69d7b6448ef9fcefbf01dc9eb46faa74f63acbce24a"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/recovered-health-18880.json",
+      "bytes": 1612,
+      "sha256": "734230bb3b16f5fbbc0633294d9d3387002525b38c9deaacd18e709bdf336d49"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/recovered-health-18881.json",
+      "bytes": 1612,
+      "sha256": "8725d123305892747252460f6af9f6874b5686fd0cbb34e858e4ef0b7d33ece6"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/requests.json",
+      "bytes": 383,
+      "sha256": "df1a2348971b6ca7e053bd485cd119db52ac7119388198bd1b603fde02d19a2f"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/services-after.txt",
+      "bytes": 1381,
+      "sha256": "aab37e865554beccaa186a917f4375eaca5e5969bb2535da23ec969338fb29fc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/specific-history-error.png",
+      "bytes": 70962,
+      "sha256": "385bb143e68cce1055942848ca7ecd76c32896ab260528b49d80d20b83c21376"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/staging-discovery.jsonl",
+      "bytes": 10966,
+      "sha256": "dafff79de3e49995ce1bd3c01fec9e86018989d2c6e6b82d59967fe4a9ccacd5"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/staging-discovery.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/tailscale-ping.txt",
+      "bytes": 204,
+      "sha256": "467554f90c66d9deb1b3a0a1c8df42c8d7941b74f4a6eee9672b5242646a8f68"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt1/executed.mjs",
+      "bytes": 3546,
+      "sha256": "d23bb88c8dc42b64af9f17e08e4c742316ed6e07552c0935ff8d6620786e09ae"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt1/result.json",
+      "bytes": 332,
+      "sha256": "b3075314044b8efed0c05c7c3c80c2c2bf773b3c35b5fbf92da88b48422e009e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt1/stderr.txt",
+      "bytes": 298,
+      "sha256": "4525f44516c6f6814c1c573c9a42dd154319ee4eebbe58fe05d34634c7ae298e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt2/executed.mjs",
+      "bytes": 3940,
+      "sha256": "c7b89576aba89ace1245e42fcf62ede154c80a32004da1ad1236f111e56290d6"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt2/failure.png",
+      "bytes": 38242,
+      "sha256": "a52df435695a19aa751a462f0eadce91cf2315de6a09de70223bfbde7c02e26b"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt2/result.json",
+      "bytes": 1724,
+      "sha256": "a8655d05ee902fdffd146e7d0242de8f18701993e642c6d84c211c54135e8b40"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt2/stderr.txt",
+      "bytes": 298,
+      "sha256": "4525f44516c6f6814c1c573c9a42dd154319ee4eebbe58fe05d34634c7ae298e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt3/executed.mjs",
+      "bytes": 3940,
+      "sha256": "c7b89576aba89ace1245e42fcf62ede154c80a32004da1ad1236f111e56290d6"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt3/failure.png",
+      "bytes": 67241,
+      "sha256": "8e01f37b6e3133a1ccee6fc04d98c595901c3c5f084762c1dd724db3f8a8f414"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt3/result.json",
+      "bytes": 1676,
+      "sha256": "505ae5e8e463af69a3fb8e965fe5f265be7d4b3ebb750bdd828ef745f18db41a"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt3/stderr.txt",
+      "bytes": 298,
+      "sha256": "4525f44516c6f6814c1c573c9a42dd154319ee4eebbe58fe05d34634c7ae298e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt4/executed.mjs",
+      "bytes": 4552,
+      "sha256": "a9bc67c9bf661657e5fd4c4ee7680bafd60ada9a0f52da3254f6f4aca50fd2b9"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt4/failure.png",
+      "bytes": 67139,
+      "sha256": "a5ec64fcbaec162ccc8ca1ac3f3f534f441d9a65355241275bc51addb80b28d1"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt4/result.json",
+      "bytes": 14414,
+      "sha256": "978102869982ccfb51851e566b5350b1f813f75f7da0aca30f089060a61cdc49"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt4/stderr.txt",
+      "bytes": 298,
+      "sha256": "4525f44516c6f6814c1c573c9a42dd154319ee4eebbe58fe05d34634c7ae298e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt5/executed.mjs",
+      "bytes": 4804,
+      "sha256": "9afa7fff99f0a90375b3a8603a2ea74ee2581e3c0f1c209d58ce0dd1dfc504b0"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt5/failure.png",
+      "bytes": 67026,
+      "sha256": "023e341d165288d53b7c4086bcd7491987500850ab1042becf02da8cf665ccfe"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt5/result.json",
+      "bytes": 14369,
+      "sha256": "af8b14acf0648fa455bb14371f9ad758cbb964df79e6ad2cdc94ea128bdde39b"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt5/stderr.txt",
+      "bytes": 298,
+      "sha256": "4525f44516c6f6814c1c573c9a42dd154319ee4eebbe58fe05d34634c7ae298e"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt6/executed.mjs",
+      "bytes": 5513,
+      "sha256": "9eb2c11bc4bb159d279ded9d1f02e796b688053d2d1b7591a32d502457fbf6cc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt6/failure.png",
+      "bytes": 67226,
+      "sha256": "2adb5fa7fb101b9bb56aff81020249555401a6a25d10232272c63f2ef24dbe3a"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt6/result.json",
+      "bytes": 25552,
+      "sha256": "d43351036eee3344f71d9b06605b9d8059928e51e1e2c5dba2cce11618e305f1"
+    },
+    {
+      "path": "artifacts/pi-history-r1/discovery-diagnosis-r2/ui-attempt6/stderr.txt",
+      "bytes": 298,
+      "sha256": "06a87ee58784c3845e8d13272b65cf3913ff4787f00d65b77d3ca918e4ca0599"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r2-discovery-diag-browser-environment.json",
+      "bytes": 9263,
+      "sha256": "f93bc3141e6855dca9ae9b7f1e87a7bf7825e078a586aff3918653b52f828b05"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r2-discovery-diag-executed.mjs",
+      "bytes": 22843,
+      "sha256": "e801d2aecebec69a17f793676edfae2f8a19b32ad4e5cf7f2920017cf745c931"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r2-discovery-diag-observations.jsonl",
+      "bytes": 57385,
+      "sha256": "d0ac52d6d6fef705e99a9bb1ba4fc66b2d6bd10e4e8388202d320824e3b78ac3"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r2-discovery-diag-samples.jsonl",
+      "bytes": 90393,
+      "sha256": "bd65939a319de99a22a85daa03e7b2e650329708b4685064ff32a0cd11a20a56"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r2-discovery-diag-trace-helper-executed.mjs",
+      "bytes": 1348,
+      "sha256": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r2-discovery-diag-walls-30h-perp-15m-1.png",
+      "bytes": 98127,
+      "sha256": "a07ac6932a2187596ff4aa93c22ebef2320e3e3866a581e8f4fc387a251bdbe8"
+    },
+    {
+      "path": "artifacts/pi-history-r1/side-r2-discovery-diag-walls-30h-perp-15m-2.png",
+      "bytes": 50740,
+      "sha256": "260f2d7ce45717827390c0ad8a5d9f72a89092122defe4b7a5c03e16b10de9c9"
+    }
+  ],
+  "httpReaderCounterfactual": "a542d65eca4d38c051bc7148adf7fa5f1c42c320",
+  "sharedJobCounterfactual": "e12965d38f9dc584c8fdfe46b8817a249166259a",
+  "gatewayBuild": "71f62d2efceb8a4ac0fadb9c8a1495bcf1eb4efa",
+  "workerBuild": "0811e742b74c1898f6c885bdd75fa50cdbba22c5"
+}

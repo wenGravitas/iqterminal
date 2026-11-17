@@ -1,0 +1,7 @@
+
+> terminal-t0@0.1.0 typecheck /home/daz/workarea/iqterminal-perf-history
+> tsc --noEmit
+
+tests/staging-watch-proxy.test.ts(8,79): error TS2740: Type 'Duplex' is missing the following properties from type 'Socket': destroySoon, connect, resetAndDestroy, setTimeout, and 18 more.
+tests/staging-watch-proxy.test.ts(8,127): error TS2740: Type 'Duplex' is missing the following properties from type 'Socket': destroySoon, connect, resetAndDestroy, setTimeout, and 18 more.
+ ELIFECYCLE  Command failed with exit code 1.

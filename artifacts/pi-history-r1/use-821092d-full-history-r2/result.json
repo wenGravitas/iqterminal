@@ -1,0 +1,8 @@
+{
+  "build": "821092d83943b3e17bba88ee6a0a41657d17807a",
+  "error": "TimeoutError: page.waitForFunction: Timeout 30000ms exceeded.",
+  "failures": [],
+  "pageErrors": [],
+  "activeRequestsAtCleanup": 0,
+  "scope": "No plateau claim without all exact-coverage cycles and inspection of retained heap/queue trend."
+}

@@ -1,0 +1,30 @@
+{
+  "scope": "Raw scoped evidence; a manifest verifies bytes, not performance acceptance. Failed attempts and superseded summaries are retained.",
+  "files": [
+    {
+      "path": "concurrent-history-1.png",
+      "bytes": 138246,
+      "sha256": "dfae4b32daf9337862e975f558c497a654731dfc39b969619288a564f9866291"
+    },
+    {
+      "path": "current-only-1.png",
+      "bytes": 54987,
+      "sha256": "36f7fa75cbebef66ec11e272c4741ca658e2af8cbe40a0e50635dfa053c1aa74"
+    },
+    {
+      "path": "executed.mjs",
+      "bytes": 11102,
+      "sha256": "f13af24b61dbef2820030e9ad5a211e0b8ad39f054b98d50c0c37c179cb8afc0"
+    },
+    {
+      "path": "input-windows.json",
+      "bytes": 26,
+      "sha256": "c27e20765a79131ba2ec523d4f6481a3a672b02bf255005d0679181256e0aee8"
+    },
+    {
+      "path": "samples.jsonl",
+      "bytes": 169579,
+      "sha256": "7660fe7e63440c277597670be17899e1f31e3075a7db2099907445f061ff6f48"
+    }
+  ]
+}

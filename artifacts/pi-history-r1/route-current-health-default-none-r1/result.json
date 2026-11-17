@@ -1,0 +1,10 @@
+{
+  "samples": 10,
+  "cleanup": {
+    "temporarySshPid": 755088,
+    "exitCode": 0,
+    "exitSignal": null,
+    "portStillListening": false
+  },
+  "scope": "Five alternating fresh TCP route pairs for small current health reads; both QoS variants use new independent SSH per sample. Exact deployed API identity checked. Request phases use client monotonic time. No historical workload or live subscriber is added. This diagnoses route/header wait and is not chart paint, historical load, live-confirmation continuity or concurrency acceptance. No persistent SSH settings changed. All failed samples retained; timestamps are client-local."
+}

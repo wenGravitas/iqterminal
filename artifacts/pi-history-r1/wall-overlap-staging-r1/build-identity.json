@@ -1,0 +1,7 @@
+{
+  "backendBuild": "fd3b2d6897f14bb41732239e3ab7f10835be75d2",
+  "bundleSha256": "484ad3a6573cf78fd96bb341f1f80b2431435040fca417482924535e8df0afc0",
+  "servingBuild": "dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51",
+  "existingRoot": "/home/daz/iqterminal-wall-rolling-defaults-r1",
+  "isolatedOutput": "/home/daz/iqterminal-wall-overlap-verify-r1"
+}

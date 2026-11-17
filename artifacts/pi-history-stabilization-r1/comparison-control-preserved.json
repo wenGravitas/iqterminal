@@ -1,0 +1,7 @@
+{
+  "branch": "perf/native-price-cache-control",
+  "before": "bf1d8425525306848cd9bc741c647fc3f1ba5054",
+  "after": "bf1d8425525306848cd9bc741c647fc3f1ba5054",
+  "unchanged": true,
+  "mergedDuringStabilization": false
+}

@@ -1,0 +1,22 @@
+{
+  "scope": "Read-only server resource window; not browser freshness/concurrency/heap proof",
+  "samples": 44,
+  "errors": [],
+  "builds": [
+    "f82abdfae06c61f8bccff9fea0778bbaac491b5e"
+  ],
+  "start": {
+    "kind": "start",
+    "pid": 312834,
+    "label": "wall-pair-13d-0ee-r1",
+    "seconds": 300,
+    "at": "2026-11-09T07:26:28.331Z",
+    "scope": "Server observation window contains the client cohort; no cross-host phase subtraction, chart paint or current confirmation proof"
+  },
+  "end": {
+    "kind": "end",
+    "label": "wall-pair-13d-0ee-r1",
+    "elapsedMs": 219576.251744,
+    "stopping": true
+  }
+}

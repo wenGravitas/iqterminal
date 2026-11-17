@@ -1,0 +1,32 @@
+{
+  "pid": 118684,
+  "port": 4202,
+  "build": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+  "phase": "diagnostic",
+  "buildFlags": {
+    "VITE_BUILD_COMMIT": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+    "VITE_DATA_MODE": "staging",
+    "VITE_HISTORY_TILES": "1",
+    "VITE_DIAGNOSTICS": "1"
+  },
+  "startupTrace": true,
+  "routes": {
+    "/market-data/v1/level-watches/stream": "http://127.0.0.1:18881",
+    "/market-data/v1/level-watches": "http://127.0.0.1:18881",
+    "/market-data/v1/liquidations/stream": "http://127.0.0.1:18881",
+    "/market-data/v1/liquidations": "http://127.0.0.1:18880",
+    "/market-data/v2/history/walls/reader": "http://127.0.0.1:18881",
+    "/market-data/v2/history/walls/preparation": "http://127.0.0.1:18881",
+    "/market-data/v2/history/footprint-current": "http://127.0.0.1:18881",
+    "/market-data/v2/history/current": "http://127.0.0.1:18881",
+    "/market-data/v2/history/health": "http://127.0.0.1:18881",
+    "/market-data/v1/order-walls/archive/current": "http://127.0.0.1:18881",
+    "/market-data/v1/effort-result": "http://127.0.0.1:18881",
+    "/market-data/v1/health": "http://127.0.0.1:18881",
+    "/market-data/v1/depth-matrix": "http://127.0.0.1:18881",
+    "/market-data/v1/footprints": "http://127.0.0.1:18880",
+    "/market-data/v1/native-candles": "http://127.0.0.1:18880",
+    "/market-data/v1/stream": "http://127.0.0.1:18881",
+    "/market-data": "http://127.0.0.1:18880"
+  }
+}

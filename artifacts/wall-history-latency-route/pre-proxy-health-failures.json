@@ -1,0 +1,41 @@
+{
+  "failures": [
+    {
+      "id": "paint-health-4e420878-4397-4094-8dc5-6b657603fb9e",
+      "utc": "2026-11-16T14:17:56.909Z",
+      "error": "TypeError: fetch failed",
+      "elapsedMs": 10185.794559999995,
+      "proxyRecords": [],
+      "gatewayRecords": []
+    },
+    {
+      "id": "paint-health-c9d4b104-182a-4626-93a1-5c07206d1486",
+      "utc": "2026-11-16T14:18:53.684Z",
+      "error": "TypeError: fetch failed",
+      "elapsedMs": 16160.90905799999,
+      "proxyRecords": [],
+      "gatewayRecords": []
+    },
+    {
+      "id": "paint-health-1bd6d983-54c4-4d0c-8c96-20f1a2e2d321",
+      "utc": "2026-11-16T14:20:02.845Z",
+      "error": "TypeError: fetch failed",
+      "elapsedMs": 13429.535837000003,
+      "proxyRecords": [],
+      "gatewayRecords": []
+    },
+    {
+      "id": "paint-health-f46e8bb4-d607-4bdb-a384-8907f8b9a80d",
+      "utc": "2026-11-16T14:21:01.524Z",
+      "error": "TypeError: fetch failed",
+      "elapsedMs": 11120.478257999988,
+      "proxyRecords": [],
+      "gatewayRecords": []
+    }
+  ],
+  "proxyTraceCount": 3532,
+  "gatewayTraceCount": 3348,
+  "maxProxyDropped": 0,
+  "maxGatewayDropped": 0,
+  "classification": "Coupled observer/client to preview boundary; no proven backend failure; original causes lack client errno/loop data."
+}

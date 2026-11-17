@@ -1,0 +1,4 @@
+iqterminal-server 3.78% 96.85MiB / 1GiB
+iqterminal-spot-server 3.08% 137.8MiB / 1GiB
+iqterminal-history-api 0.38% 76.53MiB / 512MiB
+4.72 4.79 4.86 5/1904 1930340
