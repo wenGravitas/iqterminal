@@ -190,6 +190,28 @@ test('production worker preserves resident intervals and current cursor through 
  console.log(JSON.stringify({kind:'actual-worker-controlled-canonical-source-not-live-executions',initial,requests:pending.requests,cycles,cleanup}));await page.evaluate(()=>(window as any).__workerProbe.worker.terminate());
 });
 
+test('production worker reuses a completed live-follow prefix on its first forward pan',async({page})=>{
+ test.skip(process.env.VITE_DATA_MODE!=='staging','Requires explicit staging protocol fixture build');
+ await page.goto('/tests/browser/fixtures/wall-navigation.html');
+ await page.evaluate(()=>{
+  const worker=(window as any).createProtocolWallWorker(),events:any[]=[],to=Date.now()-20000,from=to-30*3600000;
+  (window as any).__livePan={worker,events,from,to};worker.onmessage=({data}:any)=>events.push(data);worker.postMessage({type:'fixture-wall-config',from,to});
+ });
+ try{
+  await page.waitForFunction(()=>(window as any).__livePan.events.some((e:any)=>e.type==='fixture-wall-ready'));
+  await page.evaluate(()=>{const p=(window as any).__livePan;p.worker.postMessage({type:'order-wall-subscribe',id:'live-pan',request:{market:'binance-perp',from:p.from,to:p.to,followLive:true,settings:{enabled:true,mode:'top-levels',topLevels:8,searchRangePercent:10,aggregation:'native'}}});});
+  await page.waitForFunction(()=>(window as any).__livePan.events.some((e:any)=>e.type==='order-wall-batch'&&e.status.archive?.requestComplete));
+  await page.evaluate(()=>{const p=(window as any).__livePan;p.worker.postMessage({type:'order-wall-viewport',id:'live-pan',from:p.from+1000,to:p.to+1000});});
+  await page.waitForFunction(()=>(window as any).__livePan.events.some((e:any)=>e.type==='order-wall-batch'&&e.status.archive?.residentRanges?.length===2&&e.status.archive?.unloadedRanges?.length===0));
+  await page.waitForFunction(()=>(window as any).__livePan.events.filter((e:any)=>e.type==='fixture-wall-request'&&e.path.endsWith('/current')).length>=2);
+  const result=await page.evaluate(()=>{const p=(window as any).__livePan;return {from:p.from,to:p.to,requests:p.events.filter((e:any)=>e.type==='fixture-wall-request'),batches:p.events.filter((e:any)=>e.type==='order-wall-batch').map((e:any)=>({kind:e.kind,count:e.segments?.length,generation:e.generation,status:e.status}))};});
+  const history=result.requests.filter((e:any)=>e.path.endsWith('/archive')),current=result.requests.filter((e:any)=>e.path.endsWith('/current'));
+  expect(history).toHaveLength(2);expect(history[1].from).toBe(result.to);expect(current.filter((e:any)=>e.after===0)).toHaveLength(1);expect(current[1].after).toBe(100);
+  expect(new Set(result.batches.map((e:any)=>e.generation)).size).toBe(1);expect(result.batches.slice(1).some((e:any)=>e.kind==='snapshot'&&e.count===0)).toBe(false);
+  console.log(JSON.stringify({kind:'controlled-worker-live-follow-forward-pan-not-live-source',...result}));
+ }finally{await page.evaluate(()=>(window as any).__livePan.worker.terminate());}
+});
+
 test('production worker coalesces camera gestures during partial initial delivery',async({page})=>{
  test.skip(process.env.VITE_DATA_MODE!=='staging','Requires explicit staging protocol fixture build');test.setTimeout(30000);
  await page.goto('/tests/browser/fixtures/wall-navigation.html');await page.evaluate(()=>{

@@ -210,7 +210,10 @@ export class OrderWallsArchiveService {
     const nextViewport = { from, to, followLive: followLive ?? to >= this.now() - 60_000 };
     const previousViewport = sub.viewport;
     sub.viewport = nextViewport;
-    if(sub.resident||(!(from>=sub.request.from&&to<=sub.request.to)&&(!nextViewport.followLive||!canCoalesceHistoryViewport(previousViewport,nextViewport))&&this.activateResidentHistory(sub))){
+    // A completed view with a moving left edge is navigation, even near now.
+    // Keep same-start live revisions on the existing terminal revalidation path;
+    // do not make an ordinary overlapping pan replay its established prefix.
+    if(sub.resident||(!(from>=sub.request.from&&to<=sub.request.to)&&(!nextViewport.followLive||from!==previousViewport.from||!canCoalesceHistoryViewport(previousViewport,nextViewport))&&this.activateResidentHistory(sub))){
       this.navigateResidentHistory(sub,nextViewport);return;
     }
     if (from >= sub.request.from && to <= sub.request.to) {

@@ -1661,22 +1661,22 @@ it('a confirmed revision change invalidates only its resident owner while an una
 });
 
 
-it('retains completed prefix across two small forward advances and reuses their overscan',async()=>{
+it.each([false,true])('retains completed prefix across two small forward advances and reuses their overscan (live pan=%s)',async livePan=>{
  vi.useFakeTimers();const events:any[]=[],reads:Array<{from:number;to:number}>=[];
  const wall=candidate({entryId:'forward-resident',startedAt:from-1000,startCursor:0});
- const fetcher:any=(input:unknown)=>{const url=new URL(String(input),'http://localhost'),left=Number(url.searchParams.get('from')),right=Number(url.searchParams.get('to'));reads.push({from:left,to:right});
+ const fetcher:any=(input:unknown)=>{const url=new URL(String(input),'http://localhost');if(url.pathname.endsWith('/current'))return new Promise<Response>(()=>{});const left=Number(url.searchParams.get('from')),right=Number(url.searchParams.get('to'));reads.push({from:left,to:right});
   return Promise.resolve(Response.json(page({from:left,to:right,seed:{at:left,cursor:0,epoch:1,midpoint:'74480',bids:[wall],asks:[],bookScope:{bidComplete:true,askComplete:true}},
    head:{cursor:20,at:right-1,epoch:1},page:{after:0,nextAfter:20,hasMore:false,lastAt:right-1,limit:256,sameMillisecondClosed:true},coverage:coverage({requestedFrom:left,requestedTo:right,confirmedTo:right-1})})));};
  const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to+86400000),flush=async()=>{for(let i=0;i<200;i++)await Promise.resolve();};
  try{
-  service.subscribe('forward-resident',{...request(),followLive:false});await flush();const initial=publishedSegments(events)[0];
-  service.updateViewport('forward-resident',from,to+1000,false);await vi.advanceTimersByTimeAsync(130);await flush();
+  service.subscribe('forward-resident',{...request(),followLive:livePan});await flush();const initial=publishedSegments(events)[0];
+  service.updateViewport('forward-resident',from+(livePan?100:0),to+1000,livePan);await vi.advanceTimersByTimeAsync(130);await flush();
   expect(reads).toHaveLength(2);expect(reads[1]!.from).toBe(to);
-  const afterFirst=events.length,firstEnd=reads[1]!.to;service.updateViewport('forward-resident',from,firstEnd+1000,false);await vi.advanceTimersByTimeAsync(130);await flush();
+  const afterFirst=events.length,firstEnd=reads[1]!.to;service.updateViewport('forward-resident',from+(livePan?200:0),firstEnd+1000,livePan);await vi.advanceTimersByTimeAsync(130);await flush();
   expect(reads).toHaveLength(3);expect(reads[2]!.from).toBe(firstEnd);
   const retained=publishedSegments(events).find(row=>row.id===initial.id);expect(retained.valueRuns).toEqual(initial.valueRuns);expect(events.slice(afterFirst).some(event=>event.patches?.some((patch:any)=>patch.id===initial.id))).toBe(false);
   expect(retained.residentRange).toMatchObject({from,to});expect(events.at(-1).status.archive.unloadedRanges).toEqual([]);
-  service.updateViewport('forward-resident',from,to+2000,false);await vi.advanceTimersByTimeAsync(130);await flush();expect(reads).toHaveLength(3);
+  service.updateViewport('forward-resident',from,to+2000,livePan);await vi.advanceTimersByTimeAsync(130);await flush();expect(reads).toHaveLength(3);
   expect(events.slice(1).some(event=>event.kind==='snapshot'&&event.segments.length===0)).toBe(false);
  }finally{service.dispose();vi.useRealTimers();}
 });
