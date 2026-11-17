@@ -1566,12 +1566,55 @@ it('crossing a history request boundary keeps published overlap and the live sub
   service.subscribe('pan',{...request(),followLive:true});await flush();
   const loaded=events.filter(event=>event.segments?.some((segment:any)=>segment.archiveEntryId)).at(-1);
   expect(loaded).toBeDefined();const generation=loaded.generation,count=events.length;
-  service.updateViewport('pan',from-30000,to-30000,false);await flush();
+  service.updateViewport('pan',from-30000,to-30000,false);await vi.waitFor(()=>expect(historyReads).toBe(2));await flush();
   expect(historyReads).toBe(2);expect(events.at(-1).status.archive.loadedFrom).toBe(from);expect(currentSignals).toHaveLength(1);expect(currentSignals[0]!.aborted).toBe(false);
-  expect(events.slice(count).every(event=>event.generation===generation&&event.kind==='patch'&&event.patches.length===0)).toBe(true);
+  expect(events.slice(count).every(event=>event.generation===generation&&event.kind==='patch'&&event.patches.every((patch:any)=>patch.segment!==null))).toBe(true);
   failReplacement!(new Response(JSON.stringify({error:'Injected history failure'}),{status:400}));await vi.waitFor(()=>expect(events.at(-1).status.archive.reason).toContain('Injected history failure'));await flush();
   expect(events.at(-1).status.archive.requestComplete).toBe(false);
   expect(events.slice(count).some(event=>event.kind==='snapshot'&&event.segments.length===0)).toBe(false);
   service.retry('pan');await vi.waitFor(()=>expect(historyReads).toBe(3));await flush();expect(currentSignals).toHaveLength(1);expect(currentSignals[0]!.aborted).toBe(false);
  }finally{service.dispose();}
+});
+
+it('owns disjoint resident history across backward pan, zoom-out and revisit without replaying overlap',async()=>{
+ vi.useFakeTimers();const events:any[]=[],reads:Array<{from:number;to:number}>=[],currentSignals:AbortSignal[]=[];
+ const wall=candidate({entryId:'resident-carry',startedAt:from-100000,startCursor:0,quantity:'2.0000000000000000001',notional:'148960.000000000000007448'});
+ const fetcher:any=(input:unknown,init:any)=>{const url=new URL(String(input),'http://localhost');
+  if(url.pathname.endsWith('/current')){currentSignals.push(init.signal);return new Promise((_resolve,reject)=>init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));}
+  const left=Number(url.searchParams.get('from')),right=Number(url.searchParams.get('to'));reads.push({from:left,to:right});
+  return Promise.resolve(Response.json(page({from:left,to:right,seed:{at:left,cursor:0,epoch:1,midpoint:'74480',bids:[wall],asks:[],bookScope:{bidComplete:true,askComplete:true}},
+    head:{cursor:20,at:right-1,epoch:1},page:{after:0,nextAfter:20,hasMore:false,lastAt:right-1,limit:256,sameMillisecondClosed:true},coverage:coverage({requestedFrom:left,requestedTo:right,confirmedTo:right-1})})));
+ };
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to),flush=async()=>{for(let i=0;i<200;i++)await Promise.resolve();};
+ try{
+  service.subscribe('resident',{...request(),followLive:true});await flush();const initial=publishedSegments(events),generation=events.at(-1).generation;
+  service.updateViewport('resident',from-30000,to-30000,false);await vi.advanceTimersByTimeAsync(130);await flush();
+  expect(reads).toEqual([{from,to},{from:from-36000,to:from}]);
+  const prefix=publishedSegments(events).find(row=>row.id===initial[0]!.id)!;
+  expect(prefix.valueRuns).toEqual(initial[0]!.valueRuns);expect(prefix.residentRange).toMatchObject({from,to,sourceId:initial[0]!.id});
+  expect(events.at(-1).status.archive.unloadedRanges).toEqual([]);
+  const before=reads.length;service.updateViewport('resident',from-20000,to-10000,false);await vi.advanceTimersByTimeAsync(200);expect(reads).toHaveLength(before);
+  service.updateViewport('resident',from-60000,to+60000,true);await vi.advanceTimersByTimeAsync(130);await flush();
+  expect(reads).toHaveLength(4);expect(reads.slice(1).every(range=>range.to<=from||range.from>=to)).toBe(true);
+  const ranges=service.diagnostics().resident[0]!.missing;expect(ranges).toEqual([]);
+  const loaded=publishedSegments(events);expect(loaded.length).toBe(4);
+  for(const row of loaded){expect(row.valueRuns[0].quantityExact).toBe(wall.quantity);expect(row.valueRuns[0].notionalExact).toBe(wall.notional);expect(row.archiveEntryId).toBe(wall.entryId);}
+  service.updateViewport('resident',from,to,false);await vi.advanceTimersByTimeAsync(200);expect(reads).toHaveLength(4);
+  expect(events.slice(1).some(event=>event.kind==='snapshot'&&event.segments.length===0)).toBe(false);
+  expect(events.every(event=>event.generation===generation)).toBe(true);expect(currentSignals).toHaveLength(1);expect(currentSignals[0]!.aborted).toBe(false);
+ }finally{service.dispose();vi.useRealTimers();}
+ expect(currentSignals[0]!.aborted).toBe(true);expect(service.diagnostics().resident).toEqual([]);
+});
+
+it('coalesces boundary gestures before admitting missing coverage and cancels the timer on disposal',async()=>{
+ vi.useFakeTimers();const events:any[]=[],reads:Array<{from:number;to:number}>=[];
+ const fetcher:any=(input:unknown)=>{const url=new URL(String(input),'http://localhost'),left=Number(url.searchParams.get('from')),right=Number(url.searchParams.get('to'));reads.push({from:left,to:right});
+  return Promise.resolve(Response.json(page({from:left,to:right,head:{cursor:20,at:right-1,epoch:1},page:{after:0,nextAfter:20,hasMore:false,lastAt:right-1,limit:256,sameMillisecondClosed:true},coverage:coverage({requestedFrom:left,requestedTo:right,confirmedTo:right-1})})));};
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to),flush=async()=>{for(let i=0;i<200;i++)await Promise.resolve();};
+ try{
+  service.subscribe('gesture',{...request(),followLive:false});await flush();
+  for(let step=1;step<=10;step++)service.updateViewport('gesture',from-step*1000,to-step*1000,false);
+  expect(reads).toHaveLength(1);await vi.advanceTimersByTimeAsync(130);await flush();expect(reads).toHaveLength(2);expect(reads[1]).toEqual({from:from-16000,to:from});
+  service.updateViewport('gesture',from-40000,to-40000,false);service.unsubscribe('gesture');await vi.advanceTimersByTimeAsync(200);expect(reads).toHaveLength(2);
+ }finally{service.dispose();vi.useRealTimers();}
 });

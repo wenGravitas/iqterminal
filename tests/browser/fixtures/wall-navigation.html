@@ -2,6 +2,8 @@
 <script type="module">
 import {OrderWallsPrimitive} from '/src/chart/order-walls.ts';
 import {DEFAULT_ORDER_WALLS_SETTINGS} from '/src/feed/order-walls.ts';
+import {OrderWallsArchiveService} from '/src/feed/order-walls-archive-service.ts';
+window.createResidentWallService=(emit,fetcher,now)=>new OrderWallsArchiveService(emit,fetcher,now);
 const base=1704067200000;
 window.runWallNavigation=async(retained,segments=2500)=>{
  const canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d');
@@ -58,6 +60,10 @@ window.checkWallGpuCorrectness=async()=>{
   if(JSON.stringify(source)!==before)throw Error('Renderer mutated exact source');
   origin+=.1;if(gpu.orderWallAt(300,rc.priceScale.priceToY(source[1].price))!==null)throw Error('Unpainted camera produced an inspection hit');gpu.draw(ctx,rc);
   gpu.setSnapshot(JSON.parse(before),status);gpu.draw(ctx,rc);if(gpu.diagnostics().retainedRenderer.builds!==built)throw Error('Equivalent snapshot rebuilt resources');
+  const owned=source.map(segment=>({...segment,residentRange:{from:base,to:timeAt(12)*1000,sourceId:segment.id,revision:'owned-proof'}}));
+  gpu.patch(owned.map(segment=>({id:segment.id,segment,replaceValueRuns:true})),status);gpu.draw(ctx,rc);
+  if(gpu.diagnostics().retainedRenderer.builds!==built||gpu.diagnostics().retainedRenderer.bufferUploads!==uploads)throw Error('Adopting already-fenced history rebuilt unchanged geometry');
+
   gpu.patch([{id:source[0].id,segment:null}],status);ctx.clearRect(0,0,canvas.width,canvas.height);gpu.draw(ctx,rc);if(gpu.orderWallAt(300,rc.priceScale.priceToY(source[0].price))?.segment.id===source[0].id)throw Error('Removed wall remains inspectable');
   const changed={...source[1],price:100.25,valueRuns:source[1].valueRuns.map(run=>({...run,usd:999999}))};gpu.patch([{id:changed.id,segment:changed,replaceValueRuns:true}],status);
   for(let i=0;i<100;i++){ctx.clearRect(0,0,canvas.width,canvas.height);gpu.draw(ctx,rc);if(!gpu.diagnostics().pendingPaintWork)break;}

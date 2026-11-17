@@ -73,3 +73,42 @@ for(const market of ['spot','perpetual'] as const)test(`compiled ${market} 30h c
  expect(result.renderer.builds).toBe(before.builds);expect(result.renderer.bufferUploads).toBe(before.bufferUploads);expect(result.renderer.mappingInvalidations).toBe(before.mappingInvalidations);expect(result.replay.subscribes).toBe(1);
  expect(errors).toEqual([]);console.log(JSON.stringify({kind:'compiled-controlled-render-replay-not-live',market,interval,input,before,result}));
 });
+
+test('compiled chart retains overlap while its real archive adapter fetches only missing intervals',async({page})=>{
+ test.setTimeout(90000);const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+ await page.goto('/?fixture=1&fixtureTime=now');await page.waitForFunction(()=>(window as any).__terminal?.stats().panels.every((p:any)=>p.bars>1000));
+ const id=await page.locator('.candle-panel').first().getAttribute('data-panel-id'),panel=page.locator(`.candle-panel[data-panel-id="${id}"]`);
+ await chooseChartMarket(panel,'Binance · BTCUSDT USD-M Perp');await panel.getByLabel('Timeframe',{exact:true}).selectOption('15m');await page.waitForFunction(()=>(window as any).__terminal.stats().panels[0]?.bars>1000);
+ await page.evaluate(async id=>{
+  const t=(window as any).__terminal;for(const p of [...t.dock.panels])if(p.id!==id)t.dock.removePanel(p);
+  const iframe=document.createElement('iframe');iframe.hidden=true;iframe.src='/tests/browser/fixtures/wall-navigation.html';document.body.append(iframe);await new Promise<void>(resolve=>iframe.onload=()=>resolve());
+  const e=t.panels.get(id).engine,base=e.chart.dataLayer.baseIndex,center=Math.round(e.latestCandle().close/100)*100;
+  const range={from:base-122,to:base-2};e.setRange(range);e.chart.setAutoScale(false);e.chart.panes()[0].priceScale.setPriceRange({min:center-400,max:center+400});
+  const probe:any={reads:[],events:[],current:[],range,center,held:[],hold:false};(window as any).__residentProbe=probe;
+  const profile={id:'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',market:'perpetual',instrument:'binance:perpetual:BTCUSDT',feed:'binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded',version:1,venue:'binance',aggregation:'native',bandPercent:10,midpointBasis:'best-observed-bid-ask',topN:10,algorithmVersion:1,schemaVersion:1,confirmationMs:0,selectionTopN:10,minimumNotionalUsd:null,exactDerivations:{bandPercent:[10],topNMax:10,minimumNotional:true,confirmation:true,confirmationCrossings:false}};
+  const fetcher=async(input:any,init:any)=>{
+   const url=new URL(String(input),location.origin);if(url.pathname.endsWith('/current')){probe.current.push(init.signal);return new Promise((_resolve,reject)=>init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError'))));}
+   const from=Number(url.searchParams.get('from')),to=Number(url.searchParams.get('to'));probe.reads.push({from,to});
+   if(probe.hold)await new Promise<void>(resolve=>probe.held.push(resolve));
+   const bids:any[]=[],asks:any[]=[];for(let side=0;side<2;side++)for(let i=0;i<8;i++){const price=center+(side?1:-1)*(100+25*i),candidate={entryId:`real-adapter-${side}-${i}`,side:side?'ask':'bid',price:String(price),quantity:'2.00000000',notional:String(price*2),rank:i+1,startedAt:from-100000,startCursor:0,startEpoch:1,startKnown:true};(side?asks:bids).push(candidate);}
+   return new Response(JSON.stringify({version:1,profile,market:profile.market,instrument:profile.instrument,feed:profile.feed,from,to,watermark:20,head:{cursor:20,at:to-1,epoch:1},seed:{at:from,cursor:0,epoch:1,midpoint:String(center),bids,asks,bookScope:{bidComplete:true,askComplete:true}},page:{after:0,nextAfter:20,hasMore:false,lastAt:to-1,limit:256,sameMillisecondClosed:true},patches:[],coverage:{availableFrom:from-86400000,requestedFrom:from,requestedTo:to,confirmedTo:to-1,gaps:[],partial:false,status:'complete',bookScope:{bidComplete:true,askComplete:true}}}));
+  };
+  const callbacks=new Map();const service=(iframe.contentWindow as any).createResidentWallService((event:any)=>{probe.events.push({kind:event.kind,count:event.segments?.length,patches:event.patches?.length,status:event.status});callbacks.get(event.ids[0])?.(event);},fetcher,Date.now);probe.service=service;
+  t.feed.subscribeOrderWalls=(key:string,request:any,callback:any)=>{callbacks.set(key,callback);service.subscribe(key,{...request,followLive:true});return()=>{callbacks.delete(key);service.unsubscribe(key);};};
+  t.feed.updateOrderWallsViewport=(key:string,from:number,to:number)=>service.updateViewport(key,from,to,false);
+  t.feed.updateOrderWalls=(key:string,settings:any)=>service.updateSettings(key,settings);
+ },id);
+ await addIndicator(panel,'Order Walls');await expect.poll(()=>page.evaluate(id=>{const d=(window as any).__terminal.panels.get(id).engine.orderWallsDiagnostics();return d.retainedRenderer?.active&&!d.pendingPaintWork&&d.visibleHistorical>0;},id)).toBe(true);
+ const initial=await page.evaluate(id=>({reads:(window as any).__residentProbe.reads.slice(),renderer:(window as any).__terminal.panels.get(id).engine.orderWallsDiagnostics().retainedRenderer}),id);expect(initial.reads).toHaveLength(1);
+ // Delay only the missing interval, not existing history or the current lane.
+ await page.evaluate(id=>{const p=(window as any).__residentProbe;p.hold=true;const e=(window as any).__terminal.panels.get(id).engine;e.setRange({from:p.range.from-12,to:p.range.to-12});},id);
+ await expect.poll(()=>page.evaluate(()=>(window as any).__residentProbe.reads.length)).toBe(2);
+ const pending=await page.evaluate(id=>{const p=(window as any).__residentProbe,d=(window as any).__terminal.panels.get(id).engine.orderWallsDiagnostics();return {renderer:d.retainedRenderer,reads:p.reads.slice(),status:p.events.at(-1).status,empty:p.events.slice(1).some((e:any)=>e.kind==='snapshot'&&e.count===0),currentAborted:p.current.some((s:any)=>s.aborted)};},id);
+ expect(pending.renderer.visibleHistorical).toBeGreaterThan(0);expect(pending.renderer.builds).toBe(initial.renderer.builds);expect(pending.empty).toBe(false);expect(pending.currentAborted).toBe(false);expect(pending.reads[1].to).toBe(initial.reads[0].from);
+ await page.evaluate(()=>{const p=(window as any).__residentProbe;p.hold=false;for(const resolve of p.held.splice(0))resolve();});
+ await expect.poll(()=>page.evaluate(id=>{const p=(window as any).__residentProbe,d=(window as any).__terminal.panels.get(id).engine.orderWallsDiagnostics();return p.events.at(-1).status.archive.unloadedRanges?.length===0&&!d.pendingPaintWork;},id)).toBe(true);
+ await page.evaluate(id=>{const p=(window as any).__residentProbe;(window as any).__terminal.panels.get(id).engine.setRange(p.range);},id);await page.waitForTimeout(300);
+ const final=await page.evaluate(id=>{const p=(window as any).__residentProbe,d=(window as any).__terminal.panels.get(id).engine.orderWallsDiagnostics();return {reads:p.reads,diagnostics:p.service.diagnostics().resident,renderer:d.retainedRenderer,status:p.events.at(-1).status};},id);
+ expect(final.reads).toHaveLength(2);expect(final.renderer.visibleHistorical).toBeGreaterThan(0);expect(errors).toEqual([]);console.log(JSON.stringify({kind:'compiled-real-adapter-controlled-source-not-live',initial,pending,final}));
+ await page.evaluate(()=>(window as any).__residentProbe.service.dispose());
+});

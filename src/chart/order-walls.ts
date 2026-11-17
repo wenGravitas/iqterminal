@@ -596,6 +596,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     this.paintInvalid=true;this.setDrawable(line);const keys=this.drawableKeys.get(segment.id)??[];keys.push(line.key);this.drawableKeys.set(segment.id,keys);
   }
   private segmentTo(segment:OrderWallSegment){
+    if(segment.residentRange)return Math.min(segment.residentRange.to-1,segment.end??segment.start+Math.max(0,segment.durationMs));
     if(segment.end!==null)return segment.end;
     if(segment.presentationKind==='current-snapshot')return segment.start;
     if(segment.currentSelection===true)return this.status.lastConfirmedAt??segment.start;
@@ -618,7 +619,7 @@ export class OrderWallsPrimitive implements IPrimitive {
   }
   private project(segment:OrderWallSegment,runIndex:number,from:number,to:number,percentile:number|null,projection:WallProjectionContext):WallDrawable|null{
     const {rc,low,high,y,visibleFrom,visibleTo,timeToIndexFloat}=projection;
-    from=Math.max(from,segment.start+(segment.presentationKind==='current-snapshot'?0:this.settings.minDurationMs));
+    from=Math.max(from,segment.residentRange?.from??-Infinity,segment.start+(segment.presentationKind==='current-snapshot'?0:this.settings.minDurationMs));
     // A current seed is an observed point, not an observed duration. Use the
     // existing one-pixel minimum stroke without extending its source time.
     if(to<from||to===from&&segment.currentSelection!==true)return null;

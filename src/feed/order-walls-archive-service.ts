@@ -1,3 +1,4 @@
+import {WallResidentHistory,wallResidentOverscan,type WallInterval} from './wall-resident-history';
 import type {PreparedWallBase} from './prepared-wall-delta';
 import {PreparedWallPartCache} from './prepared-wall-part-cache';
 import {compactWallPresentation,replayCompactWallPresentation,type CompactWallPresentation} from './compact-wall-presentation';
@@ -60,6 +61,10 @@ interface Subscription {
   historyRevision?:string;
   cachedHistory?: boolean;
   replacingHistory?: {status:OrderWallStatus};
+  resident?:WallResidentHistory;
+  residentAttempts?:Set<string>;
+  residentTimer?:ReturnType<typeof setTimeout>;
+  residentCapacity?:string;
   currentSnapshotIds:Set<string>;
   warmReplay?:WarmReplay;
   tailProjector?: OrderWallsArchiveProjector;
@@ -184,6 +189,9 @@ export class OrderWallsArchiveService {
     const nextViewport = { from, to, followLive: followLive ?? to >= this.now() - 60_000 };
     const previousViewport = sub.viewport;
     sub.viewport = nextViewport;
+    if(sub.resident||(!(from>=sub.request.from&&to<=sub.request.to)&&!canCoalesceHistoryViewport(previousViewport,nextViewport)&&this.activateResidentHistory(sub))){
+      this.navigateResidentHistory(sub,nextViewport);return;
+    }
     if (from >= sub.request.from && to <= sub.request.to) {
       // A failed wider request does not cover a newly narrowed viewport. Admit
       // that view independently, retaining good history and the current lane.
@@ -209,8 +217,8 @@ export class OrderWallsArchiveService {
         sub.request={...sub.request,from,to};sub.pendingViewport=undefined;sub.archiveStarted=false;
         // The old prefix has not reached this viewport. Retarget only history;
         // the current subscription and its acknowledged cursor stay intact.
-        sub.historyProjector=undefined;sub.historyPresentation=undefined;sub.cachedHistory=false;sub.replacingHistory=undefined;
-        this.startHistory(sub);this.publish(sub,'snapshot',this.visibleSegments(sub),this.status(sub));return;
+        if(sub.historyStatus&&(sub.historyProjector||sub.historyPresentation))sub.replacingHistory={status:sub.historyStatus};
+        this.startHistory(sub);this.publish(sub,'patch',[],this.status(sub));return;
       }
       sub.pendingViewport = undefined; return;
     }
@@ -260,11 +268,13 @@ export class OrderWallsArchiveService {
         return;
       }
     }
+    if(sub.resident){sub.residentAttempts?.clear();sub.residentCapacity=undefined;this.startResidentMissing(sub);return;}
     this.subscribe(id, sub.request);
   }
 
   unsubscribe(id: string) {
     const sub = this.subscriptions.get(id); if (!sub) return;
+    if(sub.residentTimer)clearTimeout(sub.residentTimer);sub.resident?.clear();
     this.subscriptions.delete(id);this.releaseWarmInterests(sub.request.currentOnly?undefined:sub.request,sub.historyJob?.request);this.releaseWarmReplay(sub);
     const historyJob = sub.historyJob; sub.historyJob = undefined;
     if (historyJob) {
@@ -295,7 +305,7 @@ export class OrderWallsArchiveService {
     for(const sub of this.subscriptions.values())for(const p of [sub.historyProjector,sub.tailProjector])if(p)projectors.add(p);
     for(const group of this.groups.values())if(group.projector)projectors.add(group.projector);
     for(const job of this.historyJobs.values())for(const p of [job.latest?.projector,job.resume?.projector])if(p)projectors.add(p);
-    return { ...this.stats, preparedPartCache:this.preparedPartCache.diagnostics(),projections:[...projectors].map(projector=>projector.diagnostics()), subscriptions: this.subscriptions.size, groups: this.groups.size,
+    return { ...this.stats,resident:[...this.subscriptions.values()].filter(sub=>sub.resident).map(sub=>({id:sub.id,...sub.resident!.diagnostics(),viewport:sub.viewport,missing:sub.resident!.missing(sub.viewport),capacity:sub.residentCapacity})), preparedPartCache:this.preparedPartCache.diagnostics(),projections:[...projectors].map(projector=>projector.diagnostics()), subscriptions: this.subscriptions.size, groups: this.groups.size,
       historyJobs: this.historyJobs.size,historyActiveJobs:[...this.historyJobs.values()].filter(job=>!job.settled).length,
       historyJobStates:[...this.historyJobs.values()].map(job=>({request:{market:job.request.market,from:job.request.from,to:job.request.to,profileId:job.request.profileId},settled:job.settled,failed:Boolean(job.failure),hasProjector:Boolean(job.latest?.projector),preparedRevisionReused:Boolean(job.latest?.preparedRevisionReused),preparedFinalization:job.latest?.preparedFinalization,preparedDelta:job.latest?.preparedDelta?{...job.latest.preparedDelta,patches:job.latest.preparedDelta.patches.length}:undefined,eligibleRange:job.eligibleRange})),readerControl:wallReadControlScheduler.diagnostics(),
       warmTimings:this.warmTimings.map(timing=>({...timing})),warmEntries:this.warmHistory.size,warmBuilds:this.warmBuilds.size,warmReplayJobs:this.warmReplays.size,warmReplaySegments:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.presentation.size??0),0),warmReplayRuns:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.runs??0),0),warmCompactEntries:[...this.warmHistory.values()].filter(entry=>entry.compact).length,warmReplayConsumers:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.subscribers.size??0),0),warmSegments:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.segments,0),warmRuns:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.runs,0),warmBytes:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.bytes,0),
@@ -500,12 +510,94 @@ export class OrderWallsArchiveService {
     this.runHistoryJob(job);
   }
 
+  /** Activate only from a completed independently validated presentation.
+   * Initial streaming/warm replay keeps its existing progressive path. */
+  private activateResidentHistory(sub:Subscription){
+    const job=sub.historyJob,result=job?.latest,a=sub.historyStatus?.archive;
+    if(!job?.settled||job.failure||!result||!a?.requestComplete||!a.exact||a.state==='unavailable'
+      ||sub.cachedHistory||sub.replacingHistory||sub.historyStatus?.valueHistoryLimited||sub.historyStatus?.episodeHistoryLimited)return false;
+    const to=Math.min(a.to,a.eligibleTo??a.to);if(to<=a.from)return false;
+    const rows=sub.historyProjector?.snapshot()??(sub.historyPresentation?[...sub.historyPresentation.values()]:result.segments??[]);
+    const presentation=wallHistoryPresentation(rows,result.preparedPresentationComplete?sub.historyPresentation:undefined);if(!presentation)return false;
+    const resident=new WallResidentHistory(),admitted=resident.admit({key:`${a.from}:${to}`,from:a.from,to,keepIds:true,
+      revision:result.preparedPresentationRevision??`canonical:${result.watermark??0}:${result.head?.epoch??0}`,sourceToken:result.preparedSourceToken,status:a,segments:presentation},sub.viewport);
+    if(!admitted.ok)return false;
+    sub.resident=resident;sub.residentAttempts=new Set();this.detachHistoryJob(sub);this.releaseWarmReplay(sub);
+    sub.historyProjector=undefined;sub.historyPresentation=undefined;sub.historyRevision=undefined;sub.cachedHistory=false;sub.replacingHistory=undefined;
+    // Existing ids remain stable. The renderer reuses geometry already inside
+    // its authenticated ownership interval; no global empty snapshot occurs.
+    this.publish(sub,'patch',this.diff(sub,this.visibleSegments(sub)),this.status(sub));return true;
+  }
+
+  private navigateResidentHistory(sub:Subscription,view:{from:number;to:number;followLive?:boolean}){
+    const resident=sub.resident!;resident.touch(view);sub.residentCapacity=undefined;
+    sub.request={...sub.request,from:view.from,to:view.to,followLive:sub.request.followLive||view.followLive};
+    sub.pendingViewport=undefined;
+    if(sub.request.followLive&&!sub.group)this.attachCurrentGroup(sub);
+    // Coalesce gestures without cancelling a useful bounded request on each
+    // frame. A completed obsolete interval can become offscreen resident data.
+    if(sub.residentTimer){clearTimeout(sub.residentTimer);sub.residentTimer=undefined;}
+    if(resident.missing(view).length){sub.residentTimer=setTimeout(()=>{sub.residentTimer=undefined;this.startResidentMissing(sub);},120);}
+    this.publish(sub,'patch',[],this.status(sub));
+  }
+
+  private startResidentMissing(sub:Subscription){
+    if(this.disposed||this.subscriptions.get(sub.id)!==sub||!sub.resident||sub.residentCapacity||sub.historyJob&&!sub.historyJob.settled)return;
+    const view=sub.viewport;
+    // Overscan is bounded to one hour per edge and shares the same record
+    // allowance. Never fetch padding when the visible view is already resident.
+    if(!sub.resident.missing(view).length)return;
+    const target=wallResidentOverscan(view,1),attempts=sub.residentAttempts!;
+    const missing=sub.resident.missing(target).filter(range=>range.from<view.to&&range.to>view.from&&!attempts.has(`${range.from}:${range.to}`));
+    if(!missing.length)return;
+    // Nearest useful missing interval first; one existing scheduler consumer.
+    missing.sort((a,b)=>Math.abs((a.from+a.to)-(view.from+view.to))-Math.abs((b.from+b.to)-(view.from+view.to)));
+    const range=missing[0]!;attempts.add(`${range.from}:${range.to}`);
+    while(attempts.size>32)attempts.delete(attempts.values().next().value!);
+    this.detachHistoryJob(sub);sub.archiveStarted=false;
+    this.startHistory(sub,{...sub.request,...range});
+  }
+
+  private publishResidentUpdate(sub:Subscription,job:SharedHistoryJob,update:OrderWallsArchiveUpdate){
+    sub.historyStatus=update.status;const a=update.status.archive;
+    if(a?.requestComplete&&a.exact&&a.state!=='unavailable'&&!update.status.valueHistoryLimited&&!update.status.episodeHistoryLimited){
+      const to=Math.min(job.request.to,a.eligibleTo??job.request.to);
+      if(to>job.request.from){
+        const key=`${job.request.from}:${to}`,existing=sub.resident!.chunks.find(chunk=>chunk.key===key);
+        const revision=update.preparedPresentationRevision??`canonical:${update.watermark??0}:${update.head?.epoch??0}`;
+        if(!existing||existing.revision!==revision||!update.preparedPresentationRevision){
+          const rows=update.projector?.snapshot()??update.segments??(update.presentation?[...update.presentation.values()]:[]);
+          const presentation=wallHistoryPresentation(rows,update.preparedPresentationComplete?update.presentation:undefined);
+          if(presentation){const admitted=sub.resident!.admit({key,from:job.request.from,to,revision,sourceToken:update.preparedSourceToken,status:a,segments:presentation},sub.viewport);
+            if(!admitted.ok)sub.residentCapacity=`Resident history ${admitted.reason}; displayed coverage retained. Narrow the view or release another range.`;
+            else this.publish(sub,'patch',this.diff(sub,this.visibleSegments(sub)),this.status(sub));}
+        }
+      }
+    }
+    this.publish(sub,'patch',[],this.status(sub));
+  }
+
+  private residentStatus(sub:Subscription):OrderWallStatus{
+    const chunks=sub.resident!.chunks,missing=sub.resident!.missing(sub.viewport),prior=sub.historyStatus??{state:'loading' as const};
+    const relevantJob=sub.historyJob&&sub.historyJob.request.from<sub.viewport.to&&sub.historyJob.request.to>sub.viewport.from?sub.historyJob:undefined;
+    const loading=Boolean(sub.residentTimer||relevantJob&&!relevantJob.settled),gaps=chunks.flatMap(chunk=>chunk.status.gaps).filter(gap=>gap.to>=sub.viewport.from&&gap.from<sub.viewport.to);
+    const base=prior.archive??chunks[0]?.status??emptyArchiveStatus(sub.request,'loading');
+    const complete=!missing.length&&!gaps.length&&chunks.filter(chunk=>chunk.from<sub.viewport.to&&chunk.to>sub.viewport.from).every(chunk=>chunk.status.rangeComplete===true&&!chunk.status.gapsTruncated);
+    const reason=sub.residentCapacity??relevantJob?.failure?.message??(loading?'Retained walls remain available while missing history loads.':missing.length?'Some requested history is not resident or is beyond the confirmed archive horizon.':gaps.length?'Loaded history includes explicit source gaps.':undefined);
+    return {...prior,coverage:{from:sub.viewport.from,to:sub.viewport.to,complete,partial:!complete},...(reason?{message:reason}:{}),archive:{...base,
+      from:sub.viewport.from,to:sub.viewport.to,state:loading?(base.state==='building'?'building':'loading'):complete?'complete':'partial',requestComplete:!loading&&!relevantJob?.failure&&!sub.residentCapacity,rangeComplete:complete,
+      loadedFrom:chunks[0]?.from,loadedThrough:chunks.length?Math.max(...chunks.map(chunk=>chunk.to-1)):undefined,
+      residentRanges:chunks.map(({from,to})=>({from,to})),unloadedRanges:missing,gaps:gaps.slice(-MAX_SUBSCRIPTION_ARCHIVE_GAPS),
+      gapsTruncated:chunks.some(chunk=>chunk.status.gapsTruncated)||gaps.length>MAX_SUBSCRIPTION_ARCHIVE_GAPS,reason}};
+  }
+
   private pendingViewportNeedsExtension(sub: Subscription, job = sub.historyJob) {
     const pending=sub.pendingViewport,archive=job?.latest?.status.archive;
     return Boolean(pending&&job&&archive?.requestComplete===true&&archive.state!=='unavailable'&&pending.to>job.request.to);
   }
 
   private tryStartPendingViewportHistory(sub: Subscription) {
+    if(sub.resident){this.startResidentMissing(sub);return false;}
     const job=sub.historyJob,target=sub.pendingViewport;
     if(!job?.settled||!target||!this.pendingViewportNeedsExtension(sub,job))return false;
     const request:OrderWallsArchiveRequest={market:sub.request.market,from:sub.request.from,to:target.to,settings:sub.settings,
@@ -781,6 +873,7 @@ export class OrderWallsArchiveService {
 
   private publishSharedHistoryUpdate(sub: Subscription, job: SharedHistoryJob, update: OrderWallsArchiveUpdate, forceSnapshot=false) {
     if (this.disposed || this.subscriptions.get(sub.id) !== sub || sub.historyJob !== job) return;
+    if(sub.resident){this.publishResidentUpdate(sub,job,update);return;}
     const delta=update.preparedDelta;
     const warmBase=sub.cachedHistory&&sub.warmReplay?.settled&&!sub.warmReplay.entry.expired
       &&sub.historyPresentation===sub.warmReplay.presentation&&sub.warmReplay.entry.signature==='manifest:'+delta?.baseRevision
@@ -864,6 +957,7 @@ export class OrderWallsArchiveService {
   }
 
   private visibleSegments(sub: Subscription): OrderWallSegment[] {
+    if(sub.resident)return [...sub.resident.presentation().values(),...this.currentSnapshots(sub)];
     const history=sub.historyProjector?.snapshot()??(sub.historyPresentation?[...sub.historyPresentation.values()]:[]);
     return [...history.map(segment=>({...segment,currentSelection:false})),...this.currentSnapshots(sub)];
   }
@@ -891,7 +985,7 @@ export class OrderWallsArchiveService {
 
   private status(sub: Subscription): OrderWallStatus {
     const settings = sub.settings, availability = orderWallsArchiveProfileId(sub.request.market, settings);
-    const status = sub.historyStatus ?? { state: 'loading' as const, message: 'Waiting for the current selected-profile archive.',
+    const status = (sub.resident?this.residentStatus(sub):sub.historyStatus) ?? { state: 'loading' as const, message: 'Waiting for the current selected-profile archive.',
       archive: emptyArchiveStatus(sub.request, 'loading') };
     const baseArchive = status.archive ?? emptyArchiveStatus(sub.request, 'loading');
     const priorArchive = baseArchive;
@@ -1009,9 +1103,11 @@ function emptyArchiveStatus(request: OrderWallsArchiveRequest, state: NonNullabl
 
 /** Exact rare rebase comparison; normal current updates use projector change sets. */
 function sameWallSegment(a:OrderWallSegment,b:OrderWallSegment){
+ if(a===b)return true;
  const ak=Object.keys(a) as Array<keyof OrderWallSegment>,bk=Object.keys(b);
  if(ak.length!==bk.length)return false;
  for(const key of ak){if(key==='valueRuns')continue;if(a[key]!==b[key])return false;}
+ if(a.valueRuns===b.valueRuns)return true;
  if(a.valueRuns.length!==b.valueRuns.length)return false;
  return a.valueRuns.every((point,index)=>{const other=b.valueRuns[index]!;return point.at===other.at&&point.usd===other.usd&&point.percentile===other.percentile&&point.rank===other.rank&&point.quantity===other.quantity&&point.quantityExact===other.quantityExact&&point.notionalExact===other.notionalExact;});
 }
