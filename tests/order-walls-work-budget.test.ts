@@ -115,3 +115,15 @@ test('native tasks prepare visible geometry without timer clamping and dispose c
  p.setSnapshot(source(),status);p.draw(canvas().ctx,context());const queued=jobs.shift()!,slices=p.diagnostics().preparation.slices;p.detached();expect(queued.signal.aborted).toBe(true);
  queued.callback();await Promise.resolve();expect(p.diagnostics().preparation.slices).toBe(slices);expect(p.diagnostics().pendingPaintWork).toBe(false);expect(vi.getTimerCount()).toBe(0);
 });
+
+// Baseline contract for persistent navigation. Remove .fails when the retained
+// renderer satisfies this on every intermediate frame, not only after settle.
+test.fails('resident wall navigation never blanks an intermediate camera frame',()=>{
+ setup();const {p}=attached();p.setSnapshot(source(),status);complete(p);
+ expect(p.diagnostics().retainedPaintPaths).toBeGreaterThan(0);
+ for(const from of [.01,.02,.03,.02,.01,0]){
+  const frame=canvas();p.draw(frame.ctx,context(from));
+  expect(frame.strokes.length).toBeGreaterThan(0);
+ }
+ p.detached();
+});
