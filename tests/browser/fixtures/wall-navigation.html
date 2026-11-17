@@ -56,6 +56,7 @@ window.checkWallGpuCorrectness=async()=>{
   }
   if(gpu.diagnostics().retainedRenderer.builds!==built||gpu.diagnostics().retainedRenderer.bufferUploads!==uploads)throw Error('Camera rebuilt resources');
   if(JSON.stringify(source)!==before)throw Error('Renderer mutated exact source');
+  origin+=.1;if(gpu.orderWallAt(300,rc.priceScale.priceToY(source[1].price))!==null)throw Error('Unpainted camera produced an inspection hit');gpu.draw(ctx,rc);
   gpu.setSnapshot(JSON.parse(before),status);gpu.draw(ctx,rc);if(gpu.diagnostics().retainedRenderer.builds!==built)throw Error('Equivalent snapshot rebuilt resources');
   gpu.patch([{id:source[0].id,segment:null}],status);ctx.clearRect(0,0,canvas.width,canvas.height);gpu.draw(ctx,rc);if(gpu.orderWallAt(300,rc.priceScale.priceToY(source[0].price))?.segment.id===source[0].id)throw Error('Removed wall remains inspectable');
   const changed={...source[1],price:100.25,valueRuns:source[1].valueRuns.map(run=>({...run,usd:999999}))};gpu.patch([{id:changed.id,segment:changed,replaceValueRuns:true}],status);
@@ -64,5 +65,32 @@ window.checkWallGpuCorrectness=async()=>{
   gpu.detached();old.detached();
  }
  const {wallGpuResourceUsage}=await import('/src/chart/wall-gpu-resources.ts');return {results,resources:wallGpuResourceUsage()};
+};
+
+window.checkWallResourceLifecycle=async()=>{
+ const {wallGpuResourceUsage}=await import('/src/chart/wall-gpu-resources.ts');
+ const canvas=document.querySelector('canvas');canvas.width=1200;canvas.height=600;const ctx=canvas.getContext('2d');
+ const settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native'};
+ const rc={timeScale:{visibleRange:()=>({from:0,to:120}),indexToX:i=>i*10,xToIndex:x=>x/10},priceScale:{priceRange:()=>({min:90,max:110}),options:{mode:'linear'},priceToY:p=>(110-p)*30,yToPrice:y=>110-y/30},dataLayer:{indexToTimeFloat:i=>base/1000+i*900,timeToIndexFloat:t=>(t-base/1000)/900},plotWidth:1200,plotHeight:600,dpr:1,theme:{background:'#000',axisText:'#aaa'}};
+ const source=Array.from({length:600},(_,i)=>({id:'owned-'+i,archiveEntryId:'entry-'+i,epoch:1,side:i%2?'ask':'bid',price:95+(i%80)*.1,start:base,end:base+100000000,peakUsd:1000,meanUsd:500,durationMs:100000000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'rank-exit',detectionMode:'top-levels',rank:1,valueRunsTruncated:false,valueRuns:[{at:base,usd:1000+i,quantity:1,rank:1,percentile:null}]}));
+ const status={state:'live',tickSize:.1,lastConfirmedAt:base+100000000};
+ const drain=p=>{for(let i=0;i<100;i++){ctx.clearRect(0,0,1200,600);p.draw(ctx,rc);if(!p.diagnostics().pendingPaintWork)return;}throw Error('Resource preparation did not drain');};
+ const samples=[];
+ for(let cycle=0;cycle<4;cycle++){
+  const charts=Array.from({length:8},()=>{const p=new OrderWallsPrimitive(settings,900000,true,6,()=>true,false,true);p.attached({requestUpdate(){}});p.setSnapshot(source,status);drain(p);return p;});
+  const full=wallGpuResourceUsage();if(full.contexts!==1||full.owners!==8)throw Error('Charts did not share one context');
+  if(cycle&&full.bufferBytes!==samples[0].full.bufferBytes)throw Error('Retained GPU bytes grew across reopen cycles');
+  const p=charts[0],before=p.diagnostics().retainedRenderer;
+  p.setSettings({...settings,opacity:.5,colorMode:'side',highContrast:true});drain(p);
+  if(p.diagnostics().retainedRenderer.builds!==before.builds||p.diagnostics().retainedRenderer.bufferUploads!==before.bufferUploads)throw Error('Style rebuilt immutable resources');
+  const changed={...source[599],currentSelection:true,presentationKind:'current-snapshot',end:null,valueRuns:[{...source[599].valueRuns[0],at:base+100000000,usd:2000}]};
+  p.patch([{id:changed.id,segment:changed,replaceValueRuns:true}],{...status,lastConfirmedAt:base+100001000});drain(p);
+  const after=p.diagnostics().retainedRenderer;if(after.builds-before.builds!==1||after.visibleCurrent<1)throw Error('Current change rebuilt unchanged history or did not paint');
+  charts[3].detached();charts[3].detached();const partial=wallGpuResourceUsage();if(partial.owners!==7||partial.bufferBytes>=full.bufferBytes)throw Error('One chart disposal did not release its ownership');
+  drain(charts[7]);if(!charts[7].diagnostics().retainedRenderer.active)throw Error('Sibling disposal invalidated another chart');
+  for(const chart of charts)chart.detached();const empty=wallGpuResourceUsage();if(empty.contexts||empty.owners||empty.bufferBytes)throw Error('Final disposal retained resources');
+  samples.push({full,partial,empty,currentChangedChunks:after.builds-before.builds});
+ }
+ return {samples};
 };
 </script>

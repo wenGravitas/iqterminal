@@ -19,6 +19,7 @@ export class RetainedWallRenderer {
   private readonly dirty=new Set<Chunk>();
   private tail?:Chunk;
   private context?:PrimitiveRenderContext;
+  private paintedCamera='';
   private geometryKey='';
   private disposed=false;
   readonly stats={builds:0,frames:0,mappingInvalidations:0,uploadedBytes:0,bufferUploads:0,drawCalls:0,maxPrepareMs:0,lastPrepareMs:0,lastPaintMs:0,visibleSpans:0,visibleHistorical:0,visibleCurrent:0,bytes:0,referenceMin:0,referenceMax:0,failure:''};
@@ -116,13 +117,13 @@ export class RetainedWallRenderer {
     for(const chunk of this.chunks)if(chunk.batch){const batch=chunk.batch;
       if(!batch.paint(rc,style,cameras.get(chunk))){this.stats.failure='mapping-changed';return false;}draws++;bytes+=batch.bytes+batch.mapping.bytes+batch.values.length*8;
       for(let i=0;i<batch.spans.length;i++){const span=batch.spans[i]!;if(batch.enabled[i]&&span.to>=from&&span.from<=to&&span.price>=low&&span.price<=high){visible++;if(span.current)current++;if(span.historical)historical++;}}}
-    ctx.save();ctx.beginPath();ctx.rect(0,0,rc.plotWidth*rc.dpr,rc.plotHeight*rc.dpr);ctx.clip();ctx.globalAlpha=1;ctx.drawImage(device.canvas,0,0);ctx.restore();this.context=rc;
+    ctx.save();ctx.beginPath();ctx.rect(0,0,rc.plotWidth*rc.dpr,rc.plotHeight*rc.dpr);ctx.clip();ctx.globalAlpha=1;ctx.drawImage(device.canvas,0,0);ctx.restore();this.context=rc;this.paintedCamera=cameraIdentity(rc);
     this.stats.frames++;this.stats.drawCalls=draws;this.stats.visibleSpans=visible;this.stats.visibleCurrent=current;this.stats.visibleHistorical=historical;this.stats.bytes=bytes;this.stats.failure='';this.stats.lastPaintMs=performance.now()-paint;
     this.stats.bufferUploads+=device.uploads-uploadsBefore;this.stats.uploadedBytes+=device.uploadedBytes-bytesBefore;
     if(this.dirty.size)this.invalidate();return true;
   }
   hit(x:number,y:number,width:number,settings:OrderWallsSettings):OrderWallHit|null{
-    const rc=this.context;if(!rc||x<0||x>rc.plotWidth||y<0||y>rc.plotHeight)return null;
+    const rc=this.context;if(!rc||this.paintedCamera!==cameraIdentity(rc)||x<0||x>rc.plotWidth||y<0||y>rc.plotHeight)return null;
     const at=rc.dataLayer.indexToTimeFloat(rc.timeScale.xToIndex(x))*1000,earliest=rc.dataLayer.indexToTimeFloat(rc.timeScale.xToIndex(x-1/rc.dpr))*1000;let best:OrderWallHit|null=null,distance=Math.max(4,settings.thicknessPx/2+2);
     for(const chunk of this.chunks){const batch=chunk.batch;if(!batch||batch.mapping.offset(rc)===undefined)continue;
       for(let i=0;i<batch.spans.length;i++){const span=batch.spans[i]!;if(!batch.enabled[i]||at<span.from||earliest>span.to)continue;
@@ -137,4 +138,9 @@ function sameSegment(a:OrderWallSegment,b:OrderWallSegment){
   if(a.price!==b.price||a.start!==b.start||a.end!==b.end||a.durationMs!==b.durationMs||a.side!==b.side||a.currentSelection!==b.currentSelection||a.presentationKind!==b.presentationKind||a.valueRunsTruncated!==b.valueRunsTruncated||a.valueRuns.length!==b.valueRuns.length)return false;
   if(a.valueRuns===b.valueRuns)return true;
   return a.valueRuns.every((run,i)=>{const next=b.valueRuns[i]!;return run.at===next.at&&run.usd===next.usd&&run.quantity===next.quantity&&run.rank===next.rank&&run.percentile===next.percentile;});
+}
+
+function cameraIdentity(rc:PrimitiveRenderContext){
+ const prices=rc.priceScale.priceRange();
+ return [rc.timeScale.indexToX(0),rc.timeScale.indexToX(1),prices.min,prices.max,rc.priceScale.priceToY(prices.min),rc.priceScale.priceToY(prices.max),rc.priceScale.options?.mode,rc.plotWidth,rc.plotHeight,rc.dpr].join(':');
 }

@@ -98,10 +98,19 @@ class WallGpuDevice {
     const gl=this.canvas.getContext('webgl2',{alpha:true,premultipliedAlpha:true,antialias:false,depth:false,stencil:false,preserveDrawingBuffer:true});
     if(!gl)throw Error('WebGL2 unavailable');this.gl=gl;
     const shader=(kind:number,source:string)=>{const value=gl.createShader(kind);if(!value)throw Error('Wall shader allocation failed');gl.shaderSource(value,source);gl.compileShader(value);if(!gl.getShaderParameter(value,gl.COMPILE_STATUS)){const reason=gl.getShaderInfoLog(value);gl.deleteShader(value);throw Error(reason??'Wall shader compilation failed');}return value;};
-    const vertex=shader(gl.VERTEX_SHADER,VERTEX),fragment=shader(gl.FRAGMENT_SHADER,FRAGMENT),program=gl.createProgram();if(!program)throw Error('Wall program allocation failed');
-    gl.attachShader(program,vertex);gl.attachShader(program,fragment);gl.linkProgram(program);gl.deleteShader(vertex);gl.deleteShader(fragment);
-    if(!gl.getProgramParameter(program,gl.LINK_STATUS)){const reason=gl.getProgramInfoLog(program);gl.deleteProgram(program);throw Error(reason??'Wall program link failed');}this.program=program;
-    for(const name of ['size','timeOrigin','timeScale','priceOrigin','priceScale','logPrice','cuts','thicknesses','palette[0]','opacity','pixelRatio']){const location=gl.getUniformLocation(program,name);if(location===null)throw Error('Missing wall uniform '+name);this.uniforms.set(name,location);}
+    const shaders:WebGLShader[]=[];let program:WebGLProgram|null=null;
+    try {
+      const vertex=shader(gl.VERTEX_SHADER,VERTEX);shaders.push(vertex);
+      const fragment=shader(gl.FRAGMENT_SHADER,FRAGMENT);shaders.push(fragment);
+      program=gl.createProgram();if(!program)throw Error('Wall program allocation failed');
+      gl.attachShader(program,vertex);gl.attachShader(program,fragment);gl.linkProgram(program);
+      if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program)??'Wall program link failed');
+      for(const name of ['size','timeOrigin','timeScale','priceOrigin','priceScale','logPrice','cuts','thicknesses','palette[0]','opacity','pixelRatio']){const location=gl.getUniformLocation(program,name);if(location===null)throw Error('Missing wall uniform '+name);this.uniforms.set(name,location);}
+      this.program=program;
+    } catch(error) {
+      if(program)gl.deleteProgram(program);
+      gl.getExtension('WEBGL_lose_context')?.loseContext();throw error;
+    } finally { for(const shader of shaders)gl.deleteShader(shader); }
     this.canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();this.lost=true;this.generation++;for(const notify of this.listeners)notify();});
   }
   own(notify:()=>void){this.owners++;this.listeners.add(notify);return ()=>{this.listeners.delete(notify);if(--this.owners===0){this.gl.deleteProgram(this.program);this.gl.getExtension('WEBGL_lose_context')?.loseContext();if(device===this)device=undefined;}};}

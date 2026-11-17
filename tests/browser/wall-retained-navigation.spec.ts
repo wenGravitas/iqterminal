@@ -9,6 +9,12 @@ test('retained GPU component preserves exact source, mapped positions, styles, h
  expect(result.results).toHaveLength(32);expect(result.resources).toMatchObject({contexts:0,owners:0,bufferBytes:0});
 });
 
+test('eight charts share bounded resources and release them through reopen and current updates',async({page})=>{
+ await page.goto('/tests/browser/fixtures/wall-navigation.html');
+ const result=await page.evaluate(()=>(window as any).checkWallResourceLifecycle());
+ expect(result.samples).toHaveLength(4);console.log(JSON.stringify({kind:'controlled-resource-lifecycle',...result}));
+});
+
 for(const market of ['spot','perpetual'] as const)test(`compiled ${market} 30h chart keeps walls throughout camera gestures`,async({page})=>{
  test.setTimeout(120000);const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
  await page.addInitScript(()=>{
@@ -40,7 +46,7 @@ for(const market of ['spot','perpetual'] as const)test(`compiled ${market} 30h c
    if(hour===20)continue;const start=from+hour*1800000,price=center+(level<8?-1:1)*(100+(level%8)*25);
    segments.push({id:`resident-${hour}-${level}`,archiveEntryId:`entry-${hour}-${level}`,epoch:1,side:level<8?'bid':'ask',price,start,end:start+1700000,peakUsd:1000000,meanUsd:500000,durationMs:1700000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'rank-exit',detectionMode:'top-levels',rank:level%8+1,valueRunsTruncated:false,valueRuns:Array.from({length:8},(_,i)=>({at:start+i*200000,usd:price*(1+(i+level)%8),quantity:1+(i+level)%8,rank:level%8+1,percentile:null}))});
   }
-  const status={state:'live',tickSize:interval===300000?.01:.1,currentSubscribed:true,lastConfirmedAt:to,archive:{profileId:'explicit-retained-replay',from,to,eligibleTo:to,confirmedTo:to-1,loadedThrough:to-1,requestComplete:true,rangeComplete:true,exact:true,state:'partial',requestedTopN:8,requestedBandPercent:10,profileBandPercent:10,gaps:[{from:from+20*1800000,to:from+21*1800000,reason:'Explicit fixture source gap'}]}};
+  const status={state:'live',tickSize:interval===300000?.01:.1,currentSubscribed:true,lastConfirmedAt:to,archive:{profileId:'explicit-retained-replay',from,to,eligibleTo:to,confirmedTo:to-1,loadedThrough:to-1,requestComplete:true,rangeComplete:false,exact:true,state:'partial',requestedTopN:8,requestedBandPercent:10,profileBandPercent:10,gaps:[{from:from+20*1800000,to:from+21*1800000,reason:'Explicit fixture source gap'}]}};
   (window as any).__wallReplay.callback({kind:'snapshot',segments,status});
   const range={from:base-1-30*3600000/interval,to:base+1};e.setRange(range);e.chart.setAutoScale(false);e.chart.panes()[0].priceScale.setPriceRange({min:center-400,max:center+400});
   return {range,center,from,to,segments:segments.length};
