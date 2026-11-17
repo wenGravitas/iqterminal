@@ -87,7 +87,7 @@ export function rebasePreparedWallPage(raw:any,manifest:Manifest,part:Part,targe
  return {...canonical,watermark:target.cursor,head:{...target},snapshot:`${manifest.request.profile}:${target.cursor}:${raw.from}:${raw.to}`,
   page:{...raw.page,nextAfter:raw.page.hasMore?raw.page.nextAfter:target.cursor}} as OrderWallsArchivePage;
 }
-export class PreparedWallSourceChangedError extends Error {constructor(){super('Prepared wall source changed or cannot be revalidated; restart revision with displayed history retained');this.name='PreparedWallSourceChangedError';}}
+export class PreparedWallSourceChangedError extends Error {constructor(readonly confirmedChange=false){super('Prepared wall source changed or cannot be revalidated; restart revision with displayed history retained');this.name='PreparedWallSourceChangedError';}}
 export type PreparedWallReuseLookup=(revision:string,segments:number)=>Promise<ReadonlyMap<string,OrderWallSegment>|undefined>|undefined;
 interface ReusedProjection {projector?:undefined;presentation:ReadonlyMap<string,OrderWallSegment>;presentationRevision:string;coverage:OrderWallsArchiveCoverage;profile:OrderWallsArchiveProfile;head:Head;confirmedAt:number;midpoint:string|null;parts:0;bytes:0}
 export interface PreparedWallReader {sourceToken:string;read:(after:number)=>Promise<PreparedWallFetched>;dispose:()=>void;
@@ -110,7 +110,7 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
  const found:any=options.discovery??await discoverPreparedWallHistory(request,fetcher,signal,settings,options);
  if(!found||found.state!=='ready'){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
  if(!validSource(found.source,request))throw Error('Invalid prepared wall source validation');
- const source:Source=found.source;if(resumeSourceToken&&source.token!==resumeSourceToken)throw new PreparedWallSourceChangedError();
+ const source:Source=found.source;if(resumeSourceToken&&source.token!==resumeSourceToken)throw new PreparedWallSourceChangedError(true);
  if(found.representation!==undefined&&found.representation!=='projection-v1')throw Error('Invalid prepared wall representation');
  if(found.representation==='projection-v1'&&(!projection||!found.projection||found.manifest||found.delivery))throw Error('Invalid projection-only wall delivery');
  const manifest:SourceSnapshot=found.representation==='projection-v1'?await validateProjectionSource(found.sourceSnapshot,source,request):await validateManifest(found.manifest,source,request);
@@ -131,7 +131,7 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
    return (await readBody(response,128*1024)).body;
   }).catch(leaseFailure);
   assertActive();
-  if(!validSource(latest,request)||latest.token!==source.token||latest.watermark<target!.cursor)throw new PreparedWallSourceChangedError();
+  if(!validSource(latest,request)||latest.token!==source.token||latest.watermark<target!.cursor)throw new PreparedWallSourceChangedError(validSource(latest,request)&&latest.token!==source.token);
  }
  const pending=new Map<number,Promise<PreparedWallFetched>>();let expectedAfter:number|undefined;
  const batchEnabled=Boolean(canonicalManifest)&&found.delivery?.version===2&&found.delivery.maxDecodedBytes===8*1024*1024&&found.delivery.maxParts===8;

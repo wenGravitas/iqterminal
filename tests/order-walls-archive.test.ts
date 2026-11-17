@@ -1618,3 +1618,42 @@ it('coalesces boundary gestures before admitting missing coverage and cancels th
   service.updateViewport('gesture',from-40000,to-40000,false);service.unsubscribe('gesture');await vi.advanceTimersByTimeAsync(200);expect(reads).toHaveLength(2);
  }finally{service.dispose();vi.useRealTimers();}
 });
+
+it('resident interval fragments preserve full-reference sampled financial values across carry-in and rank changes',async()=>{
+ const {WallResidentHistory}=await import('../src/feed/wall-resident-history');
+ const {orderWallValuePointAt}=await import('../src/feed/order-walls');
+ const original=candidate({entryId:'reference-bid',price:'100.01',quantity:'2.00000000000000001',notional:'200.0200000000000010001'});
+ const changed=candidate({...original,quantity:'3.00000000000000001',notional:'300.0300000000000010001',rank:2});
+ const ask=candidate({entryId:'reference-ask',side:'ask',price:'101.01',quantity:'1.00000000000000001',notional:'101.0100000000000010101',startedAt:from+32000,startCursor:13});
+ const events=[archivePatch(10,from+1000,{bids:side([original])}),archivePatch(11,from+15000,{bids:side([changed])}),archivePatch(13,from+32000,{asks:side([ask])}),archivePatch(14,from+45000,{bids:side([],[{entryId:original.entryId,side:'bid',price:original.price,at:from+45000,cursor:14,epoch:1,reason:'rank-exit',lastConfirmedAt:from+45000,lastConfirmedCursor:14}])})];
+ const build=(left:number,right:number)=>{
+  const state=new Map<string,OrderWallsArchiveCandidate>();for(const event of events.filter(event=>event.at<left)){for(const c of [...event.bids.upserts,...event.asks.upserts])state.set(c.entryId,c);for(const r of [...event.bids.removals,...event.asks.removals])state.delete(r.entryId);}
+  const projector=new OrderWallsArchiveProjector(request().settings,left,right);projector.applyPage(page({from:left,to:right,head:{cursor:20,at:right-1,epoch:1},seed:{at:left,cursor:0,epoch:1,midpoint:'100.5',bids:[...state.values()].filter(c=>c.side==='bid'),asks:[...state.values()].filter(c=>c.side==='ask'),bookScope:{bidComplete:true,askComplete:true}},patches:events.filter(event=>event.at>=left&&event.at<right),page:{after:0,nextAfter:20,hasMore:false,lastAt:right-1,limit:256,sameMillisecondClosed:true},coverage:coverage({requestedFrom:left,requestedTo:right,confirmedTo:right-1})}));return projector.snapshot();
+ };
+ const full=build(from,to),resident=new WallResidentHistory();
+ for(let i=0;i<3;i++){const left=from+i*20000,right=left+20000,rows=build(left,right);
+  expect(resident.admit({key:String(i),from:left,to:right,revision:'same-pinned-source',segments:new Map(rows.map(row=>[row.id,row])),status:{profileId:profile().id,state:'complete',from:left,to:right,loadedThrough:right-1,requestComplete:true,rangeComplete:true,exact:true,gaps:[],requestedTopN:8,requestedBandPercent:10,profileBandPercent:10}}, {from,to}).ok).toBe(true);
+ }
+ const fragments=[...resident.presentation().values()];
+ const values=(rows:typeof full,at:number)=>rows.filter(row=>at>=Math.max(row.start,(row as any).residentRange?.from??from)&&at<=Math.min(row.end??row.start+row.durationMs,((row as any).residentRange?.to??to)-1)).map(row=>{const point=orderWallValuePointAt(row,at);return {id:row.archiveEntryId,side:row.side,price:row.priceExact,quantity:point?.quantityExact,notional:point?.notionalExact,rank:point?.rank};}).sort((a,b)=>String(a.id).localeCompare(String(b.id)));
+ for(const at of [...Array.from({length:438},(_,i)=>from+i*137),from+19999,from+20000,from+39999,from+40000])expect(values(fragments,at),String(at-from)).toEqual(values(full,at));
+ for(const chunk of resident.chunks)for(const row of chunk.segments.values()){
+  const fragment=fragments.find(fragment=>fragment.residentRange?.sourceId===row.id&&fragment.residentRange.from===chunk.from)!;
+  const {residentRange:_range,currentSelection:_current,id:_id,...exact}=fragment;const {id:_source,...expected}=row;expect(exact).toEqual(expected);
+ }
+});
+
+it('a confirmed revision change invalidates only its resident owner while an unavailable recheck retains it',async()=>{
+ const {PreparedWallSourceChangedError}=await import('../src/feed/prepared-wall-history');
+ vi.useFakeTimers();const events:any[]=[],reads:any[]=[];let failure:Error|undefined;
+ const fetcher:any=async(input:unknown)=>{if(failure)throw failure;const url=new URL(String(input),'http://localhost'),left=Number(url.searchParams.get('from')),right=Number(url.searchParams.get('to'));reads.push({from:left,to:right});
+  return Response.json(page({from:left,to:right,head:{cursor:20,at:right-1,epoch:1},seed:{at:left,cursor:0,epoch:1,midpoint:'74480',bids:[candidate({startedAt:left,startCursor:0})],asks:[],bookScope:{bidComplete:true,askComplete:true}},page:{after:0,nextAfter:20,hasMore:false,lastAt:right-1,limit:256,sameMillisecondClosed:true},coverage:coverage({requestedFrom:left,requestedTo:right,confirmedTo:right-1})}));};
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to),flush=async()=>{for(let i=0;i<250;i++)await Promise.resolve();};
+ try{
+  service.subscribe('revision',{...request(),followLive:false});await flush();service.updateViewport('revision',from-30000,to-30000,false);await vi.advanceTimersByTimeAsync(130);await flush();expect(service.diagnostics().resident[0]?.chunks).toBe(2);
+  failure=new PreparedWallSourceChangedError(false);service.retry('revision');await flush();expect(service.diagnostics().resident[0]?.chunks).toBe(2);expect(publishedSegments(events)).toHaveLength(2);
+  failure=new PreparedWallSourceChangedError(true);service.retry('revision');await flush();expect(service.diagnostics().resident[0]?.chunks).toBe(1);expect(publishedSegments(events)).toHaveLength(1);expect(publishedSegments(events)[0]?.residentRange.from).toBe(from);
+  expect(events.at(-1).status.archive.requestComplete).toBe(false);
+  failure=undefined;service.retry('revision');await flush();expect(service.diagnostics().resident[0]?.chunks).toBe(2);expect(events.at(-1).status.archive.unloadedRanges).toEqual([]);
+ }finally{service.dispose();vi.useRealTimers();}
+});

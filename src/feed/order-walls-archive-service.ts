@@ -656,7 +656,15 @@ export class OrderWallsArchiveService {
       const requestedRevision=job.preparationNeedsRevision===true;
       job.preparationNeedsRevision=sourceChanged;
       const retryable=error instanceof PreparedWallPreparationError?error.retryable:true;
+      const message = error instanceof Error ? error.message : String(error);
+      job.failure={message,retryable};
       if(sourceChanged){
+        const confirmedChange=error instanceof PreparedWallSourceChangedError?error.confirmedChange:true;
+        if(confirmedChange)for(const subscriber of job.subscribers)if(subscriber.resident?.invalidate(job.request).length){
+          // A positively changed proof invalidates its owned interval, not all
+          // history. An unavailable recheck alone does not erase good data.
+          this.publish(subscriber,'patch',this.diff(subscriber,this.visibleSegments(subscriber)),this.status(subscriber));
+        }
         job.resume=undefined;
         for(const subscriber of job.subscribers)if(subscriber.historyProjector||subscriber.historyPresentation?.size)subscriber.cachedHistory=true;
         // A user Retry may discover that its retained prepared prefix has been
@@ -670,8 +678,6 @@ export class OrderWallsArchiveService {
           this.runHistoryJob(job);return;
         }
       }
-      const message = error instanceof Error ? error.message : String(error);
-      job.failure={message,retryable};
       for (const subscriber of job.subscribers) {
         this.publishHistoryFailure(subscriber,job);
       }
