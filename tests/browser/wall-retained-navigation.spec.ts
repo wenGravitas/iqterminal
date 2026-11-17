@@ -127,3 +127,33 @@ test('compiled chart retains overlap while its real archive adapter fetches only
  console.log(JSON.stringify({kind:'compiled-real-adapter-controlled-source-not-live',initial,pending,advancing,final,forward}));
  await page.evaluate(()=>(window as any).__residentProbe.service.dispose());
 });
+
+test('production worker preserves resident intervals and current cursor through message navigation',async({page})=>{
+ test.skip(process.env.VITE_DATA_MODE!=='staging','Requires the explicit staging protocol fixture build');test.setTimeout(30000);
+ const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));await page.goto('/tests/browser/fixtures/wall-navigation.html');
+ await page.evaluate(()=>{
+  const worker=(window as any).createProtocolWallWorker(),events:any[]=[],to=Date.now()-3600000,from=to-30*3600000;
+  (window as any).__workerProbe={worker,events,from,to};worker.onmessage=({data}:any)=>events.push(data);worker.onerror=(error:any)=>events.push({type:'worker-error',message:error.message});
+  worker.postMessage({type:'fixture-wall-config',from,to});
+ });
+ await page.waitForFunction(()=>(window as any).__workerProbe.events.some((e:any)=>e.type==='fixture-wall-ready'));
+ await page.evaluate(()=>{const p=(window as any).__workerProbe;p.worker.postMessage({type:'order-wall-subscribe',id:'protocol',request:{market:'binance-perp',from:p.from,to:p.to,followLive:true,settings:{enabled:true,mode:'top-levels',topLevels:8,searchRangePercent:10,aggregation:'native'}}});});
+ await page.waitForFunction(()=>(window as any).__workerProbe.events.some((e:any)=>e.type==='order-wall-batch'&&e.status.archive?.requestComplete));
+ const initial=await page.evaluate(()=>{const p=(window as any).__workerProbe,b=p.events.filter((e:any)=>e.type==='order-wall-batch');p.before=b.length;return {generation:b.at(-1).generation,confirmed:b.at(-1).status.lastConfirmedAt};});
+ await page.evaluate(()=>{const p=(window as any).__workerProbe;p.worker.postMessage({type:'fixture-wall-hold',value:true});p.worker.postMessage({type:'order-wall-viewport',id:'protocol',from:p.from-3600000,to:p.to-3600000});});
+ await page.waitForFunction(()=>(window as any).__workerProbe.events.filter((e:any)=>e.type==='fixture-wall-request'&&e.path.endsWith('/archive')).length===2);
+ await page.waitForFunction(at=>(window as any).__workerProbe.events.some((e:any)=>e.type==='order-wall-batch'&&e.status.lastConfirmedAt>at),initial.confirmed);
+ const pending=await page.evaluate(()=>{const p=(window as any).__workerProbe;return {batches:p.events.filter((e:any)=>e.type==='order-wall-batch').slice(p.before),requests:p.events.filter((e:any)=>e.type==='fixture-wall-request')};});
+ expect(pending.batches.every((e:any)=>e.generation===initial.generation)).toBe(true);expect(pending.batches.some((e:any)=>e.kind==='snapshot'&&e.segments.length===0)).toBe(false);
+ const history=pending.requests.filter((e:any)=>e.path.endsWith('/archive'));expect(history[1].to).toBe(history[0].from);
+ const current=pending.requests.filter((e:any)=>e.path.endsWith('/current'));expect(current.map((e:any)=>e.after).slice(0,2)).toEqual([0,100]);
+ await page.evaluate(()=>{const p=(window as any).__workerProbe;p.worker.postMessage({type:'fixture-wall-hold',value:false});});
+ await page.waitForFunction(()=>(window as any).__workerProbe.events.filter((e:any)=>e.type==='order-wall-batch').at(-1)?.status.archive?.unloadedRanges?.length===0);
+ await page.evaluate(()=>{const p=(window as any).__workerProbe;p.worker.postMessage({type:'order-wall-viewport',id:'protocol',from:p.from,to:p.to});});await page.waitForTimeout(250);
+ expect(await page.evaluate(()=>(window as any).__workerProbe.events.filter((e:any)=>e.type==='fixture-wall-request'&&e.path.endsWith('/archive')).length)).toBe(2);
+ await page.evaluate(()=>{const p=(window as any).__workerProbe;p.worker.postMessage({type:'order-wall-unsubscribe',id:'protocol'});p.worker.postMessage({type:'diagnostics'});});
+ await page.waitForFunction(()=>(window as any).__workerProbe.events.some((e:any)=>e.type==='diagnostics'));
+ const cleanup=await page.evaluate(()=>(window as any).__workerProbe.events.find((e:any)=>e.type==='diagnostics').data.orderWallsArchive);
+ expect(cleanup).toMatchObject({subscriptions:0,groups:0,historyJobs:0,historyConsumers:0,resident:[]});expect(errors).toEqual([]);
+ console.log(JSON.stringify({kind:'actual-worker-controlled-canonical-source-not-live-executions',initial,requests:pending.requests,cleanup}));await page.evaluate(()=>(window as any).__workerProbe.worker.terminate());
+});

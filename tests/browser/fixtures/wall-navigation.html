@@ -3,6 +3,7 @@
 import {OrderWallsPrimitive} from '/src/chart/order-walls.ts';
 import {DEFAULT_ORDER_WALLS_SETTINGS} from '/src/feed/order-walls.ts';
 import {OrderWallsArchiveService} from '/src/feed/order-walls-archive-service.ts';
+window.createProtocolWallWorker=()=>new Worker(new URL('./wall-protocol-worker.js',import.meta.url),{type:'module'});
 window.createResidentWallService=(emit,fetcher,now)=>new OrderWallsArchiveService(emit,fetcher,now);
 const base=1704067200000;
 window.runWallNavigation=async(retained,segments=2500)=>{

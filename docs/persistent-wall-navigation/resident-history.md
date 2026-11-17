@@ -76,3 +76,20 @@ Remaining scope is unchanged: actual worker/route integration and execution ACK 
 Full compiled run at `51d65ba`: four passed, one failed. Both Spot and USD-M 30h navigation tests, the eight-owner lifecycle test, and the advancing-current adapter test passed. The component adoption assertion failed because its initial status had no archive left fence, despite claiming it was already fenced. Commit `ecf7a8e` gives that controlled initial presentation the same validated left boundary as the later resident owner. The production path already carries this boundary. The original failure is retained in `compiled-51d65ba-failed-unfenced-fixture.json`; the targeted corrected result is recorded separately. No timing target was changed.
 
 The corrected component check at `ecf7a8e` passed: `compiled-component-ecf7a8e.json`. This is a targeted fixture correction rerun; the other four checks retain their `51d65ba` scope. Builds and typecheck passed; the existing Vite extension/chunk-size warnings remain.
+
+## Historical forward navigation and worker routing
+
+Application `5465edb` closes the historical same-start forward-navigation bypass. Once a non-live-follow view is validated, small forward advances now enter resident ownership rather than issuing the original start again. A regression failed on the old implementation because the second request started at the original start, then passed with two successive missing-only acquisitions. Overscan revisit makes no request and the second acquisition sends no patch for the original owner. Initial adoption detaches the mutable canonical projector; equality, not JavaScript array identity across that adoption, is the guarantee. Live-follow rolling revisions retain the independently validated full-revision/delta path for now; this remaining distinction is explicit, not a claim of complete rolling-navigation reuse.
+
+120 archive/prepared-projection tests passed, including the existing live-follow exact-delta regression. Typecheck and compiled build passed. The ordinary compiled-panel controlled-source check passed at `5465edb` (`compiled-forward-5465edb.json`): after backward acquisition/revisit, forward acquisition started exactly at the old resident end, and the next advance stayed in overscan without a fourth request. Current wall cursors continued independently.
+
+The added explicit `wall-protocol-worker.js` diagnostic entry installs controlled HTTP responses, then imports the real compiled `src/feed/worker.ts`. It neither changes production routing nor supplies a fallback to application network failures. `compiled-worker-5465edb-working-fixture.json` records a passing check with application `5465edb` and the then-uncommitted diagnostic entry. This build explicitly uses `VITE_DATA_MODE=staging`, `VITE_HISTORY_TILES=0`, and `VITE_DIAGNOSTICS=1`. The test sends production subscribe, viewport, unsubscribe and diagnostics messages across the actual browser worker boundary. One initial history request and one missing interval; current requests after 0 and 100; stable generation; no empty reset snapshot; no revisit request. Unsubscribe leaves zero subscriptions/current groups/history jobs/consumers/resident owners. Two bounded warm entries (1536 accounted bytes) remain by existing cache policy until expiry or worker termination; the test terminates its worker. No live exchange execution ACK or prepared-projection worker claim is made.
+
+To reproduce the worker check on the dedicated preview:
+
+```sh
+VITE_DATA_MODE=staging VITE_HISTORY_TILES=0 VITE_DIAGNOSTICS=1 VITE_BUILD_COMMIT=$(git rev-parse HEAD) pnpm exec vite build --config vite.wall-navigation.config.ts
+VITE_DATA_MODE=staging pnpm exec playwright test --config playwright.wall-navigation.config.ts --grep 'production worker'
+```
+
+Archive the JSON reporter output before another run. The fixture test is explicitly skipped without the staging test environment; skipped is not passed. The preview is owned by Playwright on4189 and stopped afterward. This is headless controlled-source evidence, not foreground performance certification.
