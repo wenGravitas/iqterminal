@@ -167,3 +167,23 @@ test('production worker preserves resident intervals and current cursor through 
  expect(cleanup).toMatchObject({subscriptions:0,groups:0,historyJobs:0,historyConsumers:0,resident:[]});expect(errors).toEqual([]);
  console.log(JSON.stringify({kind:'actual-worker-controlled-canonical-source-not-live-executions',initial,requests:pending.requests,cycles,cleanup}));await page.evaluate(()=>(window as any).__workerProbe.worker.terminate());
 });
+
+test('production worker coalesces camera gestures during partial initial delivery',async({page})=>{
+ test.skip(process.env.VITE_DATA_MODE!=='staging','Requires explicit staging protocol fixture build');test.setTimeout(30000);
+ await page.goto('/tests/browser/fixtures/wall-navigation.html');await page.evaluate(()=>{
+  const worker=(window as any).createProtocolWallWorker(),events:any[]=[],to=Date.now()-3600000,from=to-30*3600000;
+  (window as any).__partialProbe={worker,events,from,to};worker.onmessage=({data}:any)=>events.push(data);
+  worker.postMessage({type:'fixture-wall-config',from,to,partialInitial:true});
+ });
+ await page.waitForFunction(()=>(window as any).__partialProbe.events.some((e:any)=>e.type==='fixture-wall-ready'));
+ await page.evaluate(()=>{const p=(window as any).__partialProbe;p.worker.postMessage({type:'order-wall-subscribe',id:'partial',request:{market:'binance-perp',from:p.from,to:p.to,followLive:true,settings:{enabled:true,mode:'top-levels',topLevels:8,searchRangePercent:10,aggregation:'native'}}});});
+ await page.waitForFunction(()=>(window as any).__partialProbe.events.some((e:any)=>e.type==='fixture-wall-request'&&e.path.endsWith('/archive')&&e.after===10));
+ await page.evaluate(()=>{const p=(window as any).__partialProbe;p.before=p.events.length;for(let step=1;step<=10;step++)p.worker.postMessage({type:'order-wall-viewport',id:'partial',from:p.from-step*60000,to:p.to-step*60000});});
+ await page.waitForFunction(()=>(window as any).__partialProbe.events.some((e:any)=>e.type==='order-wall-batch'&&e.status.archive?.requestComplete));
+ const result=await page.evaluate(()=>{const p=(window as any).__partialProbe;return {from:p.from,to:p.to,requests:p.events.filter((e:any)=>e.type==='fixture-wall-request'&&e.path.endsWith('/archive')),batches:p.events.filter((e:any)=>e.type==='order-wall-batch'),after:p.events.slice(p.before).filter((e:any)=>e.type==='order-wall-batch')};});
+ expect(result.requests.map((r:any)=>({from:r.from,to:r.to,after:r.after}))).toEqual([{from:result.from,to:result.to,after:0},{from:result.from,to:result.to,after:10},{from:result.from-600000,to:result.to-600000,after:0}]);
+ expect(result.batches.some((e:any)=>e.kind==='snapshot'&&e.segments.some((s:any)=>s.archiveEntryId))).toBe(true);
+ expect(result.after.some((e:any)=>e.kind==='snapshot'&&e.segments.length===0)).toBe(false);expect(new Set(result.batches.map((e:any)=>e.generation)).size).toBe(1);
+ console.log(JSON.stringify({kind:'actual-worker-partial-navigation-controlled-source',requests:result.requests,generations:[...new Set(result.batches.map((e:any)=>e.generation))],emptyResets:result.after.filter((e:any)=>e.kind==='snapshot'&&e.segments.length===0).length}));
+ await page.evaluate(()=>{const p=(window as any).__partialProbe;p.worker.postMessage({type:'order-wall-unsubscribe',id:'partial'});p.worker.terminate();});
+});

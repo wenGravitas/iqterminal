@@ -1696,3 +1696,28 @@ it('readmits a validated capacity-blocked owner after narrowing without another 
   service.retry('capacity');await flush();expect(reads).toHaveLength(10); // normal explicit fresh validation still reads
  }finally{service.dispose();vi.useRealTimers();}
 });
+
+it('coalesces initial partial-history boundary gestures without cancelling useful work per input',async()=>{
+ vi.useFakeTimers();const events:any[]=[],reads:Array<{from:number;to:number;after:number;signal:AbortSignal}>=[],currentSignals:AbortSignal[]=[];
+ const held:Array<(response:Response)=>void>=[],wall=candidate({startedAt:from-1000,startCursor:0});
+ const fetcher:any=(input:unknown,init:any)=>{const url=new URL(String(input),'http://localhost');
+  if(url.pathname.endsWith('/current')){currentSignals.push(init.signal);return new Promise(()=>{});}
+  const left=Number(url.searchParams.get('from')),right=Number(url.searchParams.get('to')),after=Number(url.searchParams.get('after'));reads.push({from:left,to:right,after,signal:init.signal});
+  if(reads.length===1)return Promise.resolve(Response.json(page({patches:[archivePatch(10,from+1000,{bids:side([wall])})],seed:{at:from,cursor:0,epoch:1,midpoint:'74480',bids:[wall],asks:[],bookScope:{bidComplete:true,askComplete:true}},page:{after:0,nextAfter:10,hasMore:true,lastAt:from+1000,limit:256,sameMillisecondClosed:true}})));
+  return new Promise(resolve=>held.push(resolve));
+ };
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to),flush=async()=>{for(let i=0;i<200;i++)await Promise.resolve();};
+ try{
+  service.subscribe('initial-gesture',{...request(),followLive:true});await flush();await vi.advanceTimersByTimeAsync(1);await flush();expect(reads,JSON.stringify(events.at(-1))).toHaveLength(2);expect(publishedSegments(events).length).toBeGreaterThan(0);
+  const before=events.length,old=publishedSegments(events);
+  for(let step=1;step<=10;step++){service.updateViewport('initial-gesture',from-step*1000,to-step*1000,false);await vi.advanceTimersByTimeAsync(5);}
+  expect(reads).toHaveLength(2);expect(reads[1]!.signal.aborted).toBe(false);expect(publishedSegments(events)).toEqual(old);
+  service.updateViewport('initial-gesture',from,to,false);await vi.advanceTimersByTimeAsync(130);await flush();expect(reads).toHaveLength(2);expect(reads[1]!.signal.aborted).toBe(false);
+  for(let step=1;step<=10;step++)service.updateViewport('initial-gesture',from-step*1000,to-step*1000,false);
+  await vi.advanceTimersByTimeAsync(130);await flush();expect(reads).toHaveLength(3);expect(reads[1]!.signal.aborted).toBe(true);expect(reads[2]).toMatchObject({from:from-10000,to:to-10000,after:0});
+  expect(currentSignals).toHaveLength(1);expect(currentSignals[0]!.aborted).toBe(false);
+  const at=events.length;held[0]!(Response.json(page()));await flush();expect(events).toHaveLength(at);expect(publishedSegments(events)).toEqual(old);
+  expect(events.slice(before).some(event=>event.kind==='snapshot'&&event.segments.length===0)).toBe(false);
+  service.updateViewport('initial-gesture',from-20000,to-20000,false);service.unsubscribe('initial-gesture');await vi.advanceTimersByTimeAsync(200);expect(reads).toHaveLength(3);
+ }finally{service.dispose();for(const resolve of held)resolve(Response.json(page()));await flush();vi.useRealTimers();}
+});

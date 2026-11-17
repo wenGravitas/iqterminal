@@ -64,6 +64,7 @@ interface Subscription {
   resident?:WallResidentHistory;
   residentAttempts?:Set<string>;
   residentTimer?:ReturnType<typeof setTimeout>;
+  navigationTimer?:ReturnType<typeof setTimeout>;
   residentCapacity?:string;
   currentSnapshotIds:Set<string>;
   warmReplay?:WarmReplay;
@@ -182,6 +183,23 @@ export class OrderWallsArchiveService {
   }
 
   updateViewport(id: string, from: number, to: number, followLive?: boolean) {
+    const sub=this.subscriptions.get(id);if(!sub||!Number.isFinite(from)||!Number.isFinite(to)||from>=to)return;
+    if(sub.navigationTimer){clearTimeout(sub.navigationTimer);sub.navigationTimer=undefined;}
+    const next={from,to,followLive:followLive??to>=this.now()-60_000};
+    if(!sub.resident&&sub.historyJob&&!sub.historyJob.settled
+      &&!(from>=sub.request.from&&to<=sub.request.to)&&!canCoalesceHistoryViewport(sub.viewport,next)){
+      // Keep useful initial partial data and the current lane during a gesture.
+      // If the old job finishes meanwhile, normal resident admission can reuse
+      // it when the latest viewport is applied. Never cancel once per input.
+      sub.navigationTimer=setTimeout(()=>{sub.navigationTimer=undefined;
+        if(this.subscriptions.get(id)===sub)this.applyViewport(id,from,to,next.followLive);
+      },120);
+      return;
+    }
+    this.applyViewport(id,from,to,next.followLive);
+  }
+
+  private applyViewport(id: string, from: number, to: number, followLive?: boolean) {
     const sub = this.subscriptions.get(id); if (!sub || !Number.isFinite(from) || !Number.isFinite(to) || from >= to) return;
     // A viewport is a presentation window into the retained projection. Keep its
     // wider archive request and fixed watermark while pan/zoom stays covered.
@@ -279,7 +297,7 @@ export class OrderWallsArchiveService {
 
   unsubscribe(id: string) {
     const sub = this.subscriptions.get(id); if (!sub) return;
-    if(sub.residentTimer)clearTimeout(sub.residentTimer);sub.resident?.clear();
+    if(sub.residentTimer)clearTimeout(sub.residentTimer);if(sub.navigationTimer)clearTimeout(sub.navigationTimer);sub.resident?.clear();
     this.subscriptions.delete(id);this.releaseWarmInterests(sub.request.currentOnly?undefined:sub.request,sub.historyJob?.request);this.releaseWarmReplay(sub);
     const historyJob = sub.historyJob; sub.historyJob = undefined;
     if (historyJob) {
