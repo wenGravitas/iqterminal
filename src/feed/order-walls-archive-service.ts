@@ -247,6 +247,11 @@ export class OrderWallsArchiveService {
   retry(id: string) {
     const sub = this.subscriptions.get(id); if (!sub) return;
     const job = sub.historyJob;
+    if(sub.resident&&sub.residentCapacity&&job?.settled&&!job.failure&&job.latest){
+      sub.residentCapacity=undefined;this.publishResidentUpdate(sub,job,job.latest);
+      if(!sub.residentCapacity)this.startResidentMissing(sub);
+      return;
+    }
     if (job) {
       if (!job.settled) return;
       {
@@ -530,9 +535,14 @@ export class OrderWallsArchiveService {
   }
 
   private navigateResidentHistory(sub:Subscription,view:{from:number;to:number;followLive?:boolean}){
-    const resident=sub.resident!;resident.touch(view);sub.residentCapacity=undefined;
+    const resident=sub.resident!,blocked=sub.residentCapacity;resident.touch(view);sub.residentCapacity=undefined;
     sub.request={...sub.request,from:view.from,to:view.to,followLive:sub.request.followLive||view.followLive};
     sub.pendingViewport=undefined;
+    // Admission may have failed only because all owners were visible. A new
+    // viewport can make whole owners evictable. Reuse the already validated
+    // completed result before considering another network acquisition.
+    const completed=sub.historyJob;
+    if(blocked&&completed?.settled&&!completed.failure&&completed.latest)this.publishResidentUpdate(sub,completed,completed.latest);
     if(sub.request.followLive&&!sub.group)this.attachCurrentGroup(sub);
     // Coalesce gestures without cancelling a useful bounded request on each
     // frame. A completed obsolete interval can become offscreen resident data.

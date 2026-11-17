@@ -151,9 +151,19 @@ test('production worker preserves resident intervals and current cursor through 
  await page.waitForFunction(()=>(window as any).__workerProbe.events.filter((e:any)=>e.type==='order-wall-batch').at(-1)?.status.archive?.unloadedRanges?.length===0);
  await page.evaluate(()=>{const p=(window as any).__workerProbe;p.worker.postMessage({type:'order-wall-viewport',id:'protocol',from:p.from,to:p.to});});await page.waitForTimeout(250);
  expect(await page.evaluate(()=>(window as any).__workerProbe.events.filter((e:any)=>e.type==='fixture-wall-request'&&e.path.endsWith('/archive')).length)).toBe(2);
- await page.evaluate(()=>{const p=(window as any).__workerProbe;p.worker.postMessage({type:'order-wall-unsubscribe',id:'protocol'});p.worker.postMessage({type:'diagnostics'});});
+ const cycles:any[]=[];
+ for(let cycle=0;cycle<16;cycle++){
+  await page.evaluate(cycle=>{const p=(window as any).__workerProbe;p.events=[];const span=p.to-p.from;p.worker.postMessage({type:'order-wall-viewport',id:'protocol',from:p.from-(cycle+1)*span*2,to:p.to-(cycle+1)*span*2});},cycle);
+  await page.waitForFunction(()=>(window as any).__workerProbe.events.some((e:any)=>e.type==='order-wall-batch'&&e.status.archive?.requestComplete&&e.status.archive?.unloadedRanges?.length===0));
+  await page.evaluate(()=>(window as any).__workerProbe.worker.postMessage({type:'diagnostics'}));
+  await page.waitForFunction(()=>(window as any).__workerProbe.events.some((e:any)=>e.type==='diagnostics'));
+  const sample=await page.evaluate(()=>{const d=(window as any).__workerProbe.events.find((e:any)=>e.type==='diagnostics').data.orderWallsArchive;return {owners:d.resident[0].chunks,records:d.resident[0].segments,bytes:d.resident[0].bytes,jobs:d.historyJobs,consumers:d.historyConsumers,warmBytes:d.warmBytes};});
+  expect(sample.owners).toBeLessThanOrEqual(8);expect(sample.records).toBeLessThanOrEqual(8);expect(sample.jobs).toBe(1);expect(sample.consumers).toBe(1);cycles.push(sample);
+ }
+ expect(new Set(cycles.slice(-6).map(sample=>JSON.stringify(sample))).size).toBe(1);
+ await page.evaluate(()=>{const p=(window as any).__workerProbe;p.events=[];p.worker.postMessage({type:'order-wall-unsubscribe',id:'protocol'});p.worker.postMessage({type:'diagnostics'});});
  await page.waitForFunction(()=>(window as any).__workerProbe.events.some((e:any)=>e.type==='diagnostics'));
  const cleanup=await page.evaluate(()=>(window as any).__workerProbe.events.find((e:any)=>e.type==='diagnostics').data.orderWallsArchive);
  expect(cleanup).toMatchObject({subscriptions:0,groups:0,historyJobs:0,historyConsumers:0,resident:[]});expect(errors).toEqual([]);
- console.log(JSON.stringify({kind:'actual-worker-controlled-canonical-source-not-live-executions',initial,requests:pending.requests,cleanup}));await page.evaluate(()=>(window as any).__workerProbe.worker.terminate());
+ console.log(JSON.stringify({kind:'actual-worker-controlled-canonical-source-not-live-executions',initial,requests:pending.requests,cycles,cleanup}));await page.evaluate(()=>(window as any).__workerProbe.worker.terminate());
 });
