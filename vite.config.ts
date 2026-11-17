@@ -6,6 +6,8 @@ export default defineConfig(({ mode }) => {
   const staging = mode === 'staging' || process.env.VITE_DATA_MODE === 'staging' || loadEnv(mode, process.cwd()).VITE_DATA_MODE === 'staging';
   const liquidationTarget=process.env.VITE_LIQUIDATION_API_URL;
   if(liquidationTarget){const target=new URL(liquidationTarget);if(target.protocol!=='http:'||!['127.0.0.1','localhost'].includes(target.hostname))throw Error('Liquidation development target must be loopback HTTP');}
+  const watchTarget=process.env.VITE_WATCH_API_URL;
+  if(watchTarget){const target=new URL(watchTarget);if(target.protocol!=='http:'||!['127.0.0.1','localhost'].includes(target.hostname)||target.username||target.password||target.search||target.hash||target.pathname!=='/')throw Error('Watch development target must be an unauthenticated loopback HTTP origin');}
   const currentTarget=process.env.VITE_CURRENT_API_URL??'http://127.0.0.1:18781';
   {const target=new URL(currentTarget);if(target.protocol!=='http:'||!['127.0.0.1','localhost'].includes(target.hostname)||target.username||target.password||target.search||target.hash||target.pathname!=='/')throw Error('Current development target must be an unauthenticated loopback HTTP origin');}
   const historyTarget=process.env.VITE_HISTORY_API_URL;
@@ -19,8 +21,8 @@ export default defineConfig(({ mode }) => {
   const nativeHistoryAgent=staging?new Agent({keepAlive:true,maxSockets:2,maxTotalSockets:2,maxFreeSockets:2,timeout:60000}):undefined;
   const proxy:Record<string,string|ProxyOptions>|undefined=staging?{
     // Current-book recovery must not queue behind long historical reads.
-    '/market-data/v1/level-watches/stream': { target: currentTarget, agent:false, ws:true, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/level-watches': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v1/level-watches/stream': { target: watchTarget??currentTarget, agent:false, ws:true, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v1/level-watches': { target: watchTarget??currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v1/liquidations/stream': { target: liquidationTarget??currentTarget, agent:false, ws:true, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v1/liquidations': { target: liquidationTarget??historyTarget??'http://127.0.0.1:18780', agent:historyAgent, configure:observeStagingProxy, proxyTimeout:30000, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v2/history/walls/reader': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },

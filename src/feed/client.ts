@@ -63,7 +63,7 @@ export class FeedClient {
     this.worker.onmessage=(message:MessageEvent<Event>)=>{
       const wm=message.data as unknown as WatchMessage;
       if(wm.type==='watch-result'){const request=this.watchRequests.get(wm.id);if(request){clearTimeout(request.timer);this.watchRequests.delete(wm.id);if(wm.error)request.reject(new Error(wm.error));else request.resolve(wm.value);}return;}
-      if(wm.type==='watch-state'){if(wm.snapshot)this.watchSnapshot=wm.snapshot;this.watchError=wm.error;try{for(const listener of this.watchListeners){try{listener(this.watchSnapshot,this.watchError);}catch(error){console.error('Watch subscriber failed',error);}}}finally{if(wm.snapshot?.events)this.worker.postMessage({type:'watch-ack',cursor:wm.snapshot.cursor});}return;}
+      if(wm.type==='watch-state'){if(wm.snapshot)this.watchSnapshot=wm.snapshot;this.watchError=wm.error;try{for(const listener of this.watchListeners){try{listener(this.watchSnapshot,this.watchError);}catch(error){console.error('Watch subscriber failed',error);}}}finally{if(wm.snapshot&&wm.delivery)this.worker.postMessage({type:'watch-ack',...wm.delivery});}return;}
       const e=message.data;
       if(feedDiagnosticsEnabled){this.protocolStats.events++;this.protocolStats.eventTypes[e.type]=(this.protocolStats.eventTypes[e.type]??0)+1;}
       if(e.type==='effort-claim'){const pending=this.effortClaims.get(e.ids[0]);if(pending){clearTimeout(pending.timer);this.effortClaims.delete(e.ids[0]);pending.resolve(e.accepted);}return;}
