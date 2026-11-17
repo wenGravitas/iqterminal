@@ -1,0 +1,327 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.23.4/bin/node",
+      "/home/daz/workarea/iqterminal-persistent-walls/node_modules/.pnpm/@playwright+test@1.64.0/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.wall-navigation.config.ts"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal-persistent-walls/playwright.wall-navigation.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/daz/workarea/iqterminal-persistent-walls/scripts/test-browser-i3-setup.mjs",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "wall-retained-navigation.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": "wall-retained-navigation.spec.ts",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4189",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4173",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--class=IQTerminalPerf",
+              "--name=IQTerminalPerf",
+              "--ozone-platform=x11",
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          },
+          "headless": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/persistent-wall-navigation/compiled-browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm exec vite preview --outDir dist-wall-navigation --host 127.0.0.1 --port 4189 --strictPort",
+      "url": "http://127.0.0.1:4189",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "wall-retained-navigation.spec.ts",
+      "file": "wall-retained-navigation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "retained GPU component preserves exact source, mapped positions, styles, hover and disposal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12795,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T13:02:15.106Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-20174fdcf2ba31a65e00",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 6,
+          "column": 1
+        },
+        {
+          "title": "eight charts share bounded resources and release them through reopen and current updates",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 3104,
+                  "error": {
+                    "message": "Error: page.evaluate: Error: Current change rebuilt unchanged history or did not paint\n    at window.checkWallResourceLifecycle (http://127.0.0.1:4189/assets/wallNavigation-BkS13bej.js:2:9408)\n    at async <anonymous>:396:30",
+                    "stack": "Error: page.evaluate: Error: Current change rebuilt unchanged history or did not paint\n    at window.checkWallResourceLifecycle (http://127.0.0.1:4189/assets/wallNavigation-BkS13bej.js:2:9408)\n    at async <anonymous>:396:30\n    at window.checkWallResourceLifecycle (http://127.0.0.1:4189/assets/wallNavigation-BkS13bej.js:2:9408)\n    at async <anonymous>:396:30\n    at /home/daz/workarea/iqterminal-persistent-walls/tests/browser/wall-retained-navigation.spec.ts:14:26",
+                    "location": {
+                      "file": "http://127.0.0.1:4189/assets/wallNavigation-BkS13bej.js",
+                      "column": 9408,
+                      "line": 2
+                    }
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "http://127.0.0.1:4189/assets/wallNavigation-BkS13bej.js",
+                        "column": 9408,
+                        "line": 2
+                      },
+                      "message": "Error: page.evaluate: Error: Current change rebuilt unchanged history or did not paint\n    at window.checkWallResourceLifecycle (http://127.0.0.1:4189/assets/wallNavigation-BkS13bej.js:2:9408)\n    at async <anonymous>:396:30\n    at window.checkWallResourceLifecycle (http://127.0.0.1:4189/assets/wallNavigation-BkS13bej.js:2:9408)\n    at async <anonymous>:396:30\n    at /home/daz/workarea/iqterminal-persistent-walls/tests/browser/wall-retained-navigation.spec.ts:14:26"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T13:02:31.202Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal-persistent-walls/test-results/wall-retained-navigation-e-03b27--reopen-and-current-updates/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "http://127.0.0.1:4189/assets/wallNavigation-BkS13bej.js",
+                    "column": 9408,
+                    "line": 2
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-bb450306ba9c59151f86",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "title": "compiled spot 30h chart keeps walls throughout camera gestures",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14818,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"compiled-controlled-render-replay-not-live\",\"market\":\"spot\",\"interval\":300000,\"input\":{\"range\":{\"from\":4638,\"to\":5000},\"center\":83500,\"from\":1794812100000,\"to\":1794920100000,\"segments\":944},\"before\":{\"active\":true,\"builds\":17,\"frames\":7,\"mappingInvalidations\":0,\"uploadedBytes\":332288,\"bufferUploads\":34,\"drawCalls\":17,\"maxPrepareMs\":38.29999999701977,\"lastPrepareMs\":2.7000000029802322,\"lastPaintMs\":6.200000002980232,\"visibleSpans\":6400,\"visibleHistorical\":6400,\"visibleCurrent\":0,\"bytes\":353432,\"referenceMin\":83225,\"referenceMax\":670200,\"failure\":\"\",\"pending\":0,\"chunks\":17,\"sources\":944,\"retainedSpans\":7552,\"contextLost\":false,\"sharedGpuBytes\":332288,\"sharedOwners\":1},\"result\":{\"frames\":[{\"at\":8904.60000000149,\"nonempty\":43649,\"width\":922,\"height\":600},{\"at\":8996.89999999851,\"nonempty\":44352,\"width\":922,\"height\":600},{\"at\":9036.10000000149,\"nonempty\":43658,\"width\":922,\"height\":600},{\"at\":9155.39999999851,\"nonempty\":43904,\"width\":922,\"height\":600},{\"at\":9198.10000000149,\"nonempty\":43811,\"width\":922,\"height\":600},{\"at\":9222.80000000447,\"nonempty\":43218,\"width\":922,\"height\":600},{\"at\":9250.80000000447,\"nonempty\":43758,\"width\":922,\"height\":600},{\"at\":9284.70000000298,\"nonempty\":43656,\"width\":922,\"height\":600},{\"at\":9313.80000000447,\"nonempty\":41149,\"width\":922,\"height\":600},{\"at\":9366.10000000149,\"nonempty\":43906,\"width\":922,\"height\":600},{\"at\":9403.30000000447,\"nonempty\":43998,\"width\":922,\"height\":600},{\"at\":9449.10000000149,\"nonempty\":44509,\"width\":922,\"height\":600},{\"at\":9484.20000000298,\"nonempty\":43807,\"width\":922,\"height\":600},{\"at\":9524.20000000298,\"nonempty\":44700,\"width\":922,\"height\":600},{\"at\":9564.30000000447,\"nonempty\":44642,\"width\":922,\"height\":600},{\"at\":9600.30000000447,\"nonempty\":44388,\"width\":922,\"height\":600},{\"at\":9631.60000000149,\"nonempty\":44344,\"width\":922,\"height\":600},{\"at\":9662.80000000447,\"nonempty\":44398,\"width\":922,\"height\":600},{\"at\":9700.30000000447,\"nonempty\":42693,\"width\":922,\"height\":600},{\"at\":9729.80000000447,\"nonempty\":44092,\"width\":922,\"height\":600},{\"at\":9765,\"nonempty\":44189,\"width\":922,\"height\":600},{\"at\":9800.60000000149,\"nonempty\":44596,\"width\":922,\"height\":600},{\"at\":9831.20000000298,\"nonempty\":43998,\"width\":922,\"height\":600},{\"at\":9870.10000000149,\"nonempty\":44400,\"width\":922,\"height\":600},{\"at\":9909.39999999851,\"nonempty\":43804,\"width\":922,\"height\":600},{\"at\":9936.80000000447,\"nonempty\":44562,\"width\":922,\"height\":600},{\"at\":9986.30000000447,\"nonempty\":44051,\"width\":922,\"height\":600},{\"at\":10052.30000000447,\"nonempty\":44354,\"width\":922,\"height\":600},{\"at\":10147.70000000298,\"nonempty\":43904,\"width\":922,\"height\":600},{\"at\":10208.10000000149,\"nonempty\":44358,\"width\":922,\"height\":600},{\"at\":10445.30000000447,\"nonempty\":44007,\"width\":922,\"height\":600},{\"at\":10783,\"nonempty\":44152,\"width\":922,\"height\":600},{\"at\":10820.30000000447,\"nonempty\":43654,\"width\":922,\"height\":600},{\"at\":10857.60000000149,\"nonempty\":44053,\"width\":922,\"height\":600},{\"at\":10894.70000000298,\"nonempty\":43906,\"width\":922,\"height\":600},{\"at\":11017.10000000149,\"nonempty\":43996,\"width\":922,\"height\":600},{\"at\":11056.80000000447,\"nonempty\":44300,\"width\":922,\"height\":600},{\"at\":11095.80000000447,\"nonempty\":44438,\"width\":922,\"height\":600},{\"at\":11136.80000000447,\"nonempty\":44506,\"width\":922,\"height\":600},{\"at\":11173.10000000149,\"nonempty\":43789,\"width\":922,\"height\":600},{\"at\":11206.10000000149,\"nonempty\":44601,\"width\":922,\"height\":600},{\"at\":11237.10000000149,\"nonempty\":44186,\"width\":922,\"height\":600},{\"at\":11267.30000000447,\"nonempty\":44799,\"width\":922,\"height\":600},{\"at\":11313.20000000298,\"nonempty\":44297,\"width\":922,\"height\":600},{\"at\":11359.5,\"nonempty\":44900,\"width\":922,\"height\":600},{\"at\":11408.20000000298,\"nonempty\":44996,\"width\":922,\"height\":600},{\"at\":11509.89999999851,\"nonempty\":45004,\"width\":922,\"height\":600},{\"at\":12014,\"nonempty\":38904,\"width\":922,\"height\":600},{\"at\":12043.89999999851,\"nonempty\":29084,\"width\":706,\"height\":592}],\"renderer\":{\"active\":true,\"builds\":17,\"frames\":56,\"mappingInvalidations\":0,\"uploadedBytes\":332288,\"bufferUploads\":34,\"drawCalls\":17,\"maxPrepareMs\":38.29999999701977,\"lastPrepareMs\":0,\"lastPaintMs\":18.69999999552965,\"visibleSpans\":4992,\"visibleHistorical\":4992,\"visibleCurrent\":0,\"bytes\":353432,\"referenceMin\":83225,\"referenceMax\":670200,\"failure\":\"\",\"pending\":0,\"chunks\":17,\"sources\":944,\"retainedSpans\":7552,\"contextLost\":false,\"sharedGpuBytes\":332288,\"sharedOwners\":1},\"replay\":{\"subscribes\":1,\"viewports\":35}}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T13:02:36.286Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-83f40c1521551007f11c",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 18,
+          "column": 51
+        },
+        {
+          "title": "compiled perpetual 30h chart keeps walls throughout camera gestures",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13124,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"compiled-controlled-render-replay-not-live\",\"market\":\"perpetual\",\"interval\":900000,\"input\":{\"range\":{\"from\":4878,\"to\":5000},\"center\":83500,\"from\":1794811500000,\"to\":1794919500000,\"segments\":944},\"before\":{\"active\":true,\"builds\":17,\"frames\":6,\"mappingInvalidations\":0,\"uploadedBytes\":332288,\"bufferUploads\":34,\"drawCalls\":17,\"maxPrepareMs\":11.199999995529652,\"lastPrepareMs\":2.5,\"lastPaintMs\":2.5,\"visibleSpans\":7552,\"visibleHistorical\":7552,\"visibleCurrent\":0,\"bytes\":351032,\"referenceMin\":83225,\"referenceMax\":670200,\"failure\":\"\",\"pending\":0,\"chunks\":17,\"sources\":944,\"retainedSpans\":7552,\"contextLost\":false,\"sharedGpuBytes\":332288,\"sharedOwners\":1},\"result\":{\"frames\":[{\"at\":7793.5,\"nonempty\":42939,\"width\":922,\"height\":600},{\"at\":8025.0999999940395,\"nonempty\":42953,\"width\":922,\"height\":600},{\"at\":8072.0999999940395,\"nonempty\":41742,\"width\":922,\"height\":600},{\"at\":8134,\"nonempty\":41317,\"width\":922,\"height\":600},{\"at\":8250.89999999851,\"nonempty\":40768,\"width\":922,\"height\":600},{\"at\":8336,\"nonempty\":39853,\"width\":922,\"height\":600},{\"at\":8393.29999999702,\"nonempty\":39950,\"width\":922,\"height\":600},{\"at\":8425.59999999404,\"nonempty\":39648,\"width\":922,\"height\":600},{\"at\":8467.09999999404,\"nonempty\":39819,\"width\":922,\"height\":600},{\"at\":8507.59999999404,\"nonempty\":39698,\"width\":922,\"height\":600},{\"at\":8535,\"nonempty\":39725,\"width\":922,\"height\":600},{\"at\":8578,\"nonempty\":40367,\"width\":922,\"height\":600},{\"at\":8626.5,\"nonempty\":40346,\"width\":922,\"height\":600},{\"at\":8656.69999999553,\"nonempty\":41119,\"width\":922,\"height\":600},{\"at\":8681.19999999553,\"nonempty\":41563,\"width\":922,\"height\":600},{\"at\":8714.5,\"nonempty\":41695,\"width\":922,\"height\":600},{\"at\":8737.79999999702,\"nonempty\":42427,\"width\":922,\"height\":600},{\"at\":8781.09999999404,\"nonempty\":42988,\"width\":922,\"height\":600},{\"at\":8815.59999999404,\"nonempty\":43824,\"width\":922,\"height\":600},{\"at\":8854.59999999404,\"nonempty\":44446,\"width\":922,\"height\":600},{\"at\":8882.39999999851,\"nonempty\":44448,\"width\":922,\"height\":600},{\"at\":8925.09999999404,\"nonempty\":44803,\"width\":922,\"height\":600},{\"at\":8957.59999999404,\"nonempty\":44097,\"width\":922,\"height\":600},{\"at\":8984.29999999702,\"nonempty\":44275,\"width\":922,\"height\":600},{\"at\":9014.29999999702,\"nonempty\":43384,\"width\":922,\"height\":600},{\"at\":9047.5,\"nonempty\":43907,\"width\":922,\"height\":600},{\"at\":9082,\"nonempty\":43335,\"width\":922,\"height\":600},{\"at\":9119.29999999702,\"nonempty\":43264,\"width\":922,\"height\":600},{\"at\":9148.89999999851,\"nonempty\":42698,\"width\":922,\"height\":600},{\"at\":9185.5,\"nonempty\":43078,\"width\":922,\"height\":600},{\"at\":9219.79999999702,\"nonempty\":42920,\"width\":922,\"height\":600},{\"at\":9255.19999999553,\"nonempty\":42899,\"width\":922,\"height\":600},{\"at\":9283.89999999851,\"nonempty\":42593,\"width\":922,\"height\":600},{\"at\":9319,\"nonempty\":43197,\"width\":922,\"height\":600},{\"at\":9356.89999999851,\"nonempty\":43208,\"width\":922,\"height\":600},{\"at\":9472.89999999851,\"nonempty\":43296,\"width\":922,\"height\":600},{\"at\":9510,\"nonempty\":43595,\"width\":922,\"height\":600},{\"at\":9677.89999999851,\"nonempty\":43813,\"width\":922,\"height\":600},{\"at\":9980.19999999553,\"nonempty\":44123,\"width\":922,\"height\":600},{\"at\":10069.59999999404,\"nonempty\":43539,\"width\":922,\"height\":600},{\"at\":10151.5,\"nonempty\":44509,\"width\":922,\"height\":600},{\"at\":10229.39999999851,\"nonempty\":44322,\"width\":922,\"height\":600},{\"at\":10268.29999999702,\"nonempty\":45028,\"width\":922,\"height\":600},{\"at\":10309.89999999851,\"nonempty\":44650,\"width\":922,\"height\":600},{\"at\":10361.5,\"nonempty\":45181,\"width\":922,\"height\":600},{\"at\":10445.89999999851,\"nonempty\":45190,\"width\":922,\"height\":600},{\"at\":10491.5,\"nonempty\":45230,\"width\":922,\"height\":600},{\"at\":10932.29999999702,\"nonempty\":34302,\"width\":706,\"height\":592},{\"at\":11029.39999999851,\"nonempty\":31720,\"width\":706,\"height\":592}],\"renderer\":{\"active\":true,\"builds\":17,\"frames\":55,\"mappingInvalidations\":0,\"uploadedBytes\":332288,\"bufferUploads\":34,\"drawCalls\":17,\"maxPrepareMs\":11.199999995529652,\"lastPrepareMs\":0.10000000149011612,\"lastPaintMs\":52.5,\"visibleSpans\":7552,\"visibleHistorical\":7552,\"visibleCurrent\":0,\"bytes\":351032,\"referenceMin\":83225,\"referenceMax\":670200,\"failure\":\"\",\"pending\":0,\"chunks\":17,\"sources\":944,\"retainedSpans\":7552,\"contextLost\":false,\"sharedGpuBytes\":332288,\"sharedOwners\":1},\"replay\":{\"subscribes\":1,\"viewports\":48}}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T13:02:53.166Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-ee2de4558f05f4f932dd",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 18,
+          "column": 51
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-17T13:02:09.549Z",
+    "duration": 57404.947,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}
