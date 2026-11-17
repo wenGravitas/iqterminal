@@ -97,7 +97,7 @@ test('specific nonretryable preparation failure is preserved in the chart histor
   expect(events.at(-1).status.archive.requestComplete).toBe(false);expect(events.at(-1).status.message).toMatch(/Invalid prepared content/);
  }finally{service.dispose();}
 });
-test('Retry of a retained prefix escalates a source-changed worker with a distinct revision command, retaining good bars',async()=>{
+test('Retry of a retained prefix escalates a source-changed worker with a distinct revision command, removing disproved bars',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const old=transport(fixture(),{corrupt:true}),replacement=fixture();
  replacement.discovery.source={...replacement.discovery.source,token:'c'.repeat(64)};replacement.manifest.sourceProof={...replacement.manifest.sourceProof,token:'c'.repeat(64)};
  const next=transport(replacement),events:any[]=[],commands:Headers[]=[];let repair=false,failedToken:string|null=null;
@@ -116,7 +116,7 @@ test('Retry of a retained prefix escalates a source-changed worker with a distin
   expect(events.some(e=>e.kind==='snapshot'&&e.segments?.length)).toBe(true);const before=events.length;repair=true;service.retry('retry-revision');
   await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.requestComplete).toBe(true));expect(commands).toHaveLength(2);
   expect(commands[0].get('X-IQ-Wall-New-Revision')).toBeNull();expect(commands[1].get('X-IQ-Wall-New-Revision')).toBe('1');expect(commands[1].get('X-IQ-Wall-Retry')).not.toBe(failedToken);
-  expect(events.slice(before).filter(e=>e.kind==='snapshot').every(e=>e.status.archive.requestComplete===true)).toBe(true);expect(service.diagnostics().groups).toBe(0);
+  expect(events.slice(before).some(e=>e.kind==='patch'&&e.patches?.some((p:any)=>p.segment===null))).toBe(true);expect(service.diagnostics().groups).toBe(0);
  }finally{service.dispose();}
 });
 function headBoundaryFixture(){
@@ -248,7 +248,7 @@ test('a retained prepared prefix cannot silently resume through missing, changed
  await expect(preparedWallReader({...request,watermark:25,head:{cursor:25,epoch:1,at:to+1}},t.fetcher,new AbortController().signal,current.token)).rejects.toThrow(/source changed/);
 });
 
-test('service Retry restarts a superseded prepared prefix once and retains its display until validation',async()=>{
+test('service Retry removes a positively superseded prefix and restarts once with replacement data',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const original=fixture(),replacement=fixture();
  replacement.manifest.sourceProof={...replacement.manifest.sourceProof,token:'c'.repeat(64)};
  replacement.discovery.source={...replacement.discovery.source,token:'c'.repeat(64)};
@@ -267,14 +267,14 @@ test('service Retry restarts a superseded prepared prefix once and retains its d
   const retained=events.filter(e=>e.kind==='snapshot'&&e.segments?.length).at(-1);expect(retained).toBeDefined();
   const before=events.length;phase=1;service.retry('revision');
   await vi.waitFor(()=>expect(blocked).toBe(true));
-  expect(events.slice(before).every(e=>e.kind!=='snapshot')).toBe(true);
+  expect(events.slice(before).every(e=>e.status?.archive?.requestComplete!==true)).toBe(true);
   release();await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.requestComplete).toBe(true));
   expect(discoveries).toBe(3);expect(events.at(-1).kind).toBe('snapshot');
   expect(service.diagnostics().groups).toBe(0);
  }finally{release();service.dispose();}
 });
 
-test('service Retry restarts a source-invalidated view without a resume cursor and retains its display until validation',async()=>{
+test('service removes positively source-invalidated history and Retry validates a replacement without resetting the subscription',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const original=fixture(),replacement=fixture();
  replacement.manifest.sourceProof={...replacement.manifest.sourceProof,token:'c'.repeat(64)};
  replacement.discovery.source={...replacement.discovery.source,token:'c'.repeat(64)};
@@ -293,9 +293,12 @@ test('service Retry restarts a source-invalidated view without a resume cursor a
   const retained=events.filter(e=>e.kind==='snapshot'&&e.segments?.length).at(-1);expect(retained).toBeDefined();
   expect(events.at(-1).status.archive).toMatchObject({retryable:true,requestComplete:false});
   expect(events.at(-1).status.archive.resumeAfter).toBeUndefined();
+  const displayed=new Map<string,unknown>();for(const event of events){if(event.kind==='snapshot'){displayed.clear();for(const row of event.segments??[])displayed.set(row.id,row);}else for(const patch of event.patches??[]){if(patch.segment===null)displayed.delete(patch.id);else if(patch.segment)displayed.set(patch.id,patch.segment);}}
+  expect(displayed.size).toBe(0);
+  expect(events.some(event=>event.kind==='patch'&&event.patches?.some((patch:any)=>patch.segment===null))).toBe(true);
   const before=events.length;phase=1;service.retry('revision');
   await vi.waitFor(()=>expect(blocked).toBe(true));
-  expect(events.slice(before).every(e=>e.kind!=='snapshot')).toBe(true);
+  expect(events.slice(before).every(e=>e.status?.archive?.requestComplete!==true)).toBe(true);
   release();await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.requestComplete).toBe(true));
   expect(discoveries).toBe(2);expect(events.at(-1).kind).toBe('snapshot');
   expect(service.diagnostics().groups).toBe(0);

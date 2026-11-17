@@ -160,7 +160,7 @@ test('first wall member leaves admission for native prices before bounded batch 
   expect(result?.parts).toBe(35);expect(result?.projector!.snapshot()).toHaveLength(36);expect(t.calls.every(path=>path.endsWith('/projection-batch'))).toBe(true);
  }finally{releaseFirst();releaseNative();abort.abort();await Promise.allSettled([work,...(native?[native]:[])]);}
 });
-test('shared service joins and Retry retain the prepared presentation until the full replacement validates',async()=>{
+test('shared service removes disproved presentation and Retry validates replacement before complete joins',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),old=transport(f,{changed:true});let release!:()=>void;
  const gateSource=new Promise<void>(resolve=>release=resolve),next=transport(f,{gateSource});let phase=0;
  const fetcher:typeof fetch=(input,init)=>(phase===0?old:next).fetcher(input,init),events:any[]=[],service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to+3600000);
@@ -168,9 +168,9 @@ test('shared service joins and Retry retain the prepared presentation until the 
   service.subscribe('one',{market:'binance-spot',from,to,settings,followLive:false});await vi.waitFor(()=>expect(events.at(-1)?.status?.message).toMatch(/source changed/));
   expect(events.some(event=>event.kind==='patch'&&event.patches?.some((p:any)=>p.segment?.end!==null))).toBe(true);
   const before=events.length;phase=1;service.retry('one');await vi.waitFor(()=>expect(next.calls.at(-1)).toMatch(/\/source$/));
-  expect(events.slice(before).every(event=>event.kind!=='snapshot')).toBe(true);
+  expect(events.slice(before).every(event=>event.status?.archive?.requestComplete!==true)).toBe(true);
   release();await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.requestComplete).toBe(true));
-  expect(events.filter(event=>event.kind==='snapshot').at(-1).segments).toHaveLength(f.full.segments.length);
+  expect(displayedWalls(events,'one').size).toBe(f.full.segments.length);
   // A late subscriber receives the complete shared presentation/projector,
   // rather than only the most recently delivered batch.
   service.subscribe('two',{market:'binance-spot',from,to,settings,followLive:false});await vi.waitFor(()=>expect(events.filter(event=>event.ids?.includes('two')).at(-1)?.segments).toHaveLength(f.full.segments.length));
@@ -388,18 +388,19 @@ test('identical complete prepared manifest validates warm rows without a second 
  }
 });
 
-test('cached manifest reuse retains exact rows through failed source proof and a successful explicit Retry',async()=>{
+test.each([true,false])('cached manifest proof changed=%s removes only disproved rows and Retry restores exact data',async changed=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),seed=transport(f),bad=transport(f,{changed:true}),recovered=transport(f);let phase=0;
- const events:any[]=[],service=new OrderWallsArchiveService(e=>events.push(e),(input,init)=>(phase===0?seed:phase===1?bad:recovered).fetcher(input,init),()=>to+1000,0),request={market:'binance-spot' as const,from,to,settings,followLive:false};
+ const events:any[]=[],service=new OrderWallsArchiveService(e=>events.push(e),(input,init)=>phase===1&&!changed&&new URL(String(input),'http://test').pathname.endsWith('/source')?Promise.resolve(new Response('{}',{status:503})):(phase===0?seed:phase===1?bad:recovered).fetcher(input,init),()=>to+1000,0),request={market:'binance-spot' as const,from,to,settings,followLive:false};
  try{
-  service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmCompactEntries:1,warmBuilds:0}));service.unsubscribe('seed');phase=1;
-  service.subscribe('warm',request);await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1)?.status.message).toMatch(/source changed/));
+  service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmCompactEntries:1,warmBuilds:0}));const before=[...displayedWalls(events,'seed').values()];service.unsubscribe('seed');phase=1;
+  service.subscribe('warm',request);await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1)?.status.message).toMatch(changed?/source changed/:/503/));
   expect(events.filter(e=>e.ids?.includes('warm')).at(-1).status.archive.requestComplete).toBe(false);
-  expect(displayedWalls(events,'warm').size).toBe(f.full.segments.length);expect(bad.calls.some(path=>path.endsWith('/projection-batch'))).toBe(false);
-  const before=[...displayedWalls(events,'warm').values()];phase=2;service.retry('warm');
+  expect(displayedWalls(events,'warm').size).toBe(changed?0:f.full.segments.length);expect(bad.calls.some(path=>path.endsWith('/projection-batch'))).toBe(false);
+  phase=2;service.retry('warm');
   await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1)?.status.archive.requestComplete).toBe(true));
-  expect([...displayedWalls(events,'warm').values()]).toEqual(before);
-  expect(events.filter(e=>e.ids?.includes('warm')).at(-1).status.message??'').not.toMatch(/source changed/);
+  const financial=(rows:any[])=>rows.map(({currentSelection:_selection,...row})=>row).sort((a,b)=>a.id.localeCompare(b.id));
+  expect(financial([...displayedWalls(events,'warm').values()])).toEqual(financial(before));
+  expect(events.filter(e=>e.ids?.includes('warm')).at(-1).status.message??'').not.toMatch(changed?/source changed/:/503/);
   expect(recovered.calls.some(path=>path.endsWith('/projection-batch'))).toBe(false);
  }finally{service.dispose();}
 });
@@ -589,4 +590,41 @@ test('a fresh newer revision never waits for unfinished optional warm replay',as
   expect([...displayedWalls(events,'fresh').values()].map(({currentSelection:_current,...row})=>row)).toEqual(next.full.segments);expect(service.diagnostics().preparedDeltaPublications).toBe(0);
   const before=events.length;releaseReplay();await vi.waitFor(()=>expect(service.diagnostics().warmReplayJobs).toBe(0));expect(events.slice(before).some(e=>e.status.archive?.requestComplete===false)).toBe(false);
  }finally{releaseSource();releaseReplay();service.dispose();spy?.mockRestore();}
+});
+
+test('resident navigation keeps prepared prefix while missing projection validates and current cursors advance',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const events:any[]=[],discoveries:Array<{from:number;to:number}>=[],currentAfter:number[]=[];
+ let release!:()=>void;const missingProof=new Promise<void>(resolve=>release=resolve);
+ const fixtures=new Map<string,ReturnType<typeof projectionOnlyFixture>>(),routes=new Map<string,ReturnType<typeof transport>>();
+ const get=(left:number,right:number)=>{const range=`${left}:${right}`;let f=fixtures.get(range);if(!f){f=projectionOnlyFixture(true,right,left);fixtures.set(range,f);routes.set(f.manifest.key,transport(f,left<from?{gateSource:missingProof}:{}));}return f;};
+ const fetcher:typeof fetch=async(input,init)=>{const url=new URL(String(input),'http://test');
+  if(url.pathname.endsWith('/current')){
+   const after=Number(url.searchParams.get('after'));currentAfter.push(after);const cursor=after?after+1:100,at=to+cursor*1000;
+   const candidate={entryId:'current-independent',side:'bid',price:'100.00000001',quantity:String(cursor),notional:String(cursor*100.00000001),rank:1,startedAt:to,startCursor:100,startEpoch:3,startKnown:true};
+   return Response.json({version:1,profile,market:profile.market,instrument:profile.instrument,feed:profile.feed,watermark:cursor,head:{cursor,epoch:3,at,valid:true,midpoint:'100'},...(after?{}:{state:{bids:[candidate],asks:[]}}),page:{after,nextAfter:cursor,hasMore:false,lastAt:at,limit:256,sameMillisecondClosed:true},patches:after?[{kind:'patch',cursor,epoch:3,at,midpoint:'100',bids:{upserts:[candidate],removals:[]},asks:{upserts:[],removals:[]}}]:[],coverage:{availableFrom:from,confirmedTo:at,status:'complete',gaps:[]},profileStatus:'ready'});
+  }
+  let route:ReturnType<typeof transport>|undefined;
+  if(url.pathname.endsWith('/projection-batch'))route=routes.get(url.searchParams.get('key')??'');
+  else {const left=Number(url.searchParams.get('from')),right=Number(url.searchParams.get('to'));const f=get(left,right);route=routes.get(f.manifest.key);if(url.pathname.endsWith('/discover'))discoveries.push({from:left,to:right});}
+  if(!route)throw Error('Unknown prepared owner '+url.pathname+' '+url.search);return route.fetcher(input,init);
+ };
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to+200000);
+ try{
+  service.subscribe('resident-prepared',{market:'binance-spot',from,to,settings,followLive:true});
+  await vi.waitFor(()=>expect(events.at(-1)?.status.archive?.requestComplete).toBe(true));const initial=[...displayedWalls(events,'resident-prepared').values()].filter(row=>!row.presentationKind),at=events.at(-1).status.lastConfirmedAt;
+  service.updateViewport('resident-prepared',from-3600000,to-3600000,false);
+  await vi.waitFor(()=>expect(discoveries).toHaveLength(2));
+  await vi.waitFor(()=>expect([...routes.values()][1]!.calls.at(-1)).toMatch(/\/source$/));
+  expect([...displayedWalls(events,'resident-prepared').values()].filter(row=>!row.presentationKind).map(({residentRange:_range,currentSelection:_selected,...row})=>row)).toEqual(initial.map(({currentSelection:_selected,...row})=>row));
+  expect(events.at(-1).status.archive.requestComplete).toBe(false);
+  await vi.waitFor(()=>expect(events.at(-1).status.lastConfirmedAt).toBeGreaterThan(at),{timeout:2500});expect(currentAfter.slice(0,2)).toEqual([0,100]);expect(events.at(-1).status.state).toBe('live');
+  release();await vi.waitFor(()=>expect(events.at(-1).status.archive.unloadedRanges).toEqual([]));
+  const displayed=[...displayedWalls(events,'resident-prepared').values()].filter(row=>!row.presentationKind);
+  expect(discoveries).toEqual([{from,to},{from:from-7200000,to:from}]);
+  for(const f of fixtures.values())for(const row of f.full.segments){const actual=displayed.find(value=>value.residentRange?.from===f.source.from&&value.residentRange.sourceId===row.id)!;
+    const {residentRange:_range,currentSelection:_selected,id:_id,...rest}=actual;const {id:_original,...expected}=row;expect(rest).toEqual(expected);}
+  expect(events.at(-1).status.archive.gaps).not.toHaveLength(0);expect(events.at(-1).status.archive.rangeComplete).toBe(false);
+  const count=discoveries.length;service.updateViewport('resident-prepared',from,to,false);await new Promise(resolve=>setTimeout(resolve,160));expect(discoveries).toHaveLength(count);
+  expect([...routes.values()].flatMap(route=>route.calls).some(path=>path.includes('/archive/'))).toBe(false);
+ }finally{release();service.dispose();await vi.waitFor(()=>expect(historyScheduler.diagnostics()).toMatchObject({active:0,queued:0}));}
 });

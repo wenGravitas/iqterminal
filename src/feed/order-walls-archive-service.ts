@@ -660,16 +660,34 @@ export class OrderWallsArchiveService {
       job.failure={message,retryable};
       if(sourceChanged){
         const confirmedChange=error instanceof PreparedWallSourceChangedError?error.confirmedChange:true;
-        if(confirmedChange)for(const subscriber of job.subscribers)if(subscriber.resident?.invalidate(job.request).length){
-          // A positively changed proof invalidates its owned interval, not all
-          // history. An unavailable recheck alone does not erase good data.
-          this.publish(subscriber,'patch',this.diff(subscriber,this.visibleSegments(subscriber)),this.status(subscriber));
+        if(confirmedChange){
+          // Never replay a positively invalidated result to a new subscriber.
+          job.latest=undefined;
+          const key=warmHistoryKey(job.request),entry=this.warmHistory.get(key);
+          for(const build of this.warmBuilds)if(build.key===key)build.abort.abort();
+          if(entry){entry.expired=true;clearTimeout(entry.timer);this.expireWarm(key,entry);}
+          for(const subscriber of job.subscribers){
+            if(subscriber.resident){
+              if(!subscriber.resident.invalidate(job.request).length)continue;
+            }else{
+              // A different fenced prefix retained during an extension has not
+              // been disproved by a changed proof for the larger target range.
+              const displayed=subscriber.replacingHistory?.status.archive??subscriber.warmReplay?.entry.status.archive;
+              if(displayed&&(displayed.from!==job.request.from||displayed.to!==job.request.to))continue;
+              this.releaseWarmReplay(subscriber);
+              subscriber.historyProjector=undefined;subscriber.historyPresentation=undefined;
+              subscriber.historyRevision=undefined;subscriber.cachedHistory=false;subscriber.replacingHistory=undefined;
+              subscriber.historyStatus={state:'gap',message,archive:{...emptyArchiveStatus(subscriber.request,'partial',message),requestComplete:false,rangeComplete:false,retryable}};
+            }
+            // Preserve the independent current group and its acknowledged cursor.
+            this.publish(subscriber,'patch',this.diff(subscriber,this.visibleSegments(subscriber)),this.status(subscriber));
+          }
         }
         job.resume=undefined;
         for(const subscriber of job.subscribers)if(subscriber.historyProjector||subscriber.historyPresentation?.size)subscriber.cachedHistory=true;
         // A user Retry may discover that its retained prepared prefix has been
-        // superseded. Restart once in that same Retry, staging replacements
-        // behind the displayed prefix. No socket/cursor or healthy job resets.
+        // superseded. Restart once in that same Retry. Only independently
+        // valid retained ranges survive; no socket/cursor or healthy job resets.
         if(resume){
           // Escalating a previously acknowledged resume command to a revision
           // is a distinct intent. Reusing its token would correctly be ignored
