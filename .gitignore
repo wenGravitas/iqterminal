@@ -1,6 +1,7 @@
 # Dependencies, builds, and tool caches
 node_modules/
 dist/
+dist-wall-navigation/
 coverage/
 .vite/
 .cache/

@@ -213,7 +213,10 @@ export class OpenAlgoCandleChart {
   private readonly footprintTotalsSizeSubscriptions: (() => void)[] = [];
   private footprintTotalsFitQueued = false;
 
+  private readonly persistentWallRendering:boolean;
+
   constructor(private readonly container: HTMLElement, private readonly scheduler: Scheduler, renderer: RendererChoice = 'canvas2d', panelId = 'chart', initialSeries?: CanonicalSeries) {
+    this.persistentWallRendering=renderer==='canvas2d';
     this.chart = createChart(container, {
       raf: {
         schedule: callback => {
@@ -693,7 +696,7 @@ export class OpenAlgoCandleChart {
       return;
     }
     if (!this.orderWalls) {
-      this.orderWalls = new OrderWallsPrimitive(settings, intervalMs, true, 6, () => this.visible && !document.hidden && !this.disposed);
+      this.orderWalls = new OrderWallsPrimitive(settings, intervalMs, true, 6, () => this.visible && !document.hidden && !this.disposed, true, this.persistentWallRendering);
       this.chart.addPrimitive(this.orderWalls, { anchor: 'primary-pane' });
       this.orderWalls.setSnapshot([...this.orderWallSegments.values()], this.orderWallStatus);
     } else {
