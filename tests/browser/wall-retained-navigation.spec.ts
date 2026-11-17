@@ -116,6 +116,14 @@ test('compiled chart retains overlap while its real archive adapter fetches only
  await expect.poll(()=>page.evaluate(id=>{const p=(window as any).__residentProbe,d=(window as any).__terminal.panels.get(id).engine.orderWallsDiagnostics();return p.events.at(-1).status.archive.unloadedRanges?.length===0&&!d.pendingPaintWork;},id)).toBe(true);
  await page.evaluate(id=>{const p=(window as any).__residentProbe;(window as any).__terminal.panels.get(id).engine.setRange(p.range);},id);await page.waitForTimeout(300);
  const final=await page.evaluate(id=>{const p=(window as any).__residentProbe,d=(window as any).__terminal.panels.get(id).engine.orderWallsDiagnostics();return {reads:p.reads,diagnostics:p.service.diagnostics().resident,renderer:d.retainedRenderer,status:p.events.at(-1).status};},id);
- expect(final.reads).toHaveLength(2);expect(final.renderer.visibleHistorical).toBeGreaterThan(0);expect(errors).toEqual([]);console.log(JSON.stringify({kind:'compiled-real-adapter-controlled-source-not-live',initial,pending,advancing,final}));
+ expect(final.reads).toHaveLength(2);expect(final.renderer.visibleHistorical).toBeGreaterThan(0);expect(errors).toEqual([]);
+ // A small same-start historical advance also acquires only missing coverage.
+ await page.evaluate(id=>{const p=(window as any).__residentProbe;(window as any).__terminal.panels.get(id).engine.setRange({from:p.range.from,to:p.range.to+1});},id);
+ await expect.poll(()=>page.evaluate(()=>(window as any).__residentProbe.reads.length)).toBe(3);
+ await expect.poll(()=>page.evaluate(id=>{const p=(window as any).__residentProbe,d=(window as any).__terminal.panels.get(id).engine.orderWallsDiagnostics();return p.events.at(-1).status.archive.unloadedRanges?.length===0&&!d.pendingPaintWork;},id)).toBe(true);
+ const forward=await page.evaluate(()=>(window as any).__residentProbe.reads.slice());expect(forward[2].from).toBe(initial.reads[0].to);
+ await page.evaluate(id=>{const p=(window as any).__residentProbe;(window as any).__terminal.panels.get(id).engine.setRange({from:p.range.from,to:p.range.to+2});},id);await page.waitForTimeout(300);
+ expect(await page.evaluate(()=>(window as any).__residentProbe.reads.length)).toBe(3);
+ console.log(JSON.stringify({kind:'compiled-real-adapter-controlled-source-not-live',initial,pending,advancing,final,forward}));
  await page.evaluate(()=>(window as any).__residentProbe.service.dispose());
 });

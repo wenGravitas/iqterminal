@@ -189,7 +189,7 @@ export class OrderWallsArchiveService {
     const nextViewport = { from, to, followLive: followLive ?? to >= this.now() - 60_000 };
     const previousViewport = sub.viewport;
     sub.viewport = nextViewport;
-    if(sub.resident||(!(from>=sub.request.from&&to<=sub.request.to)&&!canCoalesceHistoryViewport(previousViewport,nextViewport)&&this.activateResidentHistory(sub))){
+    if(sub.resident||(!(from>=sub.request.from&&to<=sub.request.to)&&(!nextViewport.followLive||!canCoalesceHistoryViewport(previousViewport,nextViewport))&&this.activateResidentHistory(sub))){
       this.navigateResidentHistory(sub,nextViewport);return;
     }
     if (from >= sub.request.from && to <= sub.request.to) {
