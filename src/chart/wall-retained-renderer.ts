@@ -4,8 +4,9 @@ import {orderWallValuePointAt} from '../feed/order-walls';
 import {acquireWallGpu,WallGpuBatch,WALL_GPU_BATCH_RUNS,type WallRenderSpan,type WallRenderStyle} from './wall-gpu-resources';
 
 interface Piece {id:string;first:number;last:number;chunk:Chunk}
-interface Chunk {pieces:Set<Piece>;slots:number;batch?:WallGpuBatch}
-interface Source {segment:OrderWallSegment;startAt:number;endAt:number;count:number;pieces:Piece[]}
+type Layer='history'|'current';
+interface Chunk {layer:Layer;pieces:Set<Piece>;slots:number;batch?:WallGpuBatch}
+interface Source {layer:Layer;segment:OrderWallSegment;startAt:number;endAt:number;count:number;pieces:Piece[]}
 const PALETTES={heat:{bid:['#33778c','#45bcd0','#f1cb59','#ff884d'],ask:['#666da5','#8b99eb','#e9c15b','#ff8766']},side:{bid:['#28644b','#3d9970','#66d39a','#b6f1aa'],ask:['#7b3f4b','#bf6273','#ed9a9e','#ffd0b0']}};
 
 /** Exact source ownership is separate from immutable batch resources and the
@@ -17,19 +18,19 @@ export class RetainedWallRenderer {
   private readonly sources=new Map<string,Source>();
   private readonly chunks=new Set<Chunk>();
   private readonly dirty=new Set<Chunk>();
-  private tail?:Chunk;
+  private readonly tails=new Map<Layer,Chunk>();
   private context?:PrimitiveRenderContext;
   private paintedCamera='';
   private geometryKey='';
   private disposed=false;
-  readonly stats={builds:0,frames:0,mappingInvalidations:0,uploadedBytes:0,bufferUploads:0,drawCalls:0,maxPrepareMs:0,lastPrepareMs:0,lastPaintMs:0,visibleSpans:0,visibleHistorical:0,visibleCurrent:0,bytes:0,referenceMin:0,referenceMax:0,failure:''};
+  readonly stats={builds:0,historyBuilds:0,currentBuilds:0,frames:0,mappingInvalidations:0,uploadedBytes:0,bufferUploads:0,drawCalls:0,maxPrepareMs:0,lastPrepareMs:0,lastPaintMs:0,visibleSpans:0,visibleHistorical:0,visibleCurrent:0,bytes:0,referenceMin:0,referenceMax:0,failure:''};
   private constructor(owner:NonNullable<ReturnType<typeof acquireWallGpu>>,private readonly end:(segment:OrderWallSegment)=>number,private readonly invalidate:()=>void,private readonly start:(segment:OrderWallSegment)=>number){this.owner=owner;}
   static create(end:(segment:OrderWallSegment)=>number,invalidate:()=>void,start:(segment:OrderWallSegment)=>number=()=>-Infinity){const owner=acquireWallGpu(invalidate);return owner?new RetainedWallRenderer(owner,end,invalidate,start):undefined;}
   get pending(){return this.dirty.size;}
   get active(){return Boolean(this.context)&&!this.owner.device.lost;}
   get retainedSpans(){let count=0;for(const chunk of this.chunks)count+=chunk.batch?.spans.length??0;return count;}
   diagnostics(){return {...this.stats,pending:this.pending,chunks:this.chunks.size,sources:this.sources.size,retainedSpans:this.retainedSpans,contextLost:this.owner.device.lost,sharedGpuBytes:this.owner.device.bytes,sharedOwners:this.owner.device.owners};}
-  dispose(){if(this.disposed)return;this.disposed=true;for(const chunk of this.chunks)chunk.batch?.dispose();this.chunks.clear();this.dirty.clear();this.sources.clear();this.tail=undefined;this.context=undefined;this.owner.release();this.stats.bytes=0;}
+  dispose(){if(this.disposed)return;this.disposed=true;for(const chunk of this.chunks)chunk.batch?.dispose();this.chunks.clear();this.dirty.clear();this.sources.clear();this.tails.clear();this.context=undefined;this.owner.release();this.stats.bytes=0;}
 
   reconcile(segments:ReadonlyMap<string,OrderWallSegment>){
     for(const id of this.sources.keys())if(!segments.has(id))this.remove(id);
@@ -57,7 +58,7 @@ export class RetainedWallRenderer {
   }
   remove(id:string){const source=this.sources.get(id);if(!source)return;
     for(const piece of source.pieces){const chunk=piece.chunk;chunk.batch?.hide(id);chunk.pieces.delete(piece);chunk.slots-=piece.last-piece.first;
-      if(!chunk.pieces.size){chunk.batch?.dispose();this.chunks.delete(chunk);this.dirty.delete(chunk);if(this.tail===chunk)this.tail=undefined;}else this.dirty.add(chunk);}
+      if(!chunk.pieces.size){chunk.batch?.dispose();this.chunks.delete(chunk);this.dirty.delete(chunk);if(this.tails.get(chunk.layer)===chunk)this.tails.delete(chunk.layer);}else this.dirty.add(chunk);}
     this.sources.delete(id);
   }
   refreshHorizon(segment:OrderWallSegment){
@@ -66,23 +67,26 @@ export class RetainedWallRenderer {
     else if(source.endAt!==this.end(segment))this.change(segment,Math.max(0,segment.valueRuns.length-1));
   }
   change(segment:OrderWallSegment,firstChanged= -1){
+    const layer:Layer=segment.currentSelection||segment.presentationKind==='current-snapshot'?'current':'history';
     let source=this.sources.get(segment.id);
+    if(source&&source.layer!==layer){this.remove(segment.id);source=undefined;}
     if(source&&firstChanged<0&&sameSegment(source.segment,segment)&&source.endAt===this.end(segment)&&source.startAt===this.start(segment)&&this.sameOwnedGeometry(source,segment)){source.segment=segment;return;}
     const count=Math.max(1,segment.valueRuns.length)+1;
-    if(!source){source={segment,startAt:this.start(segment),endAt:this.end(segment),count:0,pieces:[]};this.sources.set(segment.id,source);}else source.segment=segment;
+    if(!source){source={layer,segment,startAt:this.start(segment),endAt:this.end(segment),count:0,pieces:[]};this.sources.set(segment.id,source);}else source.segment=segment;
     for(const piece of [...source.pieces]){
       if(piece.last-1<firstChanged+1&&piece.last<=count)continue;
       piece.chunk.batch?.hide(segment.id,firstChanged);
       this.dirty.add(piece.chunk);
       if(piece.first>=count){piece.chunk.pieces.delete(piece);piece.chunk.slots-=piece.last-piece.first;source.pieces.splice(source.pieces.indexOf(piece),1);
-        if(!piece.chunk.pieces.size){piece.chunk.batch?.dispose();this.chunks.delete(piece.chunk);this.dirty.delete(piece.chunk);if(this.tail===piece.chunk)this.tail=undefined;}}
+        if(!piece.chunk.pieces.size){piece.chunk.batch?.dispose();this.chunks.delete(piece.chunk);this.dirty.delete(piece.chunk);if(this.tails.get(piece.chunk.layer)===piece.chunk)this.tails.delete(piece.chunk.layer);}}
       else if(piece.last>count){piece.chunk.slots-=piece.last-count;piece.last=count;}
     }
     let next=Math.min(source.count,count);
     while(next<count){
-      if(!this.tail||this.tail.slots>=WALL_GPU_BATCH_RUNS){this.tail={pieces:new Set(),slots:0};this.chunks.add(this.tail);}
-      const last=Math.min(count,next+WALL_GPU_BATCH_RUNS-this.tail.slots),piece={id:segment.id,first:next,last,chunk:this.tail};
-      this.tail.pieces.add(piece);this.tail.slots+=last-next;this.dirty.add(this.tail);source.pieces.push(piece);next=last;
+      let tail=this.tails.get(layer);
+      if(!tail||tail.slots>=WALL_GPU_BATCH_RUNS){tail={layer,pieces:new Set(),slots:0};this.tails.set(layer,tail);this.chunks.add(tail);}
+      const last=Math.min(count,next+WALL_GPU_BATCH_RUNS-tail.slots),piece={id:segment.id,first:next,last,chunk:tail};
+      tail.pieces.add(piece);tail.slots+=last-next;this.dirty.add(tail);source.pieces.push(piece);next=last;
     }
     source.count=count;source.startAt=this.start(segment);source.endAt=this.end(segment);
   }
@@ -113,11 +117,14 @@ export class RetainedWallRenderer {
     const cameras=new Map<Chunk,ReturnType<WallGpuBatch['camera']>>();
     for(const chunk of this.chunks)if(chunk.batch){const camera=chunk.batch.camera(rc);if(!camera){chunk.batch.dispose();chunk.batch=undefined;this.dirty.add(chunk);this.stats.mappingInvalidations++;}else cameras.set(chunk,camera);}
     let turns=0;
-    for(const chunk of this.dirty){
+    // A delayed current bootstrap must not sit behind a large history import.
+    // Work remains bounded by the same per-frame turn/time allowance.
+    const work=[...this.dirty];
+    for(const chunk of [...work.filter(chunk=>chunk.layer==='current'),...work.filter(chunk=>chunk.layer==='history')]){
       const spans=this.spans(chunk,settings,width);
       const next=spans.length?WallGpuBatch.prepare(rc,spans,device):undefined;
       if(spans.length&&!next){this.stats.failure='mapping-or-render-capacity';return false;}
-      chunk.batch?.dispose();chunk.batch=next;this.dirty.delete(chunk);this.stats.builds++;if(next)cameras.set(chunk,next.camera(rc));
+      chunk.batch?.dispose();chunk.batch=next;this.dirty.delete(chunk);this.stats.builds++;this.stats[chunk.layer==='history'?'historyBuilds':'currentBuilds']++;if(next)cameras.set(chunk,next.camera(rc));
       if(++turns>=4||performance.now()-started>=Math.max(1,budgetMs))break;
     }
     this.stats.lastPrepareMs=performance.now()-started;this.stats.maxPrepareMs=Math.max(this.stats.maxPrepareMs,this.stats.lastPrepareMs);

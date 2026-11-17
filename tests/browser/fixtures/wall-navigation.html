@@ -81,6 +81,11 @@ window.checkWallResourceLifecycle=async()=>{
  const source=Array.from({length:600},(_,i)=>({id:'owned-'+i,archiveEntryId:'entry-'+i,epoch:1,side:i%2?'ask':'bid',price:95+(i%80)*.1,start:base,end:base+100000000,peakUsd:1000,meanUsd:500,durationMs:100000000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'rank-exit',detectionMode:'top-levels',rank:1,valueRunsTruncated:false,valueRuns:[{at:base,usd:1000+i,quantity:1,rank:1,percentile:null}]}));
  const status={state:'live',tickSize:.1,lastConfirmedAt:base+100000000};
  const drain=p=>{for(let i=0;i<100;i++){ctx.clearRect(0,0,1200,600);p.draw(ctx,rc);if(!p.diagnostics().pendingPaintWork)return;}throw Error('Resource preparation did not drain');};
+ const priority=new OrderWallsPrimitive(settings,900000,true,1,()=>true,false,true);priority.attached({requestUpdate(){}});
+ const large=Array.from({length:5000},(_,i)=>({...source[i%source.length],id:'bulk-'+i}));priority.setSnapshot(large,status);
+ const point={...source[0],id:'independent-current',currentSelection:true,presentationKind:'current-snapshot',start:base+100000000,end:null,durationMs:0,valueRuns:[{at:base+100000000,usd:2000,quantity:2,rank:1,percentile:null}]};
+ priority.patch([{id:point.id,segment:point}],status);priority.draw(ctx,rc);
+ const priorityResult=priority.diagnostics().retainedRenderer;if(priorityResult.visibleCurrent!==1||priorityResult.pending<1)throw Error('Current bootstrap waited for complete history preparation');priority.detached();
  const samples=[];
  for(let cycle=0;cycle<4;cycle++){
   const charts=Array.from({length:8},()=>{const p=new OrderWallsPrimitive(settings,900000,true,6,()=>true,false,true);p.attached({requestUpdate(){}});p.setSnapshot(source,status);drain(p);return p;});
@@ -91,12 +96,14 @@ window.checkWallResourceLifecycle=async()=>{
   if(p.diagnostics().retainedRenderer.builds!==before.builds||p.diagnostics().retainedRenderer.bufferUploads!==before.bufferUploads)throw Error('Style rebuilt immutable resources');
   const changed={...source[599],currentSelection:true,presentationKind:'current-snapshot',start:base+100000000,durationMs:0,end:null,valueRuns:[{...source[599].valueRuns[0],at:base+100000000,usd:2000}]};
   p.patch([{id:changed.id,segment:changed,replaceValueRuns:true}],{...status,lastConfirmedAt:base+100001000});drain(p);
-  const after=p.diagnostics().retainedRenderer;if(after.builds-before.builds!==1||after.visibleCurrent<1)throw Error('Current change rebuilt unchanged history or did not paint');
+  const after=p.diagnostics().retainedRenderer;if(after.builds-before.builds>2||after.visibleCurrent<1)throw Error('Layer migration exceeded affected chunks or did not paint');
+  const live={...changed,start:changed.start+1000,valueRuns:[{...changed.valueRuns[0],at:changed.start+1000,usd:3000}]};p.patch([{id:live.id,segment:live,replaceValueRuns:true}],{...status,lastConfirmedAt:base+100002000});drain(p);
+  if(p.diagnostics().retainedRenderer.historyBuilds!==after.historyBuilds||p.diagnostics().retainedRenderer.currentBuilds!==after.currentBuilds+1)throw Error('Current update rebuilt history');
   charts[3].detached();charts[3].detached();const partial=wallGpuResourceUsage();if(partial.owners!==7||partial.bufferBytes>=full.bufferBytes)throw Error('One chart disposal did not release its ownership');
   drain(charts[7]);if(!charts[7].diagnostics().retainedRenderer.active)throw Error('Sibling disposal invalidated another chart');
   for(const chart of charts)chart.detached();const empty=wallGpuResourceUsage();if(empty.contexts||empty.owners||empty.bufferBytes)throw Error('Final disposal retained resources');
   samples.push({full,partial,empty,currentChangedChunks:after.builds-before.builds});
  }
- return {samples};
+ return {samples,priorityResult};
 };
 </script>
