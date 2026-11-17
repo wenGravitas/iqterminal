@@ -165,7 +165,15 @@ export class OrderWallsArchiveService {
 
   updateSettings(id: string, settings: OrderWallsSettings) {
     const sub = this.subscriptions.get(id); if (!sub) return;
-    this.subscribe(id, { ...sub.request, settings: orderWallsSettings(settings) });
+    const next=orderWallsSettings(settings);
+    // These controls affect only the chart primitive. They must not cancel a
+    // validated projection, its in-flight load, or the independent current lane.
+    // Keep the list explicit: selection/confirmation settings still resubscribe.
+    const presentation=new Set<keyof OrderWallsSettings>(['opacity','colorMode','thicknessPx','strengthThickness','highContrast','visibleRangeOnly','showPriceLines']);
+    if((Object.keys(next) as Array<keyof OrderWallsSettings>).every(key=>presentation.has(key)||Object.is(next[key],sub.settings[key]))){
+      sub.settings=next;sub.request={...sub.request,settings:next};return;
+    }
+    this.subscribe(id, { ...sub.request, settings: next });
   }
 
   updateViewport(id: string, from: number, to: number, followLive?: boolean) {

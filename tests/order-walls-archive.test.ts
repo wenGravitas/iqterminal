@@ -1530,3 +1530,21 @@ it('holds shared history admission until wall response bodies finish',async()=>{
   bodies[0]!.close();for(let i=0;i<100;i++)await Promise.resolve();expect(bodies).toHaveLength(3);
  }finally{for(const abort of aborts)abort.abort();for(const body of bodies)try{body.close();}catch{}await Promise.allSettled(work);}
 });
+
+
+it('presentation-only settings retain in-flight history, current lane and subscription generation',async()=>{
+ const events:any[]=[],signals:AbortSignal[]=[],urls:string[]=[];
+ const fetcher:any=(url:unknown,init:any)=>{urls.push(String(url));signals.push(init.signal);return new Promise((_resolve,reject)=>init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));};
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to);
+ const flush=async()=>{for(let i=0;i<100;i++)await Promise.resolve();};
+ try{
+  const original=request();service.subscribe('styles',{...original,followLive:true});await flush();
+  const count=urls.length,generation=events.at(-1).generation,eventCount=events.length;
+  for(const patch of [{opacity:.25},{colorMode:'bid-ask' as const},{highContrast:false},{visibleRangeOnly:false},{thicknessPx:4},{strengthThickness:false},{showPriceLines:true}]){
+   service.updateSettings('styles',{...original.settings,...patch});await flush();
+   expect(urls).toHaveLength(count);expect(events).toHaveLength(eventCount);expect(signals.every(signal=>!signal.aborted)).toBe(true);
+  }
+  service.updateSettings('styles',{...original.settings,topLevels:9});await flush();
+  expect(events.at(-1).generation).not.toBe(generation);expect(signals.slice(0,count).every(signal=>signal.aborted)).toBe(true);
+ }finally{service.dispose();}
+});
