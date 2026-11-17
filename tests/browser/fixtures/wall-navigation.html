@@ -90,6 +90,7 @@ window.checkWallResourceLifecycle=async()=>{
  const samples=[];
  for(let cycle=0;cycle<4;cycle++){
   const charts=Array.from({length:8},()=>{const p=new OrderWallsPrimitive(settings,900000,true,6,()=>true,false,true);p.attached({requestUpdate(){}});p.setSnapshot(source,status);drain(p);return p;});
+  if(window.wallResourceHeapSample)await window.wallResourceHeapSample(cycle,'open');
   const full=wallGpuResourceUsage();if(full.contexts!==1||full.owners!==8)throw Error('Charts did not share one context');
   if(cycle&&full.bufferBytes!==samples[0].full.bufferBytes)throw Error('Retained GPU bytes grew across reopen cycles');
   const p=charts[0],before=p.diagnostics().retainedRenderer;
@@ -103,6 +104,7 @@ window.checkWallResourceLifecycle=async()=>{
   charts[3].detached();charts[3].detached();const partial=wallGpuResourceUsage();if(partial.owners!==7||partial.bufferBytes>=full.bufferBytes)throw Error('One chart disposal did not release its ownership');
   drain(charts[7]);if(!charts[7].diagnostics().retainedRenderer.active)throw Error('Sibling disposal invalidated another chart');
   for(const chart of charts)chart.detached();const empty=wallGpuResourceUsage();if(empty.contexts||empty.owners||empty.bufferBytes)throw Error('Final disposal retained resources');
+  if(window.wallResourceHeapSample)await window.wallResourceHeapSample(cycle,'disposed');
   samples.push({full,partial,empty,currentChangedChunks:after.builds-before.builds});
  }
  return {samples,priorityResult};

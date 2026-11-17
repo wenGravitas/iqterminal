@@ -11,8 +11,24 @@ test('retained GPU component preserves exact source, mapped positions, styles, h
 
 test('eight charts share bounded resources and release them through reopen and current updates',async({page})=>{
  await page.goto('/tests/browser/fixtures/wall-navigation.html');
- const result=await page.evaluate(()=>(window as any).checkWallResourceLifecycle());
- expect(result.samples).toHaveLength(4);console.log(JSON.stringify({kind:'controlled-resource-lifecycle',...result}));
+ const session=await page.context().newCDPSession(page),heap:any[]=[];
+ await session.send('HeapProfiler.enable');
+ await page.exposeFunction('wallResourceHeapSample',async(cycle:number,phase:string)=>{
+  await session.send('HeapProfiler.collectGarbage');
+  heap.push({cycle,phase,...await session.send('Runtime.getHeapUsage')});
+ });
+ try{
+  const result=await page.evaluate(()=>(window as any).checkWallResourceLifecycle());
+  expect(result.samples).toHaveLength(4);
+  // Explicit collection is outside latency observations. Permit small runtime
+  // bookkeeping variance, but reject sustained retained geometry growth.
+  for(const phase of ['open','disposed']){
+   const samples=heap.filter(sample=>sample.phase===phase).slice(1);
+   expect(samples).toHaveLength(3);
+   expect(Math.max(...samples.map(s=>s.usedSize))-Math.min(...samples.map(s=>s.usedSize))).toBeLessThan(2*1024*1024);
+  }
+  console.log(JSON.stringify({kind:'controlled-resource-lifecycle',...result,heap,heapScope:'Main JavaScript heap with forced collection; shared controlled source, eight chart resources. Not RSS or representative multi-chart worker memory.'}));
+ }finally{await session.detach();}
 });
 
 for(const market of ['spot','perpetual'] as const)test(`compiled ${market} 30h chart keeps walls throughout camera gestures`,async({page})=>{

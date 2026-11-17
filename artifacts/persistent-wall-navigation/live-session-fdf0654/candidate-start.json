@@ -1,0 +1,69 @@
+{
+  "success": true,
+  "sessionId": "92caf1fc-9bb2-4276-bbbd-ea2d31bd6cf5",
+  "receipt": {
+    "allocation": {
+      "canonicalParts": 1024,
+      "metadataBytes": 2097152,
+      "derivedBytes": 8589934592,
+      "freeFloorBytes": 42949672960,
+      "writerHeadroomBytesPerRole": 167772160,
+      "workerMemory": 805306368,
+      "gatewayMemory": 805306368,
+      "workerCpus": 1,
+      "gatewayCpus": 1,
+      "heapMiB": 512,
+      "hostReserveGiB": 16,
+      "unboundedApplicationsGrowthReserveGiB": 16,
+      "rationale": "Host62.6GiB, measured46.6GiB available, bounded incumbent container commitments16.5GiB. New candidate1.5GiB leaves32GiB host/application reserve and~12GiB additional margin. Disk~173GiB free, all retained roots1.876GiB; aggregate8GiB +40GiB floor well below disk headroom; preserve incumbent maximum future allocation and both160MiBwriters.",
+      "coordinatorHeapBudgetBytes": 671088640,
+      "selectedOutputBytes": 134217728
+    },
+    "otherContainerMemoryCommitments": 17716740096,
+    "physicalMemory": 67194404864,
+    "availableMemoryAtCheck": 49988530176,
+    "utc": 1794926550.6841815,
+    "commit": "300fa5d00f607d7e3a990b128523ea265af363f5",
+    "root": "/home/daz/iqterminal-wall-tail-r5-candidate-proof",
+    "protocol": 6,
+    "reservedBytes": 2371897660,
+    "existingDerivedBytes": 1733301086,
+    "capBytes": 8589934592,
+    "incumbentMaximumAllocationIncludingLastStep": 994050048,
+    "remainingBeforeHeadroom": 5992113895,
+    "capacityReadyAtStart": true,
+    "startupMode": "normal",
+    "queueTurnAtStart": 1769,
+    "stepsBytesAtStart": 2898257,
+    "containers": [
+      {
+        "kind": "worker",
+        "id": "c1a2d4817a019a0ea4ee0b8cd4bb46f331cfb8b5cefaf2293bea58ea2fd39eb5",
+        "build": "300fa5d00f607d7e3a990b128523ea265af363f5",
+        "bundleSha256": "30daff537bcd5b4c22edf87cdb372856c789c5fcba3e65a9d67a37a194813a69",
+        "sources": 1,
+        "control": 18792,
+        "api": 18890,
+        "cpu": 1000000000,
+        "memory": 805306368,
+        "memorySwap": 805306368,
+        "canonicalParts": 1024,
+        "metadataBytes": 2097152
+      },
+      {
+        "kind": "gateway",
+        "id": "1aeacba2b5ae7ef65db88caeec8e743c2ef9761b5078b4d00efd89c8792b7004",
+        "build": "300fa5d00f607d7e3a990b128523ea265af363f5",
+        "bundleSha256": "af6d21f619eef895dbb77d9173dba06bf56de8df55b2c053a5ee73a51087d54d",
+        "sources": 1,
+        "control": 18792,
+        "api": 18890,
+        "cpu": 1000000000,
+        "memory": 805306368,
+        "memorySwap": 805306368,
+        "canonicalParts": 1024,
+        "metadataBytes": 2097152
+      }
+    ]
+  }
+}

@@ -92,3 +92,10 @@ The renderer improvement is implemented, but the goal is NOT complete. Missing-c
 ## Subsequent resident-history checkpoint
 
 The missing-interval work described as pending above is now partially implemented and tested in231d67b/5cf5392/9d83348. See [resident-history.md](resident-history.md) for exact scope, the preserved same-start path, the first failed boundary capture, corrected compiled adapter result and remaining requirements. The overall goal remains active.
+
+
+## Controlled main-heap lifecycle observation
+
+The eight-chart fixture was instrumented with opt-in CDP collection/sampling outside paint timing, using application `fdf0654` and the working observer subsequently committed with this evidence. Four open/dispose cycles used600 exact source rows shared by eight renderer owners. Open JavaScript used-heap samples were4,242,788 /4,291,372 /4,349,732 /4,353,096bytes; disposed samples2,326,740 /2,372,604 /2,423,260 /2,431,096bytes. The final increment was3,364bytes open and7,836bytes disposed. After warmup, each phase varied by less than62KiB. This supports a bounded renderer lifecycle on this small fixture; it does not prove a representative multi-chart worker/RSS plateau.
+
+GPU allocation stayed211,200buffer bytes across eight owners,184,800after one removal, and zero contexts/owners/buffers/surface after all disposals. Current updates and styles retained their existing no-history-rebuild checks. One targeted browser check passed, as did typecheck and the dedicated compiled build. Raw observer output: `compiled-resource-heap-fdf0654-working-observer.json`. No application source changed for this observation.

@@ -115,3 +115,25 @@ This timer covers crossing the initial request boundary. Dramatic zoom-in retarg
 Follow-up `fe256d7` extends the same rule to a much narrower unloaded viewport inside the initial request. Both boundary-pan and zoom-in deterministic variants pass. The two pre-existing immediate-cancellation tests now verify deferred cancellation followed by acquisition of the latest range. All68 archive tests pass; the other108 prepared/store checks passed in the preceding run, and typecheck/build pass. The compiled `baff72f` worker capture has two passing checks: repeated resident navigation and the partial-load gesture case. The latter contains exactly initial after0, initial after10, and one final-target after0 request; one generation and zero empty reset snapshots. This is controlled canonical-source worker evidence, not real source or execution ACK acceptance.
 
 The targeted compiled partial-navigation check also passed at final application `fe256d7`: `compiled-worker-partial-fe256d7.json`. The task preview was stopped afterward. Remaining goal gates are not waived by these results.
+
+
+## Real prepared-source navigation at fdf0654
+
+On 17 November, application `fdf0654` (same application source as `fe256d7`) was compiled with staging data, history tiles and diagnostics enabled. The actual worker used prepared discovery, projection batches, source validation and current-wall polling through preview4189 → separate SSH forwards18990/18991 → isolated gateway18890. Backend application was `300fa5d00f607d7e3a990b128523ea265af363f5`, paired with its matching worker, protocol6 root `/home/daz/iqterminal-wall-tail-r5-candidate-proof`, independent publication enabled only for that pair. No backend application change was made.
+
+These are one genuine-source run per market on this Pi using headless Chromium/SwiftShader1280×720. They are not a matched performance cohort or foreground certification. Initial requests used current-ending30h views, normal padding, Top8/side,10%,native, Spot5m/USD-M15m. Sources retained their genuine gaps and short unconfirmed tails. Available-history completion is distinct from gap-free range completion.
+
+| Market | First historical paint | Validated available paint | Historical segments / runs | Sampled navigation draws | Historical builds before → after |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| USD-M |43.44s|50.24s|4636 /47938|43|115 →115|
+| Spot |44.77s|60.21s|6885 /35715|37|101 →101|
+
+After completed validation, GET history/discovery/source/batch requests were blocked. Both runs made zero attempted blocked requests during36 time/price camera changes wholly inside the loaded interval. Every sampled composed wall draw had nonempty pixels. Newly exposed content was drawn from retained resources. Exact historical-presentation SHA256 stayed unchanged before/after camera movement; this is a renderer immutability check, not a new independent financial-reference comparison. No historical geometry rebuild occurred; current chunks did update. Pixel readback adds substantial overhead, so these draw/frame timings cannot certify the33ms target.
+
+Current-wall delivery progressed: USD-M39pages/51patches, Spot36pages/28patches by disposal. This is current-wall polling evidence, not durable execution ACK acceptance. The observer did not capture a visible current marker (`firstCurrent=null`); no first-current-paint latency is claimed. Browser page-error arrays were empty. Preview shutdown output included WebSocket EPIPE errors at14:46:29UTC; no correlated execution recovery claim is made from this check.
+
+After removing each panel, worker diagnostics showed zero subscriptions, groups, history jobs, consumers and resident owners. Existing bounded warm/immutable caches remained, with no pinned entries, until browser closure. Single post-navigation forced-GC worker heap samples were13,646,788bytes USD-M and14,460,792bytes Spot; these are not a repeated-cycle plateau proof or total process memory.
+
+Evidence is `live-route-{usdm,spot}-fdf0654.json` with screenshots, `live-route-environment.json`, and `live-session-fdf0654/summary.json`. The session manifest records full identities, resource preflight, roots and unchanged allocation. The bounded session ended early: strict session/build/root cleanup confirmed both isolated containers removed, no root lock, no capture errors. Gateway logs were bounded/truncated, explicitly recorded in the cleanup receipt. Local4189/18990/18991 were stopped; ordinary5173/18780/18781 retained their original processes. Useful prepared state remains. No main, production, protected watch or collector service changed.
+
+This closes the real prepared-source/worker loaded-navigation evidence gap for the sampled views. It does not close boundary-extension live testing, execution ACKs, larger repeated heap/multiple-chart workload, fallback integration, live-follow revision behavior or foreground acceptance. Earlier controlled-source tests retain their separate scope.
