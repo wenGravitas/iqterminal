@@ -860,6 +860,7 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
       service.updateViewport('delayed-current',from,to,false);
       expect(signals[0].aborted).toBe(false);
       release(new Response(JSON.stringify(current)));await flush();
+      await vi.waitFor(()=>expect(urls.filter(url=>url.includes('/archive?'))).toHaveLength(2));
       const history=urls.filter(url=>url.includes('/archive?'));expect(history).toHaveLength(2);
       expect(new URL(history.at(-1)!,'http://localhost').searchParams.get('from')).toBe(String(from));
       expect(new URL(history.at(-1)!,'http://localhost').searchParams.get('to')).toBe(String(to));
@@ -895,7 +896,8 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
       for(let i=0;i<40;i++)await Promise.resolve();
       service.updateViewport('visible-priority',from+(to-from)/2,to,false);
       for(let i=0;i<40;i++)await Promise.resolve();
-      expect(signals[0]?.aborted).toBe(true);
+      expect(signals[0]?.aborted).toBe(false);
+      await vi.waitFor(()=>expect(signals[0]?.aborted).toBe(true));
       expect(service.diagnostics().historyRequests).toBe(2);
     }finally{service.dispose();}
   });
@@ -1697,7 +1699,7 @@ it('readmits a validated capacity-blocked owner after narrowing without another 
  }finally{service.dispose();vi.useRealTimers();}
 });
 
-it('coalesces initial partial-history boundary gestures without cancelling useful work per input',async()=>{
+it.each(['boundary','zoom-in'] as const)('coalesces initial partial-history %s gestures without cancelling useful work per input',async mode=>{
  vi.useFakeTimers();const events:any[]=[],reads:Array<{from:number;to:number;after:number;signal:AbortSignal}>=[],currentSignals:AbortSignal[]=[];
  const held:Array<(response:Response)=>void>=[],wall=candidate({startedAt:from-1000,startCursor:0});
  const fetcher:any=(input:unknown,init:any)=>{const url=new URL(String(input),'http://localhost');
@@ -1709,12 +1711,12 @@ it('coalesces initial partial-history boundary gestures without cancelling usefu
  const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to),flush=async()=>{for(let i=0;i<200;i++)await Promise.resolve();};
  try{
   service.subscribe('initial-gesture',{...request(),followLive:true});await flush();await vi.advanceTimersByTimeAsync(1);await flush();expect(reads,JSON.stringify(events.at(-1))).toHaveLength(2);expect(publishedSegments(events).length).toBeGreaterThan(0);
-  const before=events.length,old=publishedSegments(events);
-  for(let step=1;step<=10;step++){service.updateViewport('initial-gesture',from-step*1000,to-step*1000,false);await vi.advanceTimersByTimeAsync(5);}
+  const before=events.length,old=publishedSegments(events),target=(step:number)=>mode==='boundary'?{from:from-step*1000,to:to-step*1000}:{from:from+20000+step*1000,to:to-step*500};
+  for(let step=1;step<=10;step++){const range=target(step);service.updateViewport('initial-gesture',range.from,range.to,false);await vi.advanceTimersByTimeAsync(5);}
   expect(reads).toHaveLength(2);expect(reads[1]!.signal.aborted).toBe(false);expect(publishedSegments(events)).toEqual(old);
   service.updateViewport('initial-gesture',from,to,false);await vi.advanceTimersByTimeAsync(130);await flush();expect(reads).toHaveLength(2);expect(reads[1]!.signal.aborted).toBe(false);
-  for(let step=1;step<=10;step++)service.updateViewport('initial-gesture',from-step*1000,to-step*1000,false);
-  await vi.advanceTimersByTimeAsync(130);await flush();expect(reads).toHaveLength(3);expect(reads[1]!.signal.aborted).toBe(true);expect(reads[2]).toMatchObject({from:from-10000,to:to-10000,after:0});
+  for(let step=1;step<=10;step++){const range=target(step);service.updateViewport('initial-gesture',range.from,range.to,false);}
+  await vi.advanceTimersByTimeAsync(130);await flush();expect(reads).toHaveLength(3);expect(reads[1]!.signal.aborted).toBe(true);expect(reads[2]).toMatchObject({...target(10),after:0});
   expect(currentSignals).toHaveLength(1);expect(currentSignals[0]!.aborted).toBe(false);
   const at=events.length;held[0]!(Response.json(page()));await flush();expect(events).toHaveLength(at);expect(publishedSegments(events)).toEqual(old);
   expect(events.slice(before).some(event=>event.kind==='snapshot'&&event.segments.length===0)).toBe(false);
