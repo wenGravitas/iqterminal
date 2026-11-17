@@ -180,6 +180,8 @@ export interface OrderWallArchiveStatus {
   midpoint?: string | null;
   availableFrom?: number;
   confirmedTo?: number;
+  /** Start of the retained validated presentation when the requested range changes. */
+  loadedFrom?: number;
   loadedThrough?: number;
   /** Confirmed extent of received prepared segments; not whole-view coverage. */
   presentationThrough?: number;

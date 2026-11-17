@@ -1548,3 +1548,30 @@ it('presentation-only settings retain in-flight history, current lane and subscr
   expect(events.at(-1).generation).not.toBe(generation);expect(signals.slice(0,count).every(signal=>signal.aborted)).toBe(true);
  }finally{service.dispose();}
 });
+
+
+it('crossing a history request boundary keeps published overlap and the live subscription during failure and retry',async()=>{
+ const events:any[]=[],urls:string[]=[],currentSignals:AbortSignal[]=[];
+ let historyReads=0,failReplacement:((response:Response)=>void)|undefined;
+ const historical=page({seed:{at:from,cursor:0,epoch:1,midpoint:'74480',bids:[candidate({startedAt:from,startCursor:0})],asks:[],bookScope:{bidComplete:true,askComplete:true}}});
+ const fetcher:any=(url:unknown,init:any)=>{
+  urls.push(String(url));
+  if(String(url).includes('/current?')){currentSignals.push(init.signal);return new Promise((_resolve,reject)=>init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));}
+  historyReads++;
+  if(historyReads===1)return Promise.resolve(new Response(JSON.stringify(historical)));
+  return new Promise((resolve,reject)=>{failReplacement=resolve;init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true});});
+ };
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to),flush=async()=>{for(let i=0;i<200;i++)await Promise.resolve();};
+ try{
+  service.subscribe('pan',{...request(),followLive:true});await flush();
+  const loaded=events.filter(event=>event.segments?.some((segment:any)=>segment.archiveEntryId)).at(-1);
+  expect(loaded).toBeDefined();const generation=loaded.generation,count=events.length;
+  service.updateViewport('pan',from-30000,to-30000,false);await flush();
+  expect(historyReads).toBe(2);expect(events.at(-1).status.archive.loadedFrom).toBe(from);expect(currentSignals).toHaveLength(1);expect(currentSignals[0]!.aborted).toBe(false);
+  expect(events.slice(count).every(event=>event.generation===generation&&event.kind==='patch'&&event.patches.length===0)).toBe(true);
+  failReplacement!(new Response(JSON.stringify({error:'Injected history failure'}),{status:400}));await vi.waitFor(()=>expect(events.at(-1).status.archive.reason).toContain('Injected history failure'));await flush();
+  expect(events.at(-1).status.archive.requestComplete).toBe(false);
+  expect(events.slice(count).some(event=>event.kind==='snapshot'&&event.segments.length===0)).toBe(false);
+  service.retry('pan');await vi.waitFor(()=>expect(historyReads).toBe(3));await flush();expect(currentSignals).toHaveLength(1);expect(currentSignals[0]!.aborted).toBe(false);
+ }finally{service.dispose();}
+});

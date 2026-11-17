@@ -219,7 +219,21 @@ export class OrderWallsArchiveService {
       if (sub.historyJob?.settled) this.tryStartPendingViewportHistory(sub);
       return;
     }
-    this.subscribe(id, { ...sub.request, ...nextViewport });
+    // Navigation changes a history interest, not market/profile identity. Keep
+    // the current poller's cursor and already published walls while the new
+    // independently fenced range is acquired. A completed replacement still
+    // uses the existing validation barrier; this is not cross-range stitching.
+    const displayed=sub.replacingHistory?.status??sub.historyStatus;
+    const previous=sub.request;
+    this.detachHistoryJob(sub);this.releaseWarmInterests(previous);
+    sub.request={...sub.request,from,to,followLive:sub.request.followLive||nextViewport.followLive};
+    sub.pendingViewport=undefined;sub.archiveStarted=false;
+    if(displayed&&(sub.historyPresentation||sub.historyProjector))sub.replacingHistory={status:{...displayed,
+      ...(displayed.archive?{archive:{...displayed.archive,loadedFrom:displayed.archive.loadedFrom??displayed.archive.from}}:{})}};
+    if(sub.request.followLive&&!sub.group)this.attachCurrentGroup(sub);
+    this.startHistory(sub);
+    if(sub.replacingHistory?.status.archive)sub.historyStatus={...sub.historyStatus!,archive:{...sub.replacingHistory.status.archive,from,to,state:'loading',requestComplete:false,rangeComplete:false}};
+    this.publish(sub,'patch',[],this.status(sub));
   }
 
   retry(id: string) {
