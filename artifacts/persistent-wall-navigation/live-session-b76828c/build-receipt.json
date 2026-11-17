@@ -1,0 +1,13 @@
+{
+  "commit": "300fa5d00f607d7e3a990b128523ea265af363f5",
+  "bundles": {
+    "worker": "30daff537bcd5b4c22edf87cdb372856c789c5fcba3e65a9d67a37a194813a69",
+    "gateway": "af6d21f619eef895dbb77d9173dba06bf56de8df55b2c053a5ee73a51087d54d",
+    "watch-protocol": "e4acfffd8cac544bc22028147482cc983665e6fac9e428dfa573b7d0a5b7f680"
+  },
+  "watchStreamSourceSha256": "0ee9808b311b34db52762b0f5bf24e009b883ab0d27099c00d4150626904bdd8",
+  "wallBundlesIdenticalToPrevious": {
+    "worker": true,
+    "gateway": true
+  }
+}

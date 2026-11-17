@@ -1,0 +1,9 @@
+{
+  "sessionId": "80f86c7c-8f17-4862-b788-5634d221b08f",
+  "kind": "persistent-wall-navigation current execution validation",
+  "startUtc": "2026-11-17T15:04:29.417322+00:00",
+  "experimentCutoffUtc": "2026-11-17T15:24:29.417322+00:00",
+  "backendApplication": "300fa5d00f607d7e3a990b128523ea265af363f5",
+  "frontendApplication": "b76828cc5f7624a22906ac50cae4c3f8ed7432a4",
+  "notGoalBudget": true
+}

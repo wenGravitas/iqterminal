@@ -54,9 +54,17 @@ def reconcile_remote(attempted,be,bout,session_id,build,runner=None):
   return report
  except Exception as e:return {'sessionId':session_id,'build':build,'confirmed':False,'status':'unconfirmed','error':str(e)[:1000],'recoveryCommand':recovery_command(be,bout)}
 
+def client_source(fe):
+ # Explicit alternate receipts let a new candidate reuse the guarded lifecycle
+ # without replacing the old frozen bundle or pretending it tests current main.
+ value=os.environ.get('IQ_FOREGROUND_CLIENT_SOURCE')
+ source=pathlib.Path(value).expanduser().resolve() if value else fe/'artifacts/watch-ack-warm-acceptance'
+ if not (source/'client-build.json').is_file():raise ValueError('Client build receipt required: '+str(source))
+ return source
+
 def main():
  fe=pathlib.Path(__file__).resolve().parents[1];be=fe.parent/'iqterminal-server-integration-startup-r1'
- source=fe/'artifacts/watch-ack-warm-acceptance';backend=be/'artifacts/watch-ack-warm-acceptance'
+ source=client_source(fe);backend=be/'artifacts/watch-ack-warm-acceptance'
  validate_helper(be)
  startup_check=sys.argv[1:]==['--startup-check']
  if sys.argv[1:] and not startup_check:raise SystemExit('Run without arguments; Ctrl-C stops only this owned session.')

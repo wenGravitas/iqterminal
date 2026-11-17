@@ -1,0 +1,236 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.23.4/bin/node",
+      "/home/daz/workarea/iqterminal-persistent-walls/node_modules/.pnpm/@playwright+test@1.64.0/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.wall-navigation.config.ts",
+      "--grep",
+      "Top Levels Spot"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal-persistent-walls/playwright.wall-navigation.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/daz/workarea/iqterminal-persistent-walls/scripts/test-browser-i3-setup.mjs",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "wall-retained-navigation.spec.ts",
+          "order-wall-top-levels.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "wall-retained-navigation.spec.ts",
+          "order-wall-top-levels.spec.ts"
+        ],
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4189",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4173",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--class=IQTerminalPerf",
+              "--name=IQTerminalPerf",
+              "--ozone-platform=x11",
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          },
+          "headless": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/persistent-wall-navigation/compiled-browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm exec vite preview --outDir dist-wall-navigation --host 127.0.0.1 --port 4189 --strictPort",
+      "url": "http://127.0.0.1:4189",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "order-wall-top-levels.spec.ts",
+      "file": "order-wall-top-levels.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Top Levels Spot 5m has stable episodes, clear styles and persistent controls (dark)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17862,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"realistic-synthetic-depth-not-live\",\"theme\":\"dark\",\"market\":\"binance-spot\",\"timeframe\":\"5m\",\"episodes\":20,\"active\":16,\"diagnostics\":{\"draws\":10,\"rebuilds\":0,\"patchProjects\":0,\"segments\":20,\"visible\":150,\"visibleHistorical\":0,\"visibleCurrent\":0,\"bytes\":81440,\"renderMs\":289.5,\"maxRenderMs\":201.5,\"strokes\":4,\"lastProjectMs\":0.10000000149011612,\"lastReferenceMs\":0,\"lastPaintMs\":5.600000001490116,\"referenceRebuilds\":0,\"referenceSegments\":0,\"referenceValueScans\":0,\"paintCacheHits\":0,\"paintCacheBuilds\":0,\"paintStyleVisits\":0,\"closedPaintCacheHits\":0,\"closedPaintCacheBuilds\":0,\"closedPaintCacheAppends\":0,\"closedPaintStyleVisits\":0,\"settingsNoops\":3,\"mappingChecks\":0,\"mappingFallbacks\":0,\"retainedRenderer\":{\"active\":true,\"builds\":4,\"historyBuilds\":4,\"currentBuilds\":0,\"frames\":10,\"mappingInvalidations\":0,\"uploadedBytes\":84480,\"bufferUploads\":8,\"drawCalls\":4,\"maxPrepareMs\":20.799999997019768,\"lastPrepareMs\":0.10000000149011612,\"lastPaintMs\":5.600000001490116,\"visibleSpans\":150,\"visibleHistorical\":0,\"visibleCurrent\":0,\"bytes\":101408,\"referenceMin\":951651.261933837,\"referenceMax\":6061601.041974265,\"failure\":\"\",\"pending\":0,\"chunks\":4,\"sources\":20,\"retainedSpans\":1920,\"contextLost\":false,\"sharedGpuBytes\":84480,\"sharedOwners\":1},\"paintedViewport\":{\"fromMs\":1794924653571.4285,\"toMs\":1794928500000,\"minPrice\":83472.60412860717,\"maxPrice\":83716.33017775661,\"plotWidth\":1436,\"plotHeight\":844},\"inputRevision\":4,\"paintedRevision\":4,\"paintedAtMono\":13275.69999999553,\"pendingProjectionSegments\":0,\"pendingPaintWork\":false,\"queuedPreparation\":false,\"preparation\":{\"slices\":0,\"steps\":0,\"cancelled\":0,\"activeMs\":0,\"lastProjectionElapsedMs\":0,\"lastReferenceElapsedMs\":0,\"lastSliceMs\":0,\"maxSliceMs\":0,\"backgroundMs\":0,\"maxBackgroundMs\":0,\"yieldMode\":\"not-scheduled\",\"phase\":\"idle\"},\"retainedPaintPaths\":0,\"retainedClosedPaintPaths\":0,\"retainedClosedPaintSegments\":0,\"pendingClosedPaintSegments\":0,\"retainedSegments\":20,\"openSegments\":16,\"retainedReferenceSegments\":0,\"referenceExtentValues\":0,\"pendingReferenceSegments\":0,\"referenceMinimum\":951651.261933837,\"referenceMaximum\":6061601.041974265,\"retainedDrawables\":0,\"p95RenderMs\":33.80000000447035,\"mounted\":true,\"archiveSegments\":0,\"directSegments\":20,\"valueRuns\":1940,\"archiveValueRuns\":0,\"directValueRuns\":1940,\"valueHistoryLimited\":false,\"episodeHistoryLimited\":false}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T15:10:10.371Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6fa5d0d61b68a3101bee-7e8044c3b70e71c9dc5c",
+          "file": "order-wall-top-levels.spec.ts",
+          "line": 4,
+          "column": 37
+        },
+        {
+          "title": "Top Levels Spot 5m has stable episodes, clear styles and persistent controls (light)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9842,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"realistic-synthetic-depth-not-live\",\"theme\":\"light\",\"market\":\"binance-spot\",\"timeframe\":\"5m\",\"episodes\":20,\"active\":16,\"diagnostics\":{\"draws\":6,\"rebuilds\":0,\"patchProjects\":0,\"segments\":20,\"visible\":1920,\"visibleHistorical\":0,\"visibleCurrent\":0,\"bytes\":81440,\"renderMs\":118.90000000596046,\"maxRenderMs\":78.60000000149012,\"strokes\":4,\"lastProjectMs\":0,\"lastReferenceMs\":0,\"lastPaintMs\":1,\"referenceRebuilds\":0,\"referenceSegments\":0,\"referenceValueScans\":0,\"paintCacheHits\":0,\"paintCacheBuilds\":0,\"paintStyleVisits\":0,\"closedPaintCacheHits\":0,\"closedPaintCacheBuilds\":0,\"closedPaintCacheAppends\":0,\"closedPaintStyleVisits\":0,\"settingsNoops\":1,\"mappingChecks\":0,\"mappingFallbacks\":0,\"retainedRenderer\":{\"active\":true,\"builds\":4,\"historyBuilds\":4,\"currentBuilds\":0,\"frames\":6,\"mappingInvalidations\":0,\"uploadedBytes\":84480,\"bufferUploads\":8,\"drawCalls\":4,\"maxPrepareMs\":12.100000001490116,\"lastPrepareMs\":0,\"lastPaintMs\":1,\"visibleSpans\":1920,\"visibleHistorical\":0,\"visibleCurrent\":0,\"bytes\":101408,\"referenceMin\":951651.261933837,\"referenceMax\":12417359.409805223,\"failure\":\"\",\"pending\":0,\"chunks\":4,\"sources\":20,\"retainedSpans\":1920,\"contextLost\":false,\"sharedGpuBytes\":84480,\"sharedOwners\":1},\"paintedViewport\":{\"fromMs\":1794913800000,\"toMs\":1794928800000,\"minPrice\":82990,\"maxPrice\":84010,\"plotWidth\":1436,\"plotHeight\":844},\"inputRevision\":4,\"paintedRevision\":4,\"paintedAtMono\":7181.70000000298,\"pendingProjectionSegments\":0,\"pendingPaintWork\":false,\"queuedPreparation\":false,\"preparation\":{\"slices\":0,\"steps\":0,\"cancelled\":0,\"activeMs\":0,\"lastProjectionElapsedMs\":0,\"lastReferenceElapsedMs\":0,\"lastSliceMs\":0,\"maxSliceMs\":0,\"backgroundMs\":0,\"maxBackgroundMs\":0,\"yieldMode\":\"not-scheduled\",\"phase\":\"idle\"},\"retainedPaintPaths\":0,\"retainedClosedPaintPaths\":0,\"retainedClosedPaintSegments\":0,\"pendingClosedPaintSegments\":0,\"retainedSegments\":20,\"openSegments\":16,\"retainedReferenceSegments\":0,\"referenceExtentValues\":0,\"pendingReferenceSegments\":0,\"referenceMinimum\":951651.261933837,\"referenceMaximum\":12417359.409805223,\"retainedDrawables\":0,\"p95RenderMs\":25.100000001490116,\"mounted\":true,\"archiveSegments\":0,\"directSegments\":20,\"valueRuns\":1940,\"archiveValueRuns\":0,\"directValueRuns\":1940,\"valueHistoryLimited\":false,\"episodeHistoryLimited\":false}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T15:10:31.882Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6fa5d0d61b68a3101bee-c80f9e8fb38f7403e137",
+          "file": "order-wall-top-levels.spec.ts",
+          "line": 4,
+          "column": 37
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-17T15:10:03.752Z",
+    "duration": 38505.134000000005,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

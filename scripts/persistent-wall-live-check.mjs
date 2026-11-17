@@ -13,7 +13,7 @@ if(process.argv[4]&&!withCurrent)throw Error('Unknown observation option');
 const to=Date.now(),from=to-30*3600000,interval=market==='spot'?'5m':'15m';
 const params={venue:'binance',market,interval,type:'candle',rowPrice:25,historyViewport:{from,to},studies:[],indicators:[{instanceId:'native.order-walls',definitionId:'native.order-walls',settingsVersion:2,visible:true,source:{kind:'chart'},placement:'overlay',settings:{enabled:true,mode:'top-levels',topLevels:8,searchRangePercent:10,aggregation:'native',minDurationMs:0,showHistory:true}}]};
 const layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:['chart-live'],activeView:'chart-live',id:'1'},size:1280}],size:720},width:1280,height:720,orientation:'HORIZONTAL'},panels:{'chart-live':{id:'chart-live',contentComponent:'candle',tabComponent:'compact-chart',title:'Candles',params,minimumHeight:140,minimumWidth:220}},activeGroup:'1'};
-const report={scope:'Real route and source; headless software rendering; readback-instrumented navigation; not foreground Pi performance',startedUtc:new Date().toISOString(),market,from,to,requests:[],errors:[],samples:[],blocked:[],withCurrent,executionSamples:[]};
+const report={scope:'Real route and source; headless rendering (actual GPU in environment.system); readback-instrumented navigation; not foreground Pi performance',startedUtc:new Date().toISOString(),market,from,to,requests:[],errors:[],samples:[],blocked:[],withCurrent,executionSamples:[]};
 const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/chromium',args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader','--enable-precise-memory-info']});
 let page;
 try{

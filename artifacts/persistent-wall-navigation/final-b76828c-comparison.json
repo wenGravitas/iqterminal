@@ -1,0 +1,84 @@
+{
+  "application": "b76828cc5f7624a22906ac50cae4c3f8ed7432a4",
+  "scope": "Three alternating baseline/candidate pairs; same2500segments/20000runs/90camera inputs, headless Pi. SwiftShader was requested but actual component renderer was not recorded. Draw durations, not frame intervals. Readback outside draw timer; no foreground certification.",
+  "samples": [
+    {
+      "run": 1,
+      "path": "baseline",
+      "initialMs": 494.70000000298023,
+      "drawP95Ms": 11.100000001490116,
+      "drawMaxMs": 11.899999998509884,
+      "blankFrames": 89,
+      "frames": 90,
+      "historyBuildsBefore": null,
+      "historyBuildsAfter": null,
+      "uploadsBefore": null,
+      "uploadsAfter": null
+    },
+    {
+      "run": 1,
+      "path": "retained",
+      "initialMs": 216.19999999552965,
+      "drawP95Ms": 38.899999998509884,
+      "drawMaxMs": 85.19999999552965,
+      "blankFrames": 0,
+      "frames": 90,
+      "historyBuildsBefore": 44,
+      "historyBuildsAfter": 44,
+      "uploadsBefore": 88,
+      "uploadsAfter": 88
+    },
+    {
+      "run": 2,
+      "path": "baseline",
+      "initialMs": 463.6000000014901,
+      "drawP95Ms": 18.600000001490116,
+      "drawMaxMs": 35,
+      "blankFrames": 89,
+      "frames": 90,
+      "historyBuildsBefore": null,
+      "historyBuildsAfter": null,
+      "uploadsBefore": null,
+      "uploadsAfter": null
+    },
+    {
+      "run": 2,
+      "path": "retained",
+      "initialMs": 517.3000000044703,
+      "drawP95Ms": 34.099999994039536,
+      "drawMaxMs": 78,
+      "blankFrames": 0,
+      "frames": 90,
+      "historyBuildsBefore": 44,
+      "historyBuildsAfter": 44,
+      "uploadsBefore": 88,
+      "uploadsAfter": 88
+    },
+    {
+      "run": 3,
+      "path": "baseline",
+      "initialMs": 1417.6000000014901,
+      "drawP95Ms": 14.100000001490116,
+      "drawMaxMs": 44.80000000447035,
+      "blankFrames": 89,
+      "frames": 90,
+      "historyBuildsBefore": null,
+      "historyBuildsAfter": null,
+      "uploadsBefore": null,
+      "uploadsAfter": null
+    },
+    {
+      "run": 3,
+      "path": "retained",
+      "initialMs": 635.6000000014901,
+      "drawP95Ms": 57.70000000298023,
+      "drawMaxMs": 129.59999999403954,
+      "blankFrames": 0,
+      "frames": 90,
+      "historyBuildsBefore": 44,
+      "historyBuildsAfter": 44,
+      "uploadsBefore": 88,
+      "uploadsAfter": 88
+    }
+  ]
+}

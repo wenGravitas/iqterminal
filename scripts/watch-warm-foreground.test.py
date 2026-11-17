@@ -4,6 +4,14 @@ SPEC=importlib.util.spec_from_file_location('foreground',pathlib.Path(__file__).
 BUILD='3'*40;ROOT='/home/daz/iqterminal-wall-tail-r5-candidate-proof'
 def confirmation(identity,confirmed=True):return {'cleanup':{'sessionId':identity,'build':BUILD,'root':ROOT,'confirmed':confirmed,'roles':[{'role':k,'status':'absent' if confirmed else 'unconfirmed','confirmedStopped':confirmed} for k in ['gateway','worker']]}}
 class Foreground(unittest.TestCase):
+ def test_explicit_client_receipt_does_not_replace_frozen_default(self):
+  with tempfile.TemporaryDirectory() as tmp:
+   root=pathlib.Path(tmp);default=root/'artifacts/watch-ack-warm-acceptance';other=root/'navigation';default.mkdir(parents=True);other.mkdir();(default/'client-build.json').write_text('frozen');(other/'client-build.json').write_text('candidate')
+   with patch.dict(m.os.environ,{'IQ_FOREGROUND_CLIENT_SOURCE':str(other)}):self.assertEqual(m.client_source(root),other)
+   self.assertEqual((default/'client-build.json').read_text(),'frozen')
+   with patch.dict(m.os.environ,{'IQ_FOREGROUND_CLIENT_SOURCE':str(root/'absent')}):
+    with self.assertRaisesRegex(ValueError,'receipt required'):m.client_source(root)
+   with patch.dict(m.os.environ,{},clear=True):self.assertEqual(m.client_source(root),default)
  def exercise_failed_start(self,failure):
   with tempfile.TemporaryDirectory() as tmp:
    base=pathlib.Path(tmp);fe=base/'frontend';be=base/'iqterminal-server-integration-startup-r1';source=fe/'artifacts/watch-ack-warm-acceptance';backend=be/'artifacts/watch-ack-warm-acceptance';source.mkdir(parents=True);backend.mkdir(parents=True);(be/'ops').mkdir();(be/'ops/watch-warm-candidate.py').write_text('SESSION_LIFECYCLE_VERSION=1');(be/'ops/watch-warm-remote.py').write_text('fixture');dist=fe/'dist';dist.mkdir()

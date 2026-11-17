@@ -1,0 +1,103 @@
+{
+  "enabled": true,
+  "build": "300fa5d00f607d7e3a990b128523ea265af363f5",
+  "metrics": {
+    "requests": 69,
+    "rejected": 0,
+    "bytes": 679947,
+    "serializeMs": 22.55441799996072,
+    "legacyHeatmap": 0,
+    "legacyFootprint": 0,
+    "closedTileReads": 0,
+    "manifests": 0,
+    "orderWallPages": 31,
+    "peakRss": 118394880,
+    "active": 1,
+    "history": 0,
+    "reservedCurrent": 1,
+    "limit": 4,
+    "rss": 118706176
+  },
+  "wallProjectionEncoding": {
+    "active": 0,
+    "limit": 3,
+    "cacheEntries": 2,
+    "cacheBytes": 633158
+  },
+  "materializer": {
+    "version": 1,
+    "head": {
+      "cursor": 30739420,
+      "at": 1794928025117,
+      "epoch": 1794926322978
+    },
+    "live": {
+      "cursor": 30739420,
+      "at": 1794928025117,
+      "from": 1794927900000,
+      "widths": [
+        10,
+        25,
+        50,
+        100,
+        250,
+        1000
+      ]
+    },
+    "archive": {
+      "pinned": {
+        "pages": 1,
+        "processed": 38,
+        "cursor": 30739398,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "current": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "lane": "pinned",
+          "pages": 1,
+          "processed": 38,
+          "cursor": 30739398,
+          "lag": 0,
+          "caughtUp": true
+        },
+        {
+          "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+          "lane": "pinned",
+          "pages": 1,
+          "processed": 31,
+          "cursor": 26904414,
+          "lag": 0,
+          "caughtUp": true
+        }
+      ],
+      "custom": [],
+      "customWorker": "perpetual-materializer"
+    },
+    "metrics": {
+      "startedAt": 1793984035129,
+      "lastPoll": 1794928025835,
+      "lastPersist": 1794927902316,
+      "records": 9244496,
+      "closedBuckets": 18882,
+      "liveLagMs": 0,
+      "derivedBytes": 1222744986,
+      "freeBytes": 179504869376,
+      "paused": false,
+      "error": "",
+      "pages": 385730,
+      "pageMs": 19687460.670519657,
+      "accumulateMs": 11304119.931255998,
+      "persistMs": 1510375.5639377278,
+      "peakRss": 615284736,
+      "sourceHeadAgeMs": 829,
+      "liveAgeMs": 829,
+      "rss": 331366400
+    },
+    "backlog": []
+  },
+  "sqlAdmission": {
+    "enabled": false
+  }
+}

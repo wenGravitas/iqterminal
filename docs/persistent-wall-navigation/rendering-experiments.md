@@ -108,3 +108,18 @@ A new compiled regression on `9f57def` reproduced a transition defect: Canvas mi
 Application `82714c01aa60a278372ccf6930bede2e4552a088` invalidates the old Canvas transform key after retained rendering. GPU updates intentionally do not maintain old Canvas geometry; switching back must rebuild from current exact rows. This does not invalidate GPU resources or alter ordinary camera behavior. The regression checks the corrected97hit, absence of the old95hit, the Threshold105hit, and completed fallback paint. This is a concrete correctness correction, not a performance claim for mixed mode.
 
 At the exact `82714c0` build, both targeted browser checks passed: the mixed transition and the existing32-case GPU mapping/color/hover/disposal comparison. Typecheck and dedicated build passed. Raw result: `compiled-mixed-82714c0.json`. The owned preview stopped after the tests. Real-route observations above retain their earlier `fdf0654` scope; no new real-source timing claim is inferred from this targeted fallback fix.
+
+
+## Final matched cohort and scope correction
+
+Three sequential alternating pairs at applicationb76828c use the same2500segments/20000runs and90camera inputs. Full samples and counts are in `final-b76828c-comparison.json` and the six `final-b76828c-run*.json` files.
+
+| Run | Baseline initial / draw p95 / worst | Candidate initial / draw p95 / worst | Baseline / candidate blank draws |
+| --- | ---: | ---: | ---: |
+|1|494.7 /11.1 /11.9ms|216.2 /38.9 /85.2ms|89/90 /0/90|
+|2|463.6 /18.6 /35.0ms|517.3 /34.1 /78.0ms|89/90 /0/90|
+|3|1417.6 /14.1 /44.8ms|635.6 /57.7 /129.6ms|89/90 /0/90|
+
+Every candidate remained44historical builds/88uploads/880000GPU bytes during camera movement. The baseline mostly paints nothing; its lower draw time is not useful rendering performance. There is substantial scheduling variation, and no initial-load speedup is claimed from these samples. These are draw durations, not RAF frame intervals/input-to-display latency.
+
+Earlier text inferred software rendering from flags. That is not reliable on this host: the real-route captures explicitly report ANGLE/V3D despite requesting SwiftShader. Actual renderer was not recorded in these component pairs; classify it as unverified headless rendering, not confirmed software. See the rendering-mode erratum in resident-history.md. Foreground33ms acceptance remains pending, with a runnable user procedure; no unattended browser is launched.
