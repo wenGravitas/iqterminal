@@ -88,3 +88,7 @@ Rollback is to use unchanged main/the ordinary application; no service or prepar
 ### Still required for the goal
 
 The renderer improvement is implemented, but the goal is NOT complete. Missing-coverage-only acquisition, bounded resident interval ownership/eviction, gesture hysteresis and cross-range financial boundary proofs remain. General boundary navigation currently retains old display while loading a full replacement. The archive's range-relative episode IDs, terminal statistics and source tokens cannot safely be combined by merely deleting from/to from a cache key. Further integration must preserve separately validated interval ownership and original financial records, with explicit seam/gap tests. Actual foreground Pi timings, total heap plateau and live current-route acceptance also remain pending.
+
+## Subsequent resident-history checkpoint
+
+The missing-interval work described as pending above is now partially implemented and tested in231d67b/5cf5392/9d83348. See [resident-history.md](resident-history.md) for exact scope, the preserved same-start path, the first failed boundary capture, corrected compiled adapter result and remaining requirements. The overall goal remains active.

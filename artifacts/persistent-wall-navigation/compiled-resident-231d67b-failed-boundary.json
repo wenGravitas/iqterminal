@@ -1,0 +1,254 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.23.4/bin/node",
+      "/home/daz/workarea/iqterminal-persistent-walls/node_modules/.pnpm/@playwright+test@1.64.0/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.wall-navigation.config.ts",
+      "--grep",
+      "retained GPU component|real archive adapter"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal-persistent-walls/playwright.wall-navigation.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/daz/workarea/iqterminal-persistent-walls/scripts/test-browser-i3-setup.mjs",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "wall-retained-navigation.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": "wall-retained-navigation.spec.ts",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4189",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4173",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--class=IQTerminalPerf",
+              "--name=IQTerminalPerf",
+              "--ozone-platform=x11",
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          },
+          "headless": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/persistent-wall-navigation/compiled-browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm exec vite preview --outDir dist-wall-navigation --host 127.0.0.1 --port 4189 --strictPort",
+      "url": "http://127.0.0.1:4189",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "wall-retained-navigation.spec.ts",
+      "file": "wall-retained-navigation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "retained GPU component preserves exact source, mapped positions, styles, hover and disposal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7230,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T13:44:06.328Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-20174fdcf2ba31a65e00",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 6,
+          "column": 1
+        },
+        {
+          "title": "compiled chart retains overlap while its real archive adapter fetches only missing intervals",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7081,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m2\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m2\u001b[39m\n    at /home/daz/workarea/iqterminal-persistent-walls/tests/browser/wall-retained-navigation.spec.ts:107:96",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser/wall-retained-navigation.spec.ts",
+                      "column": 96,
+                      "line": 107
+                    },
+                    "snippet": "  105 |  await expect.poll(()=>page.evaluate(()=>(window as any).__residentProbe.reads.length)).toBe(2);\n  106 |  const pending=await page.evaluate(id=>{const p=(window as any).__residentProbe,d=(window as any).__terminal.panels.get(id).engine.orderWallsDiagnostics();return {renderer:d.retainedRenderer,reads:p.reads.slice(),status:p.events.at(-1).status,empty:p.events.slice(1).some((e:any)=>e.kind==='snapshot'&&e.count===0),currentAborted:p.current.some((s:any)=>s.aborted)};},id);\n> 107 |  expect(pending.renderer.visibleHistorical).toBeGreaterThan(0);expect(pending.renderer.builds).toBe(initial.renderer.builds);expect(pending.empty).toBe(false);expect(pending.currentAborted).toBe(false);expect(pending.reads[1].to).toBe(initial.reads[0].from);\n      |                                                                                                ^\n  108 |  await page.evaluate(()=>{const p=(window as any).__residentProbe;p.hold=false;for(const resolve of p.held.splice(0))resolve();});\n  109 |  await expect.poll(()=>page.evaluate(id=>{const p=(window as any).__residentProbe,d=(window as any).__terminal.panels.get(id).engine.orderWallsDiagnostics();return p.events.at(-1).status.archive.unloadedRanges?.length===0&&!d.pendingPaintWork;},id)).toBe(true);\n  110 |  await page.evaluate(id=>{const p=(window as any).__residentProbe;(window as any).__terminal.panels.get(id).engine.setRange(p.range);},id);await page.waitForTimeout(300);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser/wall-retained-navigation.spec.ts",
+                        "column": 96,
+                        "line": 107
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m2\u001b[39m\n\n  105 |  await expect.poll(()=>page.evaluate(()=>(window as any).__residentProbe.reads.length)).toBe(2);\n  106 |  const pending=await page.evaluate(id=>{const p=(window as any).__residentProbe,d=(window as any).__terminal.panels.get(id).engine.orderWallsDiagnostics();return {renderer:d.retainedRenderer,reads:p.reads.slice(),status:p.events.at(-1).status,empty:p.events.slice(1).some((e:any)=>e.kind==='snapshot'&&e.count===0),currentAborted:p.current.some((s:any)=>s.aborted)};},id);\n> 107 |  expect(pending.renderer.visibleHistorical).toBeGreaterThan(0);expect(pending.renderer.builds).toBe(initial.renderer.builds);expect(pending.empty).toBe(false);expect(pending.currentAborted).toBe(false);expect(pending.reads[1].to).toBe(initial.reads[0].from);\n      |                                                                                                ^\n  108 |  await page.evaluate(()=>{const p=(window as any).__residentProbe;p.hold=false;for(const resolve of p.held.splice(0))resolve();});\n  109 |  await expect.poll(()=>page.evaluate(id=>{const p=(window as any).__residentProbe,d=(window as any).__terminal.panels.get(id).engine.orderWallsDiagnostics();return p.events.at(-1).status.archive.unloadedRanges?.length===0&&!d.pendingPaintWork;},id)).toBe(true);\n  110 |  await page.evaluate(id=>{const p=(window as any).__residentProbe;(window as any).__terminal.panels.get(id).engine.setRange(p.range);},id);await page.waitForTimeout(300);\n    at /home/daz/workarea/iqterminal-persistent-walls/tests/browser/wall-retained-navigation.spec.ts:107:96"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T13:44:18.036Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal-persistent-walls/test-results/wall-retained-navigation-c-e9e83-ches-only-missing-intervals/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser/wall-retained-navigation.spec.ts",
+                    "column": 96,
+                    "line": 107
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-1ed5f13f3cffff3ca2a6",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 77,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-17T13:44:02.110Z",
+    "duration": 23756.381,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}
