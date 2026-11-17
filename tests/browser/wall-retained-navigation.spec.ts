@@ -153,15 +153,15 @@ test('production worker preserves resident intervals and current cursor through 
  expect(await page.evaluate(()=>(window as any).__workerProbe.events.filter((e:any)=>e.type==='fixture-wall-request'&&e.path.endsWith('/archive')).length)).toBe(2);
  const cycles:any[]=[];
  for(let cycle=0;cycle<16;cycle++){
-  await page.evaluate(cycle=>{const p=(window as any).__workerProbe;p.events=[];const span=p.to-p.from;p.worker.postMessage({type:'order-wall-viewport',id:'protocol',from:p.from-(cycle+1)*span*2,to:p.to-(cycle+1)*span*2});},cycle);
-  await page.waitForFunction(()=>(window as any).__workerProbe.events.some((e:any)=>e.type==='order-wall-batch'&&e.status.archive?.requestComplete&&e.status.archive?.unloadedRanges?.length===0));
+  await page.evaluate(cycle=>{const p=(window as any).__workerProbe;p.events.length=0;const span=p.to-p.from;p.worker.postMessage({type:'order-wall-viewport',id:'protocol',from:p.from-(cycle+1)*span*2,to:p.to-(cycle+1)*span*2});},cycle);
+  await page.waitForFunction(()=>(window as any).__workerProbe.events.some((e:any)=>e.type==='order-wall-batch'&&e.status.archive?.requestComplete&&e.status.archive?.unloadedRanges?.length===0),undefined,{timeout:5000}).catch(async error=>{console.log(JSON.stringify({kind:'worker-cycle-failure',cycle,events:await page.evaluate(()=>(window as any).__workerProbe.events.map((e:any)=>({type:e.type,path:e.path,from:e.from,to:e.to,status:e.status,message:e.message})))}));throw error;});
   await page.evaluate(()=>(window as any).__workerProbe.worker.postMessage({type:'diagnostics'}));
   await page.waitForFunction(()=>(window as any).__workerProbe.events.some((e:any)=>e.type==='diagnostics'));
   const sample=await page.evaluate(()=>{const d=(window as any).__workerProbe.events.find((e:any)=>e.type==='diagnostics').data.orderWallsArchive;return {owners:d.resident[0].chunks,records:d.resident[0].segments,bytes:d.resident[0].bytes,jobs:d.historyJobs,consumers:d.historyConsumers,warmBytes:d.warmBytes};});
   expect(sample.owners).toBeLessThanOrEqual(8);expect(sample.records).toBe(sample.owners);expect(sample.jobs).toBe(1);expect(sample.consumers).toBe(1);cycles.push(sample);
  }
  expect(new Set(cycles.slice(-6).map(sample=>JSON.stringify(sample))).size).toBe(1);
- await page.evaluate(()=>{const p=(window as any).__workerProbe;p.events=[];p.worker.postMessage({type:'order-wall-unsubscribe',id:'protocol'});p.worker.postMessage({type:'diagnostics'});});
+ await page.evaluate(()=>{const p=(window as any).__workerProbe;p.events.length=0;p.worker.postMessage({type:'order-wall-unsubscribe',id:'protocol'});p.worker.postMessage({type:'diagnostics'});});
  await page.waitForFunction(()=>(window as any).__workerProbe.events.some((e:any)=>e.type==='diagnostics'));
  const cleanup=await page.evaluate(()=>(window as any).__workerProbe.events.find((e:any)=>e.type==='diagnostics').data.orderWallsArchive);
  expect(cleanup).toMatchObject({subscriptions:0,groups:0,historyJobs:0,historyConsumers:0,resident:[]});expect(errors).toEqual([]);

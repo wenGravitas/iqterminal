@@ -1,0 +1,224 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.23.4/bin/node",
+      "/home/daz/workarea/iqterminal-persistent-walls/node_modules/.pnpm/@playwright+test@1.64.0/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.wall-navigation.config.ts",
+      "--grep",
+      "production worker"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal-persistent-walls/playwright.wall-navigation.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/daz/workarea/iqterminal-persistent-walls/scripts/test-browser-i3-setup.mjs",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "wall-retained-navigation.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": "wall-retained-navigation.spec.ts",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4189",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4173",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--class=IQTerminalPerf",
+              "--name=IQTerminalPerf",
+              "--ozone-platform=x11",
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          },
+          "headless": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/persistent-wall-navigation/compiled-browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm exec vite preview --outDir dist-wall-navigation --host 127.0.0.1 --port 4189 --strictPort",
+      "url": "http://127.0.0.1:4189",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "wall-retained-navigation.spec.ts",
+      "file": "wall-retained-navigation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "production worker preserves resident intervals and current cursor through message navigation",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 11914,
+                  "error": {
+                    "message": "TimeoutError: page.waitForFunction: Timeout 5000ms exceeded.",
+                    "stack": "TimeoutError: page.waitForFunction: Timeout 5000ms exceeded.\n    at /home/daz/workarea/iqterminal-persistent-walls/tests/browser/wall-retained-navigation.spec.ts:157:14",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser/wall-retained-navigation.spec.ts",
+                      "column": 14,
+                      "line": 157
+                    },
+                    "snippet": "  155 |  for(let cycle=0;cycle<16;cycle++){\n  156 |   await page.evaluate(cycle=>{const p=(window as any).__workerProbe;p.events=[];const span=p.to-p.from;p.worker.postMessage({type:'order-wall-viewport',id:'protocol',from:p.from-(cycle+1)*span*2,to:p.to-(cycle+1)*span*2});},cycle);\n> 157 |   await page.waitForFunction(()=>(window as any).__workerProbe.events.some((e:any)=>e.type==='order-wall-batch'&&e.status.archive?.requestComplete&&e.status.archive?.unloadedRanges?.length===0),undefined,{timeout:5000}).catch(async error=>{console.log(JSON.stringify({kind:'worker-cycle-failure',cycle,events:await page.evaluate(()=>(window as any).__workerProbe.events.map((e:any)=>({type:e.type,path:e.path,from:e.from,to:e.to,status:e.status,message:e.message})))}));throw error;});\n      |              ^\n  158 |   await page.evaluate(()=>(window as any).__workerProbe.worker.postMessage({type:'diagnostics'}));\n  159 |   await page.waitForFunction(()=>(window as any).__workerProbe.events.some((e:any)=>e.type==='diagnostics'));\n  160 |   const sample=await page.evaluate(()=>{const d=(window as any).__workerProbe.events.find((e:any)=>e.type==='diagnostics').data.orderWallsArchive;return {owners:d.resident[0].chunks,records:d.resident[0].segments,bytes:d.resident[0].bytes,jobs:d.historyJobs,consumers:d.historyConsumers,warmBytes:d.warmBytes};});"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser/wall-retained-navigation.spec.ts",
+                        "column": 14,
+                        "line": 157
+                      },
+                      "message": "TimeoutError: page.waitForFunction: Timeout 5000ms exceeded.\n\n  155 |  for(let cycle=0;cycle<16;cycle++){\n  156 |   await page.evaluate(cycle=>{const p=(window as any).__workerProbe;p.events=[];const span=p.to-p.from;p.worker.postMessage({type:'order-wall-viewport',id:'protocol',from:p.from-(cycle+1)*span*2,to:p.to-(cycle+1)*span*2});},cycle);\n> 157 |   await page.waitForFunction(()=>(window as any).__workerProbe.events.some((e:any)=>e.type==='order-wall-batch'&&e.status.archive?.requestComplete&&e.status.archive?.unloadedRanges?.length===0),undefined,{timeout:5000}).catch(async error=>{console.log(JSON.stringify({kind:'worker-cycle-failure',cycle,events:await page.evaluate(()=>(window as any).__workerProbe.events.map((e:any)=>({type:e.type,path:e.path,from:e.from,to:e.to,status:e.status,message:e.message})))}));throw error;});\n      |              ^\n  158 |   await page.evaluate(()=>(window as any).__workerProbe.worker.postMessage({type:'diagnostics'}));\n  159 |   await page.waitForFunction(()=>(window as any).__workerProbe.events.some((e:any)=>e.type==='diagnostics'));\n  160 |   const sample=await page.evaluate(()=>{const d=(window as any).__workerProbe.events.find((e:any)=>e.type==='diagnostics').data.orderWallsArchive;return {owners:d.resident[0].chunks,records:d.resident[0].segments,bytes:d.resident[0].bytes,jobs:d.historyJobs,consumers:d.historyConsumers,warmBytes:d.warmBytes};});\n    at /home/daz/workarea/iqterminal-persistent-walls/tests/browser/wall-retained-navigation.spec.ts:157:14"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"worker-cycle-failure\",\"cycle\":0,\"events\":[]}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T14:28:16.981Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal-persistent-walls/test-results/wall-retained-navigation-p-b2d99--through-message-navigation/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser/wall-retained-navigation.spec.ts",
+                    "column": 14,
+                    "line": 157
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-12c6716da84ad2a5bd86",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 131,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-17T14:28:06.710Z",
+    "duration": 26753.842,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

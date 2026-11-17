@@ -93,3 +93,13 @@ VITE_DATA_MODE=staging pnpm exec playwright test --config playwright.wall-naviga
 ```
 
 Archive the JSON reporter output before another run. The fixture test is explicitly skipped without the staging test environment; skipped is not passed. The preview is owned by Playwright on4189 and stopped afterward. This is headless controlled-source evidence, not foreground performance certification.
+
+## Capacity recovery and repeated worker navigation
+
+Application `76cabe8` fixes local admission recovery: a completed, validated ninth owner can be held outside the eight-owner resident store when all old owners are visible. Previously narrowing the viewport caused another source read. Navigation now retries admission of that completed result first, allowing only complete offscreen owners to be evicted. Explicit Retry while still capacity-blocked likewise retries admission without resending the source request. Once admitted, ordinary explicit Retry still performs fresh validation. No resource limit was raised and no visible owner is discarded on failed admission.
+
+The regression reproduced the extra read before the change and passed afterward. 128 archive/store/prepared tests, typecheck and build passed. It retains eight visible owners on failure, narrows to the already fetched ninth interval, admits it without another read, and checks normal fresh Retry separately.
+
+At compiled application `57cbde9` (same application behavior, nonempty fixture improvement), the real worker test traversed sixteen disjoint nonempty controlled ranges. Owner/record/accounted-byte counts reached 8/8/6144 then remained exactly constant; one history job and consumer, and1536 warm-cache bytes throughout. Unsubscribe released all resident owners, jobs and current groups. Eight controlled current pages and seven current patches were processed. This proves bounded accounting and worker cleanup on a small controlled source, not a measured total-heap plateau or live execution ACK acceptance.
+
+Two failed fixture runs are retained. The first timed out during cycle zero; the bounded capture then showed an empty observation array. The test had replaced the array while its message callback still appended to the original array. Clearing the array in place corrected the observer. No production code or deadline was changed for that failure. `compiled-worker-cycles-57cbde9.json` is the passing result with that test-only correction; the timeout and capture JSON files preserve the failures.
