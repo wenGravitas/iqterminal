@@ -54,3 +54,25 @@ The current request in that fixture was deliberately left pending. It proves sub
 -Run matched final navigation evidence and the manual foreground Pi acceptance procedure, keeping software/headless and hardware results separate.
 
 No merge or production rollout is part of this goal. The dedicated compiled preview uses4189 and is stopped after checks. Ordinary5173 and18780/18781 remain outside task ownership. Rollback remains using unchanged main/ordinary services; no durable data migration was made.
+
+## Live-layer and invalidation follow-up
+
+Application commits `c3de66a` and `51d65ba` separate current/history GPU allocation and remove positively disproved history without resetting current delivery. Current chunks receive preparation priority within the existing four-chunk/time budget. Historical chunks no longer share an allocation with current tails, so ordinary current changes cannot force an unchanged historical upload. A source moving between layers replaces its old affected chunk and creates the new current chunk; subsequent current updates touch only current resources.
+
+The first targeted headless capture (`compiled-live-layer-fa7ff61-working-tree.json`) used the working tree that became `c3de66a`, with build metadata still identifying parent `fa7ff61`. It predates the source-invalidation change and is not evidence for that change. Both checks passed:
+
+- Four eight-chart open/dispose cycles: one shared context, 211200 buffer bytes with eight owners, 184800 after removing one, and zero owners/contexts/buffers after disposal.
+- Initial history queued behind a current point: first prepared chunk was current; 20 historical chunks remained pending. This proves priority, not a hard frame-time guarantee. The software-rendered first allocation took 35.9 ms and its draw took 46.4 ms.
+- Compiled ordinary panel plus real archive service with controlled source: current cursor advanced 100 → 101 → 102 while the missing interval was held. Historical build count stayed at one; one initial current bootstrap; 16 visible historical spans; no empty snapshot. Only the missing interval was acquired. Revisit made no additional history request.
+
+A separate prepared-projection service regression now exercises authenticated discovery, part import, delayed final source validation, exact financial rows, explicit gaps, independent current cursor progression and scheduler cleanup. This is controlled-source service evidence, not actual worker-message transfer or live execution ACK proof.
+
+Confirmed source changes now discard affected history in both resident and nonresident paths, invalidate the matching warm entry/build, and prevent late subscribers from receiving the disproved job result. A different independently fenced prefix is not discarded merely because an extended target's proof changes. An HTTP 503 during proof revalidation retains the prior valid rows. Tests compare all restored financial fields after Retry; presentation-only `currentSelection` defaults and Map insertion order are not financial differences.
+
+The older tests required retaining even positively disproved data. Those assertions failed after this correctness fix and were replaced with removal/Retry assertions; missing-proof availability failures have a separate retention regression. Final focused service/prepared/store run: 172 passed across four files. Renderer checks: 76 passed plus the explicit expected-failing legacy blanking reproduction. Typecheck passed. Full compiled browser results for `51d65ba` are recorded separately.
+
+Remaining scope is unchanged: actual worker/route integration and execution ACK evidence, additional seam/epoch/cancellation cases, initial-loading and same-start navigation lifecycle, measured total heap, compatible fallback coverage, and final matched/foreground acceptance. These checks do not certify the Pi frame-interval target.
+
+Full compiled run at `51d65ba`: four passed, one failed. Both Spot and USD-M 30h navigation tests, the eight-owner lifecycle test, and the advancing-current adapter test passed. The component adoption assertion failed because its initial status had no archive left fence, despite claiming it was already fenced. Commit `ecf7a8e` gives that controlled initial presentation the same validated left boundary as the later resident owner. The production path already carries this boundary. The original failure is retained in `compiled-51d65ba-failed-unfenced-fixture.json`; the targeted corrected result is recorded separately. No timing target was changed.
+
+The corrected component check at `ecf7a8e` passed: `compiled-component-ecf7a8e.json`. This is a targeted fixture correction rerun; the other four checks retain their `51d65ba` scope. Builds and typecheck passed; the existing Vite extension/chunk-size warnings remain.

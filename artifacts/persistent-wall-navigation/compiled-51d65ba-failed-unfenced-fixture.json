@@ -1,0 +1,369 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.23.4/bin/node",
+      "/home/daz/workarea/iqterminal-persistent-walls/node_modules/.pnpm/@playwright+test@1.64.0/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.wall-navigation.config.ts"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal-persistent-walls/playwright.wall-navigation.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/daz/workarea/iqterminal-persistent-walls/scripts/test-browser-i3-setup.mjs",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "wall-retained-navigation.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": "wall-retained-navigation.spec.ts",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4189",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4173",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--class=IQTerminalPerf",
+              "--name=IQTerminalPerf",
+              "--ozone-platform=x11",
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          },
+          "headless": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/persistent-wall-navigation/compiled-browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm exec vite preview --outDir dist-wall-navigation --host 127.0.0.1 --port 4189 --strictPort",
+      "url": "http://127.0.0.1:4189",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "wall-retained-navigation.spec.ts",
+      "file": "wall-retained-navigation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "retained GPU component preserves exact source, mapped positions, styles, hover and disposal",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6913,
+                  "error": {
+                    "message": "Error: page.evaluate: Error: Adopting already-fenced history rebuilt unchanged geometry\n    at window.checkWallGpuCorrectness (http://127.0.0.1:4189/assets/wallNavigation-bTe5gmNT.js:2:105488)\n    at eval (eval at evaluate (:370:30), <anonymous>:1:14)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                    "stack": "Error: page.evaluate: Error: Adopting already-fenced history rebuilt unchanged geometry\n    at window.checkWallGpuCorrectness (http://127.0.0.1:4189/assets/wallNavigation-bTe5gmNT.js:2:105488)\n    at eval (eval at evaluate (:370:30), <anonymous>:1:14)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at window.checkWallGpuCorrectness (http://127.0.0.1:4189/assets/wallNavigation-bTe5gmNT.js:2:105488)\n    at eval (eval at evaluate (:370:30), <anonymous>:1:14)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at /home/daz/workarea/iqterminal-persistent-walls/tests/browser/wall-retained-navigation.spec.ts:8:26",
+                    "location": {
+                      "file": "http://127.0.0.1:4189/assets/wallNavigation-bTe5gmNT.js",
+                      "column": 105488,
+                      "line": 2
+                    }
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "http://127.0.0.1:4189/assets/wallNavigation-bTe5gmNT.js",
+                        "column": 105488,
+                        "line": 2
+                      },
+                      "message": "Error: page.evaluate: Error: Adopting already-fenced history rebuilt unchanged geometry\n    at window.checkWallGpuCorrectness (http://127.0.0.1:4189/assets/wallNavigation-bTe5gmNT.js:2:105488)\n    at eval (eval at evaluate (:370:30), <anonymous>:1:14)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at window.checkWallGpuCorrectness (http://127.0.0.1:4189/assets/wallNavigation-bTe5gmNT.js:2:105488)\n    at eval (eval at evaluate (:370:30), <anonymous>:1:14)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at /home/daz/workarea/iqterminal-persistent-walls/tests/browser/wall-retained-navigation.spec.ts:8:26"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T14:14:16.109Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal-persistent-walls/test-results/wall-retained-navigation-r-2ad5b-s-styles-hover-and-disposal/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "http://127.0.0.1:4189/assets/wallNavigation-bTe5gmNT.js",
+                    "column": 105488,
+                    "line": 2
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-20174fdcf2ba31a65e00",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 6,
+          "column": 1
+        },
+        {
+          "title": "eight charts share bounded resources and release them through reopen and current updates",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3395,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"controlled-resource-lifecycle\",\"samples\":[{\"full\":{\"contexts\":1,\"owners\":8,\"bufferBytes\":211200,\"bufferLimit\":67108864,\"surfaceBytes\":2880000,\"lost\":false},\"partial\":{\"contexts\":1,\"owners\":7,\"bufferBytes\":184800,\"bufferLimit\":67108864,\"surfaceBytes\":2880000,\"lost\":false},\"empty\":{\"contexts\":0,\"owners\":0,\"bufferBytes\":0,\"bufferLimit\":67108864,\"surfaceBytes\":0,\"lost\":false},\"currentChangedChunks\":2},{\"full\":{\"contexts\":1,\"owners\":8,\"bufferBytes\":211200,\"bufferLimit\":67108864,\"surfaceBytes\":2880000,\"lost\":false},\"partial\":{\"contexts\":1,\"owners\":7,\"bufferBytes\":184800,\"bufferLimit\":67108864,\"surfaceBytes\":2880000,\"lost\":false},\"empty\":{\"contexts\":0,\"owners\":0,\"bufferBytes\":0,\"bufferLimit\":67108864,\"surfaceBytes\":0,\"lost\":false},\"currentChangedChunks\":2},{\"full\":{\"contexts\":1,\"owners\":8,\"bufferBytes\":211200,\"bufferLimit\":67108864,\"surfaceBytes\":2880000,\"lost\":false},\"partial\":{\"contexts\":1,\"owners\":7,\"bufferBytes\":184800,\"bufferLimit\":67108864,\"surfaceBytes\":2880000,\"lost\":false},\"empty\":{\"contexts\":0,\"owners\":0,\"bufferBytes\":0,\"bufferLimit\":67108864,\"surfaceBytes\":0,\"lost\":false},\"currentChangedChunks\":2},{\"full\":{\"contexts\":1,\"owners\":8,\"bufferBytes\":211200,\"bufferLimit\":67108864,\"surfaceBytes\":2880000,\"lost\":false},\"partial\":{\"contexts\":1,\"owners\":7,\"bufferBytes\":184800,\"bufferLimit\":67108864,\"surfaceBytes\":2880000,\"lost\":false},\"empty\":{\"contexts\":0,\"owners\":0,\"bufferBytes\":0,\"bufferLimit\":67108864,\"surfaceBytes\":0,\"lost\":false},\"currentChangedChunks\":2}],\"priorityResult\":{\"active\":true,\"builds\":1,\"historyBuilds\":0,\"currentBuilds\":1,\"frames\":1,\"mappingInvalidations\":0,\"uploadedBytes\":44,\"bufferUploads\":2,\"drawCalls\":1,\"maxPrepareMs\":5.299999997019768,\"lastPrepareMs\":5.299999997019768,\"lastPaintMs\":13.799999997019768,\"visibleSpans\":1,\"visibleHistorical\":0,\"visibleCurrent\":1,\"bytes\":68,\"referenceMin\":2000,\"referenceMax\":2000,\"failure\":\"\",\"pending\":20,\"chunks\":21,\"sources\":5001,\"retainedSpans\":1,\"contextLost\":false,\"sharedGpuBytes\":44,\"sharedOwners\":1}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T14:14:27.946Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-bb450306ba9c59151f86",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "title": "compiled spot 30h chart keeps walls throughout camera gestures",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8665,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"compiled-controlled-render-replay-not-live\",\"market\":\"spot\",\"interval\":300000,\"input\":{\"range\":{\"from\":4638,\"to\":5000},\"center\":83500,\"from\":1794816300000,\"to\":1794924300000,\"segments\":944},\"before\":{\"active\":true,\"builds\":17,\"historyBuilds\":17,\"currentBuilds\":0,\"frames\":7,\"mappingInvalidations\":0,\"uploadedBytes\":332288,\"bufferUploads\":34,\"drawCalls\":17,\"maxPrepareMs\":30.899999998509884,\"lastPrepareMs\":1.7000000029802322,\"lastPaintMs\":1.6000000014901161,\"visibleSpans\":6400,\"visibleHistorical\":6400,\"visibleCurrent\":0,\"bytes\":353432,\"referenceMin\":83225,\"referenceMax\":670200,\"failure\":\"\",\"pending\":0,\"chunks\":17,\"sources\":944,\"retainedSpans\":7552,\"contextLost\":false,\"sharedGpuBytes\":332288,\"sharedOwners\":1},\"result\":{\"frames\":[{\"at\":4776.70000000298,\"nonempty\":43649,\"width\":922,\"height\":600},{\"at\":4807.79999999702,\"nonempty\":44352,\"width\":922,\"height\":600},{\"at\":4840.5,\"nonempty\":43658,\"width\":922,\"height\":600},{\"at\":4907,\"nonempty\":43904,\"width\":922,\"height\":600},{\"at\":4977.5,\"nonempty\":43811,\"width\":922,\"height\":600},{\"at\":5052.70000000298,\"nonempty\":43218,\"width\":922,\"height\":600},{\"at\":5144,\"nonempty\":43758,\"width\":922,\"height\":600},{\"at\":5204,\"nonempty\":43656,\"width\":922,\"height\":600},{\"at\":5245.39999999851,\"nonempty\":41149,\"width\":922,\"height\":600},{\"at\":5274,\"nonempty\":43906,\"width\":922,\"height\":600},{\"at\":5309.70000000298,\"nonempty\":43998,\"width\":922,\"height\":600},{\"at\":5360.10000000149,\"nonempty\":44509,\"width\":922,\"height\":600},{\"at\":5398,\"nonempty\":43807,\"width\":922,\"height\":600},{\"at\":5423,\"nonempty\":44700,\"width\":922,\"height\":600},{\"at\":5459.29999999702,\"nonempty\":44642,\"width\":922,\"height\":600},{\"at\":5489,\"nonempty\":44388,\"width\":922,\"height\":600},{\"at\":5519.70000000298,\"nonempty\":44344,\"width\":922,\"height\":600},{\"at\":5551.70000000298,\"nonempty\":44398,\"width\":922,\"height\":600},{\"at\":5583.79999999702,\"nonempty\":42693,\"width\":922,\"height\":600},{\"at\":5619.39999999851,\"nonempty\":44092,\"width\":922,\"height\":600},{\"at\":5653.39999999851,\"nonempty\":44189,\"width\":922,\"height\":600},{\"at\":5694.39999999851,\"nonempty\":44596,\"width\":922,\"height\":600},{\"at\":5720.89999999851,\"nonempty\":43998,\"width\":922,\"height\":600},{\"at\":5750.20000000298,\"nonempty\":44400,\"width\":922,\"height\":600},{\"at\":5785.20000000298,\"nonempty\":43804,\"width\":922,\"height\":600},{\"at\":5818,\"nonempty\":44562,\"width\":922,\"height\":600},{\"at\":5851.5,\"nonempty\":44051,\"width\":922,\"height\":600},{\"at\":5885.70000000298,\"nonempty\":44354,\"width\":922,\"height\":600},{\"at\":5925.79999999702,\"nonempty\":43904,\"width\":922,\"height\":600},{\"at\":5963.89999999851,\"nonempty\":44358,\"width\":922,\"height\":600},{\"at\":6003.89999999851,\"nonempty\":44007,\"width\":922,\"height\":600},{\"at\":6049.29999999702,\"nonempty\":44152,\"width\":922,\"height\":600},{\"at\":6095.20000000298,\"nonempty\":43654,\"width\":922,\"height\":600},{\"at\":6132.29999999702,\"nonempty\":44053,\"width\":922,\"height\":600},{\"at\":6169.5,\"nonempty\":43906,\"width\":922,\"height\":600},{\"at\":6305.20000000298,\"nonempty\":43996,\"width\":922,\"height\":600},{\"at\":6354.20000000298,\"nonempty\":44300,\"width\":922,\"height\":600},{\"at\":6387.60000000149,\"nonempty\":44438,\"width\":922,\"height\":600},{\"at\":6433,\"nonempty\":44506,\"width\":922,\"height\":600},{\"at\":6473.5,\"nonempty\":43789,\"width\":922,\"height\":600},{\"at\":6509.89999999851,\"nonempty\":44601,\"width\":922,\"height\":600},{\"at\":6549.5,\"nonempty\":44186,\"width\":922,\"height\":600},{\"at\":6588.10000000149,\"nonempty\":44799,\"width\":922,\"height\":600},{\"at\":6629.89999999851,\"nonempty\":44297,\"width\":922,\"height\":600},{\"at\":6664.60000000149,\"nonempty\":44900,\"width\":922,\"height\":600},{\"at\":6696,\"nonempty\":44996,\"width\":922,\"height\":600},{\"at\":6747.29999999702,\"nonempty\":45004,\"width\":922,\"height\":600},{\"at\":7199.70000000298,\"nonempty\":38904,\"width\":922,\"height\":600},{\"at\":7238.5,\"nonempty\":29084,\"width\":706,\"height\":592}],\"renderer\":{\"active\":true,\"builds\":17,\"historyBuilds\":17,\"currentBuilds\":0,\"frames\":56,\"mappingInvalidations\":0,\"uploadedBytes\":332288,\"bufferUploads\":34,\"drawCalls\":17,\"maxPrepareMs\":30.899999998509884,\"lastPrepareMs\":0.5,\"lastPaintMs\":27,\"visibleSpans\":4992,\"visibleHistorical\":4992,\"visibleCurrent\":0,\"bytes\":353432,\"referenceMin\":83225,\"referenceMax\":670200,\"failure\":\"\",\"pending\":0,\"chunks\":17,\"sources\":944,\"retainedSpans\":7552,\"contextLost\":false,\"sharedGpuBytes\":332288,\"sharedOwners\":1},\"replay\":{\"subscribes\":1,\"viewports\":35}}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T14:14:32.673Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-83f40c1521551007f11c",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 18,
+          "column": 51
+        },
+        {
+          "title": "compiled perpetual 30h chart keeps walls throughout camera gestures",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9619,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"compiled-controlled-render-replay-not-live\",\"market\":\"perpetual\",\"interval\":900000,\"input\":{\"range\":{\"from\":4878,\"to\":5000},\"center\":83500,\"from\":1794815100000,\"to\":1794923100000,\"segments\":944},\"before\":{\"active\":true,\"builds\":17,\"historyBuilds\":17,\"currentBuilds\":0,\"frames\":6,\"mappingInvalidations\":0,\"uploadedBytes\":332288,\"bufferUploads\":34,\"drawCalls\":17,\"maxPrepareMs\":12.199999995529652,\"lastPrepareMs\":3.1999999955296516,\"lastPaintMs\":3.7999999970197678,\"visibleSpans\":7552,\"visibleHistorical\":7552,\"visibleCurrent\":0,\"bytes\":351032,\"referenceMin\":83225,\"referenceMax\":670200,\"failure\":\"\",\"pending\":0,\"chunks\":17,\"sources\":944,\"retainedSpans\":7552,\"contextLost\":false,\"sharedGpuBytes\":332288,\"sharedOwners\":1},\"result\":{\"frames\":[{\"at\":5436.89999999851,\"nonempty\":42939,\"width\":922,\"height\":600},{\"at\":5592.29999999702,\"nonempty\":42953,\"width\":922,\"height\":600},{\"at\":5637.79999999702,\"nonempty\":41742,\"width\":922,\"height\":600},{\"at\":5676.69999999553,\"nonempty\":41317,\"width\":922,\"height\":600},{\"at\":5721.19999999553,\"nonempty\":40768,\"width\":922,\"height\":600},{\"at\":5762.69999999553,\"nonempty\":39853,\"width\":922,\"height\":600},{\"at\":5790.19999999553,\"nonempty\":39950,\"width\":922,\"height\":600},{\"at\":5820.69999999553,\"nonempty\":39648,\"width\":922,\"height\":600},{\"at\":5851,\"nonempty\":39819,\"width\":922,\"height\":600},{\"at\":5887.39999999851,\"nonempty\":39698,\"width\":922,\"height\":600},{\"at\":5920.89999999851,\"nonempty\":39725,\"width\":922,\"height\":600},{\"at\":5960.79999999702,\"nonempty\":40367,\"width\":922,\"height\":600},{\"at\":5993.5,\"nonempty\":40346,\"width\":922,\"height\":600},{\"at\":6021.19999999553,\"nonempty\":41119,\"width\":922,\"height\":600},{\"at\":6057.19999999553,\"nonempty\":41563,\"width\":922,\"height\":600},{\"at\":6086.79999999702,\"nonempty\":41695,\"width\":922,\"height\":600},{\"at\":6123.79999999702,\"nonempty\":42427,\"width\":922,\"height\":600},{\"at\":6150.5,\"nonempty\":42988,\"width\":922,\"height\":600},{\"at\":6184.39999999851,\"nonempty\":43824,\"width\":922,\"height\":600},{\"at\":6217.10000000149,\"nonempty\":44446,\"width\":922,\"height\":600},{\"at\":6256.10000000149,\"nonempty\":44448,\"width\":922,\"height\":600},{\"at\":6284.79999999702,\"nonempty\":44803,\"width\":922,\"height\":600},{\"at\":6320.19999999553,\"nonempty\":44097,\"width\":922,\"height\":600},{\"at\":6362.39999999851,\"nonempty\":44275,\"width\":922,\"height\":600},{\"at\":6794.29999999702,\"nonempty\":43384,\"width\":922,\"height\":600},{\"at\":6827.60000000149,\"nonempty\":43907,\"width\":922,\"height\":600},{\"at\":6856.10000000149,\"nonempty\":43335,\"width\":922,\"height\":600},{\"at\":6895.69999999553,\"nonempty\":43264,\"width\":922,\"height\":600},{\"at\":6937.19999999553,\"nonempty\":42698,\"width\":922,\"height\":600},{\"at\":7021.79999999702,\"nonempty\":43078,\"width\":922,\"height\":600},{\"at\":7078.79999999702,\"nonempty\":42920,\"width\":922,\"height\":600},{\"at\":7149.29999999702,\"nonempty\":42899,\"width\":922,\"height\":600},{\"at\":7174.29999999702,\"nonempty\":42593,\"width\":922,\"height\":600},{\"at\":7205.39999999851,\"nonempty\":43197,\"width\":922,\"height\":600},{\"at\":7284.29999999702,\"nonempty\":43208,\"width\":922,\"height\":600},{\"at\":7448.5,\"nonempty\":43296,\"width\":922,\"height\":600},{\"at\":7485.5,\"nonempty\":43595,\"width\":922,\"height\":600},{\"at\":7517,\"nonempty\":43813,\"width\":922,\"height\":600},{\"at\":7612,\"nonempty\":44123,\"width\":922,\"height\":600},{\"at\":7650.39999999851,\"nonempty\":43539,\"width\":922,\"height\":600},{\"at\":7695,\"nonempty\":44509,\"width\":922,\"height\":600},{\"at\":7730.10000000149,\"nonempty\":44322,\"width\":922,\"height\":600},{\"at\":7757.5,\"nonempty\":45028,\"width\":922,\"height\":600},{\"at\":7788.29999999702,\"nonempty\":44650,\"width\":922,\"height\":600},{\"at\":7821.19999999553,\"nonempty\":45181,\"width\":922,\"height\":600},{\"at\":7850.29999999702,\"nonempty\":45190,\"width\":922,\"height\":600},{\"at\":7883.69999999553,\"nonempty\":45230,\"width\":922,\"height\":600},{\"at\":8130.29999999702,\"nonempty\":34302,\"width\":706,\"height\":592},{\"at\":8172,\"nonempty\":31720,\"width\":706,\"height\":592}],\"renderer\":{\"active\":true,\"builds\":17,\"historyBuilds\":17,\"currentBuilds\":0,\"frames\":55,\"mappingInvalidations\":0,\"uploadedBytes\":332288,\"bufferUploads\":34,\"drawCalls\":17,\"maxPrepareMs\":12.199999995529652,\"lastPrepareMs\":0,\"lastPaintMs\":15.400000005960464,\"visibleSpans\":7552,\"visibleHistorical\":7552,\"visibleCurrent\":0,\"bytes\":351032,\"referenceMin\":83225,\"referenceMax\":670200,\"failure\":\"\",\"pending\":0,\"chunks\":17,\"sources\":944,\"retainedSpans\":7552,\"contextLost\":false,\"sharedGpuBytes\":332288,\"sharedOwners\":1},\"replay\":{\"subscribes\":1,\"viewports\":48}}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T14:14:41.415Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-ee2de4558f05f4f932dd",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 18,
+          "column": 51
+        },
+        {
+          "title": "compiled chart retains overlap while its real archive adapter fetches only missing intervals",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6834,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"compiled-real-adapter-controlled-source-not-live\",\"initial\":{\"reads\":[{\"from\":1794813300000,\"to\":1794923100000}],\"renderer\":{\"active\":true,\"builds\":2,\"historyBuilds\":1,\"currentBuilds\":1,\"frames\":3,\"mappingInvalidations\":0,\"uploadedBytes\":748,\"bufferUploads\":4,\"drawCalls\":2,\"maxPrepareMs\":1.7000000029802322,\"lastPrepareMs\":0.8999999985098839,\"lastPaintMs\":0.7999999970197678,\"visibleSpans\":16,\"visibleHistorical\":16,\"visibleCurrent\":0,\"bytes\":1884,\"referenceMin\":166450,\"referenceMax\":167550,\"failure\":\"\",\"pending\":0,\"chunks\":2,\"sources\":17,\"retainedSpans\":17,\"contextLost\":false,\"sharedGpuBytes\":748,\"sharedOwners\":1}},\"pending\":{\"renderer\":{\"active\":true,\"builds\":2,\"historyBuilds\":1,\"currentBuilds\":1,\"frames\":4,\"mappingInvalidations\":0,\"uploadedBytes\":748,\"bufferUploads\":4,\"drawCalls\":2,\"maxPrepareMs\":1.7000000029802322,\"lastPrepareMs\":0.6999999955296516,\"lastPaintMs\":0.5,\"visibleSpans\":16,\"visibleHistorical\":16,\"visibleCurrent\":0,\"bytes\":1884,\"referenceMin\":166450,\"referenceMax\":167550,\"failure\":\"\",\"pending\":0,\"chunks\":2,\"sources\":17,\"retainedSpans\":17,\"contextLost\":false,\"sharedGpuBytes\":748,\"sharedOwners\":1},\"reads\":[{\"from\":1794813300000,\"to\":1794923100000},{\"from\":1794798900000,\"to\":1794813300000}],\"status\":{\"state\":\"live\",\"coverage\":{\"from\":1794802500000,\"to\":1794912300000,\"complete\":false,\"partial\":true},\"archive\":{\"profileId\":\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",\"state\":\"loading\",\"from\":1794802500000,\"to\":1794912300000,\"rangeComplete\":false,\"market\":\"perpetual\",\"feed\":\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\",\"aggregation\":\"native\",\"availableFrom\":1794726900000,\"confirmedTo\":1794923099999,\"gaps\":[],\"requestedBandPercent\":10,\"profileBandPercent\":10,\"requestedTopN\":8,\"exact\":true,\"profileVersion\":1,\"algorithmVersion\":1,\"schemaVersion\":1,\"midpoint\":\"83500\",\"requestComplete\":false,\"loadedThrough\":1794923099999,\"loadedFrom\":1794813300000,\"residentRanges\":[{\"from\":1794813300000,\"to\":1794923100000}],\"unloadedRanges\":[{\"from\":1794802500000,\"to\":1794813300000}],\"gapsTruncated\":false,\"reason\":\"Retained walls remain available while missing history loads.\",\"profileStatus\":\"ready\"},\"message\":\"Retained walls remain available while missing history loads.\",\"lastConfirmedAt\":1794924895998,\"currentSubscribed\":true},\"empty\":false,\"current\":[{\"after\":0,\"cursor\":100,\"at\":1794924895998}]},\"advancing\":{\"current\":[{\"after\":0,\"cursor\":100,\"at\":1794924895998},{\"after\":100,\"cursor\":101,\"at\":1794924897137}],\"status\":{\"state\":\"live\",\"message\":\"Retained walls remain available while missing history loads.\",\"coverage\":{\"from\":1794802500000,\"to\":1794912300000,\"complete\":false,\"partial\":true},\"archive\":{\"profileId\":\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",\"state\":\"loading\",\"requestComplete\":false,\"rangeComplete\":false,\"from\":1794802500000,\"to\":1794912300000,\"market\":\"perpetual\",\"aggregation\":\"native\",\"gaps\":[],\"requestedBandPercent\":10,\"profileBandPercent\":10,\"requestedTopN\":8,\"exact\":true,\"loadedFrom\":1794813300000,\"loadedThrough\":1794923099999,\"residentRanges\":[{\"from\":1794813300000,\"to\":1794923100000}],\"unloadedRanges\":[{\"from\":1794802500000,\"to\":1794813300000}],\"gapsTruncated\":false,\"reason\":\"Retained walls remain available while missing history loads.\",\"profileStatus\":\"ready\",\"midpoint\":\"83500\"},\"lastConfirmedAt\":1794924897137,\"currentSubscribed\":true},\"renderer\":{\"active\":true,\"builds\":3,\"historyBuilds\":1,\"currentBuilds\":2,\"frames\":5,\"mappingInvalidations\":0,\"uploadedBytes\":792,\"bufferUploads\":6,\"drawCalls\":2,\"maxPrepareMs\":1.7000000029802322,\"lastPrepareMs\":0.8000000044703484,\"lastPaintMs\":0.8999999985098839,\"visibleSpans\":16,\"visibleHistorical\":16,\"visibleCurrent\":0,\"bytes\":1884,\"referenceMin\":166450,\"referenceMax\":167550,\"failure\":\"\",\"pending\":0,\"chunks\":2,\"sources\":17,\"retainedSpans\":17,\"contextLost\":false,\"sharedGpuBytes\":748,\"sharedOwners\":1}},\"final\":{\"reads\":[{\"from\":1794813300000,\"to\":1794923100000},{\"from\":1794798900000,\"to\":1794813300000}],\"diagnostics\":[{\"id\":\"chart-binance\",\"chunks\":2,\"segments\":32,\"runs\":32,\"bytes\":24576,\"limits\":{\"chunks\":8,\"segments\":100000,\"runs\":1000000,\"bytes\":307200000},\"viewport\":{\"from\":1794813300000,\"to\":1794923100000,\"followLive\":false},\"missing\":[]}],\"renderer\":{\"active\":true,\"builds\":4,\"historyBuilds\":2,\"currentBuilds\":2,\"frames\":7,\"mappingInvalidations\":0,\"uploadedBytes\":2200,\"bufferUploads\":8,\"drawCalls\":2,\"maxPrepareMs\":6.300000004470348,\"lastPrepareMs\":0.19999999552965164,\"lastPaintMs\":0.8999999985098839,\"visibleSpans\":16,\"visibleHistorical\":16,\"visibleCurrent\":0,\"bytes\":2716,\"referenceMin\":166450,\"referenceMax\":167550,\"failure\":\"\",\"pending\":0,\"chunks\":2,\"sources\":33,\"retainedSpans\":33,\"contextLost\":false,\"sharedGpuBytes\":1452,\"sharedOwners\":1},\"status\":{\"state\":\"live\",\"coverage\":{\"from\":1794813300000,\"to\":1794923100000,\"complete\":true,\"partial\":false},\"archive\":{\"profileId\":\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",\"state\":\"complete\",\"from\":1794813300000,\"to\":1794923100000,\"rangeComplete\":true,\"market\":\"perpetual\",\"feed\":\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\",\"aggregation\":\"native\",\"availableFrom\":1794712500000,\"confirmedTo\":1794813299999,\"gaps\":[],\"requestedBandPercent\":10,\"profileBandPercent\":10,\"requestedTopN\":8,\"exact\":true,\"profileVersion\":1,\"algorithmVersion\":1,\"schemaVersion\":1,\"midpoint\":\"83500\",\"requestComplete\":true,\"loadedThrough\":1794923099999,\"loadedFrom\":1794798900000,\"residentRanges\":[{\"from\":1794798900000,\"to\":1794813300000},{\"from\":1794813300000,\"to\":1794923100000}],\"unloadedRanges\":[],\"gapsTruncated\":false,\"profileStatus\":\"ready\"},\"lastConfirmedAt\":1794924897137,\"currentSubscribed\":true}}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T14:14:51.092Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-1ed5f13f3cffff3ca2a6",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 77,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-17T14:14:12.815Z",
+    "duration": 45429.987,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}
