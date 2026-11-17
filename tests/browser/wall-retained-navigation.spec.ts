@@ -158,7 +158,7 @@ test('production worker preserves resident intervals and current cursor through 
   await page.evaluate(()=>(window as any).__workerProbe.worker.postMessage({type:'diagnostics'}));
   await page.waitForFunction(()=>(window as any).__workerProbe.events.some((e:any)=>e.type==='diagnostics'));
   const sample=await page.evaluate(()=>{const d=(window as any).__workerProbe.events.find((e:any)=>e.type==='diagnostics').data.orderWallsArchive;return {owners:d.resident[0].chunks,records:d.resident[0].segments,bytes:d.resident[0].bytes,jobs:d.historyJobs,consumers:d.historyConsumers,warmBytes:d.warmBytes};});
-  expect(sample.owners).toBeLessThanOrEqual(8);expect(sample.records).toBeLessThanOrEqual(8);expect(sample.jobs).toBe(1);expect(sample.consumers).toBe(1);cycles.push(sample);
+  expect(sample.owners).toBeLessThanOrEqual(8);expect(sample.records).toBe(sample.owners);expect(sample.jobs).toBe(1);expect(sample.consumers).toBe(1);cycles.push(sample);
  }
  expect(new Set(cycles.slice(-6).map(sample=>JSON.stringify(sample))).size).toBe(1);
  await page.evaluate(()=>{const p=(window as any).__workerProbe;p.events=[];p.worker.postMessage({type:'order-wall-unsubscribe',id:'protocol'});p.worker.postMessage({type:'diagnostics'});});
