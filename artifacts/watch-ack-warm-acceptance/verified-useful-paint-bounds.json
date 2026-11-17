@@ -1,0 +1,82 @@
+[
+  {
+    "phase": "parent",
+    "kind": "current",
+    "scope": "First verified useful content at sampled matching painted revision; an upper bound, not exact first paint. Reject raw early witnesses with incomplete revision.",
+    "actionMono": 194.40000000037253,
+    "paintedMono": 6470.200000001118,
+    "boundFromActionMs": 6275.800000000745,
+    "navigationBoundMs": 6470.200000001118,
+    "sampleElapsedMs": 7889.473439000001
+  },
+  {
+    "phase": "parent",
+    "kind": "history",
+    "scope": "First verified useful content at sampled matching painted revision; an upper bound, not exact first paint. Reject raw early witnesses with incomplete revision.",
+    "actionMono": 194.40000000037253,
+    "paintedMono": 38175.70000000112,
+    "boundFromActionMs": 37981.300000000745,
+    "navigationBoundMs": 38175.70000000112,
+    "sampleElapsedMs": 39454.609062
+  },
+  {
+    "phase": "extension-1",
+    "kind": "current",
+    "scope": "First verified useful content at sampled matching painted revision; an upper bound, not exact first paint. Reject raw early witnesses with incomplete revision.",
+    "actionMono": 44583.300000000745,
+    "paintedMono": 45994.59999999963,
+    "boundFromActionMs": 1411.2999999988824,
+    "navigationBoundMs": null,
+    "sampleElapsedMs": 47241.261308
+  },
+  {
+    "phase": "extension-1",
+    "kind": "history",
+    "scope": "First verified useful content at sampled matching painted revision; an upper bound, not exact first paint. Reject raw early witnesses with incomplete revision.",
+    "actionMono": 44583.300000000745,
+    "paintedMono": 45994.59999999963,
+    "boundFromActionMs": 1411.2999999988824,
+    "navigationBoundMs": null,
+    "sampleElapsedMs": 47241.261308
+  },
+  {
+    "phase": "extension-2",
+    "kind": "current",
+    "scope": "First verified useful content at sampled matching painted revision; an upper bound, not exact first paint. Reject raw early witnesses with incomplete revision.",
+    "actionMono": 58621.70000000112,
+    "paintedMono": 59789.5,
+    "boundFromActionMs": 1167.7999999988824,
+    "navigationBoundMs": null,
+    "sampleElapsedMs": 61707.583743
+  },
+  {
+    "phase": "extension-2",
+    "kind": "history",
+    "scope": "First verified useful content at sampled matching painted revision; an upper bound, not exact first paint. Reject raw early witnesses with incomplete revision.",
+    "actionMono": 58621.70000000112,
+    "paintedMono": 59789.5,
+    "boundFromActionMs": 1167.7999999988824,
+    "navigationBoundMs": null,
+    "sampleElapsedMs": 61707.583743
+  },
+  {
+    "phase": "reopen",
+    "kind": "current",
+    "scope": "First verified useful content at sampled matching painted revision; an upper bound, not exact first paint. Reject raw early witnesses with incomplete revision.",
+    "actionMono": 81844.70000000112,
+    "paintedMono": 85061.20000000112,
+    "boundFromActionMs": 3216.5,
+    "navigationBoundMs": null,
+    "sampleElapsedMs": 86336.85521899999
+  },
+  {
+    "phase": "reopen",
+    "kind": "history",
+    "scope": "First verified useful content at sampled matching painted revision; an upper bound, not exact first paint. Reject raw early witnesses with incomplete revision.",
+    "actionMono": 81844.70000000112,
+    "paintedMono": 85061.20000000112,
+    "boundFromActionMs": 3216.5,
+    "navigationBoundMs": null,
+    "sampleElapsedMs": 86336.85521899999
+  }
+]

@@ -1,0 +1,43 @@
+{
+  "savedBeforeReopen": {
+    "from": 1794783069.1504185,
+    "to": 1794894333.0643923
+  },
+  "restoredAfterReopen": {
+    "from": 1794783069.15,
+    "to": 1794894333.064
+  },
+  "deltaMs": {
+    "from": -0.4184246063232422,
+    "to": -0.3924369812011719
+  },
+  "pendingRetention": [
+    {
+      "phase": "extension-1",
+      "pendingSamples": 10,
+      "minimumRetainedArchiveSegments": 3810,
+      "completedPendingPaints": 9,
+      "minimumHistoricalInCompletedPaints": 15025,
+      "transientInProgressRedrawSamples": 1,
+      "priorValidatedThrough": 1794891119664,
+      "pendingHorizons": [
+        1794891119664
+      ],
+      "retainedDataAndCompletedPaints": true
+    },
+    {
+      "phase": "extension-2",
+      "pendingSamples": 15,
+      "minimumRetainedArchiveSegments": 3810,
+      "completedPendingPaints": 13,
+      "minimumHistoricalInCompletedPaints": 15028,
+      "transientInProgressRedrawSamples": 1,
+      "priorValidatedThrough": 1794891160231,
+      "pendingHorizons": [
+        1794891160231
+      ],
+      "retainedDataAndCompletedPaints": true
+    }
+  ],
+  "scope": "Data persists and completed paints show historical walls during validation. In-progress redraw counters are not first-paint evidence; foreground flicker/responsiveness remains manual."
+}

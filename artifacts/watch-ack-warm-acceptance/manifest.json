@@ -1,0 +1,14 @@
+{
+  "task": "watch-ack-and-warm-acceptance",
+  "startUtc": "2026-11-17T04:33:38Z",
+  "experimentCutoffUtc": "2026-11-17T07:03:38Z",
+  "deadlineUtc": "2026-11-17T07:33:38Z",
+  "frontendBaseline": "e9ccf7a1194a0de9ffba03f20fc17e134f32c766",
+  "backendBaseline": "6823a8df518625962c10fbd40f46bacf8297c2e3",
+  "frontendApplication": "58b3ae3eb17f93c8480a4cd9598052c1bc5d684e",
+  "backendApplication": "300fa5d00f607d7e3a990b128523ea265af363f5",
+  "experimentsEndedUtc": "2026-11-17T05:11:13Z",
+  "foregroundAcceptance": "PENDING user-invoked normal Chromium on workspace9; launcher startup/shutdown verified without browser",
+  "incumbent": "f1fb0d696312a6019f9194edba61a2dc225bc6c3 protocol4 sources0 unchanged",
+  "candidate": "protocol6 sources1 isolated stopped"
+}

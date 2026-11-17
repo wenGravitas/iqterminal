@@ -93,3 +93,5 @@ Use untouched incumbent18880/18791for rollback. Candidate18890/18792remains isol
 Target disposition: the ready fixed-view sample exceeds the10smaximum bound, and observed useful paint exceeds the3sfirst-history/1swarm targets: **observed misses remain FAIL**. A five-run median/max certification is **NOT RUN**; rolling-tail timing is not substituted for ready-server timing. The new goal does not relax those thresholds.
 
 The former2/2.5GiBallowances are not release gates; capacity passes at the already justified8GiBconfiguration. Browser cache policy remains separate.
+
+Follow-up: [watch ACK fixes, codec measurements and foreground handoff](watch-ack-warm-acceptance.md). This report retains its original scope, failures and deadline.

@@ -1,0 +1,8 @@
+{
+  "kind": "Bounded launcher startup check under original task",
+  "startUtc": "2026-11-17T05:02:52.859059+00:00",
+  "experimentCutoffUtc": "2026-11-17T05:22:52.859059+00:00",
+  "deadlineUtc": "2026-11-17T05:22:52.859059+00:00",
+  "frontendApplication": "58b3ae3eb17f93c8480a4cd9598052c1bc5d684e",
+  "backendApplication": "300fa5d00f607d7e3a990b128523ea265af363f5"
+}

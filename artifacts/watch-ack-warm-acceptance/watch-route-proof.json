@@ -1,0 +1,87 @@
+{
+  "application": "58b3ae3eb17f93c8480a4cd9598052c1bc5d684e",
+  "watchModuleApplication": "300fa5d00f607d7e3a990b128523ea265af363f5",
+  "route": "Compiled worker \u2192 localhost4204 Vite watch-only proxy \u2192 localhost4205 isolated attachWatchStream harness; financial/current routes independently use SSH/gateway. No SQLite, user watch or protected watch service accessed by this route.",
+  "sessions": [
+    {
+      "openMono": 43071.098684,
+      "errors": [],
+      "subscribeAfter": 42,
+      "close": {
+        "code": 1001,
+        "reason": "",
+        "at": 48275.262016
+      },
+      "statesSent": 5,
+      "acksReceived": 5,
+      "ackedExactly": true,
+      "acceptedByNextStateEvidence": 4,
+      "strictlyAdvancingStates": true,
+      "firstState": [
+        43
+      ],
+      "lastState": [
+        47
+      ]
+    },
+    {
+      "openMono": 181006.660513,
+      "errors": [],
+      "subscribeAfter": 179,
+      "close": {
+        "code": 1005,
+        "reason": "",
+        "at": 283233.022078
+      },
+      "statesSent": 96,
+      "acksReceived": 96,
+      "ackedExactly": true,
+      "acceptedByNextStateEvidence": 95,
+      "strictlyAdvancingStates": true,
+      "firstState": [
+        181
+      ],
+      "lastState": [
+        276
+      ]
+    },
+    {
+      "openMono": 298843.244023,
+      "errors": [],
+      "subscribeAfter": 276,
+      "close": {
+        "code": 1001,
+        "reason": "",
+        "at": 299360.485813
+      },
+      "statesSent": 1,
+      "acksReceived": 0,
+      "ackedExactly": true,
+      "acceptedByNextStateEvidence": 0,
+      "strictlyAdvancingStates": true,
+      "firstState": [
+        298
+      ],
+      "lastState": [
+        298
+      ]
+    }
+  ],
+  "timedCohortFinalSocket": {
+    "readyState": 1,
+    "appliedViaAck": 275,
+    "lastSampleUtc": "2026-11-17T04:53:36.336Z"
+  },
+  "postCohortDump": {
+    "lastFrameCursor": 276,
+    "serverSendMono": 277267.747313,
+    "serverAckArrivalMono": 282844.503055,
+    "ackDelayMs": 5576.755742,
+    "close": {
+      "code": 1005,
+      "serverMono": 283233.022078
+    },
+    "reconnectSubscribeAfter": 276,
+    "scope": "After the timed final sample, during the separate financial chart dump. Consistent with unchanged5s client watchdog; exact initiator not captured. No1008. Next subscribe preserves applied276; cleanup closes298before ACK."
+  }
+}

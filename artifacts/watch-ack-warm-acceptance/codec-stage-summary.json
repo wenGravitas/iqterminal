@@ -1,0 +1,188 @@
+[
+  {
+    "input": "10k",
+    "targetKiB": 128,
+    "count": 3,
+    "chunks": 141,
+    "encodedBytes": 1570134,
+    "decodedBytes": 18126170,
+    "retainedBytes": 1606514,
+    "maxDecodedChunk": 131068,
+    "encodeMedianMs": 7727,
+    "replayMedianMs": 3371.199999999255,
+    "firstMedianMs": 20.90000000037253,
+    "encodeStageMediansMs": {
+      "stringifyMs": 433.5999999884516,
+      "setupMs": 1654.400000007823,
+      "compressionMs": 4068.200000004843,
+      "hashMs": 176.49999999254942,
+      "yieldMs": 419.20000000856817
+    },
+    "replayStageMediansMs": {
+      "parseMs": 509.6000000052154,
+      "setupMs": 1082.5999999996275,
+      "decompressionMs": 2176.7999999970198,
+      "hashMs": 56.10000000335276,
+      "publishMs": 4.999999998137355,
+      "yieldMs": 192.70000001229346
+    },
+    "maxInstrumentedEncodeSliceMs": 230.2000000011176,
+    "maxInstrumentedReplaySliceMs": 89.89999999850988,
+    "allExact": true
+  },
+  {
+    "input": "10k",
+    "targetKiB": 256,
+    "count": 3,
+    "chunks": 69,
+    "encodedBytes": 1518899,
+    "decodedBytes": 17780657,
+    "retainedBytes": 1536847,
+    "maxDecodedChunk": 262142,
+    "encodeMedianMs": 3060.5999999996275,
+    "replayMedianMs": 1539.699999999255,
+    "firstMedianMs": 14.699999999254942,
+    "encodeStageMediansMs": {
+      "stringifyMs": 275.7999999690801,
+      "setupMs": 485.699999993667,
+      "compressionMs": 1710.2000000085682,
+      "hashMs": 78.40000000037253,
+      "yieldMs": 202.10000000149012
+    },
+    "replayStageMediansMs": {
+      "parseMs": 350.1000000014901,
+      "setupMs": 352.1000000014901,
+      "decompressionMs": 828.2999999932945,
+      "hashMs": 78.20000000298023,
+      "publishMs": 2.4000000115484,
+      "yieldMs": 119.59999999962747
+    },
+    "maxInstrumentedEncodeSliceMs": 115.90000000037253,
+    "maxInstrumentedReplaySliceMs": 36.70000000111759,
+    "allExact": true
+  },
+  {
+    "input": "10k",
+    "targetKiB": 512,
+    "count": 3,
+    "chunks": 34,
+    "encodedBytes": 1493755,
+    "decodedBytes": 17636967,
+    "retainedBytes": 1502743,
+    "maxDecodedChunk": 524283,
+    "encodeMedianMs": 3095.699999999255,
+    "replayMedianMs": 1060,
+    "firstMedianMs": 47.5,
+    "encodeStageMediansMs": {
+      "stringifyMs": 249.79999997653067,
+      "setupMs": 179.09999999590218,
+      "compressionMs": 1336.9000000003725,
+      "hashMs": 51.499999994412065,
+      "yieldMs": 141.70000000484288
+    },
+    "replayStageMediansMs": {
+      "parseMs": 276.2999999988824,
+      "setupMs": 154.80000000074506,
+      "decompressionMs": 493.7000000011176,
+      "hashMs": 71.49999999068677,
+      "publishMs": 1.1999999973922968,
+      "yieldMs": 90.29999999888241
+    },
+    "maxInstrumentedEncodeSliceMs": 123.89999999850988,
+    "maxInstrumentedReplaySliceMs": 88.5,
+    "allExact": true
+  },
+  {
+    "input": "20k",
+    "targetKiB": 128,
+    "count": 3,
+    "chunks": 201,
+    "encodedBytes": 2213948,
+    "decodedBytes": 26050259,
+    "retainedBytes": 2265688,
+    "maxDecodedChunk": 131065,
+    "encodeMedianMs": 9604.599999999627,
+    "replayMedianMs": 5224.5,
+    "firstMedianMs": 21.59999999962747,
+    "encodeStageMediansMs": {
+      "stringifyMs": 678.6000000424683,
+      "setupMs": 2316.89999999851,
+      "compressionMs": 5454.100000008941,
+      "hashMs": 247.40000000596046,
+      "yieldMs": 495.4999999720603
+    },
+    "replayStageMediansMs": {
+      "parseMs": 632.4000000040978,
+      "setupMs": 1967.9999999850988,
+      "decompressionMs": 3715.699999984354,
+      "hashMs": 159.09999999403954,
+      "publishMs": 15.59999999590218,
+      "yieldMs": 311.2000000141561
+    },
+    "maxInstrumentedEncodeSliceMs": 120.30000000074506,
+    "maxInstrumentedReplaySliceMs": 78.09999999962747,
+    "allExact": true
+  },
+  {
+    "input": "20k",
+    "targetKiB": 256,
+    "count": 3,
+    "chunks": 99,
+    "encodedBytes": 2148500,
+    "decodedBytes": 25696640,
+    "retainedBytes": 2174128,
+    "maxDecodedChunk": 262134,
+    "encodeMedianMs": 4801.5999999996275,
+    "replayMedianMs": 2536.9000000003725,
+    "firstMedianMs": 37.30000000074506,
+    "encodeStageMediansMs": {
+      "stringifyMs": 379.1999999862164,
+      "setupMs": 536.0000000055879,
+      "compressionMs": 2243.3000000044703,
+      "hashMs": 76.59999998286366,
+      "yieldMs": 323.80000000819564
+    },
+    "replayStageMediansMs": {
+      "parseMs": 469.10000001080334,
+      "setupMs": 564.3000000081956,
+      "decompressionMs": 1403.7000000104308,
+      "hashMs": 82.49999999441206,
+      "publishMs": 4.399999992921948,
+      "yieldMs": 241.40000000596046
+    },
+    "maxInstrumentedEncodeSliceMs": 59.5,
+    "maxInstrumentedReplaySliceMs": 67.10000000149012,
+    "allExact": true
+  },
+  {
+    "input": "20k",
+    "targetKiB": 512,
+    "count": 3,
+    "chunks": 50,
+    "encodedBytes": 2115163,
+    "decodedBytes": 25536005,
+    "retainedBytes": 2128247,
+    "maxDecodedChunk": 524269,
+    "encodeMedianMs": 3801.300000000745,
+    "replayMedianMs": 2111.9000000003725,
+    "firstMedianMs": 28.59999999962747,
+    "encodeStageMediansMs": {
+      "stringifyMs": 345.5999999921769,
+      "setupMs": 256.00000000186265,
+      "compressionMs": 1534.9000000003725,
+      "hashMs": 89.40000000596046,
+      "yieldMs": 221.7000000141561
+    },
+    "replayStageMediansMs": {
+      "parseMs": 476.5000000037253,
+      "setupMs": 385.1000000089407,
+      "decompressionMs": 959.9000000059605,
+      "hashMs": 137.79999999329448,
+      "publishMs": 2.3999999947845936,
+      "yieldMs": 196.40000000409782
+    },
+    "maxInstrumentedEncodeSliceMs": 99.40000000037253,
+    "maxInstrumentedReplaySliceMs": 112.30000000074506,
+    "allExact": true
+  }
+]

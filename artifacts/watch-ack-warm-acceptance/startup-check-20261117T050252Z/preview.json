@@ -1,0 +1,31 @@
+{
+  "pid": 67096,
+  "port": 4204,
+  "build": "58b3ae3eb17f93c8480a4cd9598052c1bc5d684e",
+  "flags": {
+    "VITE_DATA_MODE": "staging",
+    "VITE_HISTORY_TILES": "1",
+    "VITE_DIAGNOSTICS": "1",
+    "VITE_WALL_SELECTED_MAX_BYTES": "134217728"
+  },
+  "watchScope": "Read-only local protocol harness, no incumbent SQLite or real watch mutation",
+  "routes": {
+    "/market-data/v1/level-watches/stream": "http://127.0.0.1:4205",
+    "/market-data/v1/level-watches": "http://127.0.0.1:4205",
+    "/market-data/v1/liquidations/stream": "http://127.0.0.1:18991",
+    "/market-data/v1/liquidations": "http://127.0.0.1:18990",
+    "/market-data/v2/history/walls/reader": "http://127.0.0.1:18991",
+    "/market-data/v2/history/walls/preparation": "http://127.0.0.1:18991",
+    "/market-data/v2/history/footprint-current": "http://127.0.0.1:18991",
+    "/market-data/v2/history/current": "http://127.0.0.1:18991",
+    "/market-data/v2/history/health": "http://127.0.0.1:18991",
+    "/market-data/v1/order-walls/archive/current": "http://127.0.0.1:18991",
+    "/market-data/v1/effort-result": "http://127.0.0.1:18991",
+    "/market-data/v1/health": "http://127.0.0.1:18991",
+    "/market-data/v1/depth-matrix": "http://127.0.0.1:18991",
+    "/market-data/v1/footprints": "http://127.0.0.1:18990",
+    "/market-data/v1/native-candles": "http://127.0.0.1:18990",
+    "/market-data/v1/stream": "http://127.0.0.1:18991",
+    "/market-data": "http://127.0.0.1:18990"
+  }
+}

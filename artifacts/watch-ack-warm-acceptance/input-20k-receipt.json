@@ -1,0 +1,10 @@
+{
+  "source": {
+    "path": "/home/daz/iqterminal-wall-serving-v3-33c7e3a-r1/projections/1906ce853f918e2d403061ca0e43da1494c4096939595dfa46c6e5109cccf67a",
+    "manifestSha256": "8f417376197f8b7aa923d160198f8395521b122199bf8ef43c09142d71c47e94",
+    "scope": "Retained immutable real closed selected presentation. Read-only capture, no producer or source proof rerun."
+  },
+  "fileSha256": "7e9609f29c26df980d940b35b28e5b1d560f32c595a00b79048908ab3a09846b",
+  "segments": 19197,
+  "runs": 83467
+}
