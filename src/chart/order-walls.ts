@@ -198,9 +198,9 @@ export class OrderWallsPrimitive implements IPrimitive {
   private advanceOpenTails(prior:OrderWallStatus){
     const current=prior.lastConfirmedAt!==this.status.lastConfirmedAt,archive=this.archivePaintThrough(prior)!==this.archivePaintThrough(this.status);
     if(!current&&!archive)return;
-    for(const id of this.openIds){const segment=this.segments.get(id);if(segment&&(segment.archiveEntryId&&!segment.currentSelection?archive:current))this.markTail(id,Math.max(0,segment.valueRuns.length-1));}
+    for(const id of this.openIds){const segment=this.segments.get(id);if(segment&&(segment.archiveEntryId&&!segment.currentSelection?archive:current))this.markTail(id,Math.max(0,segment.valueRuns.length-1),true);}
   }
-  private markTail(id:string,index:number){const source=this.segments.get(id);if(source)this.retained?.change(source,index);if(this.dirty.has(id)&&!this.drawWork)return;this.tailDirty.set(id,Math.min(index,this.tailDirty.get(id)??index));}
+  private markTail(id:string,index:number,statusOnly=false){const source=this.segments.get(id);if(source){if(statusOnly)this.retained?.refreshHorizon(source);else this.retained?.change(source,index);}if(this.dirty.has(id)&&!this.drawWork)return;this.tailDirty.set(id,Math.min(index,this.tailDirty.get(id)??index));}
 
   draw(ctx:CanvasRenderingContext2D,rc:PrimitiveRenderContext){
     if(!this.settings.enabled||!this.segments.size)return;
@@ -595,6 +595,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     const line=this.project(segment,index,from,to,value.percentile,projection);if(!line)return;
     this.paintInvalid=true;this.setDrawable(line);const keys=this.drawableKeys.get(segment.id)??[];keys.push(line.key);this.drawableKeys.set(segment.id,keys);
   }
+  private segmentFrom(segment:OrderWallSegment){return segment.residentRange?.from??(segment.archiveEntryId&&!segment.currentSelection?this.status.archive?.from:undefined)??-Infinity;}
   private segmentTo(segment:OrderWallSegment){
     if(segment.residentRange)return Math.min(segment.residentRange.to-1,segment.end??segment.start+Math.max(0,segment.durationMs));
     if(segment.end!==null)return segment.end;
@@ -619,7 +620,7 @@ export class OrderWallsPrimitive implements IPrimitive {
   }
   private project(segment:OrderWallSegment,runIndex:number,from:number,to:number,percentile:number|null,projection:WallProjectionContext):WallDrawable|null{
     const {rc,low,high,y,visibleFrom,visibleTo,timeToIndexFloat}=projection;
-    from=Math.max(from,segment.residentRange?.from??-Infinity,segment.start+(segment.presentationKind==='current-snapshot'?0:this.settings.minDurationMs));
+    from=Math.max(from,this.segmentFrom(segment),segment.start+(segment.presentationKind==='current-snapshot'?0:this.settings.minDurationMs));
     // A current seed is an observed point, not an observed duration. Use the
     // existing one-pixel minimum stroke without extending its source time.
     if(to<from||to===from&&segment.currentSelection!==true)return null;
@@ -638,7 +639,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     if(this.retainedFailedRevision===this.inputRevision||!this.persistentRendering||this.settings.mode!=='top-levels'||typeof ctx.drawImage!=='function'||typeof rc.priceScale.yToPrice!=='function')return false;
     if(!this.retained){
       if([...this.segments.values()].some(segment=>segment.detectionMode!=='top-levels'))return false;
-      this.retained=RetainedWallRenderer.create(segment=>this.segmentTo(segment),()=>this.host?.requestUpdate());
+      this.retained=RetainedWallRenderer.create(segment=>this.segmentTo(segment),()=>this.host?.requestUpdate(),segment=>this.segmentFrom(segment));
       if(!this.retained){this.retainedFailure='WebGL2 unavailable; synchronous Canvas fallback';this.retainedFailedRevision=this.inputRevision;return false;}this.retained.reconcile(this.segments);
     }
     const started=performance.now();

@@ -5,7 +5,7 @@ import {acquireWallGpu,WallGpuBatch,WALL_GPU_BATCH_RUNS,type WallRenderSpan,type
 
 interface Piece {id:string;first:number;last:number;chunk:Chunk}
 interface Chunk {pieces:Set<Piece>;slots:number;batch?:WallGpuBatch}
-interface Source {segment:OrderWallSegment;endAt:number;count:number;pieces:Piece[]}
+interface Source {segment:OrderWallSegment;startAt:number;endAt:number;count:number;pieces:Piece[]}
 const PALETTES={heat:{bid:['#33778c','#45bcd0','#f1cb59','#ff884d'],ask:['#666da5','#8b99eb','#e9c15b','#ff8766']},side:{bid:['#28644b','#3d9970','#66d39a','#b6f1aa'],ask:['#7b3f4b','#bf6273','#ed9a9e','#ffd0b0']}};
 
 /** Exact source ownership is separate from immutable batch resources and the
@@ -23,8 +23,8 @@ export class RetainedWallRenderer {
   private geometryKey='';
   private disposed=false;
   readonly stats={builds:0,frames:0,mappingInvalidations:0,uploadedBytes:0,bufferUploads:0,drawCalls:0,maxPrepareMs:0,lastPrepareMs:0,lastPaintMs:0,visibleSpans:0,visibleHistorical:0,visibleCurrent:0,bytes:0,referenceMin:0,referenceMax:0,failure:''};
-  private constructor(owner:NonNullable<ReturnType<typeof acquireWallGpu>>,private readonly end:(segment:OrderWallSegment)=>number,private readonly invalidate:()=>void){this.owner=owner;}
-  static create(end:(segment:OrderWallSegment)=>number,invalidate:()=>void){const owner=acquireWallGpu(invalidate);return owner?new RetainedWallRenderer(owner,end,invalidate):undefined;}
+  private constructor(owner:NonNullable<ReturnType<typeof acquireWallGpu>>,private readonly end:(segment:OrderWallSegment)=>number,private readonly invalidate:()=>void,private readonly start:(segment:OrderWallSegment)=>number){this.owner=owner;}
+  static create(end:(segment:OrderWallSegment)=>number,invalidate:()=>void,start:(segment:OrderWallSegment)=>number=()=>-Infinity){const owner=acquireWallGpu(invalidate);return owner?new RetainedWallRenderer(owner,end,invalidate,start):undefined;}
   get pending(){return this.dirty.size;}
   get active(){return Boolean(this.context)&&!this.owner.device.lost;}
   get retainedSpans(){let count=0;for(const chunk of this.chunks)count+=chunk.batch?.spans.length??0;return count;}
@@ -35,11 +35,12 @@ export class RetainedWallRenderer {
     for(const id of this.sources.keys())if(!segments.has(id))this.remove(id);
     for(const segment of segments.values()){
       const prior=this.sources.get(segment.id),previous=prior?.segment;
-      if(prior&&previous===segment&&prior.endAt===this.end(segment))continue;
+      if(prior&&previous===segment&&prior.endAt===this.end(segment)&&prior.startAt===this.start(segment))continue;
       // Presentation snapshots can replace objects without changing financial
       // content. Compare on data arrival, never during a camera frame.
       if(previous&&sameSegment(previous,segment)&&this.sameOwnedGeometry(prior!,segment)){
-        if(prior!.endAt!==this.end(segment))this.change(segment,Math.max(0,segment.valueRuns.length-1));
+        if(prior!.startAt!==this.start(segment))this.change(segment,-1);
+        else if(prior!.endAt!==this.end(segment))this.change(segment,Math.max(0,segment.valueRuns.length-1));
         else prior!.segment=segment;
         continue;
       }
@@ -59,11 +60,16 @@ export class RetainedWallRenderer {
       if(!chunk.pieces.size){chunk.batch?.dispose();this.chunks.delete(chunk);this.dirty.delete(chunk);if(this.tail===chunk)this.tail=undefined;}else this.dirty.add(chunk);}
     this.sources.delete(id);
   }
+  refreshHorizon(segment:OrderWallSegment){
+    const source=this.sources.get(segment.id);if(!source)return;
+    if(source.startAt!==this.start(segment))this.change(segment,-1);
+    else if(source.endAt!==this.end(segment))this.change(segment,Math.max(0,segment.valueRuns.length-1));
+  }
   change(segment:OrderWallSegment,firstChanged= -1){
     let source=this.sources.get(segment.id);
-    if(source&&firstChanged<0&&sameSegment(source.segment,segment)&&source.endAt===this.end(segment)&&this.sameOwnedGeometry(source,segment)){source.segment=segment;return;}
+    if(source&&firstChanged<0&&sameSegment(source.segment,segment)&&source.endAt===this.end(segment)&&source.startAt===this.start(segment)&&this.sameOwnedGeometry(source,segment)){source.segment=segment;return;}
     const count=Math.max(1,segment.valueRuns.length)+1;
-    if(!source){source={segment,endAt:this.end(segment),count:0,pieces:[]};this.sources.set(segment.id,source);}else source.segment=segment;
+    if(!source){source={segment,startAt:this.start(segment),endAt:this.end(segment),count:0,pieces:[]};this.sources.set(segment.id,source);}else source.segment=segment;
     for(const piece of [...source.pieces]){
       if(piece.last-1<firstChanged+1&&piece.last<=count)continue;
       piece.chunk.batch?.hide(segment.id,firstChanged);
@@ -78,13 +84,13 @@ export class RetainedWallRenderer {
       const last=Math.min(count,next+WALL_GPU_BATCH_RUNS-this.tail.slots),piece={id:segment.id,first:next,last,chunk:this.tail};
       this.tail.pieces.add(piece);this.tail.slots+=last-next;this.dirty.add(this.tail);source.pieces.push(piece);next=last;
     }
-    source.count=count;source.endAt=this.end(segment);
+    source.count=count;source.startAt=this.start(segment);source.endAt=this.end(segment);
   }
   private spans(chunk:Chunk,settings:OrderWallsSettings,width:number):WallRenderSpan[]{
     const result:WallRenderSpan[]=[];
     for(const piece of chunk.pieces){const source=this.sources.get(piece.id);if(!source)continue;const s=source.segment;
       if(!settings.showHistory&&s.end!==null||s.presentationKind!=='current-snapshot'&&s.durationMs<settings.minDurationMs)continue;
-      const limit=this.end(s),minimum=Math.max(s.residentRange?.from??-Infinity,s.start+(s.presentationKind==='current-snapshot'?0:settings.minDurationMs)),price=settings.aggregation==='native'?s.price:s.price+width/2;
+      const limit=this.end(s),minimum=Math.max(this.start(s),s.start+(s.presentationKind==='current-snapshot'?0:settings.minDurationMs)),price=settings.aggregation==='native'?s.price:s.price+width/2;
       for(let at=piece.first;at<piece.last;at++){
         const i=at-1,run=s.valueRuns[i];let from:number,to:number,usd:number|null;
         if(i===-1){if(!s.valueRunsTruncated||!s.valueRuns[0]||s.valueRuns[0].at<=minimum)continue;from=minimum;to=Math.min(limit,s.valueRuns[0].at);usd=null;}
