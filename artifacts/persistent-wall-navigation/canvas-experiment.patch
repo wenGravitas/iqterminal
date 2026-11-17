@@ -1,0 +1,348 @@
+diff --git a/src/chart/order-walls.ts b/src/chart/order-walls.ts
+index 75f1408..188dbf7 100644
+--- a/src/chart/order-walls.ts
++++ b/src/chart/order-walls.ts
+@@ -1,3 +1,4 @@
++import {RetainedWallPaths, type RetainedWallSpan} from './wall-retained-paths';
+ import {OrderWallRankIndex} from '../feed/order-wall-rank';
+ import {yieldHistoryTask,historyTaskYieldMode} from '../feed/history-task-yield';
+ import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
+@@ -32,6 +33,16 @@ export function wallProjectionMappingKey(rc:PrimitiveRenderContext):string|undef
+ 
+ export class OrderWallsPrimitive implements IPrimitive {
+   private host?:PrimitiveHost;
++  private retainedRows=new Map<string,{segment:OrderWallSegment;end:number;paths:RetainedWallPaths}>();
++  private retainedJobs=new Map<string,{segment:OrderWallSegment;end:number;steps:Generator<void,RetainedWallPaths|undefined>}>();
++  private retainedContext?:PrimitiveRenderContext;
++  private retainedSettings='';
++  private retainedFailed=false;
++  private retainedBytes=0;
++  private retainedBuilds=0;
++  private retainedFrames=0;
++  private retainedFallbacks=0;
++
+   private settings:OrderWallsSettings;
+   private intervalMs:number;
+   private status:OrderWallStatus={state:'loading'};
+@@ -79,7 +90,7 @@ export class OrderWallsPrimitive implements IPrimitive {
+   private geometryEpoch=0;
+   private workStats={slices:0,steps:0,cancelled:0,activeMs:0,lastProjectionElapsedMs:0,lastReferenceElapsedMs:0,lastSliceMs:0,maxSliceMs:0,backgroundMs:0,maxBackgroundMs:0,yieldMode:'not-scheduled',phase:'idle' as 'idle'|'projection'|'reference'|'paint'};
+ 
+-  constructor(settings:OrderWallsSettings,intervalMs:number,private readonly cachePaintPaths=true,private readonly preparationBudgetMs=6,private readonly canPrepare:()=>boolean=()=>true,private readonly backgroundPreparation=true){this.settings={...settings};this.intervalMs=intervalMs;}
++  constructor(settings:OrderWallsSettings,intervalMs:number,private readonly cachePaintPaths=true,private readonly preparationBudgetMs=6,private readonly canPrepare:()=>boolean=()=>true,private readonly backgroundPreparation=true,private readonly persistentPaths=false){this.settings={...settings};this.intervalMs=intervalMs;}
+   zOrder(){return 'normal' as const;}
+   autoscaleInfo(){return null;}
+   attached(host:PrimitiveHost){this.host=host;}
+@@ -135,6 +146,7 @@ export class OrderWallsPrimitive implements IPrimitive {
+     if(extent){this.countReference(extent.min,-1);this.countReference(extent.max,-1);this.referenceExtents.delete(id);}
+   }
+   private clearEmptyProjection(){
++    this.clearRetained();
+     this.cancelPreparation();this.dirtyGeneration.clear();
+     this.paintedViewport=undefined;this.paintPaths=undefined;this.paintInvalid=true;this.paintKey='';this.paintCounts={historical:0,current:0};
+     this.closedPaintPaths=undefined;this.closedPaintKey='';this.closedPaintInvalid=true;
+@@ -194,6 +206,7 @@ export class OrderWallsPrimitive implements IPrimitive {
+ 
+   draw(ctx:CanvasRenderingContext2D,rc:PrimitiveRenderContext){
+     if(!this.settings.enabled||!this.segments.size)return;
++    if(this.persistentPaths&&this.drawRetained(ctx,rc))return;
+     const started=performance.now(),range=rc.timeScale.visibleRange(),prices=rc.priceScale.priceRange(),dpr=rc.dpr;
+     // Primitive hit inputs are plot-local CSS pixels, like indexToX/projected lines.
+     // Only drawing coordinates are multiplied by DPR.
+@@ -618,7 +631,95 @@ export class OrderWallsPrimitive implements IPrimitive {
+     return {key,segment,runIndex,from,to,percentile,usd:segment.valueRuns[runIndex]?.usd??null,x:Math.max(0,x),right:Math.min(rc.plotWidth,right),y,low,high,paintOrder:0};
+   }
+ 
++  private clearRetained(){
++    for(const job of this.retainedJobs.values())job.steps.return(undefined);
++    this.retainedJobs.clear();this.retainedRows.clear();this.retainedBytes=0;
++    this.retainedContext=undefined;this.retainedFailed=false;this.retainedSettings='';
++  }
++  private *retainedSpans(segment:OrderWallSegment):Generator<RetainedWallSpan>{
++    const end=this.segmentTo(segment),minimum=segment.start+(segment.presentationKind==='current-snapshot'?0:this.settings.minDurationMs);
++    if(segment.valueRunsTruncated&&segment.valueRuns[0]&&segment.valueRuns[0].at>minimum)
++      yield {from:minimum,to:Math.min(end,segment.valueRuns[0].at),usd:null,percentile:null};
++    for(let i=0;i<segment.valueRuns.length;i++){
++      const run=segment.valueRuns[i]!,from=Math.max(minimum,run.at),to=Math.min(end,segment.valueRuns[i+1]?.at??end);
++      if(to>from||to===from&&segment.currentSelection)yield {from,to,usd:run.usd,percentile:run.percentile};
++    }
++    if(!segment.valueRuns.length&&end>minimum)yield {from:minimum,to:end,usd:null,percentile:null};
++  }
++  /** Camera-independent Canvas paths are opt-in while their dense-history cost
++   * is evaluated. Threshold/mixed mode and guide rendering retain the incumbent
++   * implementation. No extra graphics context or source mutation is involved. */
++  private drawRetained(ctx:CanvasRenderingContext2D,rc:PrimitiveRenderContext):boolean{
++    this.retainedContext=undefined;
++    if(this.settings.mode!=='top-levels'||this.settings.showPriceLines||typeof ctx.transform!=='function'||typeof Path2D==='undefined')return false;
++    const geometrySettings=[this.settings.minDurationMs,this.settings.showHistory,this.intervalMs].join(':');
++    if(geometrySettings!==this.retainedSettings){this.clearRetained();this.retainedSettings=geometrySettings;}
++    if(this.retainedFailed)return false;
++    const fail=()=>{this.clearRetained();this.retainedFailed=true;this.retainedFallbacks++;this.transformKey='';return false;};
++    // Remove invalid/replaced resources before any draw. A camera never enters
++    // this invalidation path. Pending additions do not erase unaffected rows.
++    for(const[id,row]of this.retainedRows){const source=this.segments.get(id);
++      if(source!==row.segment||!source||this.segmentTo(source)!==row.end){this.retainedBytes-=row.paths.bytes;this.retainedRows.delete(id);}}
++    for(const[id,job]of this.retainedJobs){const source=this.segments.get(id);
++      if(source!==job.segment||!source||this.segmentTo(source)!==job.end){job.steps.return(undefined);this.retainedJobs.delete(id);}}
++    for(const[id,segment]of this.segments){
++      if(segment.detectionMode!=='top-levels')return fail();
++      if(!this.settings.showHistory&&segment.end!==null||segment.presentationKind!=='current-snapshot'&&segment.durationMs<this.settings.minDurationMs)continue;
++      if(!this.retainedRows.has(id)&&!this.retainedJobs.has(id)){
++        const end=this.segmentTo(segment);
++        this.retainedJobs.set(id,{segment,end,steps:RetainedWallPaths.prepare(rc,this.retainedSpans(segment),segment.start,Math.max(segment.start,end))});
++      }
++    }
++    const started=performance.now(),budget=Math.max(1,this.preparationBudgetMs);let steps=0;
++    for(const[id,job]of this.retainedJobs){
++      let next=job.steps.next();
++      while(!next.done&&++steps<32&&performance.now()-started<budget)next=job.steps.next();
++      if(next.done){
++        this.retainedJobs.delete(id);if(!next.value)return fail();
++        // Conservative accounted native-path/descriptor bound; not an RSS claim.
++        if(this.retainedBytes+next.value.bytes>16*1024*1024)return fail();
++        this.retainedRows.set(id,{segment:job.segment,end:job.end,paths:next.value});this.retainedBytes+=next.value.bytes;this.retainedBuilds++;
++      }
++      if(steps>=32||performance.now()-started>=budget)break;
++    }
++    const range=rc.timeScale.visibleRange(),from=rc.dataLayer.indexToTimeFloat(range.from)*1000,to=rc.dataLayer.indexToTimeFloat(range.to)*1000;
++    const visible:Array<{row:{segment:OrderWallSegment;end:number;paths:RetainedWallPaths};y:number}>=[];
++    let min=Infinity,max=0;
++    for(const row of this.retainedRows.values()){
++      const low=row.segment.price,price=this.settings.aggregation==='native'?low:low+this.width()/2,y=rc.priceScale.priceToY(price);
++      const shown=Number.isFinite(y)&&y>=0&&y<=rc.plotHeight&&row.end>=from&&row.segment.start<=to;
++      if(shown)visible.push({row,y});
++      if(!this.settings.visibleRangeOnly||shown){const extent=row.paths.extent(this.settings.visibleRangeOnly?from:-Infinity,this.settings.visibleRangeOnly?to:Infinity);min=Math.min(min,extent.min);max=Math.max(max,extent.max);}
++    }
++    this.reference={min:Number.isFinite(min)?min:0,max};
++    // Validate all visible mappings before painting, not after a partial layer.
++    for(const {row}of visible)if(row.paths.mapping.camera(rc)===undefined)return fail();
++    ctx.save();ctx.beginPath();ctx.rect(0,0,rc.plotWidth*rc.dpr,rc.plotHeight*rc.dpr);ctx.clip();ctx.globalAlpha=this.settings.opacity;ctx.setLineDash([]);
++    for(const {row,y}of visible)row.paths.paint(ctx,rc,y,(usd,percentile)=>this.lineStyle({segment:row.segment,usd,percentile} as WallDrawable));
++    ctx.restore();this.retainedContext=rc;this.retainedFrames++;
++    this.stats.draws++;this.stats.segments=this.segments.size;this.stats.visible=visible.length;
++    this.stats.visibleHistorical=visible.filter(v=>v.row.segment.archiveEntryId&&!v.row.segment.currentSelection).length;
++    this.stats.visibleCurrent=visible.filter(v=>v.row.segment.currentSelection).length;
++    this.dirty.clear();this.tailDirty.clear();this.referenceIds.clear();this.referenceDirty=false;
++    if(this.retainedJobs.size)this.host?.requestUpdate();
++    else{this.paintedRevision=this.inputRevision;this.paintedAtMono=performance.now();}
++    const prices=rc.priceScale.priceRange();this.paintedViewport={fromMs:from,toMs:to,minPrice:prices.min,maxPrice:prices.max,plotWidth:rc.plotWidth,plotHeight:rc.plotHeight};
++    return true;
++  }
++  private retainedHit(x:number,y:number,rc:PrimitiveRenderContext):OrderWallHit|null{
++    if(x<0||x>rc.plotWidth||y<0||y>rc.plotHeight)return null;
++    const at=rc.dataLayer.indexToTimeFloat(rc.timeScale.xToIndex(x))*1000;
++    let best:OrderWallHit|null=null,distance=Math.max(4,this.settings.thicknessPx/2+2);
++    for(const row of this.retainedRows.values()){
++      const segment=row.segment;if(at<segment.start+this.settings.minDurationMs||at>row.end||row.paths.mapping.offset(rc)===undefined)continue;
++      const low=segment.price,high=low+this.width(),py=rc.priceScale.priceToY(this.settings.aggregation==='native'?low:(low+high)/2),dy=Math.abs(py-y);
++      if(dy<=distance){distance=dy;best={segment,x,y,at,priceLow:low,priceHigh:high,percentile:orderWallValuePointAt(segment,at)?.percentile??null};}
++    }
++    return best;
++  }
++
+   orderWallAt(x:number,y:number):OrderWallHit|null{
++    if(this.retainedContext)return this.retainedHit(x,y,this.retainedContext);
+     if(this.drawWork||this.preparedWork||!this.transformKey)return null;
+     let best:WallDrawable|undefined,bestDistance=Infinity;
+     const tolerance=Math.max(4,this.settings.thicknessPx/2+2);
+@@ -633,7 +734,7 @@ export class OrderWallsPrimitive implements IPrimitive {
+     const segment=this.segments.get(best.segment.id)??best.segment;
+     return {segment,x,y,at,priceLow:best.low,priceHigh:best.high,percentile:orderWallValuePointAt(segment,at)?.percentile??null};
+   }
+-  diagnostics(){const sorted=[...this.durations].sort((a,b)=>a-b);return {...this.stats,paintedViewport:this.paintedViewport?{...this.paintedViewport}:undefined,inputRevision:this.inputRevision,paintedRevision:this.paintedRevision,paintedAtMono:this.paintedAtMono,pendingProjectionSegments:this.dirty.size+this.tailDirty.size+(this.drawWork||this.preparedWork?1:0),pendingPaintWork:Boolean(this.drawWork||this.preparedWork),queuedPreparation:Boolean(this.preparationTask),preparation:{...this.workStats},retainedPaintPaths:this.paintPaths?.length??0,retainedClosedPaintPaths:this.closedPaintPaths?.length??0,retainedClosedPaintSegments:this.closedPaintMembers.size,pendingClosedPaintSegments:this.closedPaintDirty.size,retainedSegments:this.segments.size,openSegments:this.openIds.size,retainedReferenceSegments:this.referenceExtents.size,referenceExtentValues:this.referenceCounts.size,pendingReferenceSegments:this.referenceIds.size,referenceMinimum:this.reference.min,referenceMaximum:this.reference.max,retainedDrawables:this.drawable.size,p95RenderMs:sorted[Math.floor((sorted.length-1)*.95)]??0};}
++  diagnostics(){const sorted=[...this.durations].sort((a,b)=>a-b);return {...this.stats,retainedRenderer:{enabled:this.persistentPaths,active:Boolean(this.retainedContext),rows:this.retainedRows.size,paths:[...this.retainedRows.values()].reduce((n,r)=>n+r.paths.paths,0),estimatedBytes:this.retainedBytes,builds:this.retainedBuilds,frames:this.retainedFrames,fallbacks:this.retainedFallbacks,pending:this.retainedJobs.size},paintedViewport:this.paintedViewport?{...this.paintedViewport}:undefined,inputRevision:this.inputRevision,paintedRevision:this.paintedRevision,paintedAtMono:this.paintedAtMono,pendingProjectionSegments:this.retainedJobs.size+this.dirty.size+this.tailDirty.size+(this.drawWork||this.preparedWork?1:0),pendingPaintWork:Boolean(this.retainedJobs.size||this.drawWork||this.preparedWork),queuedPreparation:Boolean(this.preparationTask),preparation:{...this.workStats},retainedPaintPaths:this.paintPaths?.length??0,retainedClosedPaintPaths:this.closedPaintPaths?.length??0,retainedClosedPaintSegments:this.closedPaintMembers.size,pendingClosedPaintSegments:this.closedPaintDirty.size,retainedSegments:this.segments.size,openSegments:this.openIds.size,retainedReferenceSegments:this.referenceExtents.size,referenceExtentValues:this.referenceCounts.size,pendingReferenceSegments:this.referenceIds.size,referenceMinimum:this.reference.min,referenceMaximum:this.reference.max,retainedDrawables:this.drawable.size,p95RenderMs:sorted[Math.floor((sorted.length-1)*.95)]??0};}
+   private measureOne(id:string){const before=this.sizes.get(id)??0,s=this.segments.get(id);const next=s?192+s.valueRuns.length*40:0;this.stats.bytes+=next-before;if(next)this.sizes.set(id,next);else this.sizes.delete(id);}
+   private measureBytes(){this.stats.bytes=0;this.sizes.clear();for(const id of this.segments.keys())this.measureOne(id);this.referenceDirty=true;}
+ }
+diff --git a/tests/order-walls-work-budget.test.ts b/tests/order-walls-work-budget.test.ts
+index b489918..ad65c16 100644
+--- a/tests/order-walls-work-budget.test.ts
++++ b/tests/order-walls-work-budget.test.ts
+@@ -127,3 +127,34 @@ test.fails('resident wall navigation never blanks an intermediate camera frame',
+  }
+  p.detached();
+ });
++
++test('retained primitive keeps every intermediate camera frame and newly exposed resident walls without rebuilding',()=>{
++ setup();
++ const p=new OrderWallsPrimitive(settings,60000,true,1,()=>true,false,true);p.attached({requestUpdate:vi.fn()});
++ const walls=source();walls.push({...walls[0]!,id:'outside',price:140});p.setSnapshot(walls,status);
++ const transformed=()=>{const frame=canvas();(frame.ctx as any).transform=vi.fn();(frame.ctx as any).moveTo=vi.fn();(frame.ctx as any).lineTo=vi.fn();return frame;};
++ const rc=context();let ready=false;
++ for(let i=0;i<2000;i++){p.draw(transformed().ctx,rc);if(!p.diagnostics().pendingPaintWork){ready=true;break;}}
++ expect(ready).toBe(true);const built=p.diagnostics().retainedRenderer.builds;expect(built).toBe(walls.length);
++ for(const from of [.01,.02,.03,.02,.01,0]){
++  const frame=transformed();p.draw(frame.ctx,context(from));expect(frame.strokes.length).toBeGreaterThan(0);
++  expect(p.diagnostics().retainedRenderer.builds).toBe(built);expect(p.diagnostics().pendingPaintWork).toBe(false);
++  expect(p.orderWallAt(100,200)?.segment.price).toBe(100);
++ }
++ const zoom=context(.01,2);zoom.priceScale.priceToY=(price:number)=>(150-price)*10;
++ const frame=transformed();p.draw(frame.ctx,zoom);expect(frame.strokes.length).toBeGreaterThan(0);
++ expect(p.orderWallAt(100,100)?.segment.id).toBe('outside');expect(p.diagnostics().retainedRenderer.builds).toBe(built);
++ p.detached();expect(p.diagnostics().retainedRenderer).toMatchObject({rows:0,estimatedBytes:0,pending:0});
++});
++
++test('retained replacement does not erase unaffected rows and removed source cannot remain inspectable',()=>{
++ setup();const p=new OrderWallsPrimitive(settings,60000,true,1,()=>true,false,true);p.attached({requestUpdate:vi.fn()});const walls=source();p.setSnapshot(walls,status);
++ const frame=()=>{const f=canvas();(f.ctx as any).transform=vi.fn();(f.ctx as any).moveTo=vi.fn();(f.ctx as any).lineTo=vi.fn();return f;};
++ for(let i=0;i<2000;i++){p.draw(frame().ctx,context());if(!p.diagnostics().pendingPaintWork)break;}
++ const built=p.diagnostics().retainedRenderer.builds;
++ p.patch([{id:walls[0]!.id,segment:null},{id:walls[1]!.id,segment:{...walls[1]!,price:110},replaceValueRuns:true}],status);
++ const next=frame();p.draw(next.ctx,context());expect(next.strokes.length).toBeGreaterThan(0);
++ expect(p.diagnostics().retainedRenderer.rows).toBeGreaterThanOrEqual(18);expect(p.orderWallAt(100,200)?.segment.id).not.toBe(walls[0]!.id);
++ for(let i=0;i<2000;i++){p.draw(frame().ctx,context());if(!p.diagnostics().pendingPaintWork)break;}
++ expect(p.diagnostics().retainedRenderer.builds).toBe(built+1);expect(p.orderWallAt(100,100)?.segment.id).toBe(walls[1]!.id);
++});
+diff --git a/src/chart/wall-retained-paths.ts b/src/chart/wall-retained-paths.ts
+new file mode 100644
+index 0000000..4854781
+--- /dev/null
++++ b/src/chart/wall-retained-paths.ts
+@@ -0,0 +1,80 @@
++import type {PrimitiveRenderContext} from 'openalgo-charts';
++import {WallLogicalMapping} from './wall-logical-mapping';
++
++export interface RetainedWallSpan {from:number;to:number;usd:number|null;percentile:number|null}
++interface Span extends RetainedWallSpan {left:number;right:number}
++interface Node {first:Bucket;last:Bucket;path:Path2D;minLength:number;left?:Node;right?:Node}
++interface Bucket {usd:number|null;percentile:number|null;spans:Span[];path:Path2D;minLength:number;maxLength:number}
++
++/** One exact, immutable price row in logical time coordinates. This contains no
++ * camera pixels: panning, DPR and price-scale changes never rewrite its paths.
++ * Buckets keep exact values (rather than pre-normalized contrast tiers).
++ * Short strokes are drawn separately at their mandated one-device-pixel width.
++ */
++export class RetainedWallPaths {
++  private constructor(readonly mapping:WallLogicalMapping,private readonly buckets:Bucket[],private readonly root:Node|undefined,readonly bytes:number){}
++
++  static *prepare(rc:PrimitiveRenderContext,spans:Iterable<RetainedWallSpan>,from:number,to:number):Generator<void,RetainedWallPaths|undefined> {
++    const mapping=WallLogicalMapping.capture(rc,from,to);if(!mapping)return;
++    const buckets=new Map<string,Bucket>();let bytes=mapping.bytes+128,units=0;
++    for(const span of spans){
++      if(!Number.isFinite(span.from)||!Number.isFinite(span.to)||span.to<span.from)return;
++      const left=mapping.logical(span.from),right=mapping.logical(span.to);if(left===undefined||right===undefined)return;
++      const key=`${span.usd}:${span.percentile}`;
++      let bucket=buckets.get(key);
++      if(!bucket){bucket={usd:span.usd,percentile:span.percentile,spans:[],path:new Path2D(),minLength:Infinity,maxLength:0};buckets.set(key,bucket);bytes+=256;}
++      bucket.spans.push({...span,left,right});bucket.path.moveTo(left,0);bucket.path.lineTo(right,0);
++      bucket.minLength=Math.min(bucket.minLength,right-left);bucket.maxLength=Math.max(bucket.maxLength,right-left);bytes+=96;
++      if(++units%32===0)yield;
++    }
++    const ordered=[...buckets.values()].sort((a,b)=>(a.usd??-Infinity)-(b.usd??-Infinity));
++    const tree=(from:number,to:number):Node|undefined=>{
++      if(from>=to)return;
++      const first=ordered[from]!,last=ordered[to-1]!;
++      if(to-from===1)return {first,last,path:first.path,minLength:first.minLength};
++      const mid=(from+to)>>>1,left=tree(from,mid)!,right=tree(mid,to)!,path=new Path2D();
++      path.addPath(left.path);path.addPath(right.path);
++      // Native Path2D owns copied commands. Charge each level explicitly.
++      let commands=0;for(let i=from;i<to;i++)commands+=ordered[i]!.spans.length;
++      bytes+=192+commands*64;
++      return {first,last,path,minLength:Math.min(left.minLength,right.minLength),left,right};
++    };
++    return new RetainedWallPaths(mapping,ordered,tree(0,ordered.length),bytes);
++  }
++
++  /** Returns false on a real mapping revision; callers must not paint known
++   * invalid geometry. Caller supplies the exact chart priceToY result, including
++   * logarithmic and rebased modes. No native-price affine approximation. */
++  paint(ctx:CanvasRenderingContext2D,rc:PrimitiveRenderContext,y:number,style:(usd:number|null,percentile:number|null)=>{color:string;thickness:number}){
++    const camera=this.mapping.camera(rc);if(!camera)return false;
++    const sx=camera.scale*rc.dpr,tx=camera.x*rc.dpr,ty=y*rc.dpr;
++    ctx.save();ctx.transform(sx,0,0,1,tx,ty);ctx.lineCap='butt';
++    const paint=(node:Node)=>{
++      const first=style(node.first.usd,node.first.percentile),last=style(node.last.usd,node.last.percentile);
++      // Top-level styles are monotone quantized notional tiers. An interval with
++      // matching endpoint styles can reuse its prebuilt exact union path. This
++      // range tree changes stroke selection, not geometry, when contrast moves.
++      if(node.minLength*sx>=1&&first.color===last.color&&first.thickness===last.thickness){
++        ctx.strokeStyle=first.color;ctx.lineWidth=first.thickness*rc.dpr;ctx.stroke(node.path);return;
++      }
++      if(node.left&&node.right){paint(node.left);paint(node.right);return;}
++      const bucket=node.first;
++      ctx.strokeStyle=first.color;ctx.lineWidth=first.thickness*rc.dpr;
++      ctx.beginPath();
++      for(const span of bucket.spans){ctx.moveTo(span.left,0);ctx.lineTo(Math.max(span.right,span.left+1/sx),0);}
++      ctx.stroke();
++    };
++    if(this.root)paint(this.root);
++    ctx.restore();return true;
++  }
++
++  /** Exact extrema for visible-range contrast, independent of path generation. */
++  extent(from:number,to:number){
++    let min=Infinity,max=0;
++    for(const bucket of this.buckets){if(bucket.usd===null||bucket.usd<=0)continue;
++      if(bucket.spans.some(span=>span.to>=from&&span.from<=to)){min=Math.min(min,bucket.usd);max=Math.max(max,bucket.usd);}
++    }
++    return {min,max};
++  }
++  get paths(){return this.buckets.length;}
++}
+diff --git a/tests/wall-retained-paths.test.ts b/tests/wall-retained-paths.test.ts
+new file mode 100644
+index 0000000..a324e42
+--- /dev/null
++++ b/tests/wall-retained-paths.test.ts
+@@ -0,0 +1,24 @@
++import {afterEach,expect,test,vi} from 'vitest';
++import type {PrimitiveRenderContext} from 'openalgo-charts';
++import {RetainedWallPaths} from '../src/chart/wall-retained-paths';
++const base=1704067200;
++class Path {commands:number[][]=[];moveTo(x:number,y:number){this.commands.push([x,y]);}lineTo(x:number,y:number){this.commands.push([x,y]);}addPath(path:Path){this.commands.push(...path.commands);}}
++afterEach(()=>vi.unstubAllGlobals());
++function context(from=0,scale=100,dpr=1){return {dataLayer:{timeToIndexFloat:(t:number)=>t<base+60?(t-base)/60:1+(t-base-60)/540,indexToTimeFloat:(i:number)=>i<=1?base+i*60:base+60+(i-1)*540},timeScale:{indexToX:(i:number)=>(i-from)*scale},dpr} as PrimitiveRenderContext;}
++function prepare(){vi.stubGlobal('Path2D',Path);const work=RetainedWallPaths.prepare(context(),[{from:base*1000,to:(base+330)*1000,usd:100,percentile:null},{from:(base+330)*1000,to:(base+600)*1000,usd:200,percentile:null}],base*1000,(base+600)*1000);let result=work.next();while(!result.done)result=work.next();return result.value!;}
++function canvas(){const painted:Array<{commands:number[][];width:number;color:string}>=[];let matrix=[1,0,0,1,0,0],current:number[][]=[];const ctx:any={save(){},restore(){},transform(...m:number[]){matrix=m;},beginPath(){current=[];},moveTo(x:number,y:number){current.push([x,y]);},lineTo(x:number,y:number){current.push([x,y]);},stroke(path?:Path){painted.push({commands:(path?.commands??current).map(([x,y])=>[x!*matrix[0]!+matrix[4]!,y!*matrix[3]!+matrix[5]!]),width:ctx.lineWidth,color:ctx.strokeStyle});}};return {ctx:ctx as CanvasRenderingContext2D,painted};}
++test('retains offscreen fractional mapping across every camera frame with pixel widths and live styles',()=>{
++ const paths=prepare(),style=vi.fn((usd:number|null)=>({color:String(usd),thickness:3}));expect(paths.paths).toBe(2);
++ for(const [from,scale,dpr,y] of [[0,100,1,42],[.2,150,2,63],[1.6,1000,1,20],[-.2,30,2,30]]){
++  const frame=canvas();expect(paths.paint(frame.ctx,context(from,scale,dpr),y!,style)).toBe(true);
++  expect(JSON.parse(JSON.stringify(frame.painted,(_key,value)=>typeof value==='number'?Math.round(value*1e8)/1e8:value))).toEqual(JSON.parse(JSON.stringify([{commands:[[(0-from!)*scale!*dpr!,y!*dpr!],[(1.5-from!)*scale!*dpr!,y!*dpr!]],width:3*dpr!,color:'100'},{commands:[[(1.5-from!)*scale!*dpr!,y!*dpr!],[(2-from!)*scale!*dpr!,y!*dpr!]],width:3*dpr!,color:'200'}],(_key,value)=>typeof value==='number'?Math.round(value*1e8)/1e8:value)));
++ }
++ expect(paths.extent((base+400)*1000,(base+500)*1000)).toEqual({min:200,max:200});
++});
++test('rejects corrected internal mapping before drawing and preserves exact short-span minimum',()=>{
++ const paths=prepare(),rc=context(),frame=canvas();rc.dataLayer.indexToTimeFloat=(i:number)=>base+i*300;
++ expect(paths.paint(frame.ctx,rc,50,()=>({color:'red',thickness:1}))).toBe(false);expect(frame.painted).toHaveLength(0);
++ const tiny=canvas();expect(paths.paint(tiny.ctx,context(0,.1,2),50,()=>({color:'red',thickness:1}))).toBe(true);
++ expect(tiny.painted[0]!.commands).toEqual([[0,100],[1,100]]);
++ expect(tiny.painted[1]!.commands[1]![0]!-tiny.painted[1]!.commands[0]![0]!).toBeCloseTo(1);
++});
+diff --git a/tests/browser/fixtures/wall-navigation.html b/tests/browser/fixtures/wall-navigation.html
+new file mode 100644
+index 0000000..5470295
+--- /dev/null
++++ b/tests/browser/fixtures/wall-navigation.html
+@@ -0,0 +1,18 @@
++<!doctype html><meta charset="utf-8"><title>Explicit retained-wall renderer fixture</title><canvas width="1200" height="600"></canvas>
++<script type="module">
++import {OrderWallsPrimitive} from '/src/chart/order-walls.ts';
++import {DEFAULT_ORDER_WALLS_SETTINGS} from '/src/feed/order-walls.ts';
++const base=1704067200000;
++window.runWallNavigation=async(retained,segments=2500)=>{
++ const canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d');
++ const settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native'};
++ const source=Array.from({length:segments},(_,i)=>{const start=base+(i%120)*900000;return {id:`wall-${i}`,archiveEntryId:`entry-${i}`,epoch:1,side:i%2?'ask':'bid',price:90+(i%200)*.1,start,end:start+900000,peakUsd:1000,meanUsd:500,durationMs:900000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'rank-exit',detectionMode:'top-levels',rank:1,valueRunsTruncated:false,valueRuns:Array.from({length:8},(_,j)=>({at:start+j*100000,usd:100+(i%20)*10+j*20,quantity:1,rank:1,percentile:null}))};});
++ let from=0,span=120,low=89,high=111;
++ const rc={timeScale:{visibleRange:()=>({from,to:from+span}),indexToX:i=>(i-from)*1200/span,xToIndex:x=>x*span/1200+from},priceScale:{priceRange:()=>({min:low,max:high}),priceToY:p=>(high-p)*600/(high-low)},dataLayer:{indexToTimeFloat:i=>base/1000+i*900,timeToIndexFloat:t=>(t-base/1000)/900},plotWidth:1200,plotHeight:600,dpr:1,theme:{background:'#000',axisText:'#aaa'}};
++ const p=new OrderWallsPrimitive(settings,900000,true,6,()=>true,false,retained);p.attached({requestUpdate(){}});p.setSnapshot(source,{state:'live',tickSize:.1,lastConfirmedAt:base+120*900000});
++ const begin=performance.now();let frames=0;for(;frames<10000;frames++){ctx.clearRect(0,0,1200,600);p.draw(ctx,rc);if(!p.diagnostics().pendingPaintWork&&p.diagnostics().inputRevision===p.diagnostics().paintedRevision)break;if(frames%20===0)await new Promise(r=>setTimeout(r,0));}
++ const initial=performance.now()-begin,before=p.diagnostics(),times=[],blank=[];
++ for(let i=0;i<90;i++){from=5*Math.sin(i/8);span=110+10*Math.cos(i/8);low=89+Math.sin(i/7);high=111+Math.sin(i/7);ctx.clearRect(0,0,1200,600);const t=performance.now();p.draw(ctx,rc);times.push(performance.now()-t);const pixels=ctx.getImageData(0,0,1200,600).data;blank.push(!pixels.some((v,n)=>n%4===3&&v));await new Promise(r=>requestAnimationFrame(r));}
++ const after=p.diagnostics();p.detached();return {retained,segments,runs:segments*8,initial,initialFrames:frames,before,after,times,blankFrames:blank.filter(Boolean).length,userAgent:navigator.userAgent,dpr:devicePixelRatio};
++};
++</script>
+diff --git a/scripts/measure-wall-retained.mjs b/scripts/measure-wall-retained.mjs
+new file mode 100644
+index 0000000..c94254e
+--- /dev/null
++++ b/scripts/measure-wall-retained.mjs
+@@ -0,0 +1,7 @@
++import {chromium} from '@playwright/test';
++import {writeFile} from 'node:fs/promises';
++import {verifyHeadedBrowser} from './test-browser-i3-setup.mjs';
++const label=process.argv[2];if(!label||!/^[-a-z0-9]+$/.test(label))throw Error('Supply a unique evidence label');
++verifyHeadedBrowser({headless:true});
++const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/chromium',args:['--no-sandbox','--ozone-platform=headless','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
++try{const page=await browser.newPage({viewport:{width:1280,height:720}});await page.goto('http://127.0.0.1:4189/tests/browser/fixtures/wall-navigation.html');await page.waitForFunction(()=>typeof window.runWallNavigation==='function');for(const retained of [false,true]){const result=await page.evaluate(retained=>window.runWallNavigation(retained),retained);await writeFile(`artifacts/persistent-wall-navigation/${label}-${retained?'retained':'baseline'}.json`,JSON.stringify(result,null,2),{flag:'wx'});const t=[...result.times].sort((a,b)=>a-b);console.log(JSON.stringify({retained,initial:result.initial,blank:result.blankFrames,p95:t[Math.floor(t.length*.95)],max:Math.max(...t),resources:result.after.retainedRenderer}));}}finally{await browser.close();}
