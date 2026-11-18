@@ -48,3 +48,5 @@ Multi-venue adapters (including venue-specific quantity normalization and covera
 Reference helpers were adapted from liquiditymapperfast at `6126de1cf249df9ed19a598d19939f39dd4301ba`; MIT attribution is in the dependency notices and public licenses. The reference repository contained no pinned Compact screenshot, so screenshot parity remains unverified.
 
 Deployment order: deploy and verify the companion backend before this frontend. Both modes share the cumulative-enabled subscription once a reference is pinned. An older backend rejects these parameters (verified HTTP 400 on the current staging route); the client marks the request failure rather than silently substituting unproven prefixes.
+
+For the isolated review adapter, set `VITE_DEPTH_MATRIX_API_URL=http://127.0.0.1:18940` while leaving `VITE_CURRENT_API_URL=http://127.0.0.1:18781` on the normal staging tunnel. The adapter serves only Depth Matrix snapshots; routing all current requests through it breaks Order Walls preparation and live archive requests. Set `VITE_HISTORY_TILES=1` for staging prepared history; the legacy archive endpoint rejects ranges longer than seven days.

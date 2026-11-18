@@ -16,3 +16,10 @@ test.each(['https://127.0.0.1:18881','http://example.com','http://u:p@localhost:
  vi.stubEnv('VITE_CURRENT_API_URL',target);
  await expect(loadConfigFromFile({command:'serve',mode:'staging'},resolve('vite.config.ts'))).rejects.toThrow('Current development target');
 });
+
+test('review depth adapter does not capture wall or live routes',async()=>{
+ vi.stubEnv('VITE_CURRENT_API_URL','http://127.0.0.1:18781');vi.stubEnv('VITE_DEPTH_MATRIX_API_URL','http://127.0.0.1:18940');
+ const loaded=await loadConfigFromFile({command:'serve',mode:'staging'},resolve('vite.config.ts'));const p=loaded!.config.server!.proxy!;
+ expect((p['/market-data/v1/depth-matrix'] as ProxyOptions).target).toBe('http://127.0.0.1:18940');
+ for(const path of ['/market-data/v1/stream','/market-data/v1/order-walls/archive/current','/market-data/v2/history/walls/reader'])expect((p[path] as ProxyOptions).target).toBe('http://127.0.0.1:18781');
+});
