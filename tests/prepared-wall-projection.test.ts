@@ -9,9 +9,10 @@ import {orderWallsSettings} from '../src/feed/order-walls';import {readPreparedW
 import {WALL_PROJECTION_CORE_SHA256} from '../src/shared/order-walls-projection-version';
 import {OrderWallsArchiveService} from '../src/feed/order-walls-archive-service';
 import {preparedWallReader} from '../src/feed/prepared-wall-history';
+import {PreparedWallPartCache} from '../src/feed/prepared-wall-part-cache';
 import {historyScheduler} from '../src/feed/history-scheduler';
 afterEach(()=>vi.unstubAllEnvs());
-import {hash,from,to,settings,normalized,profile,oldHead,head,fixture,projectionOnlyFixture} from './helpers/prepared-wall-fixture';
+import {hash,from,to,settings,normalized,profile,oldHead,head,fixture,projectionOnlyFixture,reverseDeliveryFixture} from './helpers/prepared-wall-fixture';
 function transport(f:ReturnType<typeof fixture>,options:{horizonAt?:number;changed?:boolean;corrupt?:boolean;gateSource?:Promise<void>;tailGate?:Promise<void>;firstGate?:Promise<void>}={}){
  const calls:string[]=[];const fetcher=vi.fn(async(input:RequestInfo|URL,init?:RequestInit)=>{
   const url=new URL(String(input),'http://test');calls.push(url.pathname);
@@ -143,13 +144,13 @@ test('incompatible settings/core fall back before transfer and abort prevents fu
  const old={...f.advertised,manifest:{...f.manifest,core:'c'.repeat(64)}};expect(await readPreparedWallProjection(old,{...f.context,fetcher:t.fetcher,signal:signal.signal},()=>{})).toBeNull();
  let count=0;await expect(readPreparedWallProjection(f.advertised,{...f.context,fetcher:t.fetcher,signal:signal.signal},()=>{count++;signal.abort();})).rejects.toThrow(/abort/i);expect(count).toBe(1);expect(t.calls).toHaveLength(0);
 });
-test('first wall member leaves admission for native prices before bounded batch pipelining',async()=>{
+test.each([false,true])('first wall member leaves admission for native prices before bounded batch pipelining (newest-first=%s)',async newestFirst=>{
  const f=fixture(),closed=JSON.parse(f.texts[0]!)[0],texts:string[]=[];
  for(let i=0;i<35;i++)texts.push(JSON.stringify([{...closed,order:i,segment:{...closed.segment,id:closed.segment.id+':'+i},valueRunOrder:closed.valueRunOrder.map((n:number)=>n+i*10)}]));
  f.texts=texts;f.manifest.parts=texts.map(text=>({hash:hash(text),bytes:Buffer.byteLength(text),records:1}));f.manifest.closed=texts.map((_,i)=>[[i,0]]);
  f.manifest.activeOrder=[35];f.manifest.active.valueRunOrder=f.manifest.active.valueRunOrder.map((values:number[])=>values.map(n=>n+400));f.manifest.active.nextValueRunSequence=500;
  let releaseFirst!:()=>void,releaseNative!:()=>void;const firstGate=new Promise<void>(r=>releaseFirst=r),nativeGate=new Promise<void>(r=>releaseNative=r),abort=new AbortController();
- const t=transport(f,{firstGate}),work=readPreparedWallProjection(f.advertised,{...f.context,fetcher:t.fetcher,signal:abort.signal},()=>{});void work.catch(()=>{});
+ const t=transport(f,{firstGate}),work=readPreparedWallProjection(f.advertised,{...f.context,newestFirst,fetcher:t.fetcher,signal:abort.signal},()=>{});void work.catch(()=>{});
  let native:Promise<number>|undefined,nativeStarted=false;
  try{
   await vi.waitFor(()=>expect(t.calls.length).toBeGreaterThan(0));
@@ -395,7 +396,7 @@ test('cached manifest reuse retains exact rows through failed source proof and a
   service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmCompactEntries:1,warmBuilds:0}));service.unsubscribe('seed');phase=1;
   service.subscribe('warm',request);await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1)?.status.message).toMatch(/source changed/));
   expect(events.filter(e=>e.ids?.includes('warm')).at(-1).status.archive.requestComplete).toBe(false);
-  expect(displayedWalls(events,'warm').size).toBe(f.full.segments.length);expect(bad.calls.some(path=>path.endsWith('/projection-batch'))).toBe(false);
+  await vi.waitFor(()=>expect(displayedWalls(events,'warm').size).toBe(f.full.segments.length));expect(bad.calls.some(path=>path.endsWith('/projection-batch'))).toBe(false);
   const before=[...displayedWalls(events,'warm').values()];phase=2;service.retry('warm');
   await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1)?.status.archive.requestComplete).toBe(true));
   expect([...displayedWalls(events,'warm').values()]).toEqual(before);
@@ -589,4 +590,67 @@ test('a fresh newer revision never waits for unfinished optional warm replay',as
   expect([...displayedWalls(events,'fresh').values()].map(({currentSelection:_current,...row})=>row)).toEqual(next.full.segments);expect(service.diagnostics().preparedDeltaPublications).toBe(0);
   const before=events.length;releaseReplay();await vi.waitFor(()=>expect(service.diagnostics().warmReplayJobs).toBe(0));expect(events.slice(before).some(e=>e.status.archive?.requestComplete===false)).toBe(false);
  }finally{releaseSource();releaseReplay();service.dispose();spy?.mockRestore();}
+});
+
+test('newest-first reverses immutable delivery, assembles split walls, and exactly preserves the canonical checkpoint',async()=>{
+ const f=reverseDeliveryFixture(),io=transport(f),starts:number[]=[],published:any[]=[],indices:number[]=[];
+ const fetcher:typeof fetch=(input,init)=>{starts.push(Number(new URL(String(input),'http://test').searchParams.get('start')));return io.fetcher(input,init);};
+ const result=await readPreparedWallProjection(f.advertised,{...f.context,newestFirst:true,fetcher,signal:new AbortController().signal},update=>{
+  published.push(...update.segments.filter(s=>s.end!==null));if(update.metrics)indices.push(update.metrics.partIndex!);
+ });
+ expect(starts).toEqual([64,32,0]);expect(indices).toEqual(Array.from({length:70},(_,i)=>69-i));
+ expect(published.map(s=>s.end)).toEqual([...published].map(s=>s.end).sort((a,b)=>b-a));expect(published).toHaveLength(35);
+ expect(published.every(s=>s.valueRuns.length===2)).toBe(true);
+ const reference=OrderWallsArchiveProjector.restoreCheckpoint(f.full,settings,from,to);
+ expect(result!.projector!.checkpoint()).toEqual(reference.checkpoint());expect(result!.segments).toEqual(reference.snapshot());expect(result!.coverage).toEqual(f.manifest.coverage);
+});
+test('newest-first cache reuse and mixed cached fragments preserve every financial field',async()=>{
+ const f=reverseDeliveryFixture(),cache=new PreparedWallPartCache(48000),reference=OrderWallsArchiveProjector.restoreCheckpoint(f.full,settings,from,to);
+ try{
+  for(let run=0;run<3;run++){
+   const io=transport(f),result=await readPreparedWallProjection(f.advertised,{...f.context,newestFirst:true,partCache:cache,fetcher:io.fetcher,signal:new AbortController().signal},()=>{});
+   expect(result!.segments).toEqual(reference.snapshot());expect(result!.projector!.checkpoint()).toEqual(reference.checkpoint());
+   if(run)expect(result!.finalization.reusedParts).toBeGreaterThan(0);
+   expect(cache.diagnostics()).toMatchObject({pinnedEntries:0,stagedEntries:0});
+  }
+ }finally{cache.dispose();}
+});
+test.each(['corruption','source-change','cancel'] as const)('newest-first retains validation and cancellation barriers: %s',async failure=>{
+ const f=reverseDeliveryFixture(),io=transport(f,{corrupt:failure==='corruption'}),abort=new AbortController(),cache=new PreparedWallPartCache(),published:any[]=[];
+ try{
+  const work=readPreparedWallProjection(f.advertised,{...f.context,newestFirst:true,partCache:cache,fetcher:io.fetcher,signal:abort.signal,
+   validateCompletion:async()=>{if(failure==='source-change')throw Error('source changed');}},update=>{published.push(...update.segments);if(failure==='cancel'&&update.parts>0)abort.abort();});
+  await expect(work).rejects.toThrow(failure==='corruption'?/hash mismatch/:failure==='source-change'?/source changed/:/abort/i);
+  if(failure==='corruption')expect(published.every(s=>s.end===null)).toBe(true);
+  expect(cache.diagnostics()).toMatchObject({pinnedEntries:0,stagedEntries:0,entries:0});
+ }finally{cache.dispose();abort.abort();}
+});
+test('wall-only newest-first opt-in uses prepared history without enabling other history tiles',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','0');vi.stubEnv('VITE_WALL_NEWEST_FIRST','1');
+ const f=fixture(true),io=transport(f),indices:number[]=[];
+ const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:io.fetcher,onPageMetrics:m=>indices.push(m.partIndex!)});
+ expect(indices).toEqual([1,0]);expect(result.segments).toEqual(OrderWallsArchiveProjector.restoreCheckpoint(f.full,settings,from,to).snapshot());
+ expect(result.status.archive).toMatchObject({requestComplete:true,rangeComplete:false});
+});
+
+test('newest-first falls back to chronological raw replay when no prepared snapshot is available',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','0');vi.stubEnv('VITE_WALL_NEWEST_FIRST','1');
+ const f=fixture(),paths:string[]=[];
+ const fetcher:typeof fetch=async input=>{
+  const url=new URL(String(input),'http://test');paths.push(url.pathname);
+  if(url.pathname.endsWith('/discover'))return new Response(null,{status:404});
+  expect(url.pathname).toBe('/market-data/v1/order-walls/archive');return Response.json(f.page);
+ };
+ const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher});
+ const reference=new OrderWallsArchiveProjector(settings,from,to);reference.applyPage(f.page);
+ expect(result.segments).toEqual(reference.snapshot());expect(result.status.archive).toMatchObject({requestComplete:true,rangeComplete:false});
+ expect(paths).toEqual(['/market-data/v2/history/walls/discover','/market-data/v1/order-walls/archive']);
+});
+
+test.each(['custom-settings','long-range'] as const)('wall-only opt-in preserves legacy support for %s',async kind=>{
+ vi.stubEnv('VITE_HISTORY_TILES','0');vi.stubEnv('VITE_WALL_NEWEST_FIRST','1');
+ const end=kind==='long-range'?from+49*3600000:to,f=fixture(false,end),selected=kind==='custom-settings'?{...settings,topLevels:4}:settings;
+ const fetcher:typeof fetch=async input=>{expect(new URL(String(input),'http://test').pathname).toBe('/market-data/v1/order-walls/archive');return Response.json(f.page);};
+ const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to:end,settings:selected},eligibleHistory:true,fetcher});
+ const reference=new OrderWallsArchiveProjector(selected,from,end);reference.applyPage(f.page);expect(result.segments).toEqual(reference.snapshot());
 });

@@ -40,5 +40,8 @@ test('private tunnel ports reject malformed, privileged, overflowing and identic
  for(const value of ['bad','0','22','65536','018880','18880; false']){
   const result=spawnSync('bash',['scripts/staging-tunnel.sh'],{env:{...process.env,IQ_STAGING_HISTORY_PORT:value},encoding:'utf8'});expect(result.status).toBe(2);expect(result.stderr).toContain('Invalid private staging tunnel port');
  }
+ for(const value of ['bad','18780','18781','18883']){
+  const result=spawnSync('bash',['scripts/staging-tunnel.sh'],{env:{...process.env,IQ_STAGING_WALL_UPSTREAM_PORT:'18892',IQ_STAGING_WALL_HISTORY_PORT:value},encoding:'utf8'});expect(result.status).toBe(2);
+ }
  const same=spawnSync('bash',['scripts/staging-tunnel.sh'],{env:{...process.env,IQ_STAGING_HISTORY_PORT:'18880',IQ_STAGING_CURRENT_PORT:'18880'},encoding:'utf8'});expect(same.status).toBe(2);expect(same.stderr).toContain('must differ');
 });

@@ -1,10 +1,12 @@
 import {test,expect} from '@playwright/test';
-import {projectionOnlyFixture} from '../helpers/prepared-wall-fixture';
+import {projectionOnlyFixture,reverseDeliveryFixture} from '../helpers/prepared-wall-fixture';
 import {installHealthyStagingWorker} from './staging-worker-fixture';
 
-test('a negotiated projection paints exact historical walls before independent source validation completes',async({page,context},testInfo)=>{
+for(const newestFirst of [false,true])test(newestFirst?'newest prepared walls paint before blocked older batches and remain canonically exact':'a negotiated projection paints exact historical walls before independent source validation completes',async({page,context},testInfo)=>{
+ test.skip(newestFirst&&process.env.IQ_WALL_NEWEST_FIRST_BROWSER!=='1','Requires the explicit newest-first staging build');
  const step=300000,now=Date.now(),end=Math.floor(now/step)*step-2*3600000,start=end-30*3600000,id='chart-projection-source';
- const f=projectionOnlyFixture(true,end+step,start-step);let release!:()=>void;
+ const source=projectionOnlyFixture(true,end+step,start-step),f=newestFirst?reverseDeliveryFixture(source):source;let release!:()=>void,releaseOlder!:()=>void;
+ const olderGate=new Promise<void>(resolve=>releaseOlder=resolve);
  const gate=new Promise<void>(resolve=>release=resolve),requests:Array<{path:string;headers:Record<string,string>}>=[];
  await installHealthyStagingWorker(context,true,{o:100,h:101,l:99,c:100});
  await context.addInitScript(({id,start,end})=>{
@@ -22,16 +24,29 @@ test('a negotiated projection paints exact historical walls before independent s
   }
   if(u.pathname.endsWith('/discover')){
    expect(Number(u.searchParams.get('from'))).toBe(f.context.from);expect(Number(u.searchParams.get('to'))).toBe(f.context.to);
-   expect(route.request().headers()['x-iq-wall-projection-only']).toBe('1');return json(f.discovery);
+   expect(route.request().headers()['x-iq-wall-projection-only']).toBe('1');return json(source.discovery);
   }
   if(u.pathname.endsWith('/horizon'))return json({version:1,kind:'wall-source-horizon-v1',market:'spot',profile:f.source.profile,head:f.source.head,availableFrom:f.context.from-3600000});
-  if(u.pathname.endsWith('/projection-batch'))return route.fulfill({contentType:'application/x-ndjson',body:f.texts.join('\n')+'\n',headers:{'x-iq-wall-start':'0','x-iq-wall-next':String(f.texts.length),'x-iq-wall-parts':String(f.texts.length),'x-iq-chunk-key':f.manifest.key,'x-iq-source-revision':f.source.token}});
+  if(u.pathname.endsWith('/projection-batch')){
+   const first=Number(u.searchParams.get('start')),texts=f.texts.slice(first,first+32);
+   if(newestFirst&&first<64)await olderGate;
+   return route.fulfill({contentType:'application/x-ndjson',body:texts.join('\n')+'\n',headers:{'x-iq-wall-start':String(first),'x-iq-wall-next':String(first+texts.length),'x-iq-wall-parts':String(texts.length),'x-iq-chunk-key':f.manifest.key,'x-iq-source-revision':f.source.token}});
+  }
   if(u.pathname.endsWith('/source')){await gate;return json(f.source);}
   if(u.pathname.endsWith('/part')||u.pathname.endsWith('/batch'))throw Error('Projection response must not fetch canonical pages');
   return json({version:1,cursor:0,watches:[],events:[]});
  });
  try{
   await page.goto('/',{waitUntil:'domcontentloaded'});
+  if(newestFirst){
+   await expect.poll(()=>page.evaluate(id=>{
+    const p=(window as any).__terminal?.panels.get(id),rows=[...(p?.engine.orderWallSegments.values()??[])].filter((s:any)=>s.end!==null);
+    return {ids:rows.map((s:any)=>s.id).sort(),painted:p?.engine.orderWallsDiagnostics().visibleHistorical??0,complete:p?.orderWallsStatus?.archive?.requestComplete};
+   },id)).toMatchObject({ids:f.full.segments.filter(s=>s.id.match(/:reverse-(32|33|34)$/)).map(s=>s.id).sort(),complete:false});
+   await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).engine.orderWallsDiagnostics().visibleHistorical,id)).toBeGreaterThan(0);
+   expect(requests.some(r=>r.path.endsWith('/source'))).toBe(false);
+   releaseOlder();
+  }
   await expect.poll(()=>requests.some(r=>r.path.endsWith('/source'))).toBe(true);
   await page.evaluate(()=>(window as any).__terminal.feed.send({type:'diagnostics'}));
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.feed.diagnostics?.staging?.config)).toMatchObject({dataMode:'staging',historyTiles:true});
@@ -50,5 +65,5 @@ test('a negotiated projection paints exact historical walls before independent s
   await page.evaluate(()=>{const label=document.createElement('div');label.textContent='EXPLICIT TRANSPORT FIXTURE - NOT LIVE OR LATENCY EVIDENCE';label.style.cssText='position:fixed;top:66px;right:145px;z-index:10000;font:11px monospace;background:#111;color:#aaa;padding:4px;pointer-events:none';document.body.append(label);});
   const screenshot=testInfo.outputPath('projection-source-fixture.png');await page.screenshot({path:screenshot});await testInfo.attach('projection-source-fixture',{path:screenshot,contentType:'image/png'});
   await testInfo.attach('projection-source-proof.json',{body:JSON.stringify({scope:'Explicit deterministic transport in a real compiled chart; no source-data, latency or foreground acceptance.',environment,requests,actual,canonicalReference:f.full.segments},null,2),contentType:'application/json'});
- }finally{release();}
+ }finally{releaseOlder();release();}
 });

@@ -31,6 +31,15 @@ const ORDER_WALL_ARCHIVE_YIELD_MAX_MS = 50;
 const ORDER_WALL_ARCHIVE_CURRENT_MAX_PAGES_PER_POLL = 64;
 const ORDER_WALL_ARCHIVE_CURRENT_MAX_BYTES_PER_PAGE = 4 * 1024 * 1024;
 const ORDER_WALL_ARCHIVE_CURRENT_MAX_BYTES_PER_POLL = 16 * 1024 * 1024;
+// A wall-only opt-in leaves candle/footprint history selection unchanged.
+function preparedWallHistoryEnabled(request:OrderWallsArchiveRequest) {
+  if(import.meta.env.VITE_HISTORY_TILES === '1')return true;
+  const settings=orderWallsSettings(request.settings);
+  return import.meta.env.VITE_WALL_NEWEST_FIRST === '1' && settings.mode==='top-levels'
+    && settings.topLevels===8 && !settings.minimumNotionalEnabled && settings.minDurationMs===0
+    && settings.aggregation==='native' && settings.searchRangePercent===10 && !request.profileId
+    && request.to-request.from<=48*3600000;
+}
 
 export interface OrderWallsArchiveCandidate {
   entryId: string;
@@ -378,7 +387,7 @@ export function orderWallsArchiveCurrentRequest(request: OrderWallsArchiveReques
 /** Fetches fixed-watermark pages and projects each selected-profile timeline into native chart segments. */
 export async function loadOrderWallsArchive(options:OrderWallsArchiveLoadOptions):Promise<OrderWallsArchiveResult>{
  const original=options.request;
- if(!options.eligibleHistory||import.meta.env.VITE_HISTORY_TILES!=='1'||options.initialProjector||options.resume&&options.resume.eligibleTo===undefined)return loadBoundedOrderWallsArchive(options);
+ if(!options.eligibleHistory||!preparedWallHistoryEnabled(original)||options.initialProjector||options.resume&&options.resume.eligibleTo===undefined)return loadBoundedOrderWallsArchive(options);
  const settings=orderWallsSettings(original.settings),availability=orderWallsArchiveAvailability(original.market,settings,original.profileId);
  if(availability.admissionRequired||!availability.market||!availability.profileId||!Number.isSafeInteger(original.from)||!Number.isSafeInteger(original.to)||original.from>=original.to)return loadBoundedOrderWallsArchive(options);
  const viewId=historyViewId(),fetcher=options.fetcher??fetch;
@@ -449,7 +458,7 @@ async function loadBoundedOrderWallsArchive(options: OrderWallsArchiveLoadOption
   let profileStatus: OrderWallsArchivePage['profileStatus'] = prior?.profileStatus;
   let sentInitial = pages > 0;
   let lastStatus: OrderWallStatus | undefined;
-  const prepared=import.meta.env.VITE_HISTORY_TILES==='1'&&(!after||prior?.preparedSourceToken)?await preparedWallReader({market:profile.market,profile:profile.id,from:queryFrom,to:request.to,
+  const prepared=preparedWallHistoryEnabled(request)&&(!after||prior?.preparedSourceToken)?await preparedWallReader({market:profile.market,profile:profile.id,from:queryFrom,to:request.to,
     watermark,head:watermarkHead},correlatedFetcher,consumerSignal,prior?.preparedSourceToken,settings,{discovery:options.preparedDiscovery,retry:options.preparationRetry,onPreparation:preparation=>{
       const reason=wallPreparationReason(preparation);
       const archive:OrderWallArchiveStatus={...archiveStatus(request,availability,'building'),requestComplete:false,rangeComplete:false,
@@ -516,7 +525,7 @@ async function loadBoundedOrderWallsArchive(options: OrderWallsArchiveLoadOption
       limit: String(pageLimit),
     });
     if (watermark !== undefined) params.set('watermark', String(watermark));
-    if (import.meta.env.VITE_HISTORY_TILES === '1') params.set('display', '1');
+    if (preparedWallHistoryEnabled(request)) params.set('display', '1');
     const url = `/market-data/v1/order-walls/archive?${params}`;
     let fetched: Awaited<ReturnType<typeof fetchArchivePageWithRetry>>;
     try { fetched = prepared ? await prepared.read(after) : await historyScheduler.read(url,'order-walls',consumerSignal,upstream=>fetchArchivePageWithRetry(correlatedFetcher,url,after,upstream)); }

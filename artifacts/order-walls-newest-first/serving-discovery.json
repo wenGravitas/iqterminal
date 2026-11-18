@@ -1,0 +1,68 @@
+[
+  {
+    "request": {
+      "market": "spot",
+      "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+      "from": 1794870000000,
+      "to": 1794978300000
+    },
+    "coverage": {
+      "status": "partial",
+      "partial": true,
+      "availableFrom": 1793521565645,
+      "confirmedTo": 1794978300000,
+      "gapCount": 13,
+      "gapsTruncated": false,
+      "reason": "Depth continuity gaps are present in the requested range"
+    },
+    "samples": [
+      {
+        "elapsedMs": 7249.441449,
+        "state": "ready",
+        "representation": "projection-v1",
+        "serverTiming": "admission;dur=0, db;dur=183.13, sqlqueue;dur=51.09, dbdecode;dur=0.28, project;dur=0.00, serialize;dur=7.05, total;dur=195.94, proxyqueue;dur=0.77, proxyheader;dur=7064.82",
+        "projectionKey": "25aa8a733bd8ee4c22781a4e8bd4ea15832423bc494070fe73f3fa98e8ca2361"
+      },
+      {
+        "elapsedMs": 1975.2120439999999,
+        "state": "ready",
+        "representation": "projection-v1",
+        "serverTiming": "admission;dur=0, db;dur=123.99, sqlqueue;dur=0.07, dbdecode;dur=0.28, project;dur=0.00, serialize;dur=7.76, total;dur=138.35, proxyqueue;dur=0.40, proxyheader;dur=1884.43",
+        "projectionKey": "25aa8a733bd8ee4c22781a4e8bd4ea15832423bc494070fe73f3fa98e8ca2361"
+      }
+    ]
+  },
+  {
+    "request": {
+      "market": "perpetual",
+      "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+      "from": 1794869100000,
+      "to": 1794978000000
+    },
+    "coverage": {
+      "status": "partial",
+      "partial": true,
+      "availableFrom": 1793506604584,
+      "confirmedTo": 1794978000000,
+      "gapCount": 3,
+      "gapsTruncated": false,
+      "reason": "Depth continuity gaps are present in the requested range"
+    },
+    "samples": [
+      {
+        "elapsedMs": 2254.2935309999993,
+        "state": "ready",
+        "representation": "projection-v1",
+        "serverTiming": "admission;dur=0, db;dur=218.52, sqlqueue;dur=68.96, dbdecode;dur=0.44, project;dur=0.00, serialize;dur=14.23, total;dur=241.44, proxyqueue;dur=0.53, proxyheader;dur=1937.44",
+        "projectionKey": "e20f40cbd7aacd0174179ab42d0573a9c83265402e450b1d6d992f8e7012f2f4"
+      },
+      {
+        "elapsedMs": 870.9942709999996,
+        "state": "ready",
+        "representation": "projection-v1",
+        "serverTiming": "admission;dur=0, db;dur=361.14, sqlqueue;dur=235.84, dbdecode;dur=0.29, project;dur=0.00, serialize;dur=14.39, total;dur=382.33, proxyqueue;dur=0.62, proxyheader;dur=745.42",
+        "projectionKey": "e20f40cbd7aacd0174179ab42d0573a9c83265402e450b1d6d992f8e7012f2f4"
+      }
+    ]
+  }
+]

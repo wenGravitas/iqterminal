@@ -16,3 +16,22 @@ test.each(['https://127.0.0.1:18881','http://example.com','http://u:p@localhost:
  vi.stubEnv('VITE_CURRENT_API_URL',target);
  await expect(loadConfigFromFile({command:'serve',mode:'staging'},resolve('vite.config.ts'))).rejects.toThrow('Current development target');
 });
+
+test('prepared wall data/control use dedicated transports while other feeds retain their targets',async()=>{
+ vi.stubEnv('VITE_WALL_HISTORY_API_URL','http://127.0.0.1:18882');vi.stubEnv('VITE_WALL_CONTROL_API_URL','http://127.0.0.1:18883');
+ const loaded=await loadConfigFromFile({command:'serve',mode:'staging'},resolve('vite.config.ts')),p=loaded!.config.server!.proxy!;
+ expect((p['/market-data/v2/history/walls'] as ProxyOptions).target).toBe('http://127.0.0.1:18882');
+ for(const path of ['reader','preparation'])expect((p['/market-data/v2/history/walls/'+path] as ProxyOptions).target).toBe('http://127.0.0.1:18883');
+ expect((p['/market-data/v1/stream'] as ProxyOptions).target).toBe('http://127.0.0.1:18781');
+ expect((p['/market-data/v1/native-candles'] as ProxyOptions).target).toBe('http://127.0.0.1:18780');
+ expect((p['/market-data/v1/order-walls/archive/current'] as ProxyOptions).target).toBe('http://127.0.0.1:18781');
+ expect((p['/market-data/v2/history/walls/reader'] as ProxyOptions).agent).not.toBe((p['/market-data/v2/history/walls'] as ProxyOptions).agent);
+});
+test.each(['https://127.0.0.1:18882','http://example.com','http://u:p@localhost:18882','http://localhost:18882/path','http://localhost:18882/?x=1','http://localhost:18882/#x'])('rejects unsafe prepared wall target %s',async target=>{
+ vi.stubEnv('VITE_WALL_HISTORY_API_URL',target);vi.stubEnv('VITE_WALL_CONTROL_API_URL','http://127.0.0.1:18883');
+ await expect(loadConfigFromFile({command:'serve',mode:'staging'},resolve('vite.config.ts'))).rejects.toThrow('Prepared wall development targets');
+});
+test('rejects half-configured prepared wall routing',async()=>{
+ vi.stubEnv('VITE_WALL_HISTORY_API_URL','http://127.0.0.1:18882');
+ await expect(loadConfigFromFile({command:'serve',mode:'staging'},resolve('vite.config.ts'))).rejects.toThrow('configured together');
+});

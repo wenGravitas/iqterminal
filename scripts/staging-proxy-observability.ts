@@ -35,7 +35,9 @@ export function markProxyDispatch(request:IncomingMessage){trace(request,'admitt
 export const observeStagingProxy:NonNullable<ProxyOptions['configure']>=(proxy)=>{
  proxy.on('start',(request:IncomingMessage)=>{const prior=states.get(request);states.set(request,{...prior,start:admissionStarts.get(request)??prior?.start??performance.now()});admissionStarts.delete(request);trace(request,'proxy-start');});
  proxy.on('proxyReq',(upstream:ClientRequest,request:IncomingMessage)=>{
-  const state=states.get(request);if(!state)return;state.socketAt=performance.now();if(state.id)upstream.setHeader('X-IQ-Request-Id',state.id);
+  // Admission already put the ID on the incoming headers copied by the proxy.
+  // A queued pooled request can flush before proxyReq is emitted.
+  const state=states.get(request);if(!state)return;state.socketAt=performance.now();if(state.id&&!upstream.headersSent)upstream.setHeader('X-IQ-Request-Id',state.id);
   trace(request,'upstream-request',{reusedSocket:upstream.reusedSocket});
   upstream.once('socket',socket=>{state.assignedAt=performance.now();trace(request,'socket-assigned',{connecting:socket.connecting});socket.once('connect',()=>trace(request,'socket-connected'));});
   // A pooled socket is usually assigned before http-proxy emits proxyReq.

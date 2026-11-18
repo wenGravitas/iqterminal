@@ -5,13 +5,25 @@ set -eu
 history_port=${IQ_STAGING_HISTORY_PORT:-18780}
 current_port=${IQ_STAGING_CURRENT_PORT:-18781}
 upstream_port=${IQ_STAGING_UPSTREAM_PORT:-18780}
-for port in "$history_port" "$current_port" "$upstream_port"; do
+wall_upstream_port=${IQ_STAGING_WALL_UPSTREAM_PORT:-}
+wall_history_port=${IQ_STAGING_WALL_HISTORY_PORT:-18882}
+wall_control_port=${IQ_STAGING_WALL_CONTROL_PORT:-18883}
+ports=("$history_port" "$current_port" "$upstream_port")
+if [ -n "$wall_upstream_port" ]; then ports+=("$wall_upstream_port" "$wall_history_port" "$wall_control_port"); fi
+for port in "${ports[@]}"; do
   if ! [[ "$port" =~ ^[1-9][0-9]{0,4}$ ]] || [ "$port" -gt 65535 ] || [ "$port" -lt 1024 ]; then
     echo 'Invalid private staging tunnel port (1024..65535 required).' >&2; exit 2
   fi
 done
 if [ "$history_port" = "$current_port" ]; then echo 'Staging history/current ports must differ.' >&2; exit 2; fi
-echo "IQTerminal tunnels: history $history_port, live stream $current_port -> staging $upstream_port; Ctrl-C closes both."
+if [ -n "$wall_upstream_port" ]; then
+  bindings=("$history_port" "$current_port" "$wall_history_port" "$wall_control_port")
+  for ((i=0;i<${#bindings[@]};i++)); do for ((j=i+1;j<${#bindings[@]};j++)); do
+    if [ "${bindings[i]}" = "${bindings[j]}" ]; then echo 'Staging local ports must differ.' >&2; exit 2; fi
+  done; done
+fi
+echo "IQTerminal tunnels: history $history_port, live stream $current_port -> staging $upstream_port; Ctrl-C closes all lanes."
+if [ -n "$wall_upstream_port" ]; then echo "Prepared walls: history $wall_history_port, control $wall_control_port -> staging $wall_upstream_port."; fi
 pids=()
 cleanup() {
   trap - EXIT INT TERM
@@ -20,7 +32,7 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 supervise() {
-  local port=$1 lane=$2 child='' delay=1 started status
+  local port=$1 lane=$2 target=${3:-$upstream_port} child='' delay=1 started status
   local -a traffic_class=(-o IPQoS=none)
   stop_lane() {
     trap - EXIT INT TERM
@@ -33,7 +45,7 @@ supervise() {
     ssh -N -T -o BatchMode=yes -o ExitOnForwardFailure=yes -o ConnectTimeout=15 \
       -o ControlMaster=no -o ControlPath=none -o Compression=no \
       -o ServerAliveInterval=15 -o ServerAliveCountMax=3 "${traffic_class[@]}" \
-      -L "127.0.0.1:${port}:127.0.0.1:${upstream_port}" staging &
+      -L "127.0.0.1:${port}:127.0.0.1:${target}" staging &
     child=$!; status=0
     wait "$child" || status=$?
     child=''
@@ -47,4 +59,8 @@ supervise() {
 }
 supervise "$history_port" history & pids+=("$!")
 supervise "$current_port" live & pids+=("$!")
+if [ -n "$wall_upstream_port" ]; then
+  supervise "$wall_history_port" wall-history "$wall_upstream_port" & pids+=("$!")
+  supervise "$wall_control_port" wall-control "$wall_upstream_port" & pids+=("$!")
+fi
 wait "${pids[@]}"

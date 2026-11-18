@@ -12,6 +12,9 @@ export default defineConfig(({ mode }) => {
   {const target=new URL(currentTarget);if(target.protocol!=='http:'||!['127.0.0.1','localhost'].includes(target.hostname)||target.username||target.password||target.search||target.hash||target.pathname!=='/')throw Error('Current development target must be an unauthenticated loopback HTTP origin');}
   const historyTarget=process.env.VITE_HISTORY_API_URL;
   if(historyTarget){const target=new URL(historyTarget);if(target.protocol!=='http:'||!['127.0.0.1','localhost'].includes(target.hostname)||target.username||target.password||target.search||target.hash||target.pathname!=='/')throw Error('History development target must be an unauthenticated loopback HTTP origin');}
+  const wallHistoryTarget=process.env.VITE_WALL_HISTORY_API_URL,wallControlTarget=process.env.VITE_WALL_CONTROL_API_URL;
+  if(Boolean(wallHistoryTarget)!==Boolean(wallControlTarget))throw Error('Prepared wall history and control targets must be configured together');
+  for(const value of [wallHistoryTarget,wallControlTarget])if(value){const target=new URL(value);if(target.protocol!=='http:'||!['127.0.0.1','localhost'].includes(target.hostname)||target.username||target.password||target.search||target.hash||target.pathname!=='/')throw Error('Prepared wall development targets must be unauthenticated loopback HTTP origins');}
   const nativeHistoryTarget=process.env.VITE_NATIVE_HISTORY_API_URL;
   if(nativeHistoryTarget){const target=new URL(nativeHistoryTarget);if(target.protocol!=='http:'||!['127.0.0.1','localhost'].includes(target.hostname))throw Error('Native history development target must be loopback HTTP');}
   const currentBookAgent=staging?new Agent({keepAlive:true,maxSockets:4,maxTotalSockets:4,maxFreeSockets:4,timeout:15000}):undefined;
@@ -25,8 +28,9 @@ export default defineConfig(({ mode }) => {
     '/market-data/v1/level-watches': { target: watchTarget??currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v1/liquidations/stream': { target: liquidationTarget??currentTarget, agent:false, ws:true, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v1/liquidations': { target: liquidationTarget??historyTarget??'http://127.0.0.1:18780', agent:historyAgent, configure:observeStagingProxy, proxyTimeout:30000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v2/history/walls/reader': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v2/history/walls/preparation': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v2/history/walls/reader': { target: wallControlTarget??currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v2/history/walls/preparation': { target: wallControlTarget??currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v2/history/walls': { target: wallHistoryTarget??historyTarget??'http://127.0.0.1:18780', agent:historyAgent, configure:observeStagingProxy, proxyTimeout:60000, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v2/history/footprint-current': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v2/history/current': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v2/history/health': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },

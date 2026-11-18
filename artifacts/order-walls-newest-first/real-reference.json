@@ -1,0 +1,116 @@
+[
+  {
+    "market": "binance-spot",
+    "origin": "http://127.0.0.1:5173/market-data",
+    "from": 1794978060000,
+    "to": 1794978360000,
+    "watermark": 27410082,
+    "segments": 17,
+    "parts": [
+      0
+    ],
+    "warmParts": [
+      0
+    ],
+    "firstPreparedMs": 5898.094243,
+    "reopenedMs": 2296.2141420000007,
+    "paths": [
+      "/market-data/v1/order-walls/archive",
+      "/market-data/v2/history/walls/discover",
+      "/market-data/v2/history/walls/discover",
+      "/market-data/v2/history/walls/discover",
+      "/market-data/v2/history/walls/preparation",
+      "/market-data/v2/history/walls/reader",
+      "/market-data/v2/history/walls/projection-batch",
+      "/market-data/v2/history/walls/source",
+      "/market-data/v2/history/walls/preparation",
+      "/market-data/v2/history/walls/discover",
+      "/market-data/v2/history/walls/reader",
+      "/market-data/v2/history/walls/projection-batch",
+      "/market-data/v2/history/walls/source",
+      "/market-data/v2/history/walls/preparation"
+    ],
+    "coverage": {
+      "profileId": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+      "state": "complete",
+      "from": 1794978060000,
+      "to": 1794978360000,
+      "rangeComplete": true,
+      "market": "spot",
+      "feed": "binance:spot:BTCUSDT:spot-diff-depth",
+      "aggregation": "native",
+      "availableFrom": 1793521565645,
+      "confirmedTo": 1794978360000,
+      "gaps": [],
+      "requestedBandPercent": 10,
+      "profileBandPercent": 10,
+      "requestedTopN": 8,
+      "exact": true,
+      "requestComplete": true,
+      "loadedThrough": 1794978360000,
+      "profileVersion": 1,
+      "algorithmVersion": 1,
+      "schemaVersion": 1,
+      "midpoint": "64426.425"
+    },
+    "sha256": "119057e6133103cb7a04973896f1c4ff93a805b21ee0decd25a05fce4d14b280",
+    "result": "exact-match"
+  },
+  {
+    "market": "binance-perp",
+    "origin": "http://127.0.0.1:5173/market-data",
+    "from": 1794978060000,
+    "to": 1794978360000,
+    "watermark": 31235696,
+    "segments": 21,
+    "parts": [
+      0
+    ],
+    "warmParts": [
+      0
+    ],
+    "firstPreparedMs": 5042.608855,
+    "reopenedMs": 1917.7543579999983,
+    "paths": [
+      "/market-data/v1/order-walls/archive",
+      "/market-data/v2/history/walls/discover",
+      "/market-data/v2/history/walls/discover",
+      "/market-data/v2/history/walls/discover",
+      "/market-data/v2/history/walls/preparation",
+      "/market-data/v2/history/walls/reader",
+      "/market-data/v2/history/walls/projection-batch",
+      "/market-data/v2/history/walls/source",
+      "/market-data/v2/history/walls/preparation",
+      "/market-data/v2/history/walls/discover",
+      "/market-data/v2/history/walls/reader",
+      "/market-data/v2/history/walls/projection-batch",
+      "/market-data/v2/history/walls/source",
+      "/market-data/v2/history/walls/preparation"
+    ],
+    "coverage": {
+      "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+      "state": "complete",
+      "from": 1794978060000,
+      "to": 1794978360000,
+      "rangeComplete": true,
+      "market": "perpetual",
+      "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+      "aggregation": "native",
+      "availableFrom": 1793506604584,
+      "confirmedTo": 1794978360000,
+      "gaps": [],
+      "requestedBandPercent": 10,
+      "profileBandPercent": 10,
+      "requestedTopN": 8,
+      "exact": true,
+      "requestComplete": true,
+      "loadedThrough": 1794978360000,
+      "profileVersion": 1,
+      "algorithmVersion": 1,
+      "schemaVersion": 1,
+      "midpoint": "64399.85"
+    },
+    "sha256": "3a1dac26d7e4680fec1b679feb224bb961456e7f42ad5c2287d2dd7b76818ea4",
+    "result": "exact-match"
+  }
+]

@@ -175,7 +175,7 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
   if(!presentation||presentation.size!==m.closed.length+m.active.segments.length)return null;
   return {presentation,presentationRevision:revision,coverage:m.coverage,profile:m.profile,head:target!,confirmedAt:m.active.confirmedTo,midpoint:m.active.midpoint,parts:0,bytes:0};
  },readProjection:async(settings,onProgress,validateProfile,partCache)=>{
-  const result=await readPreparedWallProjection(found.projection,{sourceKey:manifest.key,sourceToken:source.token,watermark:manifest.watermark,epoch:manifest.head.epoch,
+  const result=await readPreparedWallProjection(found.projection,{newestFirst:import.meta.env.VITE_WALL_NEWEST_FIRST==='1',sourceKey:manifest.key,sourceToken:source.token,watermark:manifest.watermark,epoch:manifest.head.epoch,
    from:request.from,to:request.to,profile:request.profile,market:request.market,settings,fetcher,partCache,signal:consumer,outputHead:{cursor:target!.cursor,epoch:target!.epoch},validateProfile,validateCompletion:validateRevision},value=>{assertActive();onProgress(value);}).catch(leaseFailure);
   assertActive();return result?{...result,head:target!}:null;
  },read:async after=>{

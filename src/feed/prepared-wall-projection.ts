@@ -6,7 +6,7 @@ import {acquireWallBatch} from './prepared-wall-batch';
 interface Part {hash:string;bytes:number;records:number}
 interface RecordRow {order:number;segment:OrderWallSegment;valueRunOrder:number[];offset:number;totalRuns:number}
 export interface PreparedWallProjectionManifest {version:2;key:string;sourceKey:string;sourceToken:string;core:string;complete:true;settings:OrderWallsProjectionSettings;active:WallProjectionCheckpoint;activeOrder:number[];closed:Array<Array<[number,number]>>;parts:Part[];coverage:OrderWallsArchiveCoverage;profile:OrderWallsArchiveProfile}
-interface Context {sourceKey:string;sourceToken:string;watermark:number;epoch:number;from:number;to:number;profile:string;market:'spot'|'perpetual';settings:OrderWallsProjectionSettings;fetcher:typeof fetch;signal:AbortSignal;outputHead?:{cursor:number;epoch:number};validateProfile?:(profile:OrderWallsArchiveProfile)=>void;validateCompletion?:()=>Promise<void>;restoreProjector?:boolean;partCache?:PreparedWallPartCache}
+interface Context {sourceKey:string;sourceToken:string;watermark:number;epoch:number;from:number;to:number;profile:string;market:'spot'|'perpetual';settings:OrderWallsProjectionSettings;fetcher:typeof fetch;signal:AbortSignal;outputHead?:{cursor:number;epoch:number};validateProfile?:(profile:OrderWallsArchiveProfile)=>void;validateCompletion?:()=>Promise<void>;restoreProjector?:boolean;partCache?:PreparedWallPartCache;newestFirst?:boolean}
 export interface ProjectionProgress {segments:OrderWallSegment[];presentation:ReadonlyMap<string,OrderWallSegment>;presentationThrough:number;parts:number;bytes:number;decodeMs:number;mergeMs:number;metrics?:{attempts:number;responseHeadersMs:number;bodyReadMs:number;jsonParseMs:number;validationMs:number;mergeMs:number;yieldMs:number;encodedBytes:number;cacheHit?:boolean;partHash?:string;partIndex?:number;reusedCanonicalBytes?:number;decodedTransportBytes?:number;requestId?:string}}
 const integer=(v:unknown)=>typeof v==='number'&&Number.isSafeInteger(v)&&v>=0;
 const hex=(v:unknown)=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v);
@@ -69,18 +69,29 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
  const cached=context.partCache?.begin(JSON.stringify([manifest.core,manifest.profile,manifest.settings,context.from]),manifest.parts);
  let reusedParts=0,reusedCanonicalBytes=0,fetchedParts=0;
  try{
- function acquire(start:number){
-  while(start<manifest.parts.length&&cached?.has(start))start++;
-
-  if(start>=manifest.parts.length)return undefined;
+ function selectBatch(start:number){
   const selected:Array<Part&{index:number}>=[];let size=0;
   for(let i=start;i<Math.min(start+32,manifest.parts.length);i++){const part=manifest.parts[i]!;if(size+part.bytes+1>8*1024*1024)break;selected.push({...part,index:i});size+=part.bytes+1;}
   if(!selected.length)throw Error('Prepared wall projection batch capacity');
-  const url='/market-data/v2/history/walls/projection-batch?'+new URLSearchParams({market:context.market,key:manifest.key,start:String(start),version:pointTransport===2?'3':pointTransport===1?'2':'1'});
-  return {selected,next:start+selected.length,handle:acquireWallBatch({url,key:manifest.key,revision:manifest.sourceToken,parts:selected,fetcher:context.fetcher,signal:context.signal,maxParts:32,pointTransport:pointTransport===2?2:pointTransport===1})};
+  return selected;
  }
- let current=acquire(0),next:ReturnType<typeof acquire>;
- try{for(let index=0;index<manifest.parts.length;index++){
+ // Keep the server's forward, byte-bounded framing intact. Only immutable
+ // batch delivery/import order changes; raw financial updates never reverse.
+ const batchStarts:number[]=[];
+ for(let start=0;start<manifest.parts.length;){
+  if(cached?.has(start)){start++;continue;}
+  batchStarts.push(start);start+=selectBatch(start).length;
+ }
+ if(context.newestFirst)batchStarts.reverse();
+ function acquire(){
+  const start=batchStarts.shift();if(start===undefined)return undefined;
+  const selected=selectBatch(start);
+  const url='/market-data/v2/history/walls/projection-batch?'+new URLSearchParams({market:context.market,key:manifest.key,start:String(start),version:pointTransport===2?'3':pointTransport===1?'2':'1'});
+  return {selected,handle:acquireWallBatch({url,key:manifest.key,revision:manifest.sourceToken,parts:selected,fetcher:context.fetcher,signal:context.signal,maxParts:32,pointTransport:pointTransport===2?2:pointTransport===1})};
+ }
+ let current=acquire(),next:ReturnType<typeof acquire>;
+ const indices=Array.from({length:manifest.parts.length},(_,index)=>index);if(context.newestFirst)indices.reverse();
+ try{for(const index of indices){
    context.signal.throwIfAborted();const part={...manifest.parts[index]!,index},scheduled=Boolean(current&&index>=current.selected[0]!.index&&index<=current.selected.at(-1)!.index),hit=scheduled?undefined:cached?.get<RecordRow[]>(index),cacheHit=hit!==undefined;
    const fetched=cacheHit?{body:hit,bytes:0,response:new Response(null),responseHeadersMs:0,bodyReadMs:0,jsonParseMs:0,validationMs:0,validationYieldMs:0,attempts:0}:await current!.handle.read(index),rows=fetched.body as RecordRow[];
    if(cacheHit){reusedParts++;reusedCanonicalBytes+=part.bytes;}else fetchedParts++;
@@ -89,7 +100,7 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
    // Do not fill both shared history slots before the first authenticated
    // member arrives. Visible native prices can enter the free slot while the
    // first wall response waits for headers/body; later batches still pipeline.
-   if(!cacheHit&&part.index===current!.selected[0]!.index)next=acquire(current!.next);
+   if(!cacheHit&&part.index===(context.newestFirst?current!.selected.at(-1)!:current!.selected[0]!).index)next=acquire();
    const began=performance.now(),ready:Array<Omit<RecordRow,'offset'|'totalRuns'>>=[];let yielded=performance.now(),yieldMs=0;
    for(const [row,value] of rows.entries()){
     const coordinate=coordinates.get(part.index+':'+row);if(!coordinate)continue;
@@ -115,7 +126,7 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
    }
    if(!cacheHit&&cached){const before=performance.now();await freezeMember(rows,context.signal);yieldMs+=performance.now()-before;cached.stage(index,rows,rows.reduce((n,row)=>n+(Array.isArray(row?.segment?.valueRuns)?row.segment.valueRuns.length:0),0));}
    const partMergeMs=performance.now()-began-yieldMs;mergeMs+=partMergeMs;context.signal.throwIfAborted();onProgress({segments:ready.map(row=>row.segment),presentation,presentationThrough:manifest.active.confirmedTo,parts,bytes,decodeMs,mergeMs,metrics:{cacheHit,partHash:part.hash,partIndex:index,reusedCanonicalBytes:cacheHit?part.bytes:0,decodedTransportBytes:Number(fetched.response.headers.get('x-iq-decoded-bytes')??0)*(fetched.response.headers.get('content-length')==='0'?0:1),attempts:fetched.attempts,responseHeadersMs:fetched.responseHeadersMs,bodyReadMs:fetched.bodyReadMs,jsonParseMs:fetched.jsonParseMs,validationMs:fetched.validationMs??0,mergeMs:partMergeMs,yieldMs:yieldMs+(fetched.validationYieldMs??0),encodedBytes:Number(fetched.response.headers.get('content-length')??0),requestId:fetched.response.headers.get('x-iq-request-id')??undefined}});await yieldTask(context.signal);
-   if(!cacheHit&&index===current!.selected.at(-1)!.index){current!.handle.release();current=next;next=undefined;}
+   if(!cacheHit&&index===(context.newestFirst?current!.selected[0]!:current!.selected.at(-1)!).index){current!.handle.release();current=next;next=undefined;}
  }}finally{current?.handle.release();next?.handle.release();}
  if(retained.length!==manifest.closed.length+manifest.active.segments.length||new Set(retained.map(record=>record.order)).size!==retained.length)throw Error('Prepared wall projection incomplete identities');
  // All immutable records have passed content and per-part financial checks. Start the

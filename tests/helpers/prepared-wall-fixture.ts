@@ -45,3 +45,21 @@ export function projectionOnlyFixture(split=true,end=to,start=from,sourceProfile
   sourceSnapshot:{version:1,kind:'wall-projection-source-v1',key,request:{market:proof.market,profile:proof.profile,from:proof.from,to:proof.to},sourceProof:proof,watermark:proof.watermark,head:proof.head},projection:f.advertised};
  return {...f,discovery};
 }
+
+// Independent immutable fragments model a long view with several transport
+// batches. The reference folds/restores canonical order, never reverse order.
+export function reverseDeliveryFixture(f=fixture()){
+ const closedIndex=f.full.segments.findIndex(s=>s.end!==null),base={segment:f.full.segments[closedIndex]!,valueRunOrder:f.full.valueRunOrder[closedIndex]!},closed:any[]=[],texts:string[]=[],coordinates:number[][][]=[];
+ for(let i=0;i<35;i++){
+  const segment={...base.segment,id:base.segment.id+':reverse-'+i,start:base.segment.start+i*Math.floor((f.context.to-f.context.from-60000)/35),end:base.segment.end!+i*Math.floor((f.context.to-f.context.from-60000)/35),
+   valueRuns:base.segment.valueRuns.map((point:any)=>({...point,at:point.at+i*Math.floor((f.context.to-f.context.from-60000)/35)}))};
+  const valueRunOrder=base.valueRunOrder.map((n:number)=>n+i*10);closed.push({segment,valueRunOrder});
+  coordinates.push(segment.valueRuns.map((point:any,j:number)=>{
+   const index=texts.length;texts.push(JSON.stringify([{order:i,offset:j,totalRuns:segment.valueRuns.length,segment:{...segment,valueRuns:[point]},valueRunOrder:[valueRunOrder[j]]}]));return [index,0];
+  }));
+ }
+ f.texts=texts;f.manifest.parts=texts.map(text=>({hash:hash(text),bytes:Buffer.byteLength(text),records:1}));f.manifest.closed=coordinates;
+ f.manifest.activeOrder=[35];f.manifest.active.valueRunOrder=f.manifest.active.valueRunOrder.map((values:number[])=>values.map(n=>n+1000));f.manifest.active.nextValueRunSequence=2000;
+ f.full={...f.manifest.active,segments:[...closed.map(x=>x.segment),...f.manifest.active.segments],valueRunOrder:[...closed.map(x=>x.valueRunOrder),...f.manifest.active.valueRunOrder]};
+ return f;
+}

@@ -18,3 +18,11 @@ test('proxy preserves a safe client ID through dispatch and replaces unsafe head
  expect(headers['X-IQ-Request-Id']).toBe('client-startup:1');
  const unsafe=request(['multiple','ids']);markProxyAdmission(unsafe,performance.now(),new Response() as unknown as ServerResponse);expect(unsafe.headers['x-iq-request-id']).toMatch(/^[a-f0-9-]{36}$/);
 });
+test('a queued request whose headers already flushed retains admission identity without crashing',()=>{
+ const req=request('queued:1');markProxyAdmission(req,performance.now(),new Response() as unknown as ServerResponse);
+ const proxy=new EventEmitter();(observeStagingProxy as any)(proxy);proxy.emit('start',req);
+ const upstream=Object.assign(new EventEmitter(),{headersSent:true,setHeader:()=>{throw Error('headers already sent');},socket:{connecting:false},reusedSocket:true});
+ expect(()=>proxy.emit('proxyReq',upstream,req)).not.toThrow();expect(req.headers['x-iq-request-id']).toBe('queued:1');
+ const response=Object.assign(new EventEmitter(),{headers:{},statusCode:200});proxy.emit('proxyRes',response,req);
+ expect(response.headers).toHaveProperty('x-iq-proxy-header-ms');
+});
