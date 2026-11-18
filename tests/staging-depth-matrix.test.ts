@@ -201,3 +201,14 @@ it('reports stale HTTP recovery without turning missing book data into live rows
     expect(latest.columns[0].message).toContain('No fresh synchronized depth snapshot');
   } finally { service.dispose(); }
 });
+
+it.each(['cursor','epoch','reference','at','referenceIndex'])('rejects a cumulative %s mismatch before publishing it',async(field)=>{
+ const stream=headHarness(),api=deferredRequest(),events:any[]=[];
+ const service=new StagingDepthMatrixService(stream.heads as unknown as StagingHeatmapService,e=>events.push(e),api.request,()=>10_000);
+ const referenceAnchor={price:'10000',source:'binance-perpetual',cursor:2,epoch:4,at:9999};
+ service.command({type:'depth-matrix-subscribe',id:'one',settings:{...settings(),referenceSourceId:'binance-perpetual',referenceAnchor}});
+ [...stream.observers.values()][0]!.callback({type:'head',cursor:2,at:9999,epoch:4});await waitFor(()=>api.calls.length===1);
+ const body:any=snapshotFor(api.calls[0]!.url,9999);body.cumulative={version:1,reference:'10000',referenceIndex:'100',cursor:2,epoch:4,at:9999,rows:body.rows.map((r:any)=>({index:r.index,bid:Number(r.index)<=100?{quantity:1,notional:10000,coverage:'exact'}:null,ask:Number(r.index)>=100?{quantity:2,notional:20000,coverage:'exact'}:null}))};
+ body.cumulative[field]=typeof body.cumulative[field]==='number'?0:'999';api.calls[0]!.resolve(response(body));
+ await waitFor(()=>service.diagnostics().failures===1);expect(events.some(e=>e.columns.some((c:any)=>c.cumulative))).toBe(false);service.dispose();
+});

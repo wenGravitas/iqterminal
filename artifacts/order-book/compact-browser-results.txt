@@ -1,0 +1,82 @@
+Complete fixture run before hover-test correction:
+[WebServer] (node:130960) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:130993) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 12 tests using 1 worker
+
+(node:131029) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/depth-matrix.spec.ts:4:1 › Depth Matrix keeps its current rows while a replacement viewport batch is delayed (14.0s)
+  ✓   2 tests/browser/depth-matrix.spec.ts:73:1 › Depth Matrix Center and manual ranges survive tab resubscription without paging away (10.1s)
+[WebServer] 9:07:20 AM [vite] (client) [Unhandled error] Error: ResizeObserver loop completed with undelivered notifications.
+[WebServer]  > ../../../../@vite/client:363:50
+[WebServer]
+  ✓   3 tests/browser/depth-matrix.spec.ts:121:1 › Depth Matrix restores ordered sources and settings and scrolls a narrow full-width grid (14.2s)
+  ✘   4 tests/browser/depth-matrix.spec.ts:243:1 › Depth Matrix marks unobserved far-side rows as unknown while keeping known empty and observed depth distinct (13.2s)
+(node:132012) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   5 tests/browser/depth-matrix.spec.ts:297:1 › Depth Matrix keeps partial measured labels legible without coverage markers in both themes (12.9s)
+  ✓   6 tests/browser/depth-matrix.spec.ts:384:1 › Depth Matrix tracks the rounded reference mid beside readable mixed venue rows (11.7s)
+[WebServer] 9:08:18 AM [vite] (client) [Unhandled error] Error: ResizeObserver loop completed with undelivered notifications.
+[WebServer]  > ../../../../@vite/client:363:50
+[WebServer]
+  ✓   7 tests/browser/depth-matrix.spec.ts:450:1 › Depth Matrix keeps visible rows painted through themes, DPR 2, resizing, scrolling, and recentering (10.3s)
+  ✓   8 tests/browser/depth-matrix.spec.ts:523:1 › Depth Matrix shows an explanation when no synchronized rows are available (8.0s)
+[WebServer] 9:08:37 AM [vite] (client) [Unhandled error] Error: ResizeObserver loop completed with undelivered notifications.
+[WebServer]  > ../../../../@vite/client:363:50
+[WebServer]
+  ✓   9 tests/browser/order-book.spec.ts:5:1 › unified menu, presentation-only controls, modes, preferences, hover and reload (17.3s)
+  ✓  10 tests/browser/order-book.spec.ts:27:1 › independent instances retain modes and hidden widgets stop painting (9.0s)
+  ✓  11 tests/browser/order-book.spec.ts:34:1 › legacy active and inactive workspaces restore once in Single with identity and preferences (13.5s)
+  ✓  12 tests/browser/order-book.spec.ts:50:1 › removing every Compact source clears retained liquidity and rejects a late old-source batch (6.6s)
+
+
+  1) tests/browser/depth-matrix.spec.ts:243:1 › Depth Matrix marks unobserved far-side rows as unknown while keeping known empty and observed depth distinct
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  locator('.depth-matrix-panel').locator('.depth-matrix-tooltip')
+    Expected: visible
+    Received: hidden
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeVisible" locator('.depth-matrix-panel').locator('.depth-matrix-tooltip') with timeout 5000ms
+      - waiting for locator('.depth-matrix-panel').locator('.depth-matrix-tooltip')
+        11 × locator resolved to <div hidden="" role="tooltip" class="depth-matrix-tooltip market-hover-card">…</div>
+           - unexpected value "hidden"
+
+
+      289 |     canvas.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, clientX: bounds.left + bounds.width / 2, clientY: row.top + row.height / 2 }));
+      290 |   }, { rowIndex, rowHeight });
+    > 291 |   await expect(tooltip).toBeVisible();
+          |                         ^
+      292 |   await expect(tooltip).toContainText('known empty');
+      293 |   await expect(tooltip).toContainText('Not observed');
+      294 |   await page.screenshot({ path: '/tmp/iqterminal-depth-matrix-unknown-far.png' });
+        at /home/daz/workarea/iqterminal-order-book-r1/tests/browser/depth-matrix.spec.ts:291:25
+
+    Error Context: test-results/depth-matrix-Depth-Matrix--91f0b-and-observed-depth-distinct/error-context.md
+
+  1 failed
+    tests/browser/depth-matrix.spec.ts:243:1 › Depth Matrix marks unobserved far-side rows as unknown while keeping known empty and observed depth distinct
+  11 passed (2.6m)
+
+Targeted corrected hover scenario, repeated twice:
+[WebServer] (node:133791) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:133802) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:133831) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/depth-matrix.spec.ts:243:1 › Depth Matrix marks unobserved far-side rows as unknown while keeping known empty and observed depth distinct (10.8s)
+(node:134404) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 tests/browser/depth-matrix.spec.ts:243:1 › Depth Matrix marks unobserved far-side rows as unknown while keeping known empty and observed depth distinct (8.8s)
+
+  2 passed (29.4s)

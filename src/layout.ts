@@ -1,7 +1,8 @@
 import type { SerializedDockview } from 'dockview-core';
 import { validSeries } from './feed/protocol';
-import { depthMatrixSettings } from './feed/depth-matrix';
+import { orderBookSettings,migrateOrderBookPanel } from './order-book/settings';
 import { validMarketComparisonConfig } from './market-comparison/model';
+export const LAYOUT_VERSION=10;
 export const STORAGE_KEY='basis.layout.v1';export const PANEL_BUDGET=8;
 function emptyPlainObject(value:unknown):boolean{
   if(value===null||typeof value!=='object'||Array.isArray(value))return false;
@@ -10,7 +11,7 @@ function emptyPlainObject(value:unknown):boolean{
 }
 export function restoreValue(raw:string|null):SerializedDockview|null {
   if(!raw||raw.length>100000)return null;
-  try {const saved=JSON.parse(raw);if(![1,2,3,4,5,6,7,8,9].includes(saved.version)||!saved.layout||typeof saved.layout!=='object')return null;const l=saved.layout as SerializedDockview;
+  try {const saved=JSON.parse(raw);if(![1,2,3,4,5,6,7,8,9,10].includes(saved.version)||!saved.layout||typeof saved.layout!=='object')return null;const l=saved.layout as SerializedDockview;
     if(!l.panels||typeof l.panels!=='object'||Array.isArray(l.panels)||!l.grid||Object.keys(l.panels).length>PANEL_BUDGET+31)return null;
     if(l.floatingGroups?.length||l.popoutGroups?.length)return null;
     let charts=0, comparisons=0, editors=0, tickers=0, watches=0, depthMatrices=0, liquidations=0, trading=0, tradingWidgets=0, journals=0;
@@ -29,8 +30,8 @@ export function restoreValue(raw:string|null):SerializedDockview|null {
       if(saved.version>=5&&/^liquidation-[a-z0-9-]+$/i.test(id)&&p.contentComponent==='liquidation-ticker'&&p.params&&typeof p.params==='object'){liquidations++;continue;}
       if(saved.version>=4&&/^ticker-[a-z0-9-]+$/i.test(id)&&p.contentComponent==='trade-ticker'&&p.params&&typeof p.params==='object'){tickers++;continue;}
       if(saved.version>=4&&id==='level-watch'&&p.contentComponent==='level-watch'){watches++;continue;}
-      if(saved.version>=5&&/^depth-matrix-[a-z0-9-]+$/i.test(id)&&p.contentComponent==='depth-matrix'&&p.params&&typeof p.params==='object'){
-        const settings=depthMatrixSettings(p.params);if(settings.sources.length<=8){depthMatrices++;continue;}
+      if(saved.version>=5&&/^(?:depth-matrix|order-book)-[a-z0-9-]+$/i.test(id)&&['depth-matrix','order-book'].includes(p.contentComponent??'')&&p.params&&typeof p.params==='object'){
+        const settings=orderBookSettings(p.params);if(settings.sources.length<=8){migrateOrderBookPanel(p);depthMatrices++;continue;}
       }
       if(saved.version>=2&&id==='script-editor'&&p.contentComponent==='script-editor'){editors++;continue;}
       return null;

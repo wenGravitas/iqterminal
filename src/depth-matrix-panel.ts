@@ -1,3 +1,7 @@
+import {orderBookSettings,serializeOrderBookSettings,ORDER_BOOK_GROUPS,type OrderBookSettings} from './order-book/settings';
+import {CompactOrderBook} from './order-book/compact';
+import type {OrderBookProjection} from './order-book/projection';
+import {sourceMark} from './order-book/pieces';
 import { MatrixRowLayout, MatrixRowExpansion, MATRIX_ROW_HEIGHT, matrixExactPrice, matrixCurrentBucket, matrixSideWall, usableMatrixMid, type MatrixAnchor } from './depth-matrix-presentation';
 import { positionMarketCard, renderDepthMatrixCard } from './market-hover-card';
 import { CURRENCY_EVENT, effectiveCurrency, syncCurrencyControl } from './currency-display';
@@ -21,11 +25,26 @@ const shortName: Record<string, string> = {
 };
 
 /** One native Dockview panel; aggregation stays in the worker and only bucket rows cross IPC. */
-export class DepthMatrixPanel implements IContentRenderer {
+export class OrderBookPanel implements IContentRenderer {
   readonly element = document.createElement('section');
   private params!: IDockviewPanelProps;
-  private settings: DepthMatrixSettings = depthMatrixSettings(undefined);
+  private settings: OrderBookSettings = orderBookSettings(undefined);
   private columns: DepthMatrixColumn[] = [];
+  private modeSelect=document.createElement('select');
+  private groupSelect=document.createElement('select');
+  private showSelect=document.createElement('select');
+  private linesSelect=document.createElement('select');
+  private compact=new CompactOrderBook();
+  private book?:OrderBookProjection;
+  private balance=document.createElement('div');
+  private compactHead=document.createElement('div');
+  private pendingSettings=false;
+  private paintedWidth='100';
+  private saveTimer?:ReturnType<typeof setTimeout>;
+  private hoverX=0;private hoverY=0;
+  private interactionAt=0;
+  private paints:number[]=[];private interactions:number[]=[];
+  private lastPersisted='';
   private release?: () => void;
   private visible = false;
   private dockVisible = false;
@@ -80,16 +99,19 @@ export class DepthMatrixPanel implements IContentRenderer {
   private abort = new AbortController();
 
   constructor(private feed: FeedClient, private save: () => void) {
-    this.element.className = 'depth-matrix-panel';
+    this.element.className = 'depth-matrix-panel order-book-panel';
     this.element.style.setProperty('--depth-matrix-row-height', `${ROW_HEIGHT}px`);
     this.build();
   }
 
   init(params: IDockviewPanelProps) {
     this.params = params;
-    this.settings = depthMatrixSettings(params.params);
-    params.api.updateParameters(this.settings);
-    params.api.setTitle('Depth Matrix');
+    this.settings = orderBookSettings(params.params,!params.params?.orderBookVersion&&params.api.id.startsWith('depth-matrix-'));
+    this.viewport=this.settings.viewport;
+    this.paintedWidth=this.settings.bucketWidth;
+    if(this.settings.priceAnchor){this.restoreAnchor={index:matrixBucketIndex(this.settings.priceAnchor.price,this.settings.bucketWidth)!,offset:this.settings.priceAnchor.offset};this.centerPending=false;}
+    params.api.updateParameters(serializeOrderBookSettings(this.settings));
+    params.api.setTitle('Order Book');
     this.syncSettingsControls();
     this.renderSources();
     this.dockVisible = params.api.isVisible;
@@ -105,12 +127,24 @@ export class DepthMatrixPanel implements IContentRenderer {
 
   private build() {
     const toolbar = document.createElement('header'); toolbar.className = 'depth-matrix-toolbar';
-    this.setSettingsButton.type = 'button'; this.setSettingsButton.textContent = 'SET'; this.setSettingsButton.title = 'Matrix settings';
-    this.setSettingsButton.setAttribute('aria-label', 'Depth Matrix settings'); this.setSettingsButton.setAttribute('aria-expanded', 'false');
-    this.recenterButton.type = 'button'; this.recenterButton.textContent = 'CENTER'; this.recenterButton.title = 'Center on the selected reference midpoint'; this.recenterButton.setAttribute('aria-label', 'CENTER');
+    this.setSettingsButton.type = 'button'; this.setSettingsButton.textContent = 'Sources'; this.setSettingsButton.title = 'Sources and mode settings';
+    this.setSettingsButton.setAttribute('aria-label', 'Order Book settings'); this.setSettingsButton.setAttribute('aria-expanded', 'false');
+    this.recenterButton.type = 'button'; this.recenterButton.textContent = 'Recenter'; this.recenterButton.title = 'Center on the selected reference midpoint'; this.recenterButton.setAttribute('aria-label', 'CENTER');
     const retry = document.createElement('button'); retry.type = 'button'; retry.textContent = 'RETRY'; retry.title = 'Reconnect and rebuild the synchronized book';
     this.status.className = 'depth-matrix-status'; this.status.setAttribute('role', 'status');
-    toolbar.append(this.setSettingsButton, this.recenterButton, retry, this.status);
+    this.modeSelect.setAttribute('aria-label','Mode');this.modeSelect.add(new Option('Compact','compact'));this.modeSelect.add(new Option('Single','single'));
+    this.modeSelect.addEventListener('change',()=>this.setMode(this.modeSelect.value==='single'?'single':'compact'),{signal:this.abort.signal});
+    this.groupSelect.setAttribute('aria-label','Group');this.groupSelect.add(new Option('Auto','auto'));for(const group of ORDER_BOOK_GROUPS)this.groupSelect.add(new Option(group,group));
+    this.groupSelect.addEventListener('change',()=>this.applySettings({...this.settings,grouping:this.groupSelect.value,bucketWidth:this.groupSelect.value==='auto'?'100':this.groupSelect.value}),{signal:this.abort.signal});
+    this.showSelect.setAttribute('aria-label','Show');for(const [value,label] of [['both','Levels + cumulative'],['levels','Levels'],['cumulative','Cumulative']])this.showSelect.add(new Option(label,value));
+    this.showSelect.addEventListener('change',()=>this.applySettings({...this.settings,compact:{...this.settings.compact,show:this.showSelect.value as OrderBookSettings['compact']['show']}}),{signal:this.abort.signal});
+    this.linesSelect.setAttribute('aria-label','Venue lines');for(const [value,label] of [['0','Off'],['1','Top 1'],['2','Top 2']])this.linesSelect.add(new Option(label,value));
+    this.linesSelect.title='Top N by displayed live liquidity (not traded volume); held 30 seconds';
+    this.linesSelect.addEventListener('change',()=>this.applySettings({...this.settings,compact:{...this.settings.compact,venueLines:Number(this.linesSelect.value)}}),{signal:this.abort.signal});
+    const control=(label:string,select:HTMLSelectElement,compactOnly=false)=>{const field=document.createElement('label');field.className='order-book-control'+(compactOnly?' order-book-compact-only':'');field.append(label,select);return field;};
+    toolbar.append(control('Mode',this.modeSelect),control('Group',this.groupSelect),control('Show',this.showSelect,true),control('Venue lines',this.linesSelect,true),this.setSettingsButton,this.recenterButton,retry);
+    this.balance.className='order-book-balance';this.balance.setAttribute('role','status');
+    this.compactHead.className='order-book-compact-head';
 
     this.settingsPane.className = 'depth-matrix-settings'; this.settingsPane.hidden = true;
     this.sourceList.className = 'depth-matrix-sources';
@@ -132,7 +166,7 @@ export class DepthMatrixPanel implements IContentRenderer {
     this.settingsPane.append(sourceField, this.sourceList);
     this.referenceSelect.setAttribute('aria-label', 'Reference midpoint source');
     this.referenceSelect.addEventListener('change', () => this.applySettings({ ...this.settings, referenceSourceId: this.referenceSelect.value || null }), { signal: this.abort.signal });
-    const referenceField = this.settingField('Reference mid'); referenceField.append(this.referenceSelect); this.settingsPane.append(referenceField);
+    const referenceField = this.settingField('Reference mid'); referenceField.append(this.referenceSelect); referenceField.classList.add('order-book-reference');toolbar.append(referenceField);
 
     this.bucketInput.type = 'text'; this.bucketInput.inputMode = 'decimal'; this.bucketInput.maxLength = 24;
     this.bucketInput.setAttribute('aria-label', 'Bucket width in USDT'); this.bucketInput.title = 'Exact decimal bucket width in USDT';
@@ -141,13 +175,13 @@ export class DepthMatrixPanel implements IContentRenderer {
       if (next.bucketWidth !== this.bucketInput.value.trim() || Number(next.bucketWidth) <= 0) {
         this.bucketInput.setCustomValidity('Enter a positive decimal bucket width.'); this.bucketInput.reportValidity(); this.syncSettingsControls(); return;
       }
-      this.bucketInput.setCustomValidity(''); this.applySettings(next);
+      this.bucketInput.setCustomValidity(''); this.applySettings({...this.settings,...next,grouping:next.bucketWidth});
     }, { signal: this.abort.signal });
     const presetSelect = document.createElement('select'); presetSelect.setAttribute('aria-label', 'Bucket width preset');
     presetSelect.add(new Option('CUSTOM', 'custom'));
     for (const value of BUCKET_PRESETS) presetSelect.add(new Option(value, value));
     presetSelect.addEventListener('change', () => { if (presetSelect.value !== 'custom') { this.bucketInput.value = presetSelect.value; this.bucketInput.dispatchEvent(new Event('change')); } }, { signal: this.abort.signal });
-    const bucketField = this.settingField('Bucket · USDT'); bucketField.append(presetSelect, this.bucketInput); this.settingsPane.append(bucketField);
+    const bucketField = this.settingField('Bucket · USDT'); bucketField.append(presetSelect, this.bucketInput); bucketField.classList.add('order-book-single-only');this.settingsPane.append(bucketField);
 
     this.columnSlider.type = 'range'; this.columnSlider.min = '65'; this.columnSlider.max = '150'; this.columnSlider.step = '1';
     this.columnSlider.setAttribute('aria-label', 'Venue column width');
@@ -157,24 +191,24 @@ export class DepthMatrixPanel implements IContentRenderer {
       const button = document.createElement('button'); button.type = 'button'; button.textContent = String(value); button.title = `${value}px per venue`;
       button.addEventListener('click', () => this.applySettings({ ...this.settings, columnWidth: value }), { signal: this.abort.signal }); widthField.append(button);
     }
-    widthField.append(this.columnSlider); this.settingsPane.append(widthField);
+    widthField.append(this.columnSlider); widthField.classList.add('order-book-single-only');this.settingsPane.append(widthField);
 
     this.unitSelect.add(new Option('BTC', 'btc')); this.unitSelect.add(new Option('USDT', 'usdt'));
     this.unitSelect.setAttribute('aria-label', 'Liquidity display unit'); this.unitSelect.addEventListener('change', () => this.applySettings({ ...this.settings, unit: this.unitSelect.value === 'usdt' ? 'usdt' : 'btc' }), { signal: this.abort.signal });
     this.scaleSelect.add(new Option('Per venue', 'per-source')); this.scaleSelect.add(new Option('Shared', 'shared'));
     this.scaleSelect.setAttribute('aria-label', 'Histogram scale'); this.scaleSelect.addEventListener('change', () => this.applySettings({ ...this.settings, scale: this.scaleSelect.value === 'shared' ? 'shared' : 'per-source' }), { signal: this.abort.signal });
-    const unitField = this.settingField('Display / scale'); unitField.append(this.unitSelect, this.scaleSelect); this.settingsPane.append(unitField);
+    const unitField = this.settingField('Display / scale'); unitField.append(this.unitSelect, this.scaleSelect); unitField.classList.add('order-book-single-only');this.settingsPane.append(unitField);
 
     this.wallSelect.add(new Option('Off', 'off')); this.wallSelect.add(new Option('Relative · visible typical', 'relative')); this.wallSelect.add(new Option('Absolute BTC', 'absolute'));
     this.wallSelect.setAttribute('aria-label', 'Wall threshold mode'); this.wallSelect.addEventListener('change', () => this.applySettings({ ...this.settings, wallMode: this.wallSelect.value === 'off' ? 'off' : this.wallSelect.value === 'absolute' ? 'absolute' : 'relative' }), { signal: this.abort.signal });
     this.wallThreshold.type = 'number'; this.wallThreshold.min = '.1'; this.wallThreshold.max = '1000'; this.wallThreshold.step = '.1';
     this.wallThreshold.setAttribute('aria-label', 'Wall threshold'); this.wallThreshold.addEventListener('change', () => this.applySettings({ ...this.settings, wallThreshold: Number(this.wallThreshold.value) }), { signal: this.abort.signal });
-    const wallField = this.settingField('Highlight walls'); wallField.append(this.wallSelect, this.wallThreshold); this.settingsPane.append(wallField);
+    const wallField = this.settingField('Highlight walls'); wallField.append(this.wallSelect, this.wallThreshold); wallField.classList.add('order-book-single-only');this.settingsPane.append(wallField);
 
-    this.scroll.className = 'depth-matrix-scroll'; this.scroll.setAttribute('aria-label', 'Depth matrix price levels');
+    this.scroll.className = 'depth-matrix-scroll'; this.scroll.setAttribute('aria-label', 'Order book price levels');
     this.emptyState.className = 'depth-matrix-empty-state';
     this.emptyState.append(this.loading.element);
-    this.loading.update({ kind: 'loading', title: 'Loading Depth Matrix…', detail: 'Waiting for synchronized depth data' });
+    this.loading.update({ kind: 'loading', title: 'Loading Order Book…', detail: 'Waiting for synchronized depth data' });
     this.scroll.append(this.emptyState);
     this.grid.className = 'depth-matrix-grid'; this.scroll.append(this.grid);
     this.hoverLine.className = 'depth-matrix-hover-line'; this.hoverLine.hidden = true;
@@ -182,7 +216,7 @@ export class DepthMatrixPanel implements IContentRenderer {
     this.hoverTip.className = 'depth-matrix-tooltip market-hover-card'; this.hoverTip.hidden = true; this.hoverTip.setAttribute('role', 'tooltip');
     const legend = document.createElement('div'); legend.className = 'depth-matrix-legend';
     legend.innerHTML = '<span><i class="matrix-bid-key"></i>BID</span><span><i class="matrix-ask-key"></i>ASK</span><span>— UNKNOWN DEPTH · UNOBSERVED</span>';
-    this.element.append(toolbar, this.settingsPane, this.scroll, this.hoverTip, legend);
+    this.element.append(toolbar, this.settingsPane, this.status, this.balance, this.scroll, this.hoverTip, legend);
 
     this.setSettingsButton.addEventListener('click', () => {
       this.settingsOpen = !this.settingsOpen; this.settingsPane.hidden = !this.settingsOpen;
@@ -200,6 +234,10 @@ export class DepthMatrixPanel implements IContentRenderer {
   }
 
   private syncSettingsControls() {
+    this.element.dataset.mode=this.settings.mode;
+    this.modeSelect.value=this.settings.mode;this.groupSelect.value=this.settings.grouping;
+    this.showSelect.value=this.settings.compact.show;this.linesSelect.value=String(this.settings.compact.venueLines);
+    this.balance.hidden=this.settings.mode!=='compact';
     this.referenceSelect.replaceChildren(new Option('Choose reference', ''));
     for (const source of this.settings.sources) if (DEPTH_MATRIX_SOURCE_REGISTRY[source]?.supported)
       this.referenceSelect.add(new Option(depthMatrixSourceLabel(source), source));
@@ -236,31 +274,59 @@ export class DepthMatrixPanel implements IContentRenderer {
     [sources[index], sources[next]] = [sources[next]!, sources[index]!]; this.applySettings({ ...this.settings, sources });
   }
 
-  private applySettings(value: DepthMatrixSettings) {
-    const previous = this.settings, previousWidth = previous.bucketWidth;
-    this.settings = depthMatrixSettings(value);
-    for (const source of this.referencePrices.keys()) if (!this.settings.sources.includes(source)) this.referencePrices.delete(source);
-    if (this.settings.bucketWidth !== previousWidth) { this.viewport = undefined; this.pendingViewport = undefined; this.pendingPageAccepted = false; this.centeringViewport = undefined; this.centerPending = true; }
-    this.markAllRows();
-    this.params.api.updateParameters(this.settings); this.save(); this.renderSources();
-    // Local presentation controls must not restart connections or invalidate worker grids.
-    if (previousWidth !== this.settings.bucketWidth || previous.sources.join(',') !== this.settings.sources.join(','))
-      this.feed.updateDepthMatrixSettings(this.params.api.id, this.settings);
+  private persist() {
+    const anchor=this.rowLayout.anchor(this.scroll.scrollTop),price=anchor?matrixBucketBounds(anchor.index,this.paintedWidth)?.low:undefined;
+    const value=serializeOrderBookSettings({...this.settings,...(this.viewport?{viewport:this.viewport}:{}),...(price&&anchor?{priceAnchor:{price,offset:anchor.offset}}:{})});
+    const serialized=JSON.stringify(value);if(serialized===this.lastPersisted)return;this.lastPersisted=serialized;
+    this.params.api.updateParameters(value);this.save();
+  }
+  private scheduleSave(){clearTimeout(this.saveTimer);this.saveTimer=setTimeout(()=>{if(!this.dead)this.persist();},150);}
+  private setMode(mode:'compact'|'single'){
+    if(mode===this.settings.mode)return;this.interactionAt=performance.now();
+    this.restoreAnchor=this.rowLayout.anchor(this.scroll.scrollTop);this.settings={...this.settings,mode};
+    this.gridSignature='';this.syncSettingsControls();this.markAllRows();this.persist();this.draw();
+  }
+  private applySettings(value: DepthMatrixSettings|OrderBookSettings) {
+    this.interactionAt=performance.now();const previous=this.settings;
+    this.settings=orderBookSettings(value);
+    for(const source of this.referencePrices.keys())if(!this.settings.sources.includes(source))this.referencePrices.delete(source);
+    const groupChanged=previous.bucketWidth!==this.settings.bucketWidth;
+    let replacement:{low:string;high:string}|undefined;
+    if(groupChanged){
+      const old=this.rowLayout.anchor(this.scroll.scrollTop),price=old?matrixBucketBounds(old.index,this.paintedWidth)?.low:this.settings.referenceAnchor?.price;
+      const index=price?BigInt(matrixBucketIndex(price,this.settings.bucketWidth)!):0n,first=index>80n?index-80n:0n;
+      replacement={low:matrixBucketBounds(first,this.settings.bucketWidth)!.low,high:matrixBucketBounds(first+160n,this.settings.bucketWidth)!.low};
+      this.pendingViewport={...replacement,anchor:{index:String(index),offset:old?.offset??0}};this.pendingPageAccepted=false;
+      this.centeringViewport=undefined;this.centerPending=false;this.pendingSettings=true;
+    }
+    const sourceChanged=previous.sources.join(',')!==this.settings.sources.join(',');
+    if(previous.referenceSourceId!==this.settings.referenceSourceId){
+      const column=this.referenceColumn();this.settings={...this.settings,referenceAnchor:usableMatrixMid(column)?{price:column!.mid!,source:column!.source,cursor:column!.cursor,epoch:column!.epoch!,at:column!.lastAt}:undefined};
+    }
+    const anchorChanged=previous.referenceAnchor?.price!==this.settings.referenceAnchor?.price;
+    this.markAllRows();this.persist();this.renderSources();
+    if(groupChanged||sourceChanged||anchorChanged){this.pendingSettings=true;this.feed.updateDepthMatrixSettings(this.params.api.id,this.settings,replacement);}
     this.draw();
   }
 
   private subscribe() {
     if (this.dead || !this.visible || this.release) return;
     this.release = this.feed.subscribeDepthMatrix(this.params.api.id, this.settings, event => {
-      if (this.dead) return;
+      if (this.dead||event.settings.bucketWidth!==this.settings.bucketWidth||event.settings.referenceAnchor?.price!==this.settings.referenceAnchor?.price
+        ||event.settings.referenceSourceId!==this.settings.referenceSourceId||event.settings.sources.join(',')!==this.settings.sources.join(',')) return;
+      if(!this.settings.sources.length){
+        this.columns=[];this.book=event.orderBook;this.pendingSettings=false;this.pendingViewport=undefined;this.centeringViewport=undefined;this.centerPending=false;this.draw();return;
+      }
       // Old active-page batches may arrive while a replacement is loading. A
       // Center request supersedes them; a restored subscription must not reset
       // the grid to its default page.
       const requested = this.centeringViewport ?? this.pendingViewport ?? this.viewport;
       if (event.viewport && requested && !sameViewport(event.viewport, requested)
         && (this.centeringViewport || !this.viewport || !sameViewport(event.viewport, this.viewport))) return;
-      if (!event.viewport && this.rows.length) {
-        this.columns = this.columns.map(previous => {
+      if ((!event.viewport||!event.columns.some(c=>c.rows.length)) && this.rows.length) {
+        if(event.orderBook&&event.orderBook.width===this.paintedWidth)this.book=event.orderBook;
+        if(!this.settings.sources.length)this.pendingSettings=false;
+        this.columns = this.columns.filter(column=>this.settings.sources.includes(column.source)).map(previous => {
           const current = event.columns.find(column => column.source === previous.source);
           if (current && current.state !== previous.state) this.markAllRows(previous.source);
           return current ? { ...previous, state: current.state, message: current.message,
@@ -270,6 +336,8 @@ export class DepthMatrixPanel implements IContentRenderer {
         });
         this.draw(); return;
       }
+      if(this.pendingSettings&&!event.columns.filter(c=>this.settings.sources.includes(c.source)&&DEPTH_MATRIX_SOURCE_REGISTRY[c.source]?.supported).every(c=>c.rows.length>0))return;
+      this.pendingSettings=false;this.paintedWidth=event.settings.bucketWidth;this.book=event.orderBook;
       this.trackRowChanges(this.columns, event.columns);
       this.columns = event.columns;
       for (const column of this.columns) if (column.mid !== null && Number.isFinite(Number(column.mid)) && Number(column.mid) > 0)
@@ -285,7 +353,11 @@ export class DepthMatrixPanel implements IContentRenderer {
           this.restoreAnchor = this.pendingViewport.anchor; this.pendingPageAccepted = true;
         }
       }
-      this.draw();
+      if(!this.settings.referenceAnchor){const reference=this.referenceColumn();if(usableMatrixMid(reference)){
+        this.settings={...this.settings,referenceAnchor:{price:reference!.mid!,source:reference!.source,cursor:reference!.cursor,epoch:reference!.epoch!,at:reference!.lastAt}};
+        this.pendingSettings=true;this.feed.updateDepthMatrixSettings(this.params.api.id,this.settings);this.persist();
+      }}
+      this.scheduleSave();this.draw();
     });
     const requested = this.centeringViewport ?? this.pendingViewport ?? this.viewport;
     if (requested) this.feed.updateDepthMatrixViewport(this.params.api.id, { low: requested.low, high: requested.high });
@@ -308,6 +380,7 @@ export class DepthMatrixPanel implements IContentRenderer {
   }
 
   private recenter() {
+    this.interactionAt=performance.now();
     const column = this.referenceColumn();
     if (!usableMatrixMid(column)) return;
     const reference = column!.mid!;
@@ -317,11 +390,13 @@ export class DepthMatrixPanel implements IContentRenderer {
     this.centeringViewport = { low: matrixBucketBounds(first, this.settings.bucketWidth)!.low, high: matrixBucketBounds(last, this.settings.bucketWidth)!.low };
     this.pendingViewport = undefined; this.pendingPageAccepted = false; this.restoreAnchor = undefined;
     this.centerPending = true;
-    this.feed.updateDepthMatrixViewport(this.params.api.id, this.centeringViewport);
+    this.settings={...this.settings,referenceAnchor:{price:reference,source:column!.source,cursor:column!.cursor,epoch:column!.epoch!,at:column!.lastAt}};
+    this.feed.updateDepthMatrixSettings(this.params.api.id,this.settings,this.centeringViewport);this.scheduleSave();
     this.draw();
   }
 
   private onScroll() {
+    this.interactionAt=performance.now();this.scheduleSave();
     const current = this.scroll.scrollTop;
     if (current !== this.lastScrollTop || this.scroll.scrollLeft !== this.lastScrollLeft) {
       this.hoveredIndex = -1; this.hoverColumn = ''; this.hoverAnchor = undefined; this.hoverTip.hidden = true;
@@ -430,7 +505,8 @@ export class DepthMatrixPanel implements IContentRenderer {
     if (this.renderFrame) return;
     this.renderFrame = requestAnimationFrame(() => {
       this.renderFrame = 0;
-      this.render();
+      const started=performance.now();this.render();this.paints.push(performance.now()-started);if(this.paints.length>512)this.paints.shift();
+      if(this.interactionAt){this.interactions.push(performance.now()-this.interactionAt);if(this.interactions.length>256)this.interactions.shift();this.interactionAt=0;}
     });
   }
 
@@ -438,14 +514,16 @@ export class DepthMatrixPanel implements IContentRenderer {
     if (this.dead || !this.visible) return;
     const first = this.columns.find(column => column.rows.length > 0)?.rows ?? [];
     const displayRows = [...first].reverse();
-    const nextLayout = this.expansion.layout(displayRows, this.columns.filter(column => this.settings.sources.includes(column.source)), Date.now());
+    const nextLayout = this.settings.mode==='compact'
+      ? new MatrixRowLayout(displayRows,new Set((this.book?.rows??[]).filter(row=>row.bid.contributions.some(c=>c.quantity>0)&&row.ask.contributions.some(c=>c.quantity>0)).map(row=>row.index)),18,30)
+      : this.expansion.layout(displayRows, this.columns.filter(column => this.settings.sources.includes(column.source)), Date.now());
     const geometryChanged = nextLayout.signature !== this.rowLayout.signature;
     const anchor = (this.pendingPageAccepted ? this.pendingViewport?.anchor : undefined) ?? this.restoreAnchor ?? this.rowLayout.anchor(this.scroll.scrollTop);
     this.restoreAnchor = undefined;
     this.rowLayout = nextLayout;
     clearTimeout(this.collapseTimer);
-    if (this.expansion.nextExpiry !== undefined) this.collapseTimer = setTimeout(() => this.draw(), Math.max(1, this.expansion.nextExpiry - Date.now()));
-    const signature = `${this.settings.columnWidth}|${this.settings.bucketWidth}|${this.settings.sources.join(',')}|${displayRows.map(row => row.index).join(',')}`;
+    if (this.settings.mode==='single'&&this.expansion.nextExpiry !== undefined) this.collapseTimer = setTimeout(() => this.draw(), Math.max(1, this.expansion.nextExpiry - Date.now()));
+    const signature = `${this.settings.mode}|${this.settings.columnWidth}|${this.paintedWidth}|${this.settings.sources.join(',')}|${displayRows.map(row => row.index).join(',')}`;
     if (signature !== this.gridSignature) { this.buildGrid(displayRows, signature); this.markAllRows(); }
     this.rows = displayRows;
     if (geometryChanged) {
@@ -470,7 +548,7 @@ export class DepthMatrixPanel implements IContentRenderer {
     }
     this.emptyState.hidden = this.rows.length > 0;
     const failed = this.columns.some(column => column.state === 'stale' || column.state === 'disconnected');
-    this.loading.update(this.rows.length ? null : { kind: failed ? 'error' : 'loading', title: failed ? 'Depth data unavailable' : 'Loading Depth Matrix…',
+    this.loading.update(this.rows.length ? null : { kind: failed ? 'error' : 'loading', title: failed ? 'Depth data unavailable' : 'Loading Order Book…',
       detail: this.columns.length ? this.columns.map(column => `${shortName[column.source] ?? column.source}: ${column.message}`).join(' · ') + ' · Use RETRY to reconnect.' : 'Waiting for synchronized depth data' });
     this.updateReference();
     this.updateHeaders();
@@ -483,6 +561,17 @@ export class DepthMatrixPanel implements IContentRenderer {
 
   private buildGrid(rows: MatrixRow[], signature: string) {
     const oldTop = this.scroll.scrollTop, oldLeft = this.scroll.scrollLeft;
+    if(this.settings.mode==='compact'){
+      this.gridSignature=signature;this.grid.replaceChildren(this.compactHead);this.grid.style.gridTemplateColumns='minmax(0,1fr)';this.grid.style.width='100%';
+      this.headers.clear();this.canvases.clear();this.axis=null;this.axisHead=null;this.hoveredIndex=-1;this.hoverTip.hidden=true;
+      const canvas=document.createElement('canvas');canvas.className='order-book-compact-canvas';canvas.setAttribute('aria-label','Compact Order Book; levels and cumulative USDT depth');
+      canvas.style.gridRow='2';canvas.style.height=`${this.rowLayout.height}px`;
+      canvas.addEventListener('pointermove',event=>{const rect=canvas.getBoundingClientRect();this.hoverX=event.clientX-rect.left;this.hoverY=event.clientY-rect.top;
+        this.setHover(this.rowLayout.at(this.hoverY),'__compact__',{left:event.clientX,top:event.clientY,right:event.clientX,bottom:event.clientY});});
+      canvas.addEventListener('pointerleave',()=>this.clearHover());this.grid.append(canvas,this.hoverLine);this.canvases.set('__compact__',canvas);
+      this.scroll.scrollTop=oldTop;this.lastScrollTop=this.scroll.scrollTop;return;
+    }
+    this.grid.style.width='max-content';
     this.gridSignature = signature; this.canvases.clear();
     this.grid.dataset.compact = String(this.settings.columnWidth < 85);
     this.grid.style.gridTemplateColumns = `${AXIS_WIDTH}px repeat(${this.settings.sources.length}, ${this.settings.columnWidth}px)`;
@@ -532,7 +621,7 @@ export class DepthMatrixPanel implements IContentRenderer {
       header.dataset.state = column?.state ?? 'syncing';
       header.title = column ? `${column.label}\n${column.message}${column.ageMs === null ? '' : `\nBook age ${ageLabel(column.ageMs)}`}` : depthMatrixSourceLabel(source);
       const state = header.querySelector('small');
-      if (state) state.textContent = column ? columnStateLabel(column) : 'SYNCING';
+      if (state) setText(state,column ? columnStateLabel(column) : 'SYNCING');
     }
   }
 
@@ -547,13 +636,16 @@ export class DepthMatrixPanel implements IContentRenderer {
     const state = reference ? reference.state === 'live' ? usable ? columnStateLabel(reference) : 'UNAVAILABLE' : reference.state.toUpperCase() : 'UNAVAILABLE';
     const short = source === 'binance-spot' ? 'SPOT' : source === 'binance-perpetual' ? 'PERP' : source;
     const degraded = this.columns.filter(column => column.state !== 'live' && column.source !== source).map(column => `${shortName[column.source] ?? column.source} ${column.state.toUpperCase()}`).join(' · ');
-    this.status.textContent = !source ? 'Choose reference'
+    let statusText = !source ? 'Choose reference'
       : `${short} MID ${mid === null || mid === undefined ? '—' : referencePriceLabel(mid)}${usable ? reference?.message.startsWith('Fixture:') ? ' · FIXTURE' : '' : ` · ${state}`}`;
-    if (degraded) this.status.textContent += ` · ${degraded}`;
+    if (degraded) statusText += ` · ${degraded}`;
     this.status.dataset.state = usable ? 'live' : reference?.state === 'live' ? 'unavailable' : reference?.state ?? 'unavailable';
     const detail = !source ? 'Choose a reference midpoint source in SET.'
       : `${depthMatrixSourceLabel(source)} reference midpoint${mid == null ? ': unavailable' : ` $${exactReferencePriceLabel(mid)}; compact display rounded to $${referencePriceLabel(mid)}`}. ${state}. ${reference?.message ?? 'Source unavailable'}`;
     this.status.setAttribute('aria-label', detail);
+    if(this.pendingSettings||this.pendingViewport||this.centeringViewport)statusText+=' · pending';
+    setText(this.status,statusText);
+    this.element.dataset.pending=String(this.pendingSettings||!!this.pendingViewport||!!this.centeringViewport);
     this.status.title = detail + '\n' + this.columns.map(column => `${column.label}: ${column.state}; ${column.message}; ${column.ageMs === null ? 'no book timestamp' : `book age ${ageLabel(column.ageMs)}`}; cursor ${column.cursor}`).join('\n');
     this.recenterButton.title = usable ? `Center on ${depthMatrixSourceLabel(source!)} midpoint $${exactReferencePriceLabel(mid!)}` : 'Reference midpoint requires usable live data';
   }
@@ -562,9 +654,10 @@ export class DepthMatrixPanel implements IContentRenderer {
     const reference = this.referenceColumn(), bucket = matrixCurrentBucket(reference, this.settings.bucketWidth);
     this.axis?.querySelectorAll<HTMLElement>('.depth-matrix-price-row').forEach((element, index) => {
       const row = this.rows[index]; if (!row) return;
-      element.textContent = priceLabel(row.low);
-      element.dataset.current = String(row.index === bucket);
-      element.setAttribute('aria-label', `$${row.low} ≤ price < $${row.high}${row.index === bucket ? `; selected reference ${reference!.label} midpoint $${exactReferencePriceLabel(reference!.mid!)}` : ''}`);
+      setText(element,priceLabel(row.low));
+      const current=String(row.index===bucket);if(element.dataset.current!==current)element.dataset.current=current;
+      const label=`$${row.low} ≤ price < $${row.high}${row.index === bucket ? `; selected reference ${reference!.label} midpoint $${exactReferencePriceLabel(reference!.mid!)}` : ''}`;
+      if(element.getAttribute('aria-label')!==label)element.setAttribute('aria-label',label);
     });
   }
 
@@ -593,6 +686,17 @@ export class DepthMatrixPanel implements IContentRenderer {
   }
 
   private drawCanvases() {
+    if(this.settings.mode==='compact'){
+      const canvas=this.canvases.get('__compact__');if(!canvas)return;
+      const style=getComputedStyle(this.element),[first,last]=this.rowLayout.visible(this.scroll.scrollTop-HEADER_HEIGHT,this.scroll.scrollTop+this.scroll.clientHeight-HEADER_HEIGHT);
+      const result=this.compact.paint(canvas,this.book,this.rows,this.rowLayout,first,last,Math.max(260,this.scroll.clientWidth),this.settings,{
+        background:style.getPropertyValue('--chart').trim(),text:style.getPropertyValue('--text').trim(),muted:style.getPropertyValue('--muted').trim(),divider:style.getPropertyValue('--border-soft').trim(),bid:style.getPropertyValue('--up').trim(),ask:style.getPropertyValue('--down').trim(),accent:style.getPropertyValue('--accent').trim(),light:['light','ios'].includes(document.documentElement.dataset.theme??'')});
+      setText(this.compactHead,'PRICE · LEVEL USDT   '+result.label);this.compactHead.title=result.label;
+      setText(this.balance,`BID ${result.balance.bidShare===null?'—':Math.round(result.balance.bidShare*100)+'%'} / ASK ${result.balance.bidShare===null?'—':Math.round((1-result.balance.bidShare)*100)+'%'} · selected live books, displayed range${result.balance.complete?'':' · INCOMPLETE'}`);
+      this.balance.style.setProperty('--bid-share',`${(result.balance.bidShare??.5)*100}%`);this.balance.dataset.available=String(result.balance.bidShare!==null);
+      this.balance.title='Denominator: selected live books within displayed rows; stale retained depth excluded. Missing coverage is not empty. '+result.lines.map(id=>sourceMark(id).code).join(', ')+' lines: Top N by displayed live liquidity.';
+      this.refreshHoverTooltip();return;
+    }
     if (!this.visible || !this.rows.length) return;
     const rootStyle = getComputedStyle(this.element), bidColor = rootStyle.getPropertyValue('--up').trim() || '#58a65c', askColor = rootStyle.getPropertyValue('--down').trim() || '#ad5858';
     const textColor = rootStyle.getPropertyValue('--text').trim() || '#c7c7c7', muted = rootStyle.getPropertyValue('--muted').trim() || '#858585', divider = rootStyle.getPropertyValue('--border-soft').trim() || '#1b1b1b';
@@ -690,6 +794,8 @@ export class DepthMatrixPanel implements IContentRenderer {
   private refreshHoverTooltip() { if (this.hoveredIndex >= 0) { this.updateHoverTooltip(); if (this.hoverAnchor) positionMarketCard(this.hoverTip, this.element, this.hoverAnchor); } }
 
   private updateHoverTooltip() {
+    if(this.settings.mode==='compact'){const text=this.compact.tooltip(this.hoverX,this.hoverY);this.hoverTip.textContent=text;this.hoverTip.style.whiteSpace='pre-line';this.hoverTip.hidden=!text;return;}
+    this.hoverTip.style.whiteSpace='';
     const axisRow = this.rows[this.hoveredIndex];
     if (!axisRow) return;
     const column = this.columns.find(value => value.source === this.hoverColumn);
@@ -702,10 +808,10 @@ export class DepthMatrixPanel implements IContentRenderer {
 
   private clearHover() { this.hoveredIndex = -1; this.hoverColumn = ''; this.hoverAnchor = undefined; this.hoverTip.hidden = true; this.draw(); }
 
-  diagnostics() { return { visible: this.visible, settings: this.settings, rows: this.rows.length, columns: this.columns.map(column => ({ source: column.source, state: column.state, ageMs: column.ageMs, cursor: column.cursor })), rowLayout: this.rowLayout.positions, referenceSourceId: this.settings.referenceSourceId, viewport: this.viewport, pendingViewport: this.pendingViewport, centeringViewport: this.centeringViewport, scrollTop: this.scroll.scrollTop }; }
+  diagnostics() { return { mode:this.settings.mode,paints:[...this.paints],interactions:[...this.interactions],compact:this.compact.diagnostics(),referenceAnchor:this.settings.referenceAnchor,pendingSettings:this.pendingSettings,visible: this.visible, settings: this.settings, rows: this.rows.length, columns: this.columns.map(column => ({ source: column.source, state: column.state, ageMs: column.ageMs, cursor: column.cursor })), rowLayout: this.rowLayout.positions, referenceSourceId: this.settings.referenceSourceId, viewport: this.viewport, pendingViewport: this.pendingViewport, centeringViewport: this.centeringViewport, scrollTop: this.scroll.scrollTop }; }
 
   dispose() {
-    clearTimeout(this.collapseTimer); if (this.dead) return; this.dead = true; if (this.renderFrame) cancelAnimationFrame(this.renderFrame); this.unsubscribe(); this.abort.abort(); this.listeners.forEach(listener => listener.dispose()); this.canvases.clear(); this.columns = []; }
+    clearTimeout(this.saveTimer);this.compact.dispose();clearTimeout(this.collapseTimer); if (this.dead) return; this.dead = true; if (this.renderFrame) cancelAnimationFrame(this.renderFrame); this.unsubscribe(); this.abort.abort(); this.listeners.forEach(listener => listener.dispose()); this.canvases.clear(); this.columns = []; }
 }
 
 function sameViewport(a: { low: string; high: string }, b: { low: string; high: string }) { return a.low === b.low && a.high === b.high; }
@@ -722,3 +828,8 @@ function sameMatrixRow(a: MatrixRow, b: MatrixRow) {
     && a.bidNotional === b.bidNotional && a.askNotional === b.askNotional
     && a.bidCoverage === b.bidCoverage && a.askCoverage === b.askCoverage;
 }
+
+/** Internal alias for old integrations; only Order Book is offered in the menu. */
+export {OrderBookPanel as DepthMatrixPanel};
+
+function setText(element:Element,value:string){if(element.textContent!==value)element.textContent=value;}

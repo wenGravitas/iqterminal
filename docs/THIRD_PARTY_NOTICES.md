@@ -9,3 +9,17 @@ The in-app Licences page links the runtime license texts and upstream notices. T
 Ivory palette values are adapted from OpenAlgo Charts' Apache-2.0 market-profile demo `themes.js`; Dark retains the original terminal palette over the installed 2.6.0 defaults. Modified mappings and preference handling are repo-owned in `src/theme.ts`, with a modification comment and `/licenses/theme-palettes-NOTICE.txt` linked from the app. No demo shell or market-profile implementation is copied.
 
 The UTC time-axis tick selection in `src/chart/axis-grid.ts` is adapted from the installed OpenAlgo Charts 2.6.0 renderer, with changes marked in source and `/licenses/axis-grid-NOTICE.txt`. It is used through a repo-owned public primitive; no dependency files are modified.
+
+## liquiditymapperfast Compact Order Book helpers (MIT)
+
+Source: https://github.com/liquiditymapperfast/liquiditymapperfast.github.io
+Pinned reference: `6126de1cf249df9ed19a598d19939f39dd4301ba`.
+IQ's `src/order-book/pieces.ts` adapts small pure segment partitioning, adaptive
+label selection and bounded ranking helpers from `src/app/panes/ladder-pieces.ts`
+and `ladder-curves.ts`. `ladder-pane.ts` and `levels-data.ts` inform composition
+and cumulative behavior; the reference application is not included. IQ uses
+exact decimal membership, Float64 amounts and displayed live liquidity ranking,
+not the reference's traded-volume ranking.
+
+Copyright (c) 2026 Karl. MIT license; the full license is distributed in
+`public/licenses/liquiditymapperfast-MIT.txt`.

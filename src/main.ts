@@ -29,8 +29,8 @@ import { instrumentKey, type Series } from './feed/protocol';
 import { PANEL_BUDGET } from './layout';
 import { MarketPulseController } from './market-pulse';
 import { ConnectionStatusController } from './connection-status';
-import { DepthMatrixPanel } from './depth-matrix-panel';
-import { DEFAULT_DEPTH_MATRIX_SETTINGS } from './feed/depth-matrix';
+import { OrderBookPanel } from './depth-matrix-panel';
+import {orderBookSettings} from './order-book/settings';
 import { MarketComparisonPanel } from './market-comparison/panel';
 import { defaultMarketComparisonConfig } from './market-comparison/model';
 import { TradingController } from './trading/controller';
@@ -69,7 +69,7 @@ let workspaceManager: WorkspaceManager | undefined;
 let disposed = false;
 
 function chartContextCount() { return dock.panels.filter(panel => ['candle', 'market-comparison'].includes(panel.view.contentComponent)).length; }
-function depthMatrixCount() { return dock.panels.filter(panel => panel.view.contentComponent === 'depth-matrix').length; }
+function depthMatrixCount() { return dock.panels.filter(panel => ['order-book','depth-matrix'].includes(panel.view.contentComponent)).length; }
 const save = () => {
   if (restoring || workspaceManager?.transitioning || disposed) return;
   clearTimeout(saveTimer);
@@ -123,8 +123,8 @@ function focusLiquidation(event:import('./liquidations/model').LiquidationEvent)
 
 function addDepthMatrix() {
   if (depthMatrixCount() >= 8) return;
-  dock.addPanel({ id: `depth-matrix-${crypto.randomUUID()}`, component: 'depth-matrix', title: 'Depth Matrix',
-    params: { ...DEFAULT_DEPTH_MATRIX_SETTINGS }, position: dock.activePanel ? { referencePanel: dock.activePanel, direction: 'right' } : undefined,
+  dock.addPanel({ id: `order-book-${crypto.randomUUID()}`, component: 'order-book', title: 'Order Book',
+    params: orderBookSettings(undefined), position: dock.activePanel ? { referencePanel: dock.activePanel, direction: 'right' } : undefined,
     initialWidth: Math.round(root.clientWidth / 4), minimumWidth: 300, minimumHeight: 180 });
   save();
 }
@@ -235,7 +235,7 @@ dock = createDockview(root, {
     });
     if(options.name==='liquidation-ticker')return new LiquidationTickerPanel(feed,scheduler,notifications,save,focusLiquidation);
     if(options.name==='level-watch'){watchPanel=new LevelWatchPanel(feed,save,focusWatch);return watchPanel;}
-    if(options.name==='depth-matrix') return new DepthMatrixPanel(feed,save);
+    if(options.name==='order-book'||options.name==='depth-matrix') return new OrderBookPanel(feed,save);
     if (options.name === 'hyperliquid-trading' || options.name.startsWith('hyperliquid-trading-')) {
       const view = options.name === 'hyperliquid-trading' ? 'trade' : options.name.slice('hyperliquid-trading-'.length) as TradingPanelView;
       if (!(view in { trade: true, positions: true, 'open-orders': true, 'order-history': true, 'trade-history': true })) throw new Error('Unknown trading widget type');

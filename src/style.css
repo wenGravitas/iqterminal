@@ -1057,3 +1057,20 @@ dialog.hl-confirm{width:min(380px,calc(100vw - 20px));max-height:80vh;overflow:a
 :root[data-theme=ios] .chart-object-tree-menu-item,:root[data-theme=ios] .chart-object-folder-name{font-family:var(--ios-font)}
 :root[data-theme=ios] .journal-panel input,:root[data-theme=ios] .journal-panel textarea,:root[data-theme=ios] .script-editor-panel input:not([type=checkbox]),:root[data-theme=ios] .script-editor-panel textarea,:root[data-theme=ios] .script-editor-panel select{border-radius:8px}
 :root[data-theme=ios] .chart-stage .gpu,:root[data-theme=ios] .chart-stage .overlay{border-radius:0}
+
+/* Unified Order Book: Compact is a dense stacked ladder; Single retains Matrix geometry. */
+.order-book-panel .depth-matrix-toolbar{flex-wrap:wrap;gap:4px;max-height:112px;overflow:auto;align-items:center}
+.order-book-control{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--muted);white-space:nowrap}
+.order-book-control select{height:22px;max-width:154px;font-size:10px;padding:0 3px}
+.order-book-reference.matrix-setting{display:inline-flex;align-items:center;gap:4px;font-size:10px}
+.order-book-reference select{max-width:134px;height:22px;font-size:10px}
+.order-book-panel .depth-matrix-status{flex:none;min-height:20px;padding:3px 6px;border-bottom:1px solid var(--border-soft);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:none}
+.order-book-panel[data-mode=compact] .order-book-single-only,.order-book-panel[data-mode=single] .order-book-compact-only{display:none}
+.order-book-balance{flex:none;min-height:22px;padding:3px 6px;font-size:9px;color:var(--text);border-bottom:2px solid var(--divider);background:linear-gradient(to right,color-mix(in srgb,var(--up) 20%,var(--chart)) 0 var(--bid-share,50%),color-mix(in srgb,var(--down) 20%,var(--chart)) var(--bid-share,50%) 100%)}
+.order-book-balance[data-available=false]{background:var(--chrome)}
+.order-book-balance[hidden]{display:none}
+.order-book-compact-head{position:sticky;top:0;z-index:4;height:24px;display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:9px;padding:0 4px;background:var(--chrome);color:var(--muted);border-bottom:1px solid var(--divider)}
+.order-book-compact-canvas{display:block;max-width:100%;background:var(--chart);touch-action:pan-y}
+.order-book-panel[data-mode=compact] .depth-matrix-hover-line{left:0}
+.order-book-panel .depth-matrix-tooltip{max-width:min(580px,95%);font-size:11px;line-height:1.45;padding:8px;max-height:80%;overflow:auto;pointer-events:none}
+.order-book-panel[data-pending=true] .depth-matrix-status{color:var(--muted)}

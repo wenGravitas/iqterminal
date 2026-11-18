@@ -193,7 +193,7 @@ export class FeedClient {
     this.send({type:'depth-matrix-subscribe',id:token,settings});
     return ()=>{this.depthMatrixListeners.delete(token);if(this.currentDepthMatrix.get(id)===token)this.currentDepthMatrix.delete(id);this.send({type:'depth-matrix-unsubscribe',id:token});};
   }
-  updateDepthMatrixSettings(id:string,settings:DepthMatrixSettings){const token=this.currentDepthMatrix.get(id);if(token)this.send({type:'depth-matrix-settings',id:token,settings});}
+  updateDepthMatrixSettings(id:string,settings:DepthMatrixSettings,viewport?:DepthMatrixViewport){const token=this.currentDepthMatrix.get(id);if(token)this.send({type:'depth-matrix-settings',id:token,settings,...(viewport?{viewport}:{})});}
   updateDepthMatrixViewport(id:string,viewport:DepthMatrixViewport){const token=this.currentDepthMatrix.get(id);if(token)this.send({type:'depth-matrix-viewport',id:token,viewport});}
   retryDepthMatrix(){this.send({type:'depth-matrix-retry',id:'depth-matrix-retry'});}
   subscribeTpo(id:string,series:Series,settings:TpoIndicatorSettings,callback:(event:Extract<Event,{type:'tpo-snapshot'|'tpo-patch'|'tpo-status'}>)=>void){

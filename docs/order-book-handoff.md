@@ -1,0 +1,30 @@
+# Order Book R1 review handoff
+
+Implementation is on isolated `feat/order-book-r1` worktrees. Original dirty checkouts were preserved. Nothing was merged, pushed or deployed to production.
+
+## Revisions
+
+- Frontend tested implementation: `ffefc71712ecc60b30bb6e7c92a411af5a62ac55` (`/home/daz/workarea/iqterminal-order-book-r1`), based on `bcd7619`.
+- Backend candidate: `6666bd6a9847334e39ef0e019dd1d76c1c70e1a2` (`/home/daz/workarea/iqterminal-server-order-book-r1`), based on `07318748bd2a17fe1f3a6ac917009fd9122f4865`. Production endpoint code is in `a9cbdb370d4820f1d9fe72faf053c6aba7c4f4b4`; the second commit adds the tested read-only acceptance adapter and evidence.
+- This handoff is a documentation-only follow-up. Raw captures, detailed profiling output and dependency symlinks remain local and untracked.
+
+The isolated live candidate also passed its browser scenario using fresh committed Spot and Perp heads. The last-source/old-batch correction was subsequently validated with deterministic fixtures; it does not change the measured active-source renderer.
+
+The frontend replaces the menu entry with Order Book, defaults new panels to Compact, preserves the existing renderer as Single, migrates legacy workspaces, and adds covered cumulative projections and controls. The backend adds optional versioned cumulative values from the same committed source head. See `order-book.md` for settings and semantics.
+
+## Evidence
+
+- Frontend: 70 focused tests passed across 10 files, including projection, transport, settings/migration, existing Depth Matrix, affected order-wall projections and chart helpers. Additional unavailable-side balance assertion passed in the 8-test projection recheck.
+- Backend: 11 focused tests passed; typecheck and full backend build passed.
+- Frontend typecheck and diagnostics production build passed. Build reports the existing large-chunk warning.
+- Browser: all 12 fixture scenarios verified across the complete run and focused correction. The complete final run passed 11/12; its far-side hover test was corrected to wait for scrolling and move the actual pointer to an unobscured row, then passed twice. The eight incumbent Single scenarios and four new Compact/migration/source-removal scenarios cover delayed pages, pan/recenter, themes/DPR, source settings, mixed coverage, redraw-only feed command counts, multiple instances, hidden rendering, reload, active/inactive legacy migration, clearing the last source and rejecting a late old-source batch. Migration tests wait for durable layout persistence, rather than a fixed delay.
+- Desktop dark and narrow light fixture screenshots are in `artifacts/order-book/`. This is explicit deterministic fixture evidence, not live connectivity or reference screenshot parity. Vite logged ResizeObserver loop notifications during resize; scenario page-error assertions passed.
+- Real captured data: 100 rows for each Binance Spot and USD-M perpetual checkpoint reconciled, including all side quantities, actual-price notionals and cumulative sums against an independently sorted/bounded raw capture. Spot cursor `27427345`, epoch `1794965837394`; Perp cursor `31252498`, epoch `1794926322978`. Both retain 5,000 levels per side and have incomplete outer coverage. Backend `artifacts/order-book/capture-summary.json` contains the coverage counts and source fences; raw capture hashes are retained. Raw files remain local and are not committed. Reproduce locally with `pnpm exec tsx scripts/check-order-book-capture.ts`.
+
+## Open acceptance gates
+
+1. Shared-route integration: the incumbent staging endpoint rejects `cumulative=1&reference=...` with HTTP 400. The new live UI passed against an isolated read-only candidate using the committed journal and existing head stream; this candidate opened no exchange connections and was closed after testing. The companion backend still must be deployed before this frontend on a shared route. Captured raw-state reconciliation and live rendering are separate evidence; no production release occurred.
+2. Foreground Raspberry Pi 5 performance: the repository explicitly refuses headed test browsers because desktop isolation is unverified. The actual Pi 5 ran a headless development-browser diagnostic with 107–108 visible Compact rows and 69 Single rows. After batching, steady synchronous render p95 was **17.1 ms Compact / 9.1 ms Single**, above the 8 ms target in this headless run. Input-to-render-completion p95 was 22.2 / 22.1 ms, but this is not compositor presentation and does not pass the 50 ms foreground gate. Initial usable rendering was 9.95 s including dev startup and source initialization. Sampled book ages were 0.79–1.73 s. Seven long tasks (52–284 ms) occurred across startup and interaction. Main-page heap ranged 33.6–54.1 MB over ~20 seconds, including a second instance and garbage collection; this is too short to establish a leak or stable long-term memory trend. The run observed 113 depth requests across 19 exact request grids; live updates continued, and eight redraw-only control changes issued zero feed commands. Full numbers and source cursors are in `artifacts/order-book/live-headless-pi-summary.json`. Foreground latency, long-duration memory and platform acceptance remain open; no 60fps claim is made.
+3. Reference screenshot parity: the user-selected `liquiditymapperfast/liquiditymapperfast.github.io` master commit `6126de1cf249df9ed19a598d19939f39dd4301ba` supplied implementation files but no Compact screenshot. Its three pure helper/data files are byte-identical to the initially inspected revision; the ladder pane only changes palette lookup, which IQ owns independently. Composition follows the requested price/notional gutter, source stacks, cumulative curves and balance; exact screenshot comparison is pending the reference image.
+
+Do not treat this handoff as completed shared-route/foreground performance acceptance. Multi-venue adapters and pull/stack remain follow-ups; neither is enabled in R1. No trade execution is introduced.

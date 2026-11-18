@@ -1,20 +1,21 @@
+import { projectOrderBook } from '../order-book/projection';
 import { depthSource } from './prepared-history';
 import type { Market } from './protocol';
-import { depthMatrixSettings, depthMatrixSourceDefinition, depthMatrixSourceLabel, matrixBucketBounds, matrixBucketIndex, type DepthMatrixColumn, type DepthMatrixSettings, type DepthMatrixSource, type DepthMatrixViewport, type MatrixCoverage, type MatrixRow } from './depth-matrix';
+import { depthMatrixSettings, depthMatrixSourceDefinition, depthMatrixSourceLabel, matrixBucketBounds, matrixBucketIndex, type DepthMatrixColumn, type DepthMatrixSettings, type DepthMatrixSource, type DepthMatrixViewport, type MatrixCoverage, type MatrixRow, type MatrixCumulative } from './depth-matrix';
 import type { DepthHeadNotice, StagingHeatmapService } from './staging-heatmap';
 
 interface MatrixResponse {
   version: number; source: string; market: Market; instrument: string; feed: string;
   state: 'live'|'stale'|'syncing'; message: string; cursor: number; epoch: number|null; at: number; lastAt: number;
   width: string; viewport: DepthMatrixViewport; rows: MatrixRow[]; bestBid: string|null; bestAsk: string|null; mid: string|null;
-  quantityUnit: 'BTC'; notionalUnit: 'USDT';
+  quantityUnit: 'BTC'; notionalUnit: 'USDT'; cumulative?:MatrixCumulative;
 }
 interface MarketFeed { market: Market; release?: () => void; target?: {cursor:number;at:number;epoch:number}; transport:'live'|'stale'|'syncing'|'disconnected'; message:string; lastStreamAt:number; lastProbeAt:number; probe?:AbortController; httpRecovery?:boolean }
 interface Grid {
-  key:string; market:Market; width:string; viewport?:DepthMatrixViewport; data?:MatrixResponse; busy:boolean; serial:number;
+  key:string; market:Market; width:string; reference?:string; viewport?:DepthMatrixViewport; data?:MatrixResponse; busy:boolean; serial:number;
   abort?:AbortController; requestedCursor:number; retryTimer?:ReturnType<typeof setTimeout>; prefetchOnly:boolean; prefetchStarted:boolean;
 }
-interface MatrixSubscription { id:string; settings:DepthMatrixSettings; viewport?:DepthMatrixViewport; pendingViewport?:DepthMatrixViewport; dirty:boolean; lastEmit:number }
+interface MatrixSubscription { id:string; settings:DepthMatrixSettings; viewport?:DepthMatrixViewport; pendingViewport?:DepthMatrixViewport; retained?:{columns:DepthMatrixColumn[];width:string;anchor:DepthMatrixSettings['referenceAnchor']}; dirty:boolean; lastEmit:number }
 
 const MAX_ACTIVE_WIDGETS=8, MAX_PAGES_PER_MARKET=4, SUPPORTED_MARKETS=2;
 const MAX_CACHED_GRIDS=MAX_ACTIVE_WIDGETS*MAX_PAGES_PER_MARKET*SUPPORTED_MARKETS, PUBLISH_INTERVAL_MS=160, STALE_AFTER_MS=5_000;
@@ -35,7 +36,7 @@ export class StagingDepthMatrixService {
 
   command(command:Extract<import('./protocol').Command,{type:'depth-matrix-subscribe'|'depth-matrix-settings'|'depth-matrix-viewport'|'depth-matrix-unsubscribe'|'depth-matrix-retry'}>){
     if(command.type==='depth-matrix-subscribe')this.subscribe(command.id,command.settings);
-    else if(command.type==='depth-matrix-settings')this.updateSettings(command.id,command.settings);
+    else if(command.type==='depth-matrix-settings')this.updateSettings(command.id,command.settings,command.viewport);
     else if(command.type==='depth-matrix-viewport')this.updateViewport(command.id,command.viewport);
     else if(command.type==='depth-matrix-unsubscribe')this.unsubscribe(command.id);
     else this.retry();
@@ -47,9 +48,10 @@ export class StagingDepthMatrixService {
     sub.settings=depthMatrixSettings(value);sub.dirty=true;this.subscriptions.set(id,sub);this.stats.activeWidgets=this.subscriptions.size;
     this.updateFeedLifetimes();this.reconcile();
   }
-  private updateSettings(id:string,value:DepthMatrixSettings){
+  private updateSettings(id:string,value:DepthMatrixSettings,viewport?:DepthMatrixViewport){
     const sub=this.subscriptions.get(id);if(!sub)return;const next=depthMatrixSettings(value);
     if(next.bucketWidth!==sub.settings.bucketWidth){sub.viewport=undefined;sub.pendingViewport=undefined;}
+    if(viewport&&validViewport(viewport))sub.pendingViewport={...viewport};
     sub.settings=next;sub.dirty=true;this.updateFeedLifetimes();this.reconcile();
   }
   private updateViewport(id:string,viewport:DepthMatrixViewport){
@@ -133,11 +135,11 @@ export class StagingDepthMatrixService {
     this.markMarketDirty(feed.market);this.reconcile();
   }
   private reconcile(){
-    const wanted=new Map<string,{key:string;market:Market;width:string;viewport?:DepthMatrixViewport;priority:boolean}>();
-    const add=(market:Market,width:string,viewport:DepthMatrixViewport|undefined,priority:boolean)=>{
-      const key=gridKey(market,width,viewport),existing=wanted.get(key);
+    const wanted=new Map<string,{key:string;market:Market;width:string;reference?:string;viewport?:DepthMatrixViewport;priority:boolean}>();
+    const add=(market:Market,width:string,viewport:DepthMatrixViewport|undefined,priority:boolean,reference?:string)=>{
+      const key=gridKey(market,width,viewport,reference),existing=wanted.get(key);
       if(existing){existing.priority||=priority;return;}
-      wanted.set(key,{key,market,width,...(viewport?{viewport}:{}),priority});
+      wanted.set(key,{key,market,width,reference,...(viewport?{viewport}:{}),priority});
     };
     for(const sub of this.subscriptions.values()){
       const markets=[...new Set(sub.settings.sources.map(marketOfSource).filter((market):market is Market=>market!==null))];
@@ -145,20 +147,20 @@ export class StagingDepthMatrixService {
       for(const market of markets){
         // The first source resolves the initial shared price range; subsequent venues query that same range.
         if(!sub.viewport&&!sub.pendingViewport&&market!==firstMarket)continue;
-        if(sub.viewport)add(market,sub.settings.bucketWidth,sub.viewport,true);
-        if(sub.pendingViewport)add(market,sub.settings.bucketWidth,sub.pendingViewport,true);
+        if(sub.viewport)add(market,sub.settings.bucketWidth,sub.viewport,true,sub.settings.referenceAnchor?.price);
+        if(sub.pendingViewport)add(market,sub.settings.bucketWidth,sub.pendingViewport,true,sub.settings.referenceAnchor?.price);
         const preloadBase=sub.pendingViewport??sub.viewport;
         if(preloadBase){
           for(const direction of [-1,1] as const){
             const neighbor=adjacentViewport(preloadBase,sub.settings.bucketWidth,direction);
-            if(neighbor)add(market,sub.settings.bucketWidth,neighbor,false);
+            if(neighbor)add(market,sub.settings.bucketWidth,neighbor,false,sub.settings.referenceAnchor?.price);
           }
-        }else add(market,sub.settings.bucketWidth,undefined,true);
+        }else add(market,sub.settings.bucketWidth,undefined,true,sub.settings.referenceAnchor?.price);
       }
     }
     for(const [key,grid]of this.grids)if(!wanted.has(key)){this.cancelGrid(grid);this.grids.delete(key);}
     for(const item of wanted.values()){
-      const grid=this.getGrid(item.key,item.market,item.width,item.viewport);
+      const grid=this.getGrid(item.key,item.market,item.width,item.viewport,item.reference);
       if(item.priority){
         if(grid.prefetchOnly){
           grid.prefetchOnly=false;
@@ -173,9 +175,9 @@ export class StagingDepthMatrixService {
     }
     this.stats.activeGrids=this.grids.size;
   }
-  private getGrid(key:string,market:Market,width:string,viewport?:DepthMatrixViewport){
+  private getGrid(key:string,market:Market,width:string,viewport?:DepthMatrixViewport,reference?:string){
     let grid=this.grids.get(key);if(grid){this.grids.delete(key);this.grids.set(key,grid);this.stats.cacheHits++;return grid;}
-    grid={key,market,width,viewport:viewport?{...viewport}:undefined,busy:false,serial:0,requestedCursor:0,prefetchOnly:false,prefetchStarted:false};this.grids.set(key,grid);
+    grid={key,market,width,reference,viewport:viewport?{...viewport}:undefined,busy:false,serial:0,requestedCursor:0,prefetchOnly:false,prefetchStarted:false};this.grids.set(key,grid);
     while(this.grids.size>MAX_CACHED_GRIDS){const oldest=this.grids.keys().next().value!;const removed=this.grids.get(oldest)!;this.cancelGrid(removed);this.grids.delete(oldest);}
     return grid;
   }
@@ -186,7 +188,7 @@ export class StagingDepthMatrixService {
     if(!force&&grid.requestedCursor===target.cursor)return;
     const serial=++grid.serial,abort=new AbortController();const timeout=setTimeout(()=>abort.abort(),15_000);grid.abort=abort;grid.busy=true;grid.requestedCursor=target.cursor;this.stats.requests++;
     if(grid.prefetchOnly)grid.prefetchStarted=true;
-    const params=new URLSearchParams({width:grid.width});if(grid.viewport){params.set('low',grid.viewport.low);params.set('high',grid.viewport.high);}if(grid.market==='spot')params.set('market','spot');
+    const params=new URLSearchParams({width:grid.width});if(grid.reference){params.set('cumulative','1');params.set('reference',grid.reference);}if(grid.viewport){params.set('low',grid.viewport.low);params.set('high',grid.viewport.high);}if(grid.market==='spot')params.set('market','spot');
     void this.request(`/market-data/v1/depth-matrix?${params}`,{signal:abort.signal}).then(async response=>{
       const value=await response.json() as MatrixResponse&{error?:string};if(!response.ok)throw new Error(value.error??`Depth Matrix HTTP ${response.status}`);
       if(abort.signal.aborted||grid.serial!==serial||this.grids.get(grid.key)!==grid)return;
@@ -199,10 +201,10 @@ export class StagingDepthMatrixService {
       }
       for(const sub of this.subscriptions.values()){
         const first=sub.settings.sources.find(source=>marketOfSource(source)!==null);
-        if(!sub.viewport&&first&&sub.settings.bucketWidth===grid.width&&marketOfSource(first)===grid.market&&grid.viewport===undefined&&validViewport(value.viewport)){
+        if(!sub.viewport&&first&&sub.settings.bucketWidth===grid.width&&sub.settings.referenceAnchor?.price===grid.reference&&marketOfSource(first)===grid.market&&grid.viewport===undefined&&validViewport(value.viewport)){
           sub.viewport={...value.viewport};sub.dirty=true;
-          const aliasKey=gridKey(grid.market,sub.settings.bucketWidth,sub.viewport);
-          if(!this.grids.has(aliasKey))this.grids.set(aliasKey,{key:aliasKey,market:grid.market,width:grid.width,viewport:sub.viewport,data:value,busy:false,serial:0,requestedCursor:value.cursor,prefetchOnly:false,prefetchStarted:false});
+          const aliasKey=gridKey(grid.market,sub.settings.bucketWidth,sub.viewport,sub.settings.referenceAnchor?.price);
+          if(!this.grids.has(aliasKey))this.grids.set(aliasKey,{key:aliasKey,market:grid.market,width:grid.width,reference:grid.reference,viewport:sub.viewport,data:value,busy:false,serial:0,requestedCursor:value.cursor,prefetchOnly:false,prefetchStarted:false});
         }
       }
       this.markGridDirty(grid);this.reconcile();
@@ -232,7 +234,7 @@ export class StagingDepthMatrixService {
     if(epoch===null)return false;const at=this.now();
     for(const sub of this.subscriptions.values()){
       if(!sub.viewport||!sub.settings.sources.some(source=>marketOfSource(source)===market))continue;
-      const grid=this.grids.get(gridKey(market,sub.settings.bucketWidth,sub.viewport)),data=grid?.data;
+      const grid=this.grids.get(gridKey(market,sub.settings.bucketWidth,sub.viewport,sub.settings.referenceAnchor?.price)),data=grid?.data;
       if(data&&data.epoch===epoch&&data.state==='live'&&data.lastAt>0&&at-data.lastAt<=STALE_AFTER_MS)return true;
     }
     return false;
@@ -240,7 +242,7 @@ export class StagingDepthMatrixService {
   private markGridDirty(grid:Grid){
     const resolved=grid.viewport??grid.data?.viewport;
     for(const sub of this.subscriptions.values()){
-      if(sub.settings.bucketWidth!==grid.width||!sub.settings.sources.some(source=>marketOfSource(source)===grid.market))continue;
+      if(sub.settings.bucketWidth!==grid.width||sub.settings.referenceAnchor?.price!==grid.reference||!sub.settings.sources.some(source=>marketOfSource(source)===grid.market))continue;
       if((!sub.viewport&&!sub.pendingViewport&&grid.viewport===undefined)
         ||(resolved&&sub.viewport&&sameViewport(sub.viewport,resolved))
         ||(resolved&&sub.pendingViewport&&sameViewport(sub.pendingViewport,resolved)))sub.dirty=true;
@@ -250,7 +252,7 @@ export class StagingDepthMatrixService {
     const viewport=sub.pendingViewport;if(!viewport)return false;
     const markets=[...new Set(sub.settings.sources.map(marketOfSource).filter((market):market is Market=>market!==null))];
     for(const market of markets){
-      const grid=this.grids.get(gridKey(market,sub.settings.bucketWidth,viewport)),data=grid?.data,feed=this.feeds.get(market);
+      const grid=this.grids.get(gridKey(market,sub.settings.bucketWidth,viewport,sub.settings.referenceAnchor?.price)),data=grid?.data,feed=this.feeds.get(market);
       if(!this.online||!data||!feed?.target||feed.transport==='disconnected'||feed.transport==='stale'||data.state!=='live'||data.epoch!==feed.target.epoch
         ||data.lastAt<=0||at-data.lastAt>STALE_AFTER_MS)return false;
     }
@@ -273,16 +275,23 @@ export class StagingDepthMatrixService {
       if(!sub.dirty&&at-sub.lastEmit<1_000)continue;if(at-sub.lastEmit<PUBLISH_INTERVAL_MS)continue;
       const columns=sub.settings.sources.map(source=>this.column(source,sub,at));
       const resolvedViewport=sub.viewport;
+      const hasRows=columns.some(column=>column.rows.length>0);
+      if(hasRows)sub.retained={columns,width:sub.settings.bucketWidth,anchor:sub.settings.referenceAnchor};
+      const prior=sub.retained;
+      const projectionColumns=hasRows||!prior?columns:prior.columns.filter(c=>sub.settings.sources.includes(c.source)).map(c=>{
+        const current=columns.find(value=>value.source===c.source);return {...c,state:current?.state??'stale',message:current?.message??c.message};
+      });
+      const projected=projectOrderBook(projectionColumns,sub.settings.sources,hasRows||!prior?sub.settings.bucketWidth:prior.width,hasRows||!prior?sub.settings.referenceAnchor:prior.anchor,at);
       sub.dirty=false;sub.lastEmit=at;this.stats.emittedRows+=columns.reduce((sum,column)=>sum+column.rows.length,0);
-      this.emit({type:'depth-matrix-batch',ids:[sub.id],settings:sub.settings,...(resolvedViewport?{viewport:resolvedViewport}:{}),columns,emittedAt:at});
+      this.emit({type:'depth-matrix-batch',ids:[sub.id],settings:sub.settings,...(resolvedViewport?{viewport:resolvedViewport}:{}),columns,orderBook:projected,emittedAt:at});
     }
   }
   private column(source:DepthMatrixSource,sub:MatrixSubscription,at:number):DepthMatrixColumn{
     const market=marketOfSource(source);
     if(!market)return {source,label:depthMatrixSourceLabel(source),state:'unavailable',message:'No synchronized live BTC depth source is configured.',rows:[],bestBid:null,bestAsk:null,mid:null,quantityUnit:'BTC',notionalUnit:'USDT',lastAt:0,ageMs:null,cursor:0,epoch:null};
     const feed=this.feeds.get(market),viewport=sub.viewport;
-    const grid=viewport?this.grids.get(gridKey(market,sub.settings.bucketWidth,viewport)):
-      this.grids.get(gridKey(market,sub.settings.bucketWidth,undefined));
+    const grid=viewport?this.grids.get(gridKey(market,sub.settings.bucketWidth,viewport,sub.settings.referenceAnchor?.price)):
+      this.grids.get(gridKey(market,sub.settings.bucketWidth,undefined,sub.settings.referenceAnchor?.price));
     const data=grid?.data;
     const offline=!this.online||feed?.transport==='disconnected';
     if(!data)return {source,label:depthMatrixSourceLabel(source),state:offline?'disconnected':feed?.transport==='stale'?'stale':'syncing',message:offline?'Network offline':feed?.message??'Waiting for a durable depth snapshot',rows:[],bestBid:null,bestAsk:null,mid:null,quantityUnit:'BTC',notionalUnit:'USDT',lastAt:0,ageMs:null,cursor:0,epoch:null};
@@ -295,14 +304,14 @@ export class StagingDepthMatrixService {
     else if(ageMs!==null&&ageMs>STALE_AFTER_MS)state='stale';
     const rows=state==='stale'||state==='disconnected'?data.rows.map(row=>transportCoverage(row,state)):data.rows;
     return {source,label:depthMatrixSourceLabel(source),state,message:offline?'Network offline':state==='stale'&&feed?.transport==='stale'?feed.message:feed?.message??data.message,rows,bestBid:data.bestBid,bestAsk:data.bestAsk,mid:data.mid,
-      quantityUnit:'BTC',notionalUnit:'USDT',lastAt:data.lastAt,ageMs,cursor:data.cursor,epoch:data.epoch};
+      quantityUnit:'BTC',notionalUnit:'USDT',lastAt:data.lastAt,ageMs,cursor:data.cursor,epoch:data.epoch,...(data.cumulative?{cumulative:data.cumulative}:{})};
   }
   diagnostics(){return {...this.stats,activeWidgets:this.subscriptions.size,activeMarkets:this.feeds.size,activeGrids:this.grids.size,
     markets:[...this.feeds.values()].map(feed=>({market:feed.market,cursor:feed.target?.cursor??0,epoch:feed.target?.epoch??null,state:feed.transport,busy:[...this.grids.values()].some(grid=>grid.market===feed.market&&grid.busy),consumers:[...this.subscriptions.values()].filter(sub=>sub.settings.sources.some(source=>marketOfSource(source)===feed.market)).length}))};}
   dispose(){if(this.disposed)return;this.disposed=true;clearInterval(this.timer);for(const feed of this.feeds.values()){feed.release?.();feed.probe?.abort();}for(const grid of this.grids.values())this.cancelGrid(grid);this.feeds.clear();this.grids.clear();this.subscriptions.clear();this.stats.activeWidgets=0;this.stats.activeMarkets=0;this.stats.activeGrids=0;}
 }
 
-function gridKey(market:Market,width:string,viewport?:DepthMatrixViewport){return `${market}|${width}|${viewport?`${viewport.low}:${viewport.high}`:'auto'}`;}
+function gridKey(market:Market,width:string,viewport?:DepthMatrixViewport,reference?:string){return `${market}|${width}|${viewport?`${viewport.low}:${viewport.high}`:'auto'}|${reference??''}`;}
 function sameViewport(a:DepthMatrixViewport,b:DepthMatrixViewport){return a.low===b.low&&a.high===b.high;}
 function adjacentViewport(viewport:DepthMatrixViewport,width:string,direction:-1|1):DepthMatrixViewport|null{
   const first=matrixBucketIndex(viewport.low,width),last=matrixBucketIndex(viewport.high,width);
@@ -321,6 +330,7 @@ function validateResponse(value:MatrixResponse,market:Market,target:{cursor:numb
     ||!['live','stale','syncing'].includes(value.state)||!Number.isSafeInteger(value.cursor)||value.cursor<target.cursor||value.cursor<priorCursor||value.epoch!==target.epoch
     ||!Number.isFinite(value.lastAt)||value.lastAt<0||value.width!==grid.width||value.quantityUnit!=='BTC'||value.notionalUnit!=='USDT'
     ||!validViewport(value.viewport)||!Array.isArray(value.rows)||value.rows.length<1||value.rows.length>2_000)throw new Error('Invalid compact depth matrix response');
+  if(grid.reference)validateCumulative(value,grid.reference);
   if(grid.viewport&&(value.viewport.low!==grid.viewport.low||value.viewport.high!==grid.viewport.high))throw new Error('Depth Matrix viewport mismatch');
   const first=matrixBucketIndex(value.viewport.low,value.width),end=matrixBucketIndex(value.viewport.high,value.width);
   if(first===null||end===null||matrixBucketBounds(first,value.width)?.low!==value.viewport.low||matrixBucketBounds(end,value.width)?.low!==value.viewport.high
@@ -333,3 +343,19 @@ function validateResponse(value:MatrixResponse,market:Market,target:{cursor:numb
   }
 }
 function validCoverage(value:MatrixCoverage){return ['observed','known-empty','partial','unknown','stale','disconnected','syncing'].includes(value);}
+
+/** Rows and prefix must come from one response/head, never stitched cached pages. */
+function validateCumulative(value:MatrixResponse,reference:string){
+ const c=value.cumulative,origin=matrixBucketIndex(reference,value.width);
+ if(!c||c.version!==1||c.reference!==reference||c.referenceIndex!==origin||c.cursor!==value.cursor||c.epoch!==value.epoch||c.at!==value.lastAt
+   ||!Array.isArray(c.rows)||c.rows.length!==value.rows.length)throw Error('Cumulative depth head or reference mismatch');
+ for(let i=0;i<c.rows.length;i++){
+  const row=c.rows[i]!,base=value.rows[i]!;
+  if(row.index!==base.index)throw Error('Cumulative row mismatch');
+  for(const side of ['bid','ask'] as const){
+   const expected=side==='bid'?BigInt(row.index)<=BigInt(origin!):BigInt(row.index)>=BigInt(origin!),v=row[side];
+   if(!expected){if(v!==null)throw Error('Cumulative side outside reference');continue;}
+   if(!v||!Number.isFinite(v.quantity)||v.quantity<0||!Number.isFinite(v.notional)||v.notional<0||!['exact','lower-bound','unknown','stale'].includes(v.coverage))throw Error('Invalid cumulative amount');
+  }
+ }
+}

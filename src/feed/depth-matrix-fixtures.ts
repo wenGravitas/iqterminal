@@ -1,3 +1,4 @@
+import {projectOrderBook} from '../order-book/projection';
 import { depthMatrixSettings, depthMatrixSourceDefinition, depthMatrixSourceLabel, DepthMatrixBook, matrixBucketBounds, matrixBucketIndex, matrixDefaultViewport,
   type DepthMatrixColumn, type DepthMatrixSettings, type DepthMatrixViewport, type MatrixRecord } from './depth-matrix';
 import type { Command, Event } from './protocol';
@@ -21,7 +22,7 @@ export class DepthMatrixFixtureService {
       const sub = this.subscriptions.get(command.id); if (!sub) return;
       const next = depthMatrixSettings(command.settings);
       if (next.bucketWidth !== sub.settings.bucketWidth) sub.viewport = undefined;
-      sub.settings = next;
+      sub.settings = next;if(command.viewport&&validViewport(command.viewport))sub.viewport={...command.viewport};
     } else if (command.type === 'depth-matrix-viewport') {
       const sub = this.subscriptions.get(command.id); if (!sub || !validViewport(command.viewport)) return;
       sub.viewport = { ...command.viewport };
@@ -38,7 +39,9 @@ export class DepthMatrixFixtureService {
     const books = settings.sources.map(source => fixtureColumn(source, settings, at, emittedAt, sub.viewport));
     const mid = books.find(column => column.mid !== null)?.mid;
     const viewport = sub.viewport ?? matrixDefaultViewport(mid === undefined ? null : Number(mid), settings.bucketWidth);
-    this.emit({ type: 'depth-matrix-batch', ids: [id], settings, viewport, columns: books, emittedAt });
+    // Match the production service: source changes do not silently move the shared range.
+    if(!sub.viewport&&books.some(column=>column.rows.length))sub.viewport={...viewport};
+    this.emit({ type: 'depth-matrix-batch', ids: [id], settings, viewport, columns: books, orderBook:projectOrderBook(books,settings.sources,settings.bucketWidth,settings.referenceAnchor,emittedAt), emittedAt });
   }
 }
 
@@ -71,8 +74,21 @@ function fixtureColumn(source: string, settings: DepthMatrixSettings, at: number
   const book = new DepthMatrixBook(definition.quantityToBtc); book.apply(record);
   const referenceMid = book.quote.mid;
   const visible = viewport ?? matrixDefaultViewport(referenceMid, settings.bucketWidth);
+  const rows=book.project(visible.low, visible.high, settings.bucketWidth);
+  const anchor=settings.referenceAnchor,origin=anchor?matrixBucketIndex(anchor.price,settings.bucketWidth):null;
+  const cumulative=anchor&&origin!==null?{version:1 as const,reference:anchor.price,referenceIndex:origin,cursor:book.lastCursor,epoch:book.lastEpoch,at,
+    rows:rows.map(row=>{
+      const side=(side:'bid'|'ask')=>{
+        if(side==='bid'?BigInt(row.index)>BigInt(origin):BigInt(row.index)<BigInt(origin))return null;
+        const originEdge=matrixBucketBounds(origin,settings.bucketWidth)!,lo=side==='bid'?Number(row.low):Number(originEdge.low),hi=side==='bid'?Number(originEdge.high):Number(row.high);
+        const levels=(side==='bid'?record.bids:record.asks) as readonly (readonly [string,string])[];
+        let quantity=0,notional=0;for(const [p,q] of levels)if(Number(p)>=lo&&Number(p)<hi){quantity+=Number(q);notional+=Number(p)*Number(q);}
+        const boundary=Number(side==='bid'?record.bookScope!.bidFloor:record.bookScope!.askCeiling);
+        const complete=side==='bid'?lo>=boundary:hi<=boundary,overlap=side==='bid'?hi>boundary:lo<boundary;
+        return {quantity,notional,coverage:complete?'exact' as const:overlap||quantity>0?'lower-bound' as const:'unknown' as const};
+      };return {index:row.index,bid:side('bid'),ask:side('ask')};})}:undefined;
   return { source, label: definition.label, state: 'live', message: FIXTURE_MESSAGE,
-    rows: book.project(visible.low, visible.high, settings.bucketWidth), bestBid: book.quote.bestBid, bestAsk: book.quote.bestAsk,
+    rows,...(cumulative?{cumulative}:{}), bestBid: book.quote.bestBid, bestAsk: book.quote.bestAsk,
     mid: referenceMid === null ? null : String(referenceMid), quantityUnit: 'BTC', notionalUnit: 'USDT',
     lastAt: at, ageMs: Math.max(0, now - at), cursor: book.lastCursor, epoch: book.lastEpoch };
 }
