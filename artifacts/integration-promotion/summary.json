@@ -1,0 +1,36 @@
+{
+  "frontendSource": "d368169",
+  "backendSource": "e3b280d",
+  "frontendUnit": {
+    "passed": 1464,
+    "expectedFailure": 1,
+    "skipped": 3,
+    "workers": 1,
+    "testTimeoutMs": 15000
+  },
+  "backendUnit": {
+    "passed": 472
+  },
+  "backendLifecycle": {
+    "cleanupPassed": 19,
+    "cliPassed": 3
+  },
+  "browser": {
+    "orderBook": {
+      "initialPassed": 11,
+      "initialFailed": 1,
+      "correctedRecheckPassed": 1
+    },
+    "retainedRendererPassed": 8,
+    "stagingProtocolPassed": 3,
+    "newestFirstPassed": 2,
+    "scope": "Explicit fixtures in headless Chromium; not real venue or foreground performance acceptance"
+  },
+  "cleanupTargets": 16,
+  "canonicalDirectories": [
+    "/home/daz/workarea/iqterminal",
+    "/home/daz/workarea/iqterminal-server"
+  ],
+  "productionDeployment": false,
+  "browserLaunchGuardPassed": 4
+}

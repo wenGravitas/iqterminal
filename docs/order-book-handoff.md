@@ -1,5 +1,7 @@
 # Order Book R1 review handoff
 
+This is the original review record. See [the consolidation report](integration-promotion.md) for subsequent main promotion and worktree cleanup.
+
 Implementation is on isolated `feat/order-book-r1` worktrees. Original dirty checkouts were preserved. Nothing was merged, pushed or deployed to production.
 
 ## Revisions

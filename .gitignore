@@ -33,3 +33,7 @@ Thumbs.db
 # Verified manual navigation bundle and session-local launch receipts.
 dist-wall-foreground/
 artifacts/persistent-wall-navigation/foreground-client/manual-*/
+
+# Python diagnostic bytecode and raw browser runner output
+__pycache__/
+/artifacts/order-book/browser-results.json

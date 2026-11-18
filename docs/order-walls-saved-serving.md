@@ -27,7 +27,7 @@ Collectors and the incumbent API were not replaced.
 
 ## Operation
 
-From `/home/daz/workarea/iqterminal-server-main`:
+From `/home/daz/workarea/iqterminal-server`:
 
 ```sh
 python3 ops/wall-serving.py status
