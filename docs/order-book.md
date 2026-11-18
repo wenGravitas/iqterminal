@@ -39,12 +39,12 @@ Deterministic fixture selection is explicit (`?fixture=1` in development/diagnos
 
 Panel diagnostics expose bounded synchronous render durations and input-to-render-completion samples. They do **not** measure compositor presentation or certify 60fps. Foreground Pi acceptance requires approximately 100 visible rows, two live books, alone and alongside Single: p95 synchronous paint ≤8ms and p95 interaction-to-paint ≤50ms, plus initial usable render, book age, long tasks, memory trend and request counts. Headless fixtures and captured checkpoints are separate evidence.
 
-No production merge or deployment is included. Existing staging servers require the companion optional cumulative endpoint before live Compact cumulative acceptance. The repository currently refuses headed test browsers because desktop isolation is unverified; resolve that operational gate before foreground Pi acceptance.
+No production merge or deployment is included. Existing shared staging servers require the companion optional cumulative endpoint. The isolated read-only candidate passed live UI checks; see the handoff for its scope and measured headless limitations. The repository currently refuses headed test browsers because desktop isolation is unverified; resolve that operational gate before foreground Pi acceptance.
 
 ## Follow-ups
 
 Multi-venue adapters (including venue-specific quantity normalization and coverage contracts) and pull/stack are separate milestones. R1 does not enable pull/stack or interpret snapshot decreases as cancellations. It does not claim full reference-application or exchange parity.
 
-Reference helpers were adapted from liquiditymapperfast at `be7aeb7ba772a4558704bda326405af7352a84c9`; MIT attribution is in the dependency notices and public licenses. The reference repository contained no pinned Compact screenshot, so screenshot parity remains unverified.
+Reference helpers were adapted from liquiditymapperfast at `6126de1cf249df9ed19a598d19939f39dd4301ba`; MIT attribution is in the dependency notices and public licenses. The reference repository contained no pinned Compact screenshot, so screenshot parity remains unverified.
 
 Deployment order: deploy and verify the companion backend before this frontend. Both modes share the cumulative-enabled subscription once a reference is pinned. An older backend rejects these parameters (verified HTTP 400 on the current staging route); the client marks the request failure rather than silently substituting unproven prefixes.

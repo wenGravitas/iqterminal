@@ -32,7 +32,8 @@ test('independent instances retain modes and hidden widgets stop painting',async
  await page.evaluate(id=> (window as any).__terminal.dock.getPanel(id).api.setActive(),hiddenId);await expect(panels.nth(0)).toBeVisible();
 });
 test('legacy active and inactive workspaces restore once in Single with identity and preferences',async({page})=>{
- await page.goto('/?fixture=1');await addWidget(page,'Order Book');await page.waitForTimeout(250);
+ await page.goto('/?fixture=1');await addWidget(page,'Order Book');await expect(page.locator('.depth-matrix-panel')).toBeVisible();
+ await expect.poll(()=>page.evaluate(()=>{const raw=localStorage.getItem('iqterminal:workspaces:v1');if(!raw)return false;const r=JSON.parse(raw);return Object.values(r.workspaces.find((w:any)=>w.id===r.activeId).layout.panels).some((p:any)=>p.contentComponent==='order-book');})).toBe(true);
  const ids=await page.evaluate(()=>{
   const registry=JSON.parse(localStorage.getItem('iqterminal:workspaces:v1')!),active=registry.workspaces.find((w:any)=>w.id===registry.activeId);
   const entry=Object.values(active.layout.panels).find((p:any)=>p.contentComponent==='order-book') as any;
@@ -44,4 +45,12 @@ test('legacy active and inactive workspaces restore once in Single with identity
  expect((await inspect()).panels).toMatchObject([{id:ids.panel,settings:{mode:'single',columnWidth:130,unit:'usdt',scale:'shared',wallMode:'off',sources:['binance-perpetual','binance-spot']}}]);
  expect(Object.values((await inspect()).inactive.panels).filter((p:any)=>p.contentComponent==='depth-matrix')).toHaveLength(0);
  await page.evaluate(id=>(window as any).__terminal.workspaces.switchTo(id),ids.inactive);await expect(panel).toHaveCount(1);await expect(panel.getByLabel('Mode',{exact:true})).toHaveValue('single');await page.reload();await expect(panel).toHaveCount(1);expect((await inspect()).panels[0].id).toBe(ids.panel);
+});
+
+test('removing every Compact source clears retained liquidity and rejects a late old-source batch',async({page})=>{
+ await page.addInitScript(()=>{const Native=Worker;class ReplayWorker extends Native{set onmessage(handler:any){const worker=this;super.onmessage=handler&&function(event:MessageEvent){if(event.data?.type==='depth-matrix-batch'&&event.data.orderBook?.rows.length)(window as any).__replayRemovedBook=()=>handler.call(worker,new MessageEvent('message',{data:event.data}));handler.call(worker,event);};}get onmessage(){return super.onmessage;}}Object.defineProperty(window,'Worker',{configurable:true,writable:true,value:ReplayWorker});});
+ await page.goto('/?fixture=1');await addWidget(page,'Order Book');const panel=page.locator('.depth-matrix-panel');await expect(panel.locator('.order-book-compact-head')).toContainText('USDT/full width');
+ await panel.getByRole('button',{name:'Order Book settings'}).click();for(let i=0;i<2;i++)await panel.locator('button[title="Remove source"]').first().click();
+ await expect(panel.locator('.order-book-compact-head')).toContainText('No selected sources');await expect(panel.locator('.order-book-balance')).toContainText('BID — / ASK —');
+ await page.evaluate(()=>(window as any).__replayRemovedBook());await expect(panel.locator('.order-book-compact-head')).toContainText('No selected sources');expect((await page.evaluate(diagnostic))[0].columns).toEqual([]);
 });

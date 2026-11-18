@@ -1,4 +1,4 @@
-/** Small pure helpers adapted from liquiditymapperfast, MIT, be7aeb7ba772a4558704bda326405af7352a84c9.
+/** Small pure helpers adapted from liquiditymapperfast, MIT, 6126de1cf249df9ed19a598d19939f39dd4301ba.
  * See docs/THIRD_PARTY_NOTICES.md. IQ keeps user source order and ranks lines by live depth, not traded volume. */
 export interface BarPiece {id:string|null;notional:number;x:number;width:number;rank:number;merged:{id:string;notional:number}[]}
 export function barPieces(ids:readonly string[],values:readonly number[],denominator:number,x:number,width:number,minPx=3):BarPiece[]{

@@ -14,7 +14,7 @@ export class CompactOrderBook {
  private ranked:string[]=[];
  paint(canvas:HTMLCanvasElement,projection:OrderBookProjection|undefined,rows:readonly MatrixRow[],layout:MatrixRowLayout,
   first:number,last:number,width:number,settings:OrderBookSettings,p:CompactPalette,now=performance.now()){
-  this.hits=[];this.projection=projection;if(!projection||!rows.length)return {label:'Waiting for depth',balance:displayedBalance([]),lines:[] as string[]};
+  this.hits=[];this.projection=projection;if(!projection||!rows.length){canvas.getContext('2d')?.clearRect(0,0,canvas.width,canvas.height);return {label:projection?.sources.length===0?'No selected sources':'Waiting for depth',balance:displayedBalance([]),lines:[] as string[]};}
   const map=new Map(projection.rows.map(row=>[row.index,row])),visible=rows.slice(first,last).map(r=>map.get(r.index)).filter((r):r is BookRow=>!!r);
   const target=Math.max(0,...visible.flatMap(r=>[r.bid.notional,r.ask.notional]));
   this.scale=smoothDepthMatrixScale(target,this.scale,Math.max(0,now-this.scaleAt));this.scaleAt=now;
@@ -53,32 +53,39 @@ export class CompactOrderBook {
     this.hits.push({row,top:y,height:h,side:type,pieces});
    }else this.hits.push({row,top:y,height:h,side:type,pieces:[]});
   };
+  const gridPath=new Path2D();
   for(let i=first;i<last;i++){
    const base=rows[i]!,row=map.get(base.index);if(!row)continue;const pos=layout.positions[i]!,y=pos.top,h=pos.height;
    const bidPresent=row.bid.contributions.some(c=>c.quantity>0),askPresent=row.ask.contributions.some(c=>c.quantity>0);
    const mixed=bidPresent&&askPresent,side: 'bid'|'ask'=bidPresent?'bid':askPresent?'ask':projection.anchor&&Number(row.low)>Number(projection.anchor.price)?'ask':'bid';
    if(row.index===origin){ctx.fillStyle=p.accent;ctx.globalAlpha=.09;ctx.fillRect(0,y,width,h);ctx.globalAlpha=1;}
-   ctx.strokeStyle=p.divider;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,y+h-.5);ctx.lineTo(width,y+h-.5);ctx.stroke();
+   gridPath.moveTo(0,y+h-.5);gridPath.lineTo(width,y+h-.5);
    ctx.fillStyle=row.index===origin?p.accent:p.text;ctx.textAlign='right';ctx.fillText(matrixExactPrice(row.low),63,y+h/2,61);
    if(mixed){band(row.ask,'ask',row,y,h/2);band(row.bid,'bid',row,y+h/2,h/2);}
    else band(row[side],side,row,y,h);
    const writeAmount=(s:BookSide,y0:number)=>{ctx.fillStyle=s.coverage==='unknown'?p.muted:p.text;ctx.textAlign='right';ctx.fillText(s.coverage==='unknown'?'—':(s.coverage==='lower-bound'?'≥':'')+formatDepthMatrixCellValue(s.notional,'usdt'),barX-6,y0,46);};
    if(mixed){writeAmount(row.ask,y+h/4);writeAmount(row.bid,y+3*h/4);}else writeAmount(row[side],y+h/2);
   }
+  ctx.strokeStyle=p.divider;ctx.lineWidth=1;ctx.stroke(gridPath);
   // Independent stepped axes. A missing proof stops a curve; partial coverage is dashed.
   if(settings.compact.show!=='levels'){
    const curve=(side:'bid'|'ask',source:string|null,full:number,color:string)=>{
+    if(full<=0)return;
+    // Batch by coverage style: one stroke per style, rather than save/stroke/restore
+    // for every row. Missing proof still breaks continuity at that row.
+    const paths={exact:new Path2D(),partial:new Path2D()};
     let previous:{x:number;bottom:number}|undefined;
     for(let i=first;i<last;i++){
      const row=map.get(rows[i]!.index),pos=layout.positions[i]!;if(!row){previous=undefined;continue;}
      const contribution=source?row[side].contributions.find(c=>c.source===source&&c.live):null;
      const value=source?contribution?.cumulative:row[side].cumulative;
-     if(!value||value.coverage==='unknown'||value.coverage==='stale'||full<=0){previous=undefined;continue;}
-     const x=barX+Math.min(1,value.notional/full)*barW,bandHeight=pos.height;
-     ctx.save();ctx.strokeStyle=color;ctx.globalAlpha=source?.7:.55;ctx.lineWidth=source?1:1.25;ctx.setLineDash(value.coverage==='exact'?[]:[3,3]);
-     ctx.beginPath();if(previous&&previous.bottom===pos.top){ctx.moveTo(previous.x,pos.top);ctx.lineTo(x,pos.top);}else ctx.moveTo(x,pos.top);
-     ctx.lineTo(x,pos.top+bandHeight);ctx.stroke();ctx.restore();previous={x,bottom:pos.top+bandHeight};
+     if(!value||value.coverage==='unknown'||value.coverage==='stale'){previous=undefined;continue;}
+     const x=barX+Math.min(1,value.notional/full)*barW,path=value.coverage==='exact'?paths.exact:paths.partial;
+     if(previous&&previous.bottom===pos.top){path.moveTo(previous.x,pos.top);path.lineTo(x,pos.top);}else path.moveTo(x,pos.top);
+     path.lineTo(x,pos.top+pos.height);previous={x,bottom:pos.top+pos.height};
     }
+    ctx.save();ctx.strokeStyle=color;ctx.globalAlpha=source?.7:.55;ctx.lineWidth=source?1:1.25;
+    ctx.setLineDash([]);ctx.stroke(paths.exact);ctx.setLineDash([3,3]);ctx.stroke(paths.partial);ctx.restore();
    };
    for(const side of ['bid','ask'] as const){curve(side,null,this.cumulativeScale,side==='bid'?p.bid:p.ask);for(const source of this.ranked){const mark=sourceMark(source);curve(side,source,this.venueScale,p.light?mark.light:mark.dark);}}
   }

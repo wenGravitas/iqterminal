@@ -13,7 +13,7 @@ The UTC time-axis tick selection in `src/chart/axis-grid.ts` is adapted from the
 ## liquiditymapperfast Compact Order Book helpers (MIT)
 
 Source: https://github.com/liquiditymapperfast/liquiditymapperfast.github.io
-Pinned reference: `be7aeb7ba772a4558704bda326405af7352a84c9`.
+Pinned reference: `6126de1cf249df9ed19a598d19939f39dd4301ba`.
 IQ's `src/order-book/pieces.ts` adapts small pure segment partitioning, adaptive
 label selection and bounded ranking helpers from `src/app/panes/ladder-pieces.ts`
 and `ladder-curves.ts`. `ladder-pane.ts` and `levels-data.ts` inform composition

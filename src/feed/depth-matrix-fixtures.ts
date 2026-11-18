@@ -39,6 +39,8 @@ export class DepthMatrixFixtureService {
     const books = settings.sources.map(source => fixtureColumn(source, settings, at, emittedAt, sub.viewport));
     const mid = books.find(column => column.mid !== null)?.mid;
     const viewport = sub.viewport ?? matrixDefaultViewport(mid === undefined ? null : Number(mid), settings.bucketWidth);
+    // Match the production service: source changes do not silently move the shared range.
+    if(!sub.viewport&&books.some(column=>column.rows.length))sub.viewport={...viewport};
     this.emit({ type: 'depth-matrix-batch', ids: [id], settings, viewport, columns: books, orderBook:projectOrderBook(books,settings.sources,settings.bucketWidth,settings.referenceAnchor,emittedAt), emittedAt });
   }
 }

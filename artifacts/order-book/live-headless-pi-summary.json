@@ -1,0 +1,215 @@
+{
+  "evidence": "Live committed-source candidate on actual Pi 5, headless browser; NOT foreground/compositor acceptance",
+  "initialUsableMs": 9950,
+  "requests": 113,
+  "uniqueRequestGrids": 19,
+  "redrawOnlyCommands": 0,
+  "longTasks": [
+    244,
+    59,
+    54,
+    55,
+    211,
+    52,
+    284
+  ],
+  "samples": [
+    {
+      "at": 1794980879735,
+      "mainPageHeapBytes": 33586681,
+      "books": [
+        {
+          "mode": "compact",
+          "visibleRows": 108,
+          "rows": 160,
+          "columns": [
+            {
+              "source": "binance-spot",
+              "state": "live",
+              "ageMs": 1085,
+              "cursor": 27434168
+            },
+            {
+              "source": "binance-perpetual",
+              "state": "live",
+              "ageMs": 787,
+              "cursor": 31259293
+            }
+          ],
+          "paintP95Ms": 48.30000000074506,
+          "steadyRenderP95Ms": null,
+          "steadyCanvasP95Ms": null,
+          "inputToRenderCompletionP95Ms": 7.400000000372529
+        }
+      ]
+    },
+    {
+      "at": 1794980882756,
+      "mainPageHeapBytes": 36785354,
+      "books": [
+        {
+          "mode": "compact",
+          "visibleRows": 108,
+          "rows": 160,
+          "columns": [
+            {
+              "source": "binance-spot",
+              "state": "live",
+              "ageMs": 1026,
+              "cursor": 27434199
+            },
+            {
+              "source": "binance-perpetual",
+              "state": "live",
+              "ageMs": 870,
+              "cursor": 31259322
+            }
+          ],
+          "paintP95Ms": 18.699999999254942,
+          "steadyRenderP95Ms": 17.09999999962747,
+          "steadyCanvasP95Ms": 15.400000000372529,
+          "inputToRenderCompletionP95Ms": 7.400000000372529
+        }
+      ]
+    },
+    {
+      "at": 1794980883493,
+      "mainPageHeapBytes": 37223956,
+      "books": [
+        {
+          "mode": "compact",
+          "visibleRows": 108,
+          "rows": 160,
+          "columns": [
+            {
+              "source": "binance-spot",
+              "state": "live",
+              "ageMs": 1125,
+              "cursor": 27434207
+            },
+            {
+              "source": "binance-perpetual",
+              "state": "live",
+              "ageMs": 957,
+              "cursor": 31259329
+            }
+          ],
+          "paintP95Ms": 18.699999999254942,
+          "steadyRenderP95Ms": 17.09999999962747,
+          "steadyCanvasP95Ms": 15.400000000372529,
+          "inputToRenderCompletionP95Ms": 22.199999999254942
+        }
+      ]
+    },
+    {
+      "at": 1794980893622,
+      "mainPageHeapBytes": 33771581,
+      "books": [
+        {
+          "mode": "compact",
+          "visibleRows": 107,
+          "rows": 160,
+          "columns": [
+            {
+              "source": "binance-spot",
+              "state": "live",
+              "ageMs": 1345,
+              "cursor": 27434304
+            },
+            {
+              "source": "binance-perpetual",
+              "state": "live",
+              "ageMs": 983,
+              "cursor": 31259427
+            }
+          ],
+          "paintP95Ms": 18.699999999254942,
+          "steadyRenderP95Ms": 18,
+          "steadyCanvasP95Ms": 15.400000000372529,
+          "inputToRenderCompletionP95Ms": 22.199999999254942
+        },
+        {
+          "mode": "single",
+          "visibleRows": 69,
+          "rows": 160,
+          "columns": [
+            {
+              "source": "binance-spot",
+              "state": "live",
+              "ageMs": 1345,
+              "cursor": 27434304
+            },
+            {
+              "source": "binance-perpetual",
+              "state": "live",
+              "ageMs": 983,
+              "cursor": 31259427
+            }
+          ],
+          "paintP95Ms": 21.5,
+          "steadyRenderP95Ms": 11.700000001117587,
+          "steadyCanvasP95Ms": 8.600000001490116,
+          "inputToRenderCompletionP95Ms": 22.09999999962747
+        }
+      ]
+    },
+    {
+      "at": 1794980899656,
+      "mainPageHeapBytes": 54099881,
+      "books": [
+        {
+          "mode": "compact",
+          "visibleRows": 107,
+          "rows": 160,
+          "columns": [
+            {
+              "source": "binance-spot",
+              "state": "live",
+              "ageMs": 1726,
+              "cursor": 27434361
+            },
+            {
+              "source": "binance-perpetual",
+              "state": "live",
+              "ageMs": 1248,
+              "cursor": 31259484
+            }
+          ],
+          "paintP95Ms": 18,
+          "steadyRenderP95Ms": 17.09999999962747,
+          "steadyCanvasP95Ms": 14.300000000745058,
+          "inputToRenderCompletionP95Ms": 22.199999999254942
+        },
+        {
+          "mode": "single",
+          "visibleRows": 69,
+          "rows": 160,
+          "columns": [
+            {
+              "source": "binance-spot",
+              "state": "live",
+              "ageMs": 1726,
+              "cursor": 27434361
+            },
+            {
+              "source": "binance-perpetual",
+              "state": "live",
+              "ageMs": 1248,
+              "cursor": 31259484
+            }
+          ],
+          "paintP95Ms": 17.600000001490116,
+          "steadyRenderP95Ms": 9.099999999627471,
+          "steadyCanvasP95Ms": 5.700000001117587,
+          "inputToRenderCompletionP95Ms": 22.09999999962747
+        }
+      ]
+    }
+  ],
+  "platform": {
+    "architecture": "aarch64",
+    "model": "Raspberry Pi 5 Model B Rev 1.0",
+    "browser": "Chromium headless, Vite development server",
+    "foregroundAcceptance": false
+  }
+}

@@ -312,7 +312,11 @@ export class OrderBookPanel implements IContentRenderer {
   private subscribe() {
     if (this.dead || !this.visible || this.release) return;
     this.release = this.feed.subscribeDepthMatrix(this.params.api.id, this.settings, event => {
-      if (this.dead||event.settings.bucketWidth!==this.settings.bucketWidth||event.settings.referenceAnchor?.price!==this.settings.referenceAnchor?.price) return;
+      if (this.dead||event.settings.bucketWidth!==this.settings.bucketWidth||event.settings.referenceAnchor?.price!==this.settings.referenceAnchor?.price
+        ||event.settings.referenceSourceId!==this.settings.referenceSourceId||event.settings.sources.join(',')!==this.settings.sources.join(',')) return;
+      if(!this.settings.sources.length){
+        this.columns=[];this.book=event.orderBook;this.pendingSettings=false;this.pendingViewport=undefined;this.centeringViewport=undefined;this.centerPending=false;this.draw();return;
+      }
       // Old active-page batches may arrive while a replacement is loading. A
       // Center request supersedes them; a restored subscription must not reset
       // the grid to its default page.
@@ -320,8 +324,9 @@ export class OrderBookPanel implements IContentRenderer {
       if (event.viewport && requested && !sameViewport(event.viewport, requested)
         && (this.centeringViewport || !this.viewport || !sameViewport(event.viewport, this.viewport))) return;
       if ((!event.viewport||!event.columns.some(c=>c.rows.length)) && this.rows.length) {
-        if(event.orderBook?.rows.length&&event.orderBook.width===this.paintedWidth)this.book=event.orderBook;
-        this.columns = this.columns.map(previous => {
+        if(event.orderBook&&event.orderBook.width===this.paintedWidth)this.book=event.orderBook;
+        if(!this.settings.sources.length)this.pendingSettings=false;
+        this.columns = this.columns.filter(column=>this.settings.sources.includes(column.source)).map(previous => {
           const current = event.columns.find(column => column.source === previous.source);
           if (current && current.state !== previous.state) this.markAllRows(previous.source);
           return current ? { ...previous, state: current.state, message: current.message,
@@ -616,7 +621,7 @@ export class OrderBookPanel implements IContentRenderer {
       header.dataset.state = column?.state ?? 'syncing';
       header.title = column ? `${column.label}\n${column.message}${column.ageMs === null ? '' : `\nBook age ${ageLabel(column.ageMs)}`}` : depthMatrixSourceLabel(source);
       const state = header.querySelector('small');
-      if (state) state.textContent = column ? columnStateLabel(column) : 'SYNCING';
+      if (state) setText(state,column ? columnStateLabel(column) : 'SYNCING');
     }
   }
 
@@ -631,14 +636,15 @@ export class OrderBookPanel implements IContentRenderer {
     const state = reference ? reference.state === 'live' ? usable ? columnStateLabel(reference) : 'UNAVAILABLE' : reference.state.toUpperCase() : 'UNAVAILABLE';
     const short = source === 'binance-spot' ? 'SPOT' : source === 'binance-perpetual' ? 'PERP' : source;
     const degraded = this.columns.filter(column => column.state !== 'live' && column.source !== source).map(column => `${shortName[column.source] ?? column.source} ${column.state.toUpperCase()}`).join(' · ');
-    this.status.textContent = !source ? 'Choose reference'
+    let statusText = !source ? 'Choose reference'
       : `${short} MID ${mid === null || mid === undefined ? '—' : referencePriceLabel(mid)}${usable ? reference?.message.startsWith('Fixture:') ? ' · FIXTURE' : '' : ` · ${state}`}`;
-    if (degraded) this.status.textContent += ` · ${degraded}`;
+    if (degraded) statusText += ` · ${degraded}`;
     this.status.dataset.state = usable ? 'live' : reference?.state === 'live' ? 'unavailable' : reference?.state ?? 'unavailable';
     const detail = !source ? 'Choose a reference midpoint source in SET.'
       : `${depthMatrixSourceLabel(source)} reference midpoint${mid == null ? ': unavailable' : ` $${exactReferencePriceLabel(mid)}; compact display rounded to $${referencePriceLabel(mid)}`}. ${state}. ${reference?.message ?? 'Source unavailable'}`;
     this.status.setAttribute('aria-label', detail);
-    if(this.pendingSettings||this.pendingViewport||this.centeringViewport)this.status.textContent+=' · pending';
+    if(this.pendingSettings||this.pendingViewport||this.centeringViewport)statusText+=' · pending';
+    setText(this.status,statusText);
     this.element.dataset.pending=String(this.pendingSettings||!!this.pendingViewport||!!this.centeringViewport);
     this.status.title = detail + '\n' + this.columns.map(column => `${column.label}: ${column.state}; ${column.message}; ${column.ageMs === null ? 'no book timestamp' : `book age ${ageLabel(column.ageMs)}`}; cursor ${column.cursor}`).join('\n');
     this.recenterButton.title = usable ? `Center on ${depthMatrixSourceLabel(source!)} midpoint $${exactReferencePriceLabel(mid!)}` : 'Reference midpoint requires usable live data';
@@ -648,9 +654,10 @@ export class OrderBookPanel implements IContentRenderer {
     const reference = this.referenceColumn(), bucket = matrixCurrentBucket(reference, this.settings.bucketWidth);
     this.axis?.querySelectorAll<HTMLElement>('.depth-matrix-price-row').forEach((element, index) => {
       const row = this.rows[index]; if (!row) return;
-      element.textContent = priceLabel(row.low);
-      element.dataset.current = String(row.index === bucket);
-      element.setAttribute('aria-label', `$${row.low} ≤ price < $${row.high}${row.index === bucket ? `; selected reference ${reference!.label} midpoint $${exactReferencePriceLabel(reference!.mid!)}` : ''}`);
+      setText(element,priceLabel(row.low));
+      const current=String(row.index===bucket);if(element.dataset.current!==current)element.dataset.current=current;
+      const label=`$${row.low} ≤ price < $${row.high}${row.index === bucket ? `; selected reference ${reference!.label} midpoint $${exactReferencePriceLabel(reference!.mid!)}` : ''}`;
+      if(element.getAttribute('aria-label')!==label)element.setAttribute('aria-label',label);
     });
   }
 
@@ -684,8 +691,8 @@ export class OrderBookPanel implements IContentRenderer {
       const style=getComputedStyle(this.element),[first,last]=this.rowLayout.visible(this.scroll.scrollTop-HEADER_HEIGHT,this.scroll.scrollTop+this.scroll.clientHeight-HEADER_HEIGHT);
       const result=this.compact.paint(canvas,this.book,this.rows,this.rowLayout,first,last,Math.max(260,this.scroll.clientWidth),this.settings,{
         background:style.getPropertyValue('--chart').trim(),text:style.getPropertyValue('--text').trim(),muted:style.getPropertyValue('--muted').trim(),divider:style.getPropertyValue('--border-soft').trim(),bid:style.getPropertyValue('--up').trim(),ask:style.getPropertyValue('--down').trim(),accent:style.getPropertyValue('--accent').trim(),light:['light','ios'].includes(document.documentElement.dataset.theme??'')});
-      this.compactHead.textContent='PRICE · LEVEL USDT   '+result.label;this.compactHead.title=result.label;
-      this.balance.textContent=`BID ${result.balance.bidShare===null?'—':Math.round(result.balance.bidShare*100)+'%'} / ASK ${result.balance.bidShare===null?'—':Math.round((1-result.balance.bidShare)*100)+'%'} · selected live books, displayed range${result.balance.complete?'':' · INCOMPLETE'}`;
+      setText(this.compactHead,'PRICE · LEVEL USDT   '+result.label);this.compactHead.title=result.label;
+      setText(this.balance,`BID ${result.balance.bidShare===null?'—':Math.round(result.balance.bidShare*100)+'%'} / ASK ${result.balance.bidShare===null?'—':Math.round((1-result.balance.bidShare)*100)+'%'} · selected live books, displayed range${result.balance.complete?'':' · INCOMPLETE'}`);
       this.balance.style.setProperty('--bid-share',`${(result.balance.bidShare??.5)*100}%`);this.balance.dataset.available=String(result.balance.bidShare!==null);
       this.balance.title='Denominator: selected live books within displayed rows; stale retained depth excluded. Missing coverage is not empty. '+result.lines.map(id=>sourceMark(id).code).join(', ')+' lines: Top N by displayed live liquidity.';
       this.refreshHoverTooltip();return;
@@ -824,3 +831,5 @@ function sameMatrixRow(a: MatrixRow, b: MatrixRow) {
 
 /** Internal alias for old integrations; only Order Book is offered in the menu. */
 export {OrderBookPanel as DepthMatrixPanel};
+
+function setText(element:Element,value:string){if(element.textContent!==value)element.textContent=value;}

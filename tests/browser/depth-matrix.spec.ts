@@ -283,11 +283,20 @@ test('Depth Matrix marks unobserved far-side rows as unknown while keeping known
   const row = matrix.locator('.depth-matrix-price-row[data-price-range^="$90600"]');
   const rowIndex = Number(await row.getAttribute('data-row-index'));
   expect(Number.isInteger(rowIndex)).toBe(true);
-  await perpCanvas.evaluate((canvas, { rowIndex: index, rowHeight: height }) => {
-    const bounds = canvas.getBoundingClientRect();
-    const row = document.querySelectorAll('.depth-matrix-price-row')[index]!.getBoundingClientRect();
-    canvas.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, clientX: bounds.left + bounds.width / 2, clientY: row.top + row.height / 2 }));
-  }, { rowIndex, rowHeight });
+  // Put the row below the sticky header and let the queued scroll finish.
+  // A synthetic pointermove while the real pointer remains on Spot can be
+  // cleared by the subsequent native scroll/leave event.
+  await row.evaluate(element => {
+    const container=element.closest('.depth-matrix-scroll')!;
+    const obscured=container.getBoundingClientRect().top+28-element.getBoundingClientRect().top;
+    if(obscured>0)container.scrollTop=Math.max(0,container.scrollTop-obscured);
+  });
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve(null)))));
+  const point=await perpCanvas.evaluate((canvas,index)=>{
+    const bounds=canvas.getBoundingClientRect(),row=document.querySelectorAll('.depth-matrix-price-row')[index]!.getBoundingClientRect();
+    return {x:bounds.left+bounds.width/2,y:row.top+row.height/2};
+  },rowIndex);
+  await page.mouse.move(point.x,point.y);
   await expect(tooltip).toBeVisible();
   await expect(tooltip).toContainText('known empty');
   await expect(tooltip).toContainText('Not observed');
