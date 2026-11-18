@@ -200,6 +200,7 @@ test('Depth Matrix restores ordered sources and settings and scrolls a narrow fu
 
   await page.reload();
   const restored = page.locator('.depth-matrix-panel');
+  await page.waitForFunction(() => document.documentElement.dataset.appState === 'ready');
   await expect(restored).toBeVisible();
   await expect(restored.locator('.depth-matrix-column-head')).toHaveCount(5);
   await expect(restored.locator('.depth-matrix-column-head[data-state="unavailable"]')).toHaveCount(3);
