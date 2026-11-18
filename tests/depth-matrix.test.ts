@@ -73,7 +73,7 @@ describe('absolute decimal matrix buckets', () => {
   it('restores source order and settings and uses a common full-cell denominator for global comparison', () => {
     const settings = depthMatrixSettings({ sources: ['binance-perpetual', 'binance-spot'], bucketWidth: '250', columnWidth: 130, unit: 'btc', scale: 'shared' });
     const layout = { grid: {}, panels: { 'depth-matrix-live': { contentComponent: 'depth-matrix', params: settings } } } as any;
-    expect(restoreValue(JSON.stringify({ version: 5, layout }))).toEqual(layout);
+    expect(restoreValue(JSON.stringify({ version: 5, layout }))?.panels['depth-matrix-live']).toMatchObject({contentComponent:'order-book',params:{...settings,mode:'single'}});
     expect(restoreValue(JSON.stringify({ version: 4, layout }))).toBeNull();
     expect(settings.sources).toEqual(['binance-perpetual', 'binance-spot']);
     expect(depthMatrixSettings(undefined).columnWidth).toBe(95);

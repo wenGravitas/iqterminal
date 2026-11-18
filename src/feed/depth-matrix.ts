@@ -4,11 +4,19 @@ export type MatrixState = 'syncing' | 'live' | 'gap' | 'stale' | 'disconnected';
 export type DepthMatrixSource = string;
 export type DepthMatrixUnit = 'btc' | 'usdt';
 export type DepthMatrixScale = 'per-source' | 'shared';
+export interface MatrixReferenceAnchor { price: string; source: string; cursor: number; epoch: number|string; at: number }
+export interface MatrixCumulativeValue { quantity: number; notional: number; coverage: 'exact'|'lower-bound'|'unknown'|'stale' }
+export interface MatrixCumulative {
+  version: 1; reference: string; referenceIndex: string; cursor: number; epoch: number|string|null; at: number;
+  rows: {index:string;bid:MatrixCumulativeValue|null;ask:MatrixCumulativeValue|null}[];
+}
 export interface DepthMatrixSettings {
   sources: DepthMatrixSource[]; bucketWidth: string;
   referenceSourceId: DepthMatrixSource | null;
   columnWidth: number; unit: DepthMatrixUnit; scale: DepthMatrixScale;
   wallMode: 'off' | 'absolute' | 'relative'; wallThreshold: number;
+  /** Optional R1 cumulative origin, pinned independently of scroll or mode. */
+  referenceAnchor?: MatrixReferenceAnchor;
 }
 export interface DepthMatrixViewport { low: string; high: string }
 export type MatrixLevel = readonly [price: string | number, quantity: string | number] | { price: string | number; quantity: string | number };
@@ -28,6 +36,7 @@ export interface DepthMatrixColumn {
   source: DepthMatrixSource; label: string; state: MatrixState | 'unavailable'; message: string;
   rows: MatrixRow[]; bestBid: string | null; bestAsk: string | null; mid: string | null;
   quantityUnit: 'BTC'; notionalUnit: 'USDT'; lastAt: number; ageMs: number | null; cursor: number; epoch: number | string | null;
+  cumulative?: MatrixCumulative;
 }
 export interface DepthMatrixSourceDefinition {
   label: string; venue: string; instrument: string; market?: 'spot' | 'perpetual';
@@ -66,10 +75,20 @@ export function depthMatrixSettings(value: unknown): DepthMatrixSettings {
   const referenceSourceId = Object.prototype.hasOwnProperty.call(raw, 'referenceSourceId')
     ? typeof raw.referenceSourceId === 'string' && sources.includes(raw.referenceSourceId) && DEPTH_MATRIX_SOURCE_REGISTRY[raw.referenceSourceId]?.supported ? raw.referenceSourceId : null
     : sources.find(source => DEPTH_MATRIX_SOURCE_REGISTRY[source]?.supported) ?? null;
+  const anchor = validMatrixReference(raw.referenceAnchor, referenceSourceId) ? raw.referenceAnchor : undefined;
   return { sources, referenceSourceId, bucketWidth: validWidth ? parsedWidth! : DEFAULT_DEPTH_MATRIX_SETTINGS.bucketWidth,
     columnWidth, unit: raw.unit === 'usdt' ? 'usdt' : 'btc', scale: raw.scale === 'shared' ? 'shared' : 'per-source',
     wallMode: raw.wallMode === 'off' ? 'off' : raw.wallMode === 'absolute' ? 'absolute' : 'relative',
-    wallThreshold: typeof raw.wallThreshold === 'number' && Number.isFinite(raw.wallThreshold) ? Math.max(.1, Math.min(1000, raw.wallThreshold)) : 2.5 };
+    wallThreshold: typeof raw.wallThreshold === 'number' && Number.isFinite(raw.wallThreshold) ? Math.max(.1, Math.min(1000, raw.wallThreshold)) : 2.5,
+    ...(anchor ? {referenceAnchor: {...anchor,price:normalizedPrice(anchor.price)!}} : {}) };
+}
+export function validMatrixReference(value:unknown,source?:string|null):value is MatrixReferenceAnchor {
+  if(!value||typeof value!=='object')return false;
+  const v=value as MatrixReferenceAnchor;
+  return typeof v.price==='string'&&matrixBucketIndex(v.price,'0.00000001')!==null&&Number(v.price)>0&&Number.isFinite(Number(v.price))
+    &&typeof v.source==='string'&&(source===undefined||v.source===source)&&Number.isSafeInteger(v.cursor)&&v.cursor>=0
+    &&(typeof v.epoch==='string'&&v.epoch.length>0&&v.epoch.length<=128||typeof v.epoch==='number'&&Number.isSafeInteger(v.epoch)&&v.epoch>=0)
+    &&Number.isFinite(v.at)&&v.at>0;
 }
 
 const MAX_LEVELS_PER_SIDE = 5_000;

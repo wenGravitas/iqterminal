@@ -1,0 +1,4 @@
+import {defineConfig} from '@playwright/test';
+import {twoChartWorkspaceState} from './tests/browser/workspace-state';
+const baseURL='http://127.0.0.1:4190';
+export default defineConfig({globalSetup:'./scripts/test-browser-i3-setup.mjs',testDir:'tests/browser',testMatch:/(order-book|depth-matrix)\.spec\.ts/,workers:1,timeout:30000,use:{baseURL,storageState:twoChartWorkspaceState(baseURL),viewport:{width:1366,height:900},launchOptions:{executablePath:'/usr/bin/chromium',args:['--no-sandbox','--ozone-platform=headless','--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader']}},webServer:{command:'pnpm exec vite --host 127.0.0.1 --port 4190 --strictPort',url:baseURL,reuseExistingServer:false},reporter:[['list'],['json',{outputFile:'artifacts/order-book/browser-results.json'}]]});

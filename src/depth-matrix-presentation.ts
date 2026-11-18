@@ -12,10 +12,10 @@ export class MatrixRowLayout {
   readonly height: number;
   readonly signature: string;
   private byIndex: Map<string, MatrixRowPosition>;
-  constructor(rows: readonly MatrixRow[], expanded: ReadonlySet<string> = new Set()) {
+  constructor(rows: readonly MatrixRow[], expanded: ReadonlySet<string> = new Set(), rowHeight=MATRIX_ROW_HEIGHT, mixedHeight=MATRIX_MIXED_ROW_HEIGHT) {
     let top = 0;
     this.positions = rows.map(row => {
-      const height = expanded.has(row.index) ? MATRIX_MIXED_ROW_HEIGHT : MATRIX_ROW_HEIGHT;
+      const height = expanded.has(row.index) ? mixedHeight : rowHeight;
       const position = { index: row.index, top, height }; top += height; return position;
     });
     this.height = top;

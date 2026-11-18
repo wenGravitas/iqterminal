@@ -13,7 +13,7 @@ export function widgetRegistry(actions: WidgetActions): WidgetDefinition[] {
     ['comparison', 'Market Comparison', 'Charts', 'wave', 'Compare market percentage changes', false, actions.comparison, charts],
     ['ticker', 'Trade Ticker', 'Orderflow', 'bars', 'Executed trades and retained tape', false, actions.ticker, limit('trade-ticker')],
     ['liquidations', 'Liquidations', 'Orderflow', 'target', 'Liquidation event tape', false, actions.liquidations, limit('liquidation-ticker')],
-    ['depth', 'Depth Matrix', 'Liquidity', 'grid', 'Synchronized depth columns', false, actions.depth, limit('depth-matrix')],
+    ['depth', 'Order Book', 'Liquidity', 'grid', 'Compact ladder or individual synchronized depth columns', false, actions.depth, () => actions.count('order-book')+actions.count('depth-matrix')>=8?'Maximum 8 Order Book widgets in this workspace':null],
     ['trading', 'Hyperliquid Trading', 'Trading', 'market', 'Open the global trading account panel', true, actions.trading, () => null],
     ['positions', 'Positions', 'Trading', 'layers', 'Current account positions', true, actions.positions, () => null],
     ['orders', 'Open Orders', 'Trading', 'layers', 'Current account open orders', true, actions.orders, () => null],
@@ -24,7 +24,7 @@ export function widgetRegistry(actions: WidgetActions): WidgetDefinition[] {
     ['editor', 'OpenScript Editor', 'Tools', 'chart', 'Edit the global script library for an active chart', true, actions.editor, () => actions.count('candle') || actions.has('script-editor') ? null : 'Open a chart to select an editor target'],
   ];
   const components: Record<string, string> = {
-    chart: 'candle', comparison: 'market-comparison', ticker: 'trade-ticker', liquidations: 'liquidation-ticker', depth: 'depth-matrix',
+    chart: 'candle', comparison: 'market-comparison', ticker: 'trade-ticker', liquidations: 'liquidation-ticker', depth: 'order-book',
     trading: 'hyperliquid-trading', positions: 'hyperliquid-trading-positions', orders: 'hyperliquid-trading-open-orders',
     'order-history': 'hyperliquid-trading-order-history', 'trade-history': 'hyperliquid-trading-trade-history',
     watches: 'level-watch', journal: 'global-journal', editor: 'script-editor',
