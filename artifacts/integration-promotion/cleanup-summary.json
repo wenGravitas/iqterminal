@@ -1,0 +1,36 @@
+{
+  "removedCount": 16,
+  "removedFolders": [
+    "iqterminal-font-control",
+    "iqterminal-integration-startup-r1",
+    "iqterminal-order-book-r1",
+    "iqterminal-perf-baseline",
+    "iqterminal-perf-history",
+    "iqterminal-perf-native-price-control",
+    "iqterminal-persistent-walls",
+    "iqterminal-r2-release",
+    "iqterminal-server-index-baseline-e4fa9b6",
+    "iqterminal-server-integration-startup-r1",
+    "iqterminal-server-local-followups",
+    "iqterminal-server-main",
+    "iqterminal-server-order-book-r1",
+    "iqterminal-server-perf-history",
+    "iqterminal-server-r2-candidate",
+    "iqterminal-wall-13d-control"
+  ],
+  "canonical": [
+    "/home/daz/workarea/iqterminal",
+    "/home/daz/workarea/iqterminal-server"
+  ],
+  "archiveChecksumsVerified": true,
+  "gitBundlesVerified": true,
+  "activeOldWorktreeProcesses": 0,
+  "remainingWorktrees": {
+    "frontend": [
+      "/home/daz/workarea/iqterminal"
+    ],
+    "backend": [
+      "/home/daz/workarea/iqterminal-server"
+    ]
+  }
+}

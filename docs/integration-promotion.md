@@ -62,7 +62,8 @@ API on the shared staging route; the review client uses its isolated adapter.
 
 Canonical repositories are `/home/daz/workarea/iqterminal` and
 `/home/daz/workarea/iqterminal-server`. The review client now runs from the former.
-Sixteen old worktree/control folders are cleanup targets. Their original heads
+Sixteen old worktree/control folders were removed after both GitHub pushes and
+archive verification. Only the two canonical repositories remain. Their original heads
 are preserved under `archive/consolidation-2026-11-18/*` recovery branches.
 
 Verified filesystem archives, the original inventory, Git bundles, and checksums
