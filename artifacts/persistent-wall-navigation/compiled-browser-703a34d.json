@@ -1,0 +1,264 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.23.4/bin/node",
+      "/home/daz/workarea/iqterminal-persistent-walls/node_modules/.pnpm/@playwright+test@1.64.0/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.wall-navigation.config.ts"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal-persistent-walls/playwright.wall-navigation.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/daz/workarea/iqterminal-persistent-walls/scripts/test-browser-i3-setup.mjs",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "wall-retained-navigation.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": "wall-retained-navigation.spec.ts",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4189",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4173",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--class=IQTerminalPerf",
+              "--name=IQTerminalPerf",
+              "--ozone-platform=x11",
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          },
+          "headless": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/persistent-wall-navigation/compiled-browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm exec vite preview --outDir dist-wall-navigation --host 127.0.0.1 --port 4189 --strictPort",
+      "url": "http://127.0.0.1:4189",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "wall-retained-navigation.spec.ts",
+      "file": "wall-retained-navigation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "retained GPU component preserves exact source, mapped positions, styles, hover and disposal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8992,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T12:54:19.388Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-20174fdcf2ba31a65e00",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 6,
+          "column": 1
+        },
+        {
+          "title": "compiled spot 30h chart keeps walls throughout camera gestures",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10238,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"compiled-controlled-render-replay-not-live\",\"market\":\"spot\",\"interval\":300000,\"input\":{\"range\":{\"from\":4638,\"to\":5000},\"center\":83500,\"from\":1794811500000,\"to\":1794919500000,\"segments\":944},\"before\":{\"active\":true,\"builds\":17,\"frames\":6,\"mappingInvalidations\":0,\"uploadedBytes\":332288,\"bufferUploads\":34,\"drawCalls\":17,\"maxPrepareMs\":11.800000004470348,\"lastPrepareMs\":4.200000002980232,\"lastPaintMs\":1.7000000029802322,\"visibleSpans\":6400,\"visibleHistorical\":6400,\"visibleCurrent\":0,\"bytes\":353432,\"referenceMin\":83225,\"referenceMax\":670200,\"failure\":\"\",\"pending\":0,\"chunks\":17,\"sources\":944,\"retainedSpans\":7552,\"contextLost\":false,\"sharedGpuBytes\":332288,\"sharedOwners\":1},\"result\":{\"frames\":[{\"at\":5033.10000000149,\"nonempty\":43649,\"width\":922,\"height\":600},{\"at\":5059.60000000149,\"nonempty\":44352,\"width\":922,\"height\":600},{\"at\":5089.89999999851,\"nonempty\":43658,\"width\":922,\"height\":600},{\"at\":5131.89999999851,\"nonempty\":43904,\"width\":922,\"height\":600},{\"at\":5172.80000000447,\"nonempty\":43811,\"width\":922,\"height\":600},{\"at\":5228.60000000149,\"nonempty\":43218,\"width\":922,\"height\":600},{\"at\":5257.70000000298,\"nonempty\":43758,\"width\":922,\"height\":600},{\"at\":5297,\"nonempty\":43656,\"width\":922,\"height\":600},{\"at\":5337.10000000149,\"nonempty\":41149,\"width\":922,\"height\":600},{\"at\":5370,\"nonempty\":43906,\"width\":922,\"height\":600},{\"at\":5406.39999999851,\"nonempty\":43998,\"width\":922,\"height\":600},{\"at\":5436.89999999851,\"nonempty\":44509,\"width\":922,\"height\":600},{\"at\":5466.89999999851,\"nonempty\":43807,\"width\":922,\"height\":600},{\"at\":5514.39999999851,\"nonempty\":44700,\"width\":922,\"height\":600},{\"at\":5541.80000000447,\"nonempty\":44642,\"width\":922,\"height\":600},{\"at\":5577.70000000298,\"nonempty\":44388,\"width\":922,\"height\":600},{\"at\":5602.10000000149,\"nonempty\":44344,\"width\":922,\"height\":600},{\"at\":5633.80000000447,\"nonempty\":44398,\"width\":922,\"height\":600},{\"at\":5669,\"nonempty\":42693,\"width\":922,\"height\":600},{\"at\":5713.39999999851,\"nonempty\":44092,\"width\":922,\"height\":600},{\"at\":5875.20000000298,\"nonempty\":44189,\"width\":922,\"height\":600},{\"at\":5955.80000000447,\"nonempty\":44596,\"width\":922,\"height\":600},{\"at\":5990.20000000298,\"nonempty\":43998,\"width\":922,\"height\":600},{\"at\":6020,\"nonempty\":44400,\"width\":922,\"height\":600},{\"at\":6067.10000000149,\"nonempty\":43804,\"width\":922,\"height\":600},{\"at\":6106,\"nonempty\":44562,\"width\":922,\"height\":600},{\"at\":6134.5,\"nonempty\":44051,\"width\":922,\"height\":600},{\"at\":6168.10000000149,\"nonempty\":44354,\"width\":922,\"height\":600},{\"at\":6217.10000000149,\"nonempty\":43904,\"width\":922,\"height\":600},{\"at\":6254.60000000149,\"nonempty\":44358,\"width\":922,\"height\":600},{\"at\":6295.30000000447,\"nonempty\":44007,\"width\":922,\"height\":600},{\"at\":6363.70000000298,\"nonempty\":44152,\"width\":922,\"height\":600},{\"at\":6428.89999999851,\"nonempty\":43654,\"width\":922,\"height\":600},{\"at\":6456.70000000298,\"nonempty\":44053,\"width\":922,\"height\":600},{\"at\":6488.89999999851,\"nonempty\":43906,\"width\":922,\"height\":600},{\"at\":6633.20000000298,\"nonempty\":43996,\"width\":922,\"height\":600},{\"at\":6672.5,\"nonempty\":44300,\"width\":922,\"height\":600},{\"at\":6702.89999999851,\"nonempty\":44438,\"width\":922,\"height\":600},{\"at\":6747.20000000298,\"nonempty\":44506,\"width\":922,\"height\":600},{\"at\":6814.30000000447,\"nonempty\":43789,\"width\":922,\"height\":600},{\"at\":6845.89999999851,\"nonempty\":44601,\"width\":922,\"height\":600},{\"at\":6883.30000000447,\"nonempty\":44186,\"width\":922,\"height\":600},{\"at\":6910.80000000447,\"nonempty\":44799,\"width\":922,\"height\":600},{\"at\":6941.60000000149,\"nonempty\":44297,\"width\":922,\"height\":600},{\"at\":6995.10000000149,\"nonempty\":44900,\"width\":922,\"height\":600},{\"at\":7024.20000000298,\"nonempty\":44996,\"width\":922,\"height\":600},{\"at\":7060.30000000447,\"nonempty\":45004,\"width\":922,\"height\":600},{\"at\":7409.39999999851,\"nonempty\":38904,\"width\":922,\"height\":600},{\"at\":7441.39999999851,\"nonempty\":29084,\"width\":706,\"height\":592}],\"renderer\":{\"active\":true,\"builds\":17,\"frames\":55,\"mappingInvalidations\":0,\"uploadedBytes\":332288,\"bufferUploads\":34,\"drawCalls\":17,\"maxPrepareMs\":51.399999998509884,\"lastPrepareMs\":0.10000000149011612,\"lastPaintMs\":24.80000000447035,\"visibleSpans\":4992,\"visibleHistorical\":4992,\"visibleCurrent\":0,\"bytes\":353432,\"referenceMin\":83225,\"referenceMax\":670200,\"failure\":\"\",\"pending\":0,\"chunks\":17,\"sources\":944,\"retainedSpans\":7552,\"contextLost\":false,\"sharedGpuBytes\":332288,\"sharedOwners\":1},\"replay\":{\"subscribes\":1,\"viewports\":35}}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T12:54:31.149Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-83f40c1521551007f11c",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 12,
+          "column": 51
+        },
+        {
+          "title": "compiled perpetual 30h chart keeps walls throughout camera gestures",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7705,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"compiled-controlled-render-replay-not-live\",\"market\":\"perpetual\",\"interval\":900000,\"input\":{\"range\":{\"from\":4878,\"to\":5000},\"center\":83500,\"from\":1794810600000,\"to\":1794918600000,\"segments\":944},\"before\":{\"active\":true,\"builds\":17,\"frames\":7,\"mappingInvalidations\":0,\"uploadedBytes\":332288,\"bufferUploads\":34,\"drawCalls\":17,\"maxPrepareMs\":18.600000001490116,\"lastPrepareMs\":1.1000000014901161,\"lastPaintMs\":3.0999999940395355,\"visibleSpans\":7552,\"visibleHistorical\":7552,\"visibleCurrent\":0,\"bytes\":351032,\"referenceMin\":83225,\"referenceMax\":670200,\"failure\":\"\",\"pending\":0,\"chunks\":17,\"sources\":944,\"retainedSpans\":7552,\"contextLost\":false,\"sharedGpuBytes\":332288,\"sharedOwners\":1},\"result\":{\"frames\":[{\"at\":4255,\"nonempty\":42939,\"width\":922,\"height\":600},{\"at\":4408.19999999553,\"nonempty\":42953,\"width\":922,\"height\":600},{\"at\":4442,\"nonempty\":41742,\"width\":922,\"height\":600},{\"at\":4481.39999999851,\"nonempty\":41317,\"width\":922,\"height\":600},{\"at\":4531.5,\"nonempty\":40768,\"width\":922,\"height\":600},{\"at\":4556.89999999851,\"nonempty\":39853,\"width\":922,\"height\":600},{\"at\":4599.5,\"nonempty\":39950,\"width\":922,\"height\":600},{\"at\":4630.39999999851,\"nonempty\":39648,\"width\":922,\"height\":600},{\"at\":4669.69999999553,\"nonempty\":39819,\"width\":922,\"height\":600},{\"at\":4711.5,\"nonempty\":39698,\"width\":922,\"height\":600},{\"at\":4747.39999999851,\"nonempty\":39725,\"width\":922,\"height\":600},{\"at\":4778.10000000149,\"nonempty\":40367,\"width\":922,\"height\":600},{\"at\":4812.5,\"nonempty\":40346,\"width\":922,\"height\":600},{\"at\":4837.89999999851,\"nonempty\":41119,\"width\":922,\"height\":600},{\"at\":4863.39999999851,\"nonempty\":41563,\"width\":922,\"height\":600},{\"at\":4896.5,\"nonempty\":41695,\"width\":922,\"height\":600},{\"at\":4948.5,\"nonempty\":42427,\"width\":922,\"height\":600},{\"at\":4991.69999999553,\"nonempty\":42988,\"width\":922,\"height\":600},{\"at\":5015.60000000149,\"nonempty\":43824,\"width\":922,\"height\":600},{\"at\":5047.69999999553,\"nonempty\":44446,\"width\":922,\"height\":600},{\"at\":5079.5,\"nonempty\":44448,\"width\":922,\"height\":600},{\"at\":5126.29999999702,\"nonempty\":44803,\"width\":922,\"height\":600},{\"at\":5158.10000000149,\"nonempty\":44097,\"width\":922,\"height\":600},{\"at\":5183.10000000149,\"nonempty\":44275,\"width\":922,\"height\":600},{\"at\":5216.69999999553,\"nonempty\":43384,\"width\":922,\"height\":600},{\"at\":5253.69999999553,\"nonempty\":43907,\"width\":922,\"height\":600},{\"at\":5296.69999999553,\"nonempty\":43335,\"width\":922,\"height\":600},{\"at\":5326,\"nonempty\":43264,\"width\":922,\"height\":600},{\"at\":5352,\"nonempty\":42698,\"width\":922,\"height\":600},{\"at\":5397.60000000149,\"nonempty\":43078,\"width\":922,\"height\":600},{\"at\":5439.19999999553,\"nonempty\":42920,\"width\":922,\"height\":600},{\"at\":5464.89999999851,\"nonempty\":42899,\"width\":922,\"height\":600},{\"at\":5497.39999999851,\"nonempty\":42593,\"width\":922,\"height\":600},{\"at\":5529.10000000149,\"nonempty\":43197,\"width\":922,\"height\":600},{\"at\":5568.39999999851,\"nonempty\":43208,\"width\":922,\"height\":600},{\"at\":5764,\"nonempty\":43296,\"width\":922,\"height\":600},{\"at\":5805.60000000149,\"nonempty\":43595,\"width\":922,\"height\":600},{\"at\":5849.69999999553,\"nonempty\":43813,\"width\":922,\"height\":600},{\"at\":5885.60000000149,\"nonempty\":44123,\"width\":922,\"height\":600},{\"at\":5916.89999999851,\"nonempty\":43539,\"width\":922,\"height\":600},{\"at\":5957.79999999702,\"nonempty\":44509,\"width\":922,\"height\":600},{\"at\":6013.89999999851,\"nonempty\":44322,\"width\":922,\"height\":600},{\"at\":6079.29999999702,\"nonempty\":45028,\"width\":922,\"height\":600},{\"at\":6122.89999999851,\"nonempty\":44650,\"width\":922,\"height\":600},{\"at\":6157.29999999702,\"nonempty\":45181,\"width\":922,\"height\":600},{\"at\":6196.29999999702,\"nonempty\":45190,\"width\":922,\"height\":600},{\"at\":6231.5,\"nonempty\":45230,\"width\":922,\"height\":600},{\"at\":6393.89999999851,\"nonempty\":34302,\"width\":706,\"height\":592},{\"at\":6468.39999999851,\"nonempty\":31720,\"width\":706,\"height\":592}],\"renderer\":{\"active\":true,\"builds\":17,\"frames\":56,\"mappingInvalidations\":0,\"uploadedBytes\":332288,\"bufferUploads\":34,\"drawCalls\":17,\"maxPrepareMs\":18.600000001490116,\"lastPrepareMs\":0.10000000149011612,\"lastPaintMs\":12.900000005960464,\"visibleSpans\":7552,\"visibleHistorical\":7552,\"visibleCurrent\":0,\"bytes\":351032,\"referenceMin\":83225,\"referenceMax\":670200,\"failure\":\"\",\"pending\":0,\"chunks\":17,\"sources\":944,\"retainedSpans\":7552,\"contextLost\":false,\"sharedGpuBytes\":332288,\"sharedOwners\":1},\"replay\":{\"subscribes\":1,\"viewports\":48}}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T12:54:41.596Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-ee2de4558f05f4f932dd",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 12,
+          "column": 51
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-17T12:54:15.154Z",
+    "duration": 34552.133,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,194 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.23.4/bin/node",
+      "/home/daz/workarea/iqterminal-persistent-walls/node_modules/.pnpm/@playwright+test@1.64.0/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.wall-navigation.config.ts",
+      "--grep",
+      "production worker"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal-persistent-walls/playwright.wall-navigation.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/daz/workarea/iqterminal-persistent-walls/scripts/test-browser-i3-setup.mjs",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "wall-retained-navigation.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": "wall-retained-navigation.spec.ts",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4189",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4173",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--class=IQTerminalPerf",
+              "--name=IQTerminalPerf",
+              "--ozone-platform=x11",
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          },
+          "headless": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/persistent-wall-navigation/compiled-browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm exec vite preview --outDir dist-wall-navigation --host 127.0.0.1 --port 4189 --strictPort",
+      "url": "http://127.0.0.1:4189",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "wall-retained-navigation.spec.ts",
+      "file": "wall-retained-navigation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "production worker preserves resident intervals and current cursor through message navigation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7376,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"actual-worker-controlled-canonical-source-not-live-executions\",\"initial\":{\"generation\":1,\"confirmed\":1794925337798},\"requests\":[{\"type\":\"fixture-wall-request\",\"path\":\"/market-data/v1/order-walls/archive/current\",\"from\":0,\"to\":0,\"after\":0},{\"type\":\"fixture-wall-request\",\"path\":\"/market-data/v1/order-walls/archive\",\"from\":1794813737147,\"to\":1794921737147,\"after\":0},{\"type\":\"fixture-wall-request\",\"path\":\"/market-data/v1/order-walls/archive\",\"from\":1794806537147,\"to\":1794813737147,\"after\":0},{\"type\":\"fixture-wall-request\",\"path\":\"/market-data/v1/order-walls/archive/current\",\"from\":0,\"to\":0,\"after\":100}],\"cleanup\":{\"preparedDeltaPublications\":0,\"preparedDeltaPatches\":0,\"preparedDeltaComparedSegments\":0,\"preparedDeltaComparedRuns\":0,\"preparedDeltaMs\":0,\"preparedDeltaYieldMs\":0,\"warmAdmissions\":2,\"warmPrefixHits\":0,\"warmCapacityMisses\":0,\"warmInvalidMisses\":0,\"warmCompactBuilds\":0,\"warmRevisionReuses\":0,\"warmValidatedReuses\":0,\"warmBuildFailures\":0,\"warmDecodeFailures\":0,\"incrementalSegments\":1,\"fullReconciliations\":3,\"comparisonVisits\":8,\"subscriptions\":0,\"groups\":0,\"historyRequests\":2,\"currentPages\":2,\"historyPages\":2,\"bytes\":3118,\"historyBytes\":3118,\"historyResponseHeadersMs\":1160.7000000029802,\"historyBodyReadMs\":1.1999999955296516,\"historyJsonParseMs\":0.5,\"historyValidationMs\":2.7000000029802322,\"historyProjectorApplyMs\":4.200000002980232,\"historyUpdateCallbackMs\":13.399999998509884,\"historyEventLoopYieldDelayMs\":0,\"currentPatches\":1,\"ringDrops\":0,\"failures\":0,\"resident\":[],\"preparedPartCache\":{\"hits\":0,\"misses\":0,\"reusedCanonicalBytes\":0,\"admissions\":0,\"evictions\":0,\"capacityMisses\":0,\"abortedAdmissions\":0,\"entries\":0,\"accountedBytes\":0,\"pinnedEntries\":0,\"stagedEntries\":0,\"maxBytes\":134217728,\"maxEntries\":256,\"warmPresentationBudgetBytes\":33554432},\"projections\":[],\"historyJobs\":0,\"historyActiveJobs\":0,\"historyJobStates\":[],\"readerControl\":{\"submitted\":0,\"coalesced\":0,\"cancelled\":0,\"completed\":0,\"failed\":0,\"peakActive\":0,\"queueMs\":0,\"runMs\":0,\"active\":0,\"queued\":0},\"warmTimings\":[],\"warmEntries\":2,\"warmBuilds\":0,\"warmReplayJobs\":0,\"warmReplaySegments\":0,\"warmReplayRuns\":0,\"warmCompactEntries\":0,\"warmReplayConsumers\":0,\"warmSegments\":2,\"warmRuns\":2,\"warmBytes\":1536,\"historyConsumers\":0,\"ringPages\":0,\"ringBytes\":0,\"recentHistoryRequests\":[{\"viewId\":\"view-b68912c1-1d29-41a1-8e94-e20c3bc64dc3-1\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1559,\"responseHeadersMs\":0.6000000014901161,\"responseBodyReadMs\":1.1000000014901161,\"jsonParseMs\":0.29999999701976776,\"validationMs\":2.7000000029802322,\"projectorApplyMs\":4,\"updateCallbackMs\":3.600000001490116,\"eventLoopYieldDelayMs\":0,\"attempts\":1},{\"viewId\":\"view-b68912c1-1d29-41a1-8e94-e20c3bc64dc3-2\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1559,\"responseHeadersMs\":1160.1000000014901,\"responseBodyReadMs\":0.09999999403953552,\"jsonParseMs\":0.20000000298023224,\"validationMs\":0,\"projectorApplyMs\":0.20000000298023224,\"updateCallbackMs\":9.799999997019768,\"eventLoopYieldDelayMs\":0,\"attempts\":1}],\"historyPageTiming\":{\"totalPages\":2,\"retainedSamples\":2,\"completeSample\":true,\"p50\":{\"responseHeadersMs\":0.6000000014901161,\"responseBodyReadMs\":0.09999999403953552,\"jsonParseMs\":0.20000000298023224,\"validationMs\":0,\"projectorApplyMs\":0.20000000298023224,\"updateCallbackMs\":3.600000001490116,\"eventLoopYieldDelayMs\":0,\"responseBytes\":1559},\"p95\":{\"responseHeadersMs\":1160.1000000014901,\"responseBodyReadMs\":1.1000000014901161,\"jsonParseMs\":0.29999999701976776,\"validationMs\":2.7000000029802322,\"projectorApplyMs\":4,\"updateCallbackMs\":9.799999997019768,\"eventLoopYieldDelayMs\":0,\"responseBytes\":1559},\"max\":{\"responseHeadersMs\":1160.1000000014901,\"responseBodyReadMs\":1.1000000014901161,\"jsonParseMs\":0.29999999701976776,\"validationMs\":2.7000000029802322,\"projectorApplyMs\":4,\"updateCallbackMs\":9.799999997019768,\"eventLoopYieldDelayMs\":0,\"responseBytes\":1559}}}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T14:22:09.069Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-12c6716da84ad2a5bd86",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 131,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-17T14:22:05.460Z",
+    "duration": 14927.093,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

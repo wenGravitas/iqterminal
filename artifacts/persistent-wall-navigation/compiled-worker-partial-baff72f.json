@@ -1,0 +1,232 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.23.4/bin/node",
+      "/home/daz/workarea/iqterminal-persistent-walls/node_modules/.pnpm/@playwright+test@1.64.0/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.wall-navigation.config.ts",
+      "--grep",
+      "production worker"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal-persistent-walls/playwright.wall-navigation.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/daz/workarea/iqterminal-persistent-walls/scripts/test-browser-i3-setup.mjs",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "wall-retained-navigation.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": "wall-retained-navigation.spec.ts",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4189",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4173",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--class=IQTerminalPerf",
+              "--name=IQTerminalPerf",
+              "--ozone-platform=x11",
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          },
+          "headless": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/persistent-wall-navigation/compiled-browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm exec vite preview --outDir dist-wall-navigation --host 127.0.0.1 --port 4189 --strictPort",
+      "url": "http://127.0.0.1:4189",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "wall-retained-navigation.spec.ts",
+      "file": "wall-retained-navigation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "production worker preserves resident intervals and current cursor through message navigation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13040,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"actual-worker-controlled-canonical-source-not-live-executions\",\"initial\":{\"generation\":1,\"confirmed\":1794926128364},\"requests\":[{\"type\":\"fixture-wall-request\",\"path\":\"/market-data/v1/order-walls/archive/current\",\"from\":0,\"to\":0,\"after\":0},{\"type\":\"fixture-wall-request\",\"path\":\"/market-data/v1/order-walls/archive\",\"from\":1794814527818,\"to\":1794922527818,\"after\":0},{\"type\":\"fixture-wall-request\",\"path\":\"/market-data/v1/order-walls/archive\",\"from\":1794807327818,\"to\":1794814527818,\"after\":0},{\"type\":\"fixture-wall-request\",\"path\":\"/market-data/v1/order-walls/archive/current\",\"from\":0,\"to\":0,\"after\":100}],\"cycles\":[{\"owners\":3,\"records\":3,\"bytes\":2304,\"jobs\":1,\"consumers\":1,\"warmBytes\":1536},{\"owners\":4,\"records\":4,\"bytes\":3072,\"jobs\":1,\"consumers\":1,\"warmBytes\":1536},{\"owners\":5,\"records\":5,\"bytes\":3840,\"jobs\":1,\"consumers\":1,\"warmBytes\":1536},{\"owners\":6,\"records\":6,\"bytes\":4608,\"jobs\":1,\"consumers\":1,\"warmBytes\":1536},{\"owners\":7,\"records\":7,\"bytes\":5376,\"jobs\":1,\"consumers\":1,\"warmBytes\":1536},{\"owners\":8,\"records\":8,\"bytes\":6144,\"jobs\":1,\"consumers\":1,\"warmBytes\":1536},{\"owners\":8,\"records\":8,\"bytes\":6144,\"jobs\":1,\"consumers\":1,\"warmBytes\":1536},{\"owners\":8,\"records\":8,\"bytes\":6144,\"jobs\":1,\"consumers\":1,\"warmBytes\":1536},{\"owners\":8,\"records\":8,\"bytes\":6144,\"jobs\":1,\"consumers\":1,\"warmBytes\":1536},{\"owners\":8,\"records\":8,\"bytes\":6144,\"jobs\":1,\"consumers\":1,\"warmBytes\":1536},{\"owners\":8,\"records\":8,\"bytes\":6144,\"jobs\":1,\"consumers\":1,\"warmBytes\":1536},{\"owners\":8,\"records\":8,\"bytes\":6144,\"jobs\":1,\"consumers\":1,\"warmBytes\":1536},{\"owners\":8,\"records\":8,\"bytes\":6144,\"jobs\":1,\"consumers\":1,\"warmBytes\":1536},{\"owners\":8,\"records\":8,\"bytes\":6144,\"jobs\":1,\"consumers\":1,\"warmBytes\":1536},{\"owners\":8,\"records\":8,\"bytes\":6144,\"jobs\":1,\"consumers\":1,\"warmBytes\":1536},{\"owners\":8,\"records\":8,\"bytes\":6144,\"jobs\":1,\"consumers\":1,\"warmBytes\":1536}],\"cleanup\":{\"preparedDeltaPublications\":0,\"preparedDeltaPatches\":0,\"preparedDeltaComparedSegments\":0,\"preparedDeltaComparedRuns\":0,\"preparedDeltaMs\":0,\"preparedDeltaYieldMs\":0,\"warmAdmissions\":18,\"warmPrefixHits\":0,\"warmCapacityMisses\":0,\"warmInvalidMisses\":0,\"warmCompactBuilds\":0,\"warmRevisionReuses\":0,\"warmValidatedReuses\":0,\"warmBuildFailures\":0,\"warmDecodeFailures\":0,\"incrementalSegments\":7,\"fullReconciliations\":35,\"comparisonVisits\":266,\"subscriptions\":0,\"groups\":0,\"historyRequests\":18,\"currentPages\":8,\"historyPages\":18,\"bytes\":27774,\"historyBytes\":27774,\"historyResponseHeadersMs\":994.4999999701977,\"historyBodyReadMs\":8.100000016391277,\"historyJsonParseMs\":2.299999974668026,\"historyValidationMs\":4.700000002980232,\"historyProjectorApplyMs\":4.4000000059604645,\"historyUpdateCallbackMs\":33.099999986588955,\"historyEventLoopYieldDelayMs\":0,\"currentPatches\":7,\"ringDrops\":0,\"failures\":0,\"resident\":[],\"preparedPartCache\":{\"hits\":0,\"misses\":0,\"reusedCanonicalBytes\":0,\"admissions\":0,\"evictions\":0,\"capacityMisses\":0,\"abortedAdmissions\":0,\"entries\":0,\"accountedBytes\":0,\"pinnedEntries\":0,\"stagedEntries\":0,\"maxBytes\":134217728,\"maxEntries\":256,\"warmPresentationBudgetBytes\":33554432},\"projections\":[],\"historyJobs\":0,\"historyActiveJobs\":0,\"historyJobStates\":[],\"readerControl\":{\"submitted\":0,\"coalesced\":0,\"cancelled\":0,\"completed\":0,\"failed\":0,\"peakActive\":0,\"queueMs\":0,\"runMs\":0,\"active\":0,\"queued\":0},\"warmTimings\":[],\"warmEntries\":2,\"warmBuilds\":0,\"warmReplayJobs\":0,\"warmReplaySegments\":0,\"warmReplayRuns\":0,\"warmCompactEntries\":0,\"warmReplayConsumers\":0,\"warmSegments\":2,\"warmRuns\":2,\"warmBytes\":1536,\"historyConsumers\":0,\"ringPages\":0,\"ringBytes\":0,\"recentHistoryRequests\":[{\"viewId\":\"view-fa5403cd-24b1-4432-b4c6-4098bc93ebcc-3\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1543,\"responseHeadersMs\":0.5999999940395355,\"responseBodyReadMs\":0.3999999985098839,\"jsonParseMs\":0.20000000298023224,\"validationMs\":0,\"projectorApplyMs\":0.30000000447034836,\"updateCallbackMs\":1.1999999955296516,\"eventLoopYieldDelayMs\":0,\"attempts\":1},{\"viewId\":\"view-fa5403cd-24b1-4432-b4c6-4098bc93ebcc-4\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1543,\"responseHeadersMs\":0.8999999985098839,\"responseBodyReadMs\":0.29999999701976776,\"jsonParseMs\":0.10000000149011612,\"validationMs\":0.10000000149011612,\"projectorApplyMs\":0.10000000149011612,\"updateCallbackMs\":0.5,\"eventLoopYieldDelayMs\":0,\"attempts\":1},{\"viewId\":\"view-fa5403cd-24b1-4432-b4c6-4098bc93ebcc-5\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1543,\"responseHeadersMs\":0.20000000298023224,\"responseBodyReadMs\":0.20000000298023224,\"jsonParseMs\":0,\"validationMs\":0,\"projectorApplyMs\":0.19999999552965164,\"updateCallbackMs\":0.5,\"eventLoopYieldDelayMs\":0,\"attempts\":1},{\"viewId\":\"view-fa5403cd-24b1-4432-b4c6-4098bc93ebcc-6\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1543,\"responseHeadersMs\":0.7999999970197678,\"responseBodyReadMs\":0.10000000149011612,\"jsonParseMs\":0.09999999403953552,\"validationMs\":0.10000000149011612,\"projectorApplyMs\":0,\"updateCallbackMs\":0.3999999985098839,\"eventLoopYieldDelayMs\":0,\"attempts\":1},{\"viewId\":\"view-fa5403cd-24b1-4432-b4c6-4098bc93ebcc-7\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1543,\"responseHeadersMs\":5.199999995529652,\"responseBodyReadMs\":0.3999999985098839,\"jsonParseMs\":0.10000000149011612,\"validationMs\":2.7999999970197678,\"projectorApplyMs\":0.30000000447034836,\"updateCallbackMs\":0.7999999970197678,\"eventLoopYieldDelayMs\":0,\"attempts\":1},{\"viewId\":\"view-fa5403cd-24b1-4432-b4c6-4098bc93ebcc-8\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1543,\"responseHeadersMs\":0.5,\"responseBodyReadMs\":0.20000000298023224,\"jsonParseMs\":0.09999999403953552,\"validationMs\":0.10000000149011612,\"projectorApplyMs\":0.20000000298023224,\"updateCallbackMs\":0.7000000029802322,\"eventLoopYieldDelayMs\":0,\"attempts\":1},{\"viewId\":\"view-fa5403cd-24b1-4432-b4c6-4098bc93ebcc-9\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1543,\"responseHeadersMs\":1.7000000029802322,\"responseBodyReadMs\":0.19999999552965164,\"jsonParseMs\":0.20000000298023224,\"validationMs\":0.09999999403953552,\"projectorApplyMs\":0.10000000149011612,\"updateCallbackMs\":0.7999999970197678,\"eventLoopYieldDelayMs\":0,\"attempts\":1},{\"viewId\":\"view-fa5403cd-24b1-4432-b4c6-4098bc93ebcc-10\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1543,\"responseHeadersMs\":0.5,\"responseBodyReadMs\":0.29999999701976776,\"jsonParseMs\":0,\"validationMs\":0.10000000149011612,\"projectorApplyMs\":0.19999999552965164,\"updateCallbackMs\":0.5,\"eventLoopYieldDelayMs\":0,\"attempts\":1},{\"viewId\":\"view-fa5403cd-24b1-4432-b4c6-4098bc93ebcc-11\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1543,\"responseHeadersMs\":0.29999999701976776,\"responseBodyReadMs\":0.10000000149011612,\"jsonParseMs\":0.19999999552965164,\"validationMs\":0,\"projectorApplyMs\":0,\"updateCallbackMs\":0.29999999701976776,\"eventLoopYieldDelayMs\":0,\"attempts\":1},{\"viewId\":\"view-fa5403cd-24b1-4432-b4c6-4098bc93ebcc-12\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1543,\"responseHeadersMs\":0.20000000298023224,\"responseBodyReadMs\":0.19999999552965164,\"jsonParseMs\":0,\"validationMs\":0.10000000149011612,\"projectorApplyMs\":0.10000000149011612,\"updateCallbackMs\":0.3999999985098839,\"eventLoopYieldDelayMs\":0,\"attempts\":1},{\"viewId\":\"view-fa5403cd-24b1-4432-b4c6-4098bc93ebcc-13\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1543,\"responseHeadersMs\":0.29999999701976776,\"responseBodyReadMs\":0.20000000298023224,\"jsonParseMs\":0.19999999552965164,\"validationMs\":0,\"projectorApplyMs\":0,\"updateCallbackMs\":0.4000000059604645,\"eventLoopYieldDelayMs\":0,\"attempts\":1},{\"viewId\":\"view-fa5403cd-24b1-4432-b4c6-4098bc93ebcc-14\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1543,\"responseHeadersMs\":0.6999999955296516,\"responseBodyReadMs\":0.20000000298023224,\"jsonParseMs\":0.20000000298023224,\"validationMs\":0,\"projectorApplyMs\":0.10000000149011612,\"updateCallbackMs\":4.799999997019768,\"eventLoopYieldDelayMs\":0,\"attempts\":1},{\"viewId\":\"view-fa5403cd-24b1-4432-b4c6-4098bc93ebcc-15\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1543,\"responseHeadersMs\":1.1999999955296516,\"responseBodyReadMs\":1.2000000029802322,\"jsonParseMs\":0.19999999552965164,\"validationMs\":0.10000000149011612,\"projectorApplyMs\":0,\"updateCallbackMs\":1.6000000014901161,\"eventLoopYieldDelayMs\":0,\"attempts\":1},{\"viewId\":\"view-fa5403cd-24b1-4432-b4c6-4098bc93ebcc-16\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1543,\"responseHeadersMs\":0.3999999985098839,\"responseBodyReadMs\":0.20000000298023224,\"jsonParseMs\":0.19999999552965164,\"validationMs\":0,\"projectorApplyMs\":0.10000000149011612,\"updateCallbackMs\":0.5,\"eventLoopYieldDelayMs\":0,\"attempts\":1},{\"viewId\":\"view-fa5403cd-24b1-4432-b4c6-4098bc93ebcc-17\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1543,\"responseHeadersMs\":1.5999999940395355,\"responseBodyReadMs\":0.20000000298023224,\"jsonParseMs\":0.10000000149011612,\"validationMs\":0.10000000149011612,\"projectorApplyMs\":0,\"updateCallbackMs\":3.2999999970197678,\"eventLoopYieldDelayMs\":0,\"attempts\":1},{\"viewId\":\"view-fa5403cd-24b1-4432-b4c6-4098bc93ebcc-18\",\"dbQueries\":0,\"dbReadRows\":0,\"dbReadBytes\":0,\"encodedBytes\":0,\"requestedAfter\":0,\"pageAfter\":0,\"nextAfter\":20,\"patchCount\":0,\"responseBytes\":1543,\"responseHeadersMs\":0.5,\"responseBodyReadMs\":0.30000000447034836,\"jsonParseMs\":0,\"validationMs\":0.10000000149011612,\"projectorApplyMs\":0.09999999403953552,\"updateCallbackMs\":0.6000000014901161,\"eventLoopYieldDelayMs\":0,\"attempts\":1}],\"historyPageTiming\":{\"totalPages\":18,\"retainedSamples\":18,\"completeSample\":true,\"p50\":{\"responseHeadersMs\":0.5999999940395355,\"responseBodyReadMs\":0.20000000298023224,\"jsonParseMs\":0.10000000149011612,\"validationMs\":0.10000000149011612,\"projectorApplyMs\":0.10000000149011612,\"updateCallbackMs\":0.6000000014901161,\"eventLoopYieldDelayMs\":0,\"responseBytes\":1543},\"p95\":{\"responseHeadersMs\":977.8999999985099,\"responseBodyReadMs\":3.100000001490116,\"jsonParseMs\":0.20000000298023224,\"validationMs\":2.7999999970197678,\"projectorApplyMs\":2.2000000029802322,\"updateCallbackMs\":10,\"eventLoopYieldDelayMs\":0,\"responseBytes\":1543},\"max\":{\"responseHeadersMs\":977.8999999985099,\"responseBodyReadMs\":3.100000001490116,\"jsonParseMs\":0.20000000298023224,\"validationMs\":2.7999999970197678,\"projectorApplyMs\":2.2000000029802322,\"updateCallbackMs\":10,\"eventLoopYieldDelayMs\":0,\"responseBytes\":1543}}}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T14:35:18.948Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-12c6716da84ad2a5bd86",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 131,
+          "column": 1
+        },
+        {
+          "title": "production worker coalesces camera gestures during partial initial delivery",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4174,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"actual-worker-partial-navigation-controlled-source\",\"requests\":[{\"type\":\"fixture-wall-request\",\"path\":\"/market-data/v1/order-walls/archive\",\"from\":1794814540054,\"to\":1794922540054,\"after\":0},{\"type\":\"fixture-wall-request\",\"path\":\"/market-data/v1/order-walls/archive\",\"from\":1794814540054,\"to\":1794922540054,\"after\":10},{\"type\":\"fixture-wall-request\",\"path\":\"/market-data/v1/order-walls/archive\",\"from\":1794813940054,\"to\":1794921940054,\"after\":0}],\"generations\":[1],\"emptyResets\":0}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T14:35:36.694Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-029d84502b37651d84f0",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 171,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-17T14:35:10.808Z",
+    "duration": 30935.288,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

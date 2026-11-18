@@ -1,0 +1,41 @@
+{
+  "application": "b76828cc5f7624a22906ac50cae4c3f8ed7432a4",
+  "backend": "300fa5d00f607d7e3a990b128523ea265af363f5",
+  "marksMs": {
+    "firstCurrent": null,
+    "firstHistory": 36357.90000000596,
+    "complete": 41855.60000000149
+  },
+  "executionProof": {
+    "pass": true,
+    "failures": [],
+    "catchingUpStatuses": 0,
+    "appliedBatches": 69,
+    "appliedExecutions": 2966,
+    "confirmedAckBatches": 69,
+    "fromCursor": 3529433072,
+    "toCursor": 3529436038,
+    "confirmedThrough": 3529436006,
+    "sourceCursorJumps": 0,
+    "maxWorkerApplyMs": 25.399999998509884,
+    "maxWorkerLifetimeReceiptGapMs": 752.1999999955297
+  },
+  "observationMs": 38356.79999999702,
+  "contract": {
+    "noHistoryRequests": true,
+    "noSampledBlank": true,
+    "noHistoryRebuild": true,
+    "financialUnchanged": true
+  },
+  "financial": {
+    "segments": 4662,
+    "runs": 48496,
+    "sha256": "faa2de9bbe70bf12d86b1d7cb97ab15c6e67c0ed4513ccb56dd91ca33a1ed6dc"
+  },
+  "cleanup": {
+    "subscriptions": 0,
+    "groups": 0,
+    "historyJobs": 0,
+    "historyConsumers": 0
+  }
+}

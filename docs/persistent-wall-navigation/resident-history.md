@@ -1,0 +1,156 @@
+# Resident history implementation checkpoint
+
+This continues the active persistent-wall navigation goal. It is not a completion or foreground-performance claim.
+
+## Application changes
+
+-231d67b adds `wall-resident-history.ts`, integrates it into the worker-owned archive service, and adds display ownership bounds to frontend wall records.
+-5cf5392 clips initial carry-in rendering to the requested interval and avoids resource updates when only status metadata changes without changing a wall's horizon.
+-9d83348 distinguishes a positively changed source proof from an unavailable recheck. Only confirmed changes invalidate the affected resident owner; ordinary errors retain good display.
+
+Backend main remains07318748bd2a17fe1f3a6ac917009fd9122f4865 as inspected at task entry. No backend change or remote deployment was needed for this checkpoint. Ordinary main/client, tunnels, collectors, protected watch and prepared state were not changed by this work.
+
+## Ownership and financial semantics
+
+General navigation activates resident ownership from a fully completed, exact historical result. Each subsequent missing interval retains its independently validated request, source revision/token, exact records and source gaps. It is not a concatenated financial projector. Request-relative episode IDs are not assumed globally interchangeable. The first owner's IDs stay stable; later owners receive a presentation namespace and retain the original source ID.
+
+`residentRange` is frontend display metadata. The original prices, exact decimal strings, rank/value runs, start/end knowledge, duration, mean and peak remain unchanged. Renderer and hover clip to the owner's interval. Tooltips explicitly scope the episode statistics to that source interval. In particular, the implementation does NOT claim a new global episode mean/duration assembled from independent requests. Same-start continuation retains the established exact producer/delta path before resident navigation is activated; its existing quiet-tail and shared-ready regressions continue to pass.
+
+This is a compatibility choice, not a claim that every forward extension now uses only a missing-tail request. Once resident navigation is active, missing intervals are admitted separately. Source corrections positively identified by the source validator remove the affected entire owner before replacement; inability to revalidate alone does not certify a correction or erase good data. Old frozen proofs do not become newly validated merely because the camera revisits them.
+
+## Scheduling, coverage and bounds
+
+The viewport, immutable request and resident intervals are separate. Covered camera moves do not request history or replay the resident presentation. A120ms trailing gesture timer coalesces boundary movements. One history job remains in flight; useful work is not cancelled at every frame. Missing ranges are selected nearest the useful viewport first, with10% time padding capped at one hour per side. Padding shares the same admission allowance; it is not a larger memory reservation.
+
+Admission evicts complete offscreen owners in least-recent-use order, never an owner intersecting the current viewport. Failure is atomic: a capacity failure does not evict visible data or claim missing coverage complete. Eight owners share the existing one-projection limits of100000segments and1000000value runs. Conservative representation accounting is512bytes/header plus256bytes/run, capped by those same existing limits; this is not measured JS heap. GPU and warm-cache allowances remain separate and unchanged. A single large owner can prevent further admission while visible; that limitation is reported rather than silently trimming its financial detail.
+
+Status reports resident and unloaded intervals separately, with exact interval bounds in the status tooltip. Known source gaps remain on their owners. Loading a missing interval keeps prior walls and the current poller/generation. Errors and Retry keep unrelated owners. Initial progressive loading retains its existing path; retargeting no longer explicitly clears a good partial presentation. Further testing of gestures during an unfinished initial load remains required.
+
+## Verification and failures
+
+-108 focused service/store/chart checks passed after initial integration, including missing left/right requests, revisit without requests, gesture coalescing, disposal, capacity/eviction, clipping and existing same-start continuation behavior.
+-Additional full-range reference comparison checks exact selected price/quantity/notional/rank at442 sampled integer timestamps across carry-in, quantity and rank changes. Every fragment's unmodified financial fields also equal its independent interval reference. This is deterministic evidence, not a retained real-source comparison or exhaustive gap/epoch seam proof.
+-71 service/store checks passed after confirmed-source-change recovery was added.
+-99 prepared-history/projection checks and typecheck passed after that validator change.
+
+The first compiled adapter test at231d67b failed because adopting a carry-in owner rebuilt its geometry. Investigation showed that the initial renderer had allowed the carry-in point before the requested left edge. The correction at5cf5392 applies that left boundary at initial render and avoids status-only horizon rebuilds. The failing capture is preserved as `compiled-resident-231d67b-failed-boundary.json`.
+
+The targeted compiled5cf5392 adapter/chart check then passed. It uses a real `OrderWallsArchiveService` and ordinary compiled panel with controlled canonical source responses, not a substitute service implementation. The first request covered30.5hours including normal panel padding. It loaded16 exact carry-in walls. Panning left requested only the missing4hour interval including overscan. While that response was deliberately held:
+
+-16 loaded historical spans remained visible.
+-Geometry remained at one build/two uploads/704GPU bytes.
+-No empty reset snapshot or current-request abort occurred.
+
+After release, the new owner was added. Revisit issued no further request: two total source requests, two owners,32records/runs,24576accounted representation bytes. The affected small renderer batch was replaced once (two total builds); this is bounded data-arrival work, not a camera rebuild. Raw evidence: `compiled-resident-5cf5392.json`.
+
+The current request in that fixture was deliberately left pending. It proves subscription preservation, NOT live current/ACK progress. The fixture uses the canonical fallback transport; prepared projection delivery and actual worker-message transfer still require integration coverage. The earlier30h944-segment Spot/USD-M renderer interaction tests retain their original independent scope.
+
+## Next required evidence and work
+
+-Exercise prepared projection delivery through resident ownership, actual worker lifecycle, and independent advancing current data.
+-Extend exact reference cases to source gaps, epoch changes, timestamp regressions/late corrections, stale asynchronous results and cancellation.
+-Verify repeated extensions/eviction, mixed/Threshold fallback, restoration/show-hide, candles/footprints, and measured heap plateau.
+-Complete source-safe coverage handling for all forward/initial-loading navigation paths; the preserved same-start path is not advertised as missing-only.
+-Run matched final navigation evidence and the manual foreground Pi acceptance procedure, keeping software/headless and hardware results separate.
+
+No merge or production rollout is part of this goal. The dedicated compiled preview uses4189 and is stopped after checks. Ordinary5173 and18780/18781 remain outside task ownership. Rollback remains using unchanged main/ordinary services; no durable data migration was made.
+
+## Live-layer and invalidation follow-up
+
+Application commits `c3de66a` and `51d65ba` separate current/history GPU allocation and remove positively disproved history without resetting current delivery. Current chunks receive preparation priority within the existing four-chunk/time budget. Historical chunks no longer share an allocation with current tails, so ordinary current changes cannot force an unchanged historical upload. A source moving between layers replaces its old affected chunk and creates the new current chunk; subsequent current updates touch only current resources.
+
+The first targeted headless capture (`compiled-live-layer-fa7ff61-working-tree.json`) used the working tree that became `c3de66a`, with build metadata still identifying parent `fa7ff61`. It predates the source-invalidation change and is not evidence for that change. Both checks passed:
+
+- Four eight-chart open/dispose cycles: one shared context, 211200 buffer bytes with eight owners, 184800 after removing one, and zero owners/contexts/buffers after disposal.
+- Initial history queued behind a current point: first prepared chunk was current; 20 historical chunks remained pending. This proves priority, not a hard frame-time guarantee. The software-rendered first allocation took 35.9 ms and its draw took 46.4 ms.
+- Compiled ordinary panel plus real archive service with controlled source: current cursor advanced 100 → 101 → 102 while the missing interval was held. Historical build count stayed at one; one initial current bootstrap; 16 visible historical spans; no empty snapshot. Only the missing interval was acquired. Revisit made no additional history request.
+
+A separate prepared-projection service regression now exercises authenticated discovery, part import, delayed final source validation, exact financial rows, explicit gaps, independent current cursor progression and scheduler cleanup. This is controlled-source service evidence, not actual worker-message transfer or live execution ACK proof.
+
+Confirmed source changes now discard affected history in both resident and nonresident paths, invalidate the matching warm entry/build, and prevent late subscribers from receiving the disproved job result. A different independently fenced prefix is not discarded merely because an extended target's proof changes. An HTTP 503 during proof revalidation retains the prior valid rows. Tests compare all restored financial fields after Retry; presentation-only `currentSelection` defaults and Map insertion order are not financial differences.
+
+The older tests required retaining even positively disproved data. Those assertions failed after this correctness fix and were replaced with removal/Retry assertions; missing-proof availability failures have a separate retention regression. Final focused service/prepared/store run: 172 passed across four files. Renderer checks: 76 passed plus the explicit expected-failing legacy blanking reproduction. Typecheck passed. Full compiled browser results for `51d65ba` are recorded separately.
+
+Remaining scope is unchanged: actual worker/route integration and execution ACK evidence, additional seam/epoch/cancellation cases, initial-loading and same-start navigation lifecycle, measured total heap, compatible fallback coverage, and final matched/foreground acceptance. These checks do not certify the Pi frame-interval target.
+
+Full compiled run at `51d65ba`: four passed, one failed. Both Spot and USD-M 30h navigation tests, the eight-owner lifecycle test, and the advancing-current adapter test passed. The component adoption assertion failed because its initial status had no archive left fence, despite claiming it was already fenced. Commit `ecf7a8e` gives that controlled initial presentation the same validated left boundary as the later resident owner. The production path already carries this boundary. The original failure is retained in `compiled-51d65ba-failed-unfenced-fixture.json`; the targeted corrected result is recorded separately. No timing target was changed.
+
+The corrected component check at `ecf7a8e` passed: `compiled-component-ecf7a8e.json`. This is a targeted fixture correction rerun; the other four checks retain their `51d65ba` scope. Builds and typecheck passed; the existing Vite extension/chunk-size warnings remain.
+
+## Historical forward navigation and worker routing
+
+Application `5465edb` closes the historical same-start forward-navigation bypass. Once a non-live-follow view is validated, small forward advances now enter resident ownership rather than issuing the original start again. A regression failed on the old implementation because the second request started at the original start, then passed with two successive missing-only acquisitions. Overscan revisit makes no request and the second acquisition sends no patch for the original owner. Initial adoption detaches the mutable canonical projector; equality, not JavaScript array identity across that adoption, is the guarantee. Live-follow rolling revisions retain the independently validated full-revision/delta path for now; this remaining distinction is explicit, not a claim of complete rolling-navigation reuse.
+
+120 archive/prepared-projection tests passed, including the existing live-follow exact-delta regression. Typecheck and compiled build passed. The ordinary compiled-panel controlled-source check passed at `5465edb` (`compiled-forward-5465edb.json`): after backward acquisition/revisit, forward acquisition started exactly at the old resident end, and the next advance stayed in overscan without a fourth request. Current wall cursors continued independently.
+
+The added explicit `wall-protocol-worker.js` diagnostic entry installs controlled HTTP responses, then imports the real compiled `src/feed/worker.ts`. It neither changes production routing nor supplies a fallback to application network failures. `compiled-worker-5465edb-working-fixture.json` records a passing check with application `5465edb` and the then-uncommitted diagnostic entry. This build explicitly uses `VITE_DATA_MODE=staging`, `VITE_HISTORY_TILES=0`, and `VITE_DIAGNOSTICS=1`. The test sends production subscribe, viewport, unsubscribe and diagnostics messages across the actual browser worker boundary. One initial history request and one missing interval; current requests after 0 and 100; stable generation; no empty reset snapshot; no revisit request. Unsubscribe leaves zero subscriptions/current groups/history jobs/consumers/resident owners. Two bounded warm entries (1536 accounted bytes) remain by existing cache policy until expiry or worker termination; the test terminates its worker. No live exchange execution ACK or prepared-projection worker claim is made.
+
+To reproduce the worker check on the dedicated preview:
+
+```sh
+VITE_DATA_MODE=staging VITE_HISTORY_TILES=0 VITE_DIAGNOSTICS=1 VITE_BUILD_COMMIT=$(git rev-parse HEAD) pnpm exec vite build --config vite.wall-navigation.config.ts
+VITE_DATA_MODE=staging pnpm exec playwright test --config playwright.wall-navigation.config.ts --grep 'production worker'
+```
+
+Archive the JSON reporter output before another run. The fixture test is explicitly skipped without the staging test environment; skipped is not passed. The preview is owned by Playwright on4189 and stopped afterward. This is headless controlled-source evidence, not foreground performance certification.
+
+## Capacity recovery and repeated worker navigation
+
+Application `76cabe8` fixes local admission recovery: a completed, validated ninth owner can be held outside the eight-owner resident store when all old owners are visible. Previously narrowing the viewport caused another source read. Navigation now retries admission of that completed result first, allowing only complete offscreen owners to be evicted. Explicit Retry while still capacity-blocked likewise retries admission without resending the source request. Once admitted, ordinary explicit Retry still performs fresh validation. No resource limit was raised and no visible owner is discarded on failed admission.
+
+The regression reproduced the extra read before the change and passed afterward. 128 archive/store/prepared tests, typecheck and build passed. It retains eight visible owners on failure, narrows to the already fetched ninth interval, admits it without another read, and checks normal fresh Retry separately.
+
+At compiled application `57cbde9` (same application behavior, nonempty fixture improvement), the real worker test traversed sixteen disjoint nonempty controlled ranges. Owner/record/accounted-byte counts reached 8/8/6144 then remained exactly constant; one history job and consumer, and1536 warm-cache bytes throughout. Unsubscribe released all resident owners, jobs and current groups. Eight controlled current pages and seven current patches were processed. This proves bounded accounting and worker cleanup on a small controlled source, not a measured total-heap plateau or live execution ACK acceptance.
+
+Two failed fixture runs are retained. The first timed out during cycle zero; the bounded capture then showed an empty observation array. The test had replaced the array while its message callback still appended to the original array. Clearing the array in place corrected the observer. No production code or deadline was changed for that failure. `compiled-worker-cycles-57cbde9.json` is the passing result with that test-only correction; the timeout and capture JSON files preserve the failures.
+
+## Initial partial-load gesture coalescing
+
+Application `baff72f` adds a120ms latest-viewport timer for boundary navigation while initial history is still in flight. It does not cancel useful work for each input. On expiry it uses the normal viewport path: a newly completed result can become resident, or the still-partial result stays displayed while one replacement request starts. Returning to the original covered request cancels the queued retarget. Unsubscribe/profile replacement cancels the timer; stale async responses remain rejected by existing job/subscriber identity checks. Current subscription identity/cursor is untouched.
+
+175 focused archive/prepared/store tests, typecheck and compiled build passed. The deterministic test holds the second page of a valid partial stream, sends ten gestures, returns to the original range, then sends another ten. Only the final target is acquired after coalescing; partial rows remain byte-equal, the current signal is not aborted, a late cancelled history response publishes nothing, and disposal prevents the queued request. The first fixture version was rejected correctly for a continuation cursor with no corresponding event; the fixture now supplies its cursor10 event rather than weakening protocol validation.
+
+This timer covers crossing the initial request boundary. Dramatic zoom-in retargeting within an unfinished oversized request retains its existing policy; full initial-loading interaction acceptance remains broader than this regression.
+
+Follow-up `fe256d7` extends the same rule to a much narrower unloaded viewport inside the initial request. Both boundary-pan and zoom-in deterministic variants pass. The two pre-existing immediate-cancellation tests now verify deferred cancellation followed by acquisition of the latest range. All68 archive tests pass; the other108 prepared/store checks passed in the preceding run, and typecheck/build pass. The compiled `baff72f` worker capture has two passing checks: repeated resident navigation and the partial-load gesture case. The latter contains exactly initial after0, initial after10, and one final-target after0 request; one generation and zero empty reset snapshots. This is controlled canonical-source worker evidence, not real source or execution ACK acceptance.
+
+The targeted compiled partial-navigation check also passed at final application `fe256d7`: `compiled-worker-partial-fe256d7.json`. The task preview was stopped afterward. Remaining goal gates are not waived by these results.
+
+
+## Real prepared-source navigation at fdf0654
+
+On 17 November, application `fdf0654` (same application source as `fe256d7`) was compiled with staging data, history tiles and diagnostics enabled. The actual worker used prepared discovery, projection batches, source validation and current-wall polling through preview4189 → separate SSH forwards18990/18991 → isolated gateway18890. Backend application was `300fa5d00f607d7e3a990b128523ea265af363f5`, paired with its matching worker, protocol6 root `/home/daz/iqterminal-wall-tail-r5-candidate-proof`, independent publication enabled only for that pair. No backend application change was made.
+
+These are one genuine-source run per market on this Pi using headless Chromium/SwiftShader1280×720. They are not a matched performance cohort or foreground certification. Initial requests used current-ending30h views, normal padding, Top8/side,10%,native, Spot5m/USD-M15m. Sources retained their genuine gaps and short unconfirmed tails. Available-history completion is distinct from gap-free range completion.
+
+| Market | First historical paint | Validated available paint | Historical segments / runs | Sampled navigation draws | Historical builds before → after |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| USD-M |43.44s|50.24s|4636 /47938|43|115 →115|
+| Spot |44.77s|60.21s|6885 /35715|37|101 →101|
+
+After completed validation, GET history/discovery/source/batch requests were blocked. Both runs made zero attempted blocked requests during36 time/price camera changes wholly inside the loaded interval. Every sampled composed wall draw had nonempty pixels. Newly exposed content was drawn from retained resources. Exact historical-presentation SHA256 stayed unchanged before/after camera movement; this is a renderer immutability check, not a new independent financial-reference comparison. No historical geometry rebuild occurred; current chunks did update. Pixel readback adds substantial overhead, so these draw/frame timings cannot certify the33ms target.
+
+Current-wall delivery progressed: USD-M39pages/51patches, Spot36pages/28patches by disposal. This is current-wall polling evidence, not durable execution ACK acceptance. The observer did not capture a visible current marker (`firstCurrent=null`); no first-current-paint latency is claimed. Browser page-error arrays were empty. Preview shutdown output included WebSocket EPIPE errors at14:46:29UTC; no correlated execution recovery claim is made from this check.
+
+After removing each panel, worker diagnostics showed zero subscriptions, groups, history jobs, consumers and resident owners. Existing bounded warm/immutable caches remained, with no pinned entries, until browser closure. Single post-navigation forced-GC worker heap samples were13,646,788bytes USD-M and14,460,792bytes Spot; these are not a repeated-cycle plateau proof or total process memory.
+
+Evidence is `live-route-{usdm,spot}-fdf0654.json` with screenshots, `live-route-environment.json`, and `live-session-fdf0654/summary.json`. The session manifest records full identities, resource preflight, roots and unchanged allocation. The bounded session ended early: strict session/build/root cleanup confirmed both isolated containers removed, no root lock, no capture errors. Gateway logs were bounded/truncated, explicitly recorded in the cleanup receipt. Local4189/18990/18991 were stopped; ordinary5173/18780/18781 retained their original processes. Useful prepared state remains. No main, production, protected watch or collector service changed.
+
+This closes the real prepared-source/worker loaded-navigation evidence gap for the sampled views. It does not close boundary-extension live testing, execution ACKs, larger repeated heap/multiple-chart workload, fallback integration, live-follow revision behavior or foreground acceptance. Earlier controlled-source tests retain their separate scope.
+
+## Completed live-follow forward pans
+
+Application `5fb393e` distinguishes a completed view whose left edge moves from a same-start live revision. Previously an overlapping forward pan near now entered the rolling revision path and requested the original start again. The focused regression failed with actual second-request start1800000000000 instead of1800000060000. It now admits the completed prefix into resident ownership and requests only the missing end interval. Two successive advances preserve exact prefix values; revisiting overscan makes no request. Same-start live terminal/source revision handling and still-in-flight coalescing remain unchanged, including timestamp-ahead and quiet-terminal financial reference tests.
+
+131 archive/prepared-projection/resident checks passed, as did typecheck and the dedicated build. The compiled production-worker check at `5fb393e` passed: initial30h request, one missing-end request, stable generation1, no post-initial empty snapshot, and one current bootstrap followed by cursor100. This is controlled-source protocol evidence, not live source/ACK proof. Its source intentionally confirms the padded interval; it is not evidence that future archive data exists on the real route. Raw result `compiled-live-pan-5fb393e.json`; focused suite result `live-pan-focused-tests.txt`.
+
+
+## Final live execution check and renderer-label correction
+
+Application `b76828cc5f7624a22906ac50cae4c3f8ed7432a4`, backend300fa5d, the same isolated protocol6 route and allocation: one USD-M30h view plus a real5m/$25footprint subscription completed available-history paint at41.86s (first history36.36s). The navigation contract again passed with zero blocked history requests, zero sampled blank draws, no historical rebuild and unchanged exact presentation hash. This is a different rolling window, not a before/after loading-speed comparison.
+
+The independently healthy baseline at11.086s and final sample49.443s showed69additional applied batches,2966executions and69confirmed ACKs. Applied cursor3529433072→3529436038; confirmed through3529436006. Actual socket readyState1 at both ends; no reconnect/disconnect/reset/error/source jump during the38.36s window. Longest measured worker-lifetime receipt gap752.2ms and max apply25.4ms. Initial bootstrap/catch-up preceded that baseline and is preserved in the raw statuses; it is not erased from startup evidence. This does not prove the older intermittent transport fault resolved. The health endpoint succeeded before and after. Removing the footprint consumer/panel left zero staging groups and archive groups/jobs/consumers; browser closure released remaining caches. Strict cleanup confirmed both session-owned remote roles removed and no root lock. Local preview and forwards stopped.
+
+**Rendering-mode erratum:** the live captures' `SystemInfo.gpu.auxAttributes` report `(gl=egl-angle,angle=opengles)` and `ANGLE (Broadcom, V3D7.1.7.0, OpenGL ES3.1 Mesa24.2.8-1~bpo12+rpt5)`. Earlier prose/raw scope labels called them SwiftShader/software based on requested command-line flags; that inference was wrong. Host is `pi`,aarch64; Chromium155.0.8059.79. Treat these as **headless Pi/V3D**. The three final component pairs did not record actual GPU metadata, so their renderer remains unverified despite requested SwiftShader flags. Neither dataset certifies foreground frame intervals. Original raw captures remain intact; this correction takes precedence over their human-authored scope strings.
+
+Evidence: `live-execution-usdm-b76828c.json`, screenshot and `live-session-b76828c/` receipts/health/summary. The final compiled candle/footprint overlay and persistent-controls tests passed in dark/light themes (`integrated-b76828c.json`, scoped screenshots). They use explicit synthetic data and do not substitute for live source equality. The manual procedure now selects a separately verified copy of this application via [foreground-acceptance.md](foreground-acceptance.md), preserving the older frozen manual receipt.

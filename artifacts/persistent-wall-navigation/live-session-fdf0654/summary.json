@@ -1,0 +1,220 @@
+{
+  "frontendApplication": "fdf0654cdfbccf92e6121eb9345e0df0edfe80d2",
+  "backendApplication": "300fa5d00f607d7e3a990b128523ea265af363f5",
+  "scriptSha256": "61a78455c65f97f9592a02ee29f006f517c8d4f9fc8add9f9fc0bdb5d3e9e2ae",
+  "scope": "One genuine-source run per market; headless SwiftShader, pixel readback enabled; not foreground frame certification.",
+  "runs": [
+    {
+      "market": "spot",
+      "marksMs": {
+        "firstCurrent": null,
+        "firstHistory": 44771,
+        "complete": 60208.40000000596
+      },
+      "contract": {
+        "noHistoryRequests": true,
+        "noSampledBlank": true,
+        "noHistoryRebuild": true,
+        "financialUnchanged": true
+      },
+      "financial": {
+        "segments": 6885,
+        "runs": 35715,
+        "sha256": "e95ad8bc5dc490e6127f9cb714e1b4d2746a355093e4c0f497b70af85700a263"
+      },
+      "sampledDraws": 37,
+      "historyBuilds": [
+        101,
+        101
+      ],
+      "currentBuilds": [
+        21,
+        22
+      ],
+      "workerHeapUsed": 14460792,
+      "currentPages": 36,
+      "currentPatches": 28,
+      "afterDispose": {
+        "subscriptions": 0,
+        "groups": 0,
+        "historyJobs": 0,
+        "historyConsumers": 0,
+        "resident": []
+      },
+      "archive": {
+        "profileId": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+        "state": "partial",
+        "from": 1794818400000,
+        "to": 1794926861958,
+        "rangeComplete": false,
+        "market": "spot",
+        "feed": "binance:spot:BTCUSDT:spot-diff-depth",
+        "aggregation": "native",
+        "availableFrom": 1793521565645,
+        "confirmedTo": 1794926861446,
+        "gaps": [
+          {
+            "from": 1794827140050,
+            "to": 1794827140050,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1794832478155,
+            "to": 1794832478155,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1794839580947,
+            "to": 1794839580947,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1794841605752,
+            "to": 1794841605752,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1794846422347,
+            "to": 1794846422347,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1794855219150,
+            "to": 1794855219150,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1794865221554,
+            "to": 1794865221554,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1794872573547,
+            "to": 1794872573547,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1794886084781,
+            "to": 1794886084781,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1794897540444,
+            "to": 1794897540444,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1794914275146,
+            "to": 1794914275146,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1794926154848,
+            "to": 1794926154848,
+            "reason": "Observed book capacity: epoch invalidated"
+          }
+        ],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "reason": "Depth continuity gaps are present in the requested range History is loaded through the archive horizon; later chart time is not covered.",
+        "requestComplete": true,
+        "loadedThrough": 1794926861446,
+        "profileVersion": 1,
+        "algorithmVersion": 1,
+        "schemaVersion": 1,
+        "midpoint": "65000.005",
+        "eligibleTo": 1794926861446,
+        "horizonAt": 1794926861445,
+        "profileStatus": "backfilling"
+      }
+    },
+    {
+      "market": "usdm",
+      "marksMs": {
+        "firstCurrent": null,
+        "firstHistory": 43437.10000000149,
+        "complete": 50239.39999999851
+      },
+      "contract": {
+        "noHistoryRequests": true,
+        "noSampledBlank": true,
+        "noHistoryRebuild": true,
+        "financialUnchanged": true
+      },
+      "financial": {
+        "segments": 4636,
+        "runs": 47938,
+        "sha256": "2450bd495b57ba68d0f3dcfd1e909fdd182bc4fd3f8be353f4df9105f6e9abbd"
+      },
+      "sampledDraws": 43,
+      "historyBuilds": [
+        115,
+        115
+      ],
+      "currentBuilds": [
+        17,
+        21
+      ],
+      "workerHeapUsed": 13646788,
+      "currentPages": 39,
+      "currentPatches": 51,
+      "afterDispose": {
+        "subscriptions": 0,
+        "groups": 0,
+        "historyJobs": 0,
+        "historyConsumers": 0,
+        "resident": []
+      },
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "partial",
+        "from": 1794817800000,
+        "to": 1794926728321,
+        "rangeComplete": false,
+        "market": "perpetual",
+        "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+        "aggregation": "native",
+        "availableFrom": 1793506604584,
+        "confirmedTo": 1794926726594,
+        "gaps": [
+          {
+            "from": 1794831639255,
+            "to": 1794831639255,
+            "reason": "Depth disconnected"
+          },
+          {
+            "from": 1794914444290,
+            "to": 1794914444290,
+            "reason": "Depth disconnected"
+          },
+          {
+            "from": 1794917590869,
+            "to": 1794917590869,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "from": 1794926291287,
+            "to": 1794926291287,
+            "reason": "Shared disk watermark"
+          }
+        ],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "reason": "Depth continuity gaps are present in the requested range History is loaded through the archive horizon; later chart time is not covered.",
+        "requestComplete": true,
+        "loadedThrough": 1794926726594,
+        "profileVersion": 1,
+        "algorithmVersion": 1,
+        "schemaVersion": 1,
+        "midpoint": "64977.45",
+        "eligibleTo": 1794926726595,
+        "horizonAt": 1794926726594,
+        "profileStatus": "backfilling"
+      }
+    }
+  ]
+}

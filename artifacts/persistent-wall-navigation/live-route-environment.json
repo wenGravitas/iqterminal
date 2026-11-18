@@ -1,0 +1,124 @@
+{
+  "utc": "2026-11-17T14:45:43.684252+00:00",
+  "frontendSource": "fdf0654",
+  "preview": "http://127.0.0.1:4189",
+  "historyForward": 18990,
+  "currentForward": 18991,
+  "remoteCandidatePort": 18890,
+  "root": "/home/daz/iqterminal-wall-tail-r5-candidate-proof",
+  "health": {
+    "enabled": true,
+    "build": "300fa5d00f607d7e3a990b128523ea265af363f5",
+    "metrics": {
+      "requests": 30,
+      "rejected": 0,
+      "bytes": 10063,
+      "serializeMs": 8.601687999984733,
+      "legacyHeatmap": 0,
+      "legacyFootprint": 0,
+      "closedTileReads": 0,
+      "manifests": 0,
+      "orderWallPages": 12,
+      "peakRss": 68337664,
+      "active": 1,
+      "history": 0,
+      "reservedCurrent": 1,
+      "limit": 4,
+      "rss": 68337664
+    },
+    "wallProjectionEncoding": {
+      "active": 0,
+      "limit": 3,
+      "cacheEntries": 0,
+      "cacheBytes": 0
+    },
+    "materializer": {
+      "version": 1,
+      "head": {
+        "cursor": 30726812,
+        "at": 1794926743115,
+        "epoch": 1794926322978
+      },
+      "live": {
+        "cursor": 30726812,
+        "at": 1794926743115,
+        "from": 1794926700000,
+        "widths": [
+          10,
+          25,
+          50,
+          100,
+          250,
+          1000
+        ]
+      },
+      "archive": {
+        "pinned": {
+          "pages": 1,
+          "processed": 37,
+          "cursor": 30726768,
+          "lag": 0,
+          "caughtUp": true
+        },
+        "current": [
+          {
+            "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+            "lane": "pinned",
+            "pages": 1,
+            "processed": 37,
+            "cursor": 30726768,
+            "lag": 0,
+            "caughtUp": true
+          },
+          {
+            "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+            "lane": "pinned",
+            "pages": 1,
+            "processed": 40,
+            "cursor": 26891538,
+            "lag": 0,
+            "caughtUp": true
+          }
+        ],
+        "custom": [],
+        "customWorker": "perpetual-materializer"
+      },
+      "metrics": {
+        "startedAt": 1793984035129,
+        "lastPoll": 1794926743670,
+        "lastPersist": 1794926704392,
+        "records": 9231930,
+        "closedBuckets": 18858,
+        "liveLagMs": 0,
+        "derivedBytes": 1220993259,
+        "freeBytes": 179478364160,
+        "paused": false,
+        "error": "",
+        "pages": 385188,
+        "pageMs": 19657589.096922226,
+        "accumulateMs": 11282957.384306254,
+        "persistMs": 1508909.373568837,
+        "peakRss": 615284736,
+        "sourceHeadAgeMs": 1006,
+        "liveAgeMs": 1006,
+        "rss": 325468160
+      },
+      "backlog": []
+    },
+    "sqlAdmission": {
+      "enabled": false
+    }
+  },
+  "horizon": {
+    "version": 1,
+    "kind": "wall-source-horizon-v1",
+    "market": "perpetual",
+    "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+    "head": {
+      "cursor": 30726768,
+      "epoch": 1794926322978,
+      "at": 1794926738629
+    },
+    "availableFrom": 1793506604584
+  }
+}

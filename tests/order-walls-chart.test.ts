@@ -657,3 +657,11 @@ it('keeps a selected snapshot at its own point time through later status confirm
  primitive.setStatus({state:'live',lastConfirmedAt:base+120000});primitive.draw(canvas(),context());
  expect(primitive.orderWallAt(50,100)).toMatchObject({at:base});expect(primitive.orderWallAt(100,100)).toBeNull();
 });
+
+it('clips owned archive fragments without changing exact episode or hover values',()=>{
+ const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native'},60000,true,0);
+ const segment:OrderWallSegment={id:'fragment',archiveEntryId:'original',epoch:1,side:'bid',price:100,start:base,end:base+120000,peakUsd:1000,meanUsd:900,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'rank-exit',detectionMode:'top-levels',valueRunsTruncated:false,valueRuns:[{at:base,usd:1000,quantityExact:'10.000000000000000001',notionalExact:'1000.0000000000000001',percentile:null}],residentRange:{from:base+30000,to:base+90000,sourceId:'exact-source-id',revision:'proof'}};
+ const original=JSON.stringify(segment);primitive.setSnapshot([segment],{state:'live',lastConfirmedAt:base+120000});const paths:CapturedPath[]=[];primitive.draw(canvas([],paths),context());
+ expect(primitive.orderWallAt(90,100)).toBeNull();expect(primitive.orderWallAt(160,100)?.segment.valueRuns[0]?.notionalExact).toBe('1000.0000000000000001');expect(primitive.orderWallAt(210,100)).toBeNull();
+ expect(paths[0]!.points[0]![0]).toBe(200);expect(paths[0]!.points.at(-1)![0]).toBeCloseTo(399.9966667,4);expect(JSON.stringify(segment)).toBe(original);
+});

@@ -183,7 +183,7 @@ export class OrderWallsControls {
         const band = observedBandCoverage(status, archive.midpoint, archive.requestedBandPercent);
         const gaps = archive.gaps.length ? ` · ${archive.gaps.length} gap${archive.gaps.length === 1 ? '' : 's'}` : '';
         const eligible = archive.eligibleTo === undefined ? '' : ` · eligible through ${archiveTime(archive.eligibleTo)}`;
-        const loaded = archive.loadedThrough === undefined ? '' : ` · loaded through ${archiveTime(archive.loadedThrough)}`;
+        const loaded = archive.residentRanges ? ` · resident ${archive.residentRanges.length} interval${archive.residentRanges.length===1?'':'s'}${archive.unloadedRanges?.length?` · ${archive.unloadedRanges.length} unloaded interval${archive.unloadedRanges.length===1?'':'s'}`:''}` : archive.loadedThrough === undefined ? '' : ` · loaded through ${archiveTime(archive.loadedThrough)}${archive.loadedFrom===undefined?'':` (from ${archiveTime(archive.loadedFrom)})`}`;
         const detail = `History ${historyRange} UTC · requested ${archiveTime(archive.from)}–${archiveTime(archive.to)}${eligible}${loaded} · observed band ${band}${gaps}`;
         const reason = archive.reason ?? status.message;
         message = `${line1}\n${detail}${reason && (archive.state === 'partial' || archive.state === 'unavailable') ? ` · ${reason}` : ''}`;
@@ -198,7 +198,7 @@ export class OrderWallsControls {
     }
     this.notice.replaceChildren(document.createTextNode(message));
     if (canResumeHistory) this.notice.append(this.resumeHistoryButton);
-    this.notice.title = message;
+    this.notice.title = message+(this.status?.archive?.residentRanges?`\nResident: ${this.status.archive.residentRanges.map(range=>`${archiveTime(range.from)}–${archiveTime(range.to)}`).join(', ')}\nUnloaded: ${this.status.archive.unloadedRanges?.map(range=>`${archiveTime(range.from)}–${archiveTime(range.to)}`).join(', ')||'none'}`:'');
     this.notice.hidden = !this.noticeAllowed || !message;
     if (this.fitButton) this.fitButton.disabled = !this.noticeAllowed || !this.supported || this.current.mode !== 'top-levels' || this.status?.state !== 'live';
   }
@@ -243,6 +243,7 @@ export class OrderWallsControls {
     const point=orderWallValuePointAt(segment,hit.at);
     const strengthText = segment.detectionMode==='top-levels' ? ` · ${point?.rank ? `observed rank #${point.rank}` : 'outside selected ranks'}${point?.quantity!==undefined ? ` · ${point.quantity.toLocaleString('en-US',{maximumFractionDigits:8})} BTC` : ''}` : typeof hit.percentile !== 'number' ? ' · historical rank unavailable' : ` · p${hit.percentile.toFixed(1)} at that time`;
     if(segment.presentationKind==='current-snapshot')return `${segment.side.toUpperCase()} selected Top Level · ${instrumentLabel(series)}\n$${price(hit.priceLow)} · ${segment.scopePartial?'partial book scope':'observed book'}${currentState}\n${valueText}${strengthText}\nSelected snapshot ${utc(segment.start)} UTC · ${ageText(age)} ago`;
+    const ownership=segment.residentRange?`\nValidated interval ${utc(segment.residentRange.from)}–${utc(segment.residentRange.to)} UTC · episode statistics retain this source scope`:'';
     const startText = segment.startKnown ? `Observed from ${utc(segment.start)} UTC` : `Observed since ${utc(segment.start)} UTC · start unknown`;
     const spanText = `${segment.startKnown ? 'Duration' : 'Observed span'} ${durationText(segment.durationMs)}`;
     const endText = segment.end === null
@@ -250,7 +251,7 @@ export class OrderWallsControls {
       : segment.endKnown
         ? `Observed exit ${utc(segment.end)} UTC${segment.endReason === 'removed' ? ' · level removed · observed zero resting quantity; cause unknown' : segment.endReason === 'below-threshold' ? ' · below threshold' : segment.endReason === 'rank-exit' ? ' · rank exit; liquidity may remain' : segment.endReason === 'out-of-range' ? ' · left search range; liquidity may remain' : segment.endReason === 'below-minimum' ? ' · below minimum; liquidity may remain' : ''}`
         : `Censored at last confirmed ${utc(segment.end)} UTC${segment.censoredReason ? ` · ${segment.censoredReason}` : ''}`;
-    return `${segment.side.toUpperCase()} ${segment.detectionMode==='top-levels'?'Top Level':'wall'} · ${instrumentLabel(series)}\n$${price(hit.priceLow)}${this.current.aggregation==='native'?'':`–$${price(hit.priceHigh)}`} · ${coverage}${currentState}\n${valueText}${strengthText}\n${startText} · ${spanText}\n${endText}\nLast confirmed ${utc(lastConfirmed)} UTC · ${ageText(age)} ago`;
+    return `${segment.side.toUpperCase()} ${segment.detectionMode==='top-levels'?'Top Level':'wall'} · ${instrumentLabel(series)}\n$${price(hit.priceLow)}${this.current.aggregation==='native'?'':`–$${price(hit.priceHigh)}`} · ${coverage}${currentState}\n${valueText}${strengthText}\n${startText} · ${spanText}\n${endText}\nLast confirmed ${utc(lastConfirmed)} UTC · ${ageText(age)} ago${ownership}`;
   }
 
   dispose() { if (this.dialog.open) this.dialog.close(); }

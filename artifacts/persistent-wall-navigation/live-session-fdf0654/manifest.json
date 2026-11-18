@@ -1,0 +1,9 @@
+{
+  "sessionId": "92caf1fc-9bb2-4276-bbbd-ea2d31bd6cf5",
+  "kind": "persistent-wall-navigation bounded live validation",
+  "startUtc": "2026-11-17T14:42:24.073797+00:00",
+  "experimentCutoffUtc": "2026-11-17T15:12:24.073797+00:00",
+  "backendApplication": "300fa5d00f607d7e3a990b128523ea265af363f5",
+  "frontendSource": "fdf0654",
+  "notGoalBudget": true
+}

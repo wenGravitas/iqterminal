@@ -1,0 +1,103 @@
+{
+  "enabled": true,
+  "build": "300fa5d00f607d7e3a990b128523ea265af363f5",
+  "metrics": {
+    "requests": 2,
+    "rejected": 0,
+    "bytes": 1552,
+    "serializeMs": 0.11220900000000711,
+    "legacyHeatmap": 0,
+    "legacyFootprint": 0,
+    "closedTileReads": 0,
+    "manifests": 0,
+    "orderWallPages": 0,
+    "peakRss": 59473920,
+    "active": 1,
+    "history": 0,
+    "reservedCurrent": 1,
+    "limit": 4,
+    "rss": 59858944
+  },
+  "wallProjectionEncoding": {
+    "active": 0,
+    "limit": 3,
+    "cacheEntries": 0,
+    "cacheBytes": 0
+  },
+  "materializer": {
+    "version": 1,
+    "head": {
+      "cursor": 30738360,
+      "at": 1794927917273,
+      "epoch": 1794926322978
+    },
+    "live": {
+      "cursor": 30738360,
+      "at": 1794927917273,
+      "from": 1794927900000,
+      "widths": [
+        10,
+        25,
+        50,
+        100,
+        250,
+        1000
+      ]
+    },
+    "archive": {
+      "pinned": {
+        "pages": 1,
+        "processed": 21,
+        "cursor": 30738330,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "current": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "lane": "pinned",
+          "pages": 1,
+          "processed": 21,
+          "cursor": 30738330,
+          "lag": 0,
+          "caughtUp": true
+        },
+        {
+          "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+          "lane": "pinned",
+          "pages": 1,
+          "processed": 22,
+          "cursor": 26903327,
+          "lag": 0,
+          "caughtUp": true
+        }
+      ],
+      "custom": [],
+      "customWorker": "perpetual-materializer"
+    },
+    "metrics": {
+      "startedAt": 1793984035129,
+      "lastPoll": 1794927917958,
+      "lastPersist": 1794927902316,
+      "records": 9243439,
+      "closedBuckets": 18882,
+      "liveLagMs": 0,
+      "derivedBytes": 1222404556,
+      "freeBytes": 179483623424,
+      "paused": false,
+      "error": "",
+      "pages": 385692,
+      "pageMs": 19683760.225186773,
+      "accumulateMs": 11301909.706936063,
+      "persistMs": 1510375.5639377278,
+      "peakRss": 615284736,
+      "sourceHeadAgeMs": 1429,
+      "liveAgeMs": 1429,
+      "rss": 331116544
+    },
+    "backlog": []
+  },
+  "sqlAdmission": {
+    "enabled": false
+  }
+}

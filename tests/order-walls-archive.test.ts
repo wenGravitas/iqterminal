@@ -860,6 +860,7 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
       service.updateViewport('delayed-current',from,to,false);
       expect(signals[0].aborted).toBe(false);
       release(new Response(JSON.stringify(current)));await flush();
+      await vi.waitFor(()=>expect(urls.filter(url=>url.includes('/archive?'))).toHaveLength(2));
       const history=urls.filter(url=>url.includes('/archive?'));expect(history).toHaveLength(2);
       expect(new URL(history.at(-1)!,'http://localhost').searchParams.get('from')).toBe(String(from));
       expect(new URL(history.at(-1)!,'http://localhost').searchParams.get('to')).toBe(String(to));
@@ -895,7 +896,8 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
       for(let i=0;i<40;i++)await Promise.resolve();
       service.updateViewport('visible-priority',from+(to-from)/2,to,false);
       for(let i=0;i<40;i++)await Promise.resolve();
-      expect(signals[0]?.aborted).toBe(true);
+      expect(signals[0]?.aborted).toBe(false);
+      await vi.waitFor(()=>expect(signals[0]?.aborted).toBe(true));
       expect(service.diagnostics().historyRequests).toBe(2);
     }finally{service.dispose();}
   });
@@ -1529,4 +1531,195 @@ it('holds shared history admission until wall response bodies finish',async()=>{
   for(let i=0;i<100;i++)await Promise.resolve();expect(bodies).toHaveLength(2);
   bodies[0]!.close();for(let i=0;i<100;i++)await Promise.resolve();expect(bodies).toHaveLength(3);
  }finally{for(const abort of aborts)abort.abort();for(const body of bodies)try{body.close();}catch{}await Promise.allSettled(work);}
+});
+
+
+it('presentation-only settings retain in-flight history, current lane and subscription generation',async()=>{
+ const events:any[]=[],signals:AbortSignal[]=[],urls:string[]=[];
+ const fetcher:any=(url:unknown,init:any)=>{urls.push(String(url));signals.push(init.signal);return new Promise((_resolve,reject)=>init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));};
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to);
+ const flush=async()=>{for(let i=0;i<100;i++)await Promise.resolve();};
+ try{
+  const original=request();service.subscribe('styles',{...original,followLive:true});await flush();
+  const count=urls.length,generation=events.at(-1).generation,eventCount=events.length;
+  for(const patch of [{opacity:.25},{colorMode:'bid-ask' as const},{highContrast:false},{visibleRangeOnly:false},{thicknessPx:4},{strengthThickness:false},{showPriceLines:true}]){
+   service.updateSettings('styles',{...original.settings,...patch});await flush();
+   expect(urls).toHaveLength(count);expect(events).toHaveLength(eventCount);expect(signals.every(signal=>!signal.aborted)).toBe(true);
+  }
+  service.updateSettings('styles',{...original.settings,topLevels:9});await flush();
+  expect(events.at(-1).generation).not.toBe(generation);expect(signals.slice(0,count).every(signal=>signal.aborted)).toBe(true);
+ }finally{service.dispose();}
+});
+
+
+it('crossing a history request boundary keeps published overlap and the live subscription during failure and retry',async()=>{
+ const events:any[]=[],urls:string[]=[],currentSignals:AbortSignal[]=[];
+ let historyReads=0,failReplacement:((response:Response)=>void)|undefined;
+ const historical=page({seed:{at:from,cursor:0,epoch:1,midpoint:'74480',bids:[candidate({startedAt:from,startCursor:0})],asks:[],bookScope:{bidComplete:true,askComplete:true}}});
+ const fetcher:any=(url:unknown,init:any)=>{
+  urls.push(String(url));
+  if(String(url).includes('/current?')){currentSignals.push(init.signal);return new Promise((_resolve,reject)=>init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));}
+  historyReads++;
+  if(historyReads===1)return Promise.resolve(new Response(JSON.stringify(historical)));
+  return new Promise((resolve,reject)=>{failReplacement=resolve;init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true});});
+ };
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to),flush=async()=>{for(let i=0;i<200;i++)await Promise.resolve();};
+ try{
+  service.subscribe('pan',{...request(),followLive:true});await flush();
+  const loaded=events.filter(event=>event.segments?.some((segment:any)=>segment.archiveEntryId)).at(-1);
+  expect(loaded).toBeDefined();const generation=loaded.generation,count=events.length;
+  service.updateViewport('pan',from-30000,to-30000,false);await vi.waitFor(()=>expect(historyReads).toBe(2));await flush();
+  expect(historyReads).toBe(2);expect(events.at(-1).status.archive.loadedFrom).toBe(from);expect(currentSignals).toHaveLength(1);expect(currentSignals[0]!.aborted).toBe(false);
+  expect(events.slice(count).every(event=>event.generation===generation&&event.kind==='patch'&&event.patches.every((patch:any)=>patch.segment!==null))).toBe(true);
+  failReplacement!(new Response(JSON.stringify({error:'Injected history failure'}),{status:400}));await vi.waitFor(()=>expect(events.at(-1).status.archive.reason).toContain('Injected history failure'));await flush();
+  expect(events.at(-1).status.archive.requestComplete).toBe(false);
+  expect(events.slice(count).some(event=>event.kind==='snapshot'&&event.segments.length===0)).toBe(false);
+  service.retry('pan');await vi.waitFor(()=>expect(historyReads).toBe(3));await flush();expect(currentSignals).toHaveLength(1);expect(currentSignals[0]!.aborted).toBe(false);
+ }finally{service.dispose();}
+});
+
+it('owns disjoint resident history across backward pan, zoom-out and revisit without replaying overlap',async()=>{
+ vi.useFakeTimers();const events:any[]=[],reads:Array<{from:number;to:number}>=[],currentSignals:AbortSignal[]=[];
+ const wall=candidate({entryId:'resident-carry',startedAt:from-100000,startCursor:0,quantity:'2.0000000000000000001',notional:'148960.000000000000007448'});
+ const fetcher:any=(input:unknown,init:any)=>{const url=new URL(String(input),'http://localhost');
+  if(url.pathname.endsWith('/current')){currentSignals.push(init.signal);return new Promise((_resolve,reject)=>init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));}
+  const left=Number(url.searchParams.get('from')),right=Number(url.searchParams.get('to'));reads.push({from:left,to:right});
+  return Promise.resolve(Response.json(page({from:left,to:right,seed:{at:left,cursor:0,epoch:1,midpoint:'74480',bids:[wall],asks:[],bookScope:{bidComplete:true,askComplete:true}},
+    head:{cursor:20,at:right-1,epoch:1},page:{after:0,nextAfter:20,hasMore:false,lastAt:right-1,limit:256,sameMillisecondClosed:true},coverage:coverage({requestedFrom:left,requestedTo:right,confirmedTo:right-1})})));
+ };
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to),flush=async()=>{for(let i=0;i<200;i++)await Promise.resolve();};
+ try{
+  service.subscribe('resident',{...request(),followLive:true});await flush();const initial=publishedSegments(events),generation=events.at(-1).generation;
+  service.updateViewport('resident',from-30000,to-30000,false);await vi.advanceTimersByTimeAsync(130);await flush();
+  expect(reads).toEqual([{from,to},{from:from-36000,to:from}]);
+  const prefix=publishedSegments(events).find(row=>row.id===initial[0]!.id)!;
+  expect(prefix.valueRuns).toEqual(initial[0]!.valueRuns);expect(prefix.residentRange).toMatchObject({from,to,sourceId:initial[0]!.id});
+  expect(events.at(-1).status.archive.unloadedRanges).toEqual([]);
+  const before=reads.length;service.updateViewport('resident',from-20000,to-10000,false);await vi.advanceTimersByTimeAsync(200);expect(reads).toHaveLength(before);
+  service.updateViewport('resident',from-60000,to+60000,true);await vi.advanceTimersByTimeAsync(130);await flush();
+  expect(reads).toHaveLength(4);expect(reads.slice(1).every(range=>range.to<=from||range.from>=to)).toBe(true);
+  const ranges=service.diagnostics().resident[0]!.missing;expect(ranges).toEqual([]);
+  const loaded=publishedSegments(events);expect(loaded.length).toBe(4);
+  for(const row of loaded){expect(row.valueRuns[0].quantityExact).toBe(wall.quantity);expect(row.valueRuns[0].notionalExact).toBe(wall.notional);expect(row.archiveEntryId).toBe(wall.entryId);}
+  service.updateViewport('resident',from,to,false);await vi.advanceTimersByTimeAsync(200);expect(reads).toHaveLength(4);
+  expect(events.slice(1).some(event=>event.kind==='snapshot'&&event.segments.length===0)).toBe(false);
+  expect(events.every(event=>event.generation===generation)).toBe(true);expect(currentSignals).toHaveLength(1);expect(currentSignals[0]!.aborted).toBe(false);
+ }finally{service.dispose();vi.useRealTimers();}
+ expect(currentSignals[0]!.aborted).toBe(true);expect(service.diagnostics().resident).toEqual([]);
+});
+
+it('coalesces boundary gestures before admitting missing coverage and cancels the timer on disposal',async()=>{
+ vi.useFakeTimers();const events:any[]=[],reads:Array<{from:number;to:number}>=[];
+ const fetcher:any=(input:unknown)=>{const url=new URL(String(input),'http://localhost'),left=Number(url.searchParams.get('from')),right=Number(url.searchParams.get('to'));reads.push({from:left,to:right});
+  return Promise.resolve(Response.json(page({from:left,to:right,head:{cursor:20,at:right-1,epoch:1},page:{after:0,nextAfter:20,hasMore:false,lastAt:right-1,limit:256,sameMillisecondClosed:true},coverage:coverage({requestedFrom:left,requestedTo:right,confirmedTo:right-1})})));};
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to),flush=async()=>{for(let i=0;i<200;i++)await Promise.resolve();};
+ try{
+  service.subscribe('gesture',{...request(),followLive:false});await flush();
+  for(let step=1;step<=10;step++)service.updateViewport('gesture',from-step*1000,to-step*1000,false);
+  expect(reads).toHaveLength(1);await vi.advanceTimersByTimeAsync(130);await flush();expect(reads).toHaveLength(2);expect(reads[1]).toEqual({from:from-16000,to:from});
+  service.updateViewport('gesture',from-40000,to-40000,false);service.unsubscribe('gesture');await vi.advanceTimersByTimeAsync(200);expect(reads).toHaveLength(2);
+ }finally{service.dispose();vi.useRealTimers();}
+});
+
+it('resident interval fragments preserve full-reference sampled financial values across carry-in and rank changes',async()=>{
+ const {WallResidentHistory}=await import('../src/feed/wall-resident-history');
+ const {orderWallValuePointAt}=await import('../src/feed/order-walls');
+ const original=candidate({entryId:'reference-bid',price:'100.01',quantity:'2.00000000000000001',notional:'200.0200000000000010001'});
+ const changed=candidate({...original,quantity:'3.00000000000000001',notional:'300.0300000000000010001',rank:2});
+ const ask=candidate({entryId:'reference-ask',side:'ask',price:'101.01',quantity:'1.00000000000000001',notional:'101.0100000000000010101',startedAt:from+32000,startCursor:13});
+ const events=[archivePatch(10,from+1000,{bids:side([original])}),archivePatch(11,from+15000,{bids:side([changed])}),archivePatch(13,from+32000,{asks:side([ask])}),archivePatch(14,from+45000,{bids:side([],[{entryId:original.entryId,side:'bid',price:original.price,at:from+45000,cursor:14,epoch:1,reason:'rank-exit',lastConfirmedAt:from+45000,lastConfirmedCursor:14}])})];
+ const build=(left:number,right:number)=>{
+  const state=new Map<string,OrderWallsArchiveCandidate>();for(const event of events.filter(event=>event.at<left)){for(const c of [...event.bids.upserts,...event.asks.upserts])state.set(c.entryId,c);for(const r of [...event.bids.removals,...event.asks.removals])state.delete(r.entryId);}
+  const projector=new OrderWallsArchiveProjector(request().settings,left,right);projector.applyPage(page({from:left,to:right,head:{cursor:20,at:right-1,epoch:1},seed:{at:left,cursor:0,epoch:1,midpoint:'100.5',bids:[...state.values()].filter(c=>c.side==='bid'),asks:[...state.values()].filter(c=>c.side==='ask'),bookScope:{bidComplete:true,askComplete:true}},patches:events.filter(event=>event.at>=left&&event.at<right),page:{after:0,nextAfter:20,hasMore:false,lastAt:right-1,limit:256,sameMillisecondClosed:true},coverage:coverage({requestedFrom:left,requestedTo:right,confirmedTo:right-1})}));return projector.snapshot();
+ };
+ const full=build(from,to),resident=new WallResidentHistory();
+ for(let i=0;i<3;i++){const left=from+i*20000,right=left+20000,rows=build(left,right);
+  expect(resident.admit({key:String(i),from:left,to:right,revision:'same-pinned-source',segments:new Map(rows.map(row=>[row.id,row])),status:{profileId:profile().id,state:'complete',from:left,to:right,loadedThrough:right-1,requestComplete:true,rangeComplete:true,exact:true,gaps:[],requestedTopN:8,requestedBandPercent:10,profileBandPercent:10}}, {from,to}).ok).toBe(true);
+ }
+ const fragments=[...resident.presentation().values()];
+ const values=(rows:typeof full,at:number)=>rows.filter(row=>at>=Math.max(row.start,(row as any).residentRange?.from??from)&&at<=Math.min(row.end??row.start+row.durationMs,((row as any).residentRange?.to??to)-1)).map(row=>{const point=orderWallValuePointAt(row,at);return {id:row.archiveEntryId,side:row.side,price:row.priceExact,quantity:point?.quantityExact,notional:point?.notionalExact,rank:point?.rank};}).sort((a,b)=>String(a.id).localeCompare(String(b.id)));
+ for(const at of [...Array.from({length:438},(_,i)=>from+i*137),from+19999,from+20000,from+39999,from+40000])expect(values(fragments,at),String(at-from)).toEqual(values(full,at));
+ for(const chunk of resident.chunks)for(const row of chunk.segments.values()){
+  const fragment=fragments.find(fragment=>fragment.residentRange?.sourceId===row.id&&fragment.residentRange.from===chunk.from)!;
+  const {residentRange:_range,currentSelection:_current,id:_id,...exact}=fragment;const {id:_source,...expected}=row;expect(exact).toEqual(expected);
+ }
+});
+
+it('a confirmed revision change invalidates only its resident owner while an unavailable recheck retains it',async()=>{
+ const {PreparedWallSourceChangedError}=await import('../src/feed/prepared-wall-history');
+ vi.useFakeTimers();const events:any[]=[],reads:any[]=[];let failure:Error|undefined;
+ const fetcher:any=async(input:unknown)=>{if(failure)throw failure;const url=new URL(String(input),'http://localhost'),left=Number(url.searchParams.get('from')),right=Number(url.searchParams.get('to'));reads.push({from:left,to:right});
+  return Response.json(page({from:left,to:right,head:{cursor:20,at:right-1,epoch:1},seed:{at:left,cursor:0,epoch:1,midpoint:'74480',bids:[candidate({startedAt:left,startCursor:0})],asks:[],bookScope:{bidComplete:true,askComplete:true}},page:{after:0,nextAfter:20,hasMore:false,lastAt:right-1,limit:256,sameMillisecondClosed:true},coverage:coverage({requestedFrom:left,requestedTo:right,confirmedTo:right-1})}));};
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to),flush=async()=>{for(let i=0;i<250;i++)await Promise.resolve();};
+ try{
+  service.subscribe('revision',{...request(),followLive:false});await flush();service.updateViewport('revision',from-30000,to-30000,false);await vi.advanceTimersByTimeAsync(130);await flush();expect(service.diagnostics().resident[0]?.chunks).toBe(2);
+  failure=new PreparedWallSourceChangedError(false);service.retry('revision');await flush();expect(service.diagnostics().resident[0]?.chunks).toBe(2);expect(publishedSegments(events)).toHaveLength(2);
+  failure=new PreparedWallSourceChangedError(true);service.retry('revision');await flush();expect(service.diagnostics().resident[0]?.chunks).toBe(1);expect(publishedSegments(events)).toHaveLength(1);expect(publishedSegments(events)[0]?.residentRange.from).toBe(from);
+  expect(events.at(-1).status.archive.requestComplete).toBe(false);
+  failure=undefined;service.retry('revision');await flush();expect(service.diagnostics().resident[0]?.chunks).toBe(2);expect(events.at(-1).status.archive.unloadedRanges).toEqual([]);
+ }finally{service.dispose();vi.useRealTimers();}
+});
+
+
+it.each([false,true])('retains completed prefix across two small forward advances and reuses their overscan (live pan=%s)',async livePan=>{
+ vi.useFakeTimers();const events:any[]=[],reads:Array<{from:number;to:number}>=[];
+ const wall=candidate({entryId:'forward-resident',startedAt:from-1000,startCursor:0});
+ const fetcher:any=(input:unknown)=>{const url=new URL(String(input),'http://localhost');if(url.pathname.endsWith('/current'))return new Promise<Response>(()=>{});const left=Number(url.searchParams.get('from')),right=Number(url.searchParams.get('to'));reads.push({from:left,to:right});
+  return Promise.resolve(Response.json(page({from:left,to:right,seed:{at:left,cursor:0,epoch:1,midpoint:'74480',bids:[wall],asks:[],bookScope:{bidComplete:true,askComplete:true}},
+   head:{cursor:20,at:right-1,epoch:1},page:{after:0,nextAfter:20,hasMore:false,lastAt:right-1,limit:256,sameMillisecondClosed:true},coverage:coverage({requestedFrom:left,requestedTo:right,confirmedTo:right-1})})));};
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to+86400000),flush=async()=>{for(let i=0;i<200;i++)await Promise.resolve();};
+ try{
+  service.subscribe('forward-resident',{...request(),followLive:livePan});await flush();const initial=publishedSegments(events)[0];
+  service.updateViewport('forward-resident',from+(livePan?100:0),to+1000,livePan);await vi.advanceTimersByTimeAsync(130);await flush();
+  expect(reads).toHaveLength(2);expect(reads[1]!.from).toBe(to);
+  const afterFirst=events.length,firstEnd=reads[1]!.to;service.updateViewport('forward-resident',from+(livePan?200:0),firstEnd+1000,livePan);await vi.advanceTimersByTimeAsync(130);await flush();
+  expect(reads).toHaveLength(3);expect(reads[2]!.from).toBe(firstEnd);
+  const retained=publishedSegments(events).find(row=>row.id===initial.id);expect(retained.valueRuns).toEqual(initial.valueRuns);expect(events.slice(afterFirst).some(event=>event.patches?.some((patch:any)=>patch.id===initial.id))).toBe(false);
+  expect(retained.residentRange).toMatchObject({from,to});expect(events.at(-1).status.archive.unloadedRanges).toEqual([]);
+  service.updateViewport('forward-resident',from,to+2000,livePan);await vi.advanceTimersByTimeAsync(130);await flush();expect(reads).toHaveLength(3);
+  expect(events.slice(1).some(event=>event.kind==='snapshot'&&event.segments.length===0)).toBe(false);
+ }finally{service.dispose();vi.useRealTimers();}
+});
+
+it('readmits a validated capacity-blocked owner after narrowing without another source read',async()=>{
+ vi.useFakeTimers();const events:any[]=[],reads:Array<{from:number;to:number}>=[];
+ const wall=candidate({entryId:'capacity-resident',startedAt:from-1000,startCursor:0});
+ const fetcher:any=(input:unknown)=>{const url=new URL(String(input),'http://localhost'),left=Number(url.searchParams.get('from')),right=Number(url.searchParams.get('to'));reads.push({from:left,to:right});
+  return Promise.resolve(Response.json(page({from:left,to:right,seed:{at:left,cursor:0,epoch:1,midpoint:'74480',bids:[wall],asks:[],bookScope:{bidComplete:true,askComplete:true}},head:{cursor:20,at:right-1,epoch:1},page:{after:0,nextAfter:20,hasMore:false,lastAt:right-1,limit:256,sameMillisecondClosed:true},coverage:coverage({requestedFrom:left,requestedTo:right,confirmedTo:right-1})})));};
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to+86400000),flush=async()=>{for(let i=0;i<200;i++)await Promise.resolve();};
+ try{
+  service.subscribe('capacity',{...request(),followLive:false});await flush();
+  for(let n=0;n<8;n++){service.updateViewport('capacity',from,reads.at(-1)!.to+1000,false);await vi.advanceTimersByTimeAsync(130);await flush();}
+  expect(reads).toHaveLength(9);expect(service.diagnostics().resident[0]?.chunks).toBe(8);expect(events.at(-1).status.archive.reason).toMatch(/capacity/);expect(publishedSegments(events)).toHaveLength(8);
+  service.retry('capacity');await flush();expect(reads).toHaveLength(9);expect(events.at(-1).status.archive.reason).toMatch(/capacity/);
+  const ready=reads.at(-1)!;service.updateViewport('capacity',ready.from,ready.to,false);await vi.advanceTimersByTimeAsync(130);await flush();
+  expect(reads).toHaveLength(9);expect(events.at(-1).status.archive.unloadedRanges).toEqual([]);expect(events.at(-1).status.archive.reason??'').not.toMatch(/capacity/);
+  expect(service.diagnostics().resident[0]?.chunks).toBe(8);expect(publishedSegments(events)).toHaveLength(8);
+  service.retry('capacity');await flush();expect(reads).toHaveLength(10); // normal explicit fresh validation still reads
+ }finally{service.dispose();vi.useRealTimers();}
+});
+
+it.each(['boundary','zoom-in'] as const)('coalesces initial partial-history %s gestures without cancelling useful work per input',async mode=>{
+ vi.useFakeTimers();const events:any[]=[],reads:Array<{from:number;to:number;after:number;signal:AbortSignal}>=[],currentSignals:AbortSignal[]=[];
+ const held:Array<(response:Response)=>void>=[],wall=candidate({startedAt:from-1000,startCursor:0});
+ const fetcher:any=(input:unknown,init:any)=>{const url=new URL(String(input),'http://localhost');
+  if(url.pathname.endsWith('/current')){currentSignals.push(init.signal);return new Promise(()=>{});}
+  const left=Number(url.searchParams.get('from')),right=Number(url.searchParams.get('to')),after=Number(url.searchParams.get('after'));reads.push({from:left,to:right,after,signal:init.signal});
+  if(reads.length===1)return Promise.resolve(Response.json(page({patches:[archivePatch(10,from+1000,{bids:side([wall])})],seed:{at:from,cursor:0,epoch:1,midpoint:'74480',bids:[wall],asks:[],bookScope:{bidComplete:true,askComplete:true}},page:{after:0,nextAfter:10,hasMore:true,lastAt:from+1000,limit:256,sameMillisecondClosed:true}})));
+  return new Promise(resolve=>held.push(resolve));
+ };
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to),flush=async()=>{for(let i=0;i<200;i++)await Promise.resolve();};
+ try{
+  service.subscribe('initial-gesture',{...request(),followLive:true});await flush();await vi.advanceTimersByTimeAsync(1);await flush();expect(reads,JSON.stringify(events.at(-1))).toHaveLength(2);expect(publishedSegments(events).length).toBeGreaterThan(0);
+  const before=events.length,old=publishedSegments(events),target=(step:number)=>mode==='boundary'?{from:from-step*1000,to:to-step*1000}:{from:from+20000+step*1000,to:to-step*500};
+  for(let step=1;step<=10;step++){const range=target(step);service.updateViewport('initial-gesture',range.from,range.to,false);await vi.advanceTimersByTimeAsync(5);}
+  expect(reads).toHaveLength(2);expect(reads[1]!.signal.aborted).toBe(false);expect(publishedSegments(events)).toEqual(old);
+  service.updateViewport('initial-gesture',from,to,false);await vi.advanceTimersByTimeAsync(130);await flush();expect(reads).toHaveLength(2);expect(reads[1]!.signal.aborted).toBe(false);
+  for(let step=1;step<=10;step++){const range=target(step);service.updateViewport('initial-gesture',range.from,range.to,false);}
+  await vi.advanceTimersByTimeAsync(130);await flush();expect(reads).toHaveLength(3);expect(reads[1]!.signal.aborted).toBe(true);expect(reads[2]).toMatchObject({...target(10),after:0});
+  expect(currentSignals).toHaveLength(1);expect(currentSignals[0]!.aborted).toBe(false);
+  const at=events.length;held[0]!(Response.json(page()));await flush();expect(events).toHaveLength(at);expect(publishedSegments(events)).toEqual(old);
+  expect(events.slice(before).some(event=>event.kind==='snapshot'&&event.segments.length===0)).toBe(false);
+  service.updateViewport('initial-gesture',from-20000,to-20000,false);service.unsubscribe('initial-gesture');await vi.advanceTimersByTimeAsync(200);expect(reads).toHaveLength(3);
+ }finally{service.dispose();for(const resolve of held)resolve(Response.json(page()));await flush();vi.useRealTimers();}
 });

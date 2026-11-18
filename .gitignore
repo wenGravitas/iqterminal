@@ -1,6 +1,7 @@
 # Dependencies, builds, and tool caches
 node_modules/
 dist/
+dist-wall-navigation/
 coverage/
 .vite/
 .cache/
@@ -28,3 +29,7 @@ playwright-report/
 Thumbs.db
 
 # Keep the lockfile, reference image, and curated verification artifacts tracked.
+
+# Verified manual navigation bundle and session-local launch receipts.
+dist-wall-foreground/
+artifacts/persistent-wall-navigation/foreground-client/manual-*/

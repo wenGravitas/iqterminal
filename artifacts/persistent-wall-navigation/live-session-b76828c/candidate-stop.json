@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "cleanup": {
+    "sessionId": "80f86c7c-8f17-4862-b788-5634d221b08f",
+    "build": "300fa5d00f607d7e3a990b128523ea265af363f5",
+    "root": "/home/daz/iqterminal-wall-tail-r5-candidate-proof",
+    "cancellationRecorded": true,
+    "startupQuiescent": true,
+    "errors": [],
+    "rootLockPresent": false,
+    "roles": [
+      {
+        "role": "gateway",
+        "name": "iqterminal-capacity-candidate-gateway",
+        "confirmedStopped": true,
+        "errors": [],
+        "captureErrors": [],
+        "id": "90ad0ce314a7c2f87dfe83ca5b0d648a83bdbcd5ce05c9afdf3a40445ca79086",
+        "logTruncated": false,
+        "status": "removed"
+      },
+      {
+        "role": "worker",
+        "name": "iqterminal-capacity-candidate-worker",
+        "confirmedStopped": true,
+        "errors": [],
+        "captureErrors": [],
+        "id": "2916e92aea0bc84352abf9b09c4271ea28a2981f189709c9b52d83ceb587ad78",
+        "logTruncated": false,
+        "status": "removed"
+      }
+    ],
+    "confirmed": true,
+    "allStopped": true,
+    "recoveryCommand": "cd /home/daz/workarea/iqterminal-server-main && IQ_WATCH_WARM_RUN_DIR=/tmp/iq-persistent-walls-live-session-2 /usr/bin/python3 ops/watch-warm-candidate.py stop",
+    "recoveryNote": "Repeat this same session-scoped stop when access is restored. Never stop by name or adopt a mismatch; inspect its recorded ID/owner separately. Do not remove prepared locks or state."
+  }
+}

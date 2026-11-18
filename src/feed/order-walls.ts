@@ -180,7 +180,13 @@ export interface OrderWallArchiveStatus {
   midpoint?: string | null;
   availableFrom?: number;
   confirmedTo?: number;
+  /** Start of the retained validated presentation when the requested range changes. */
+  loadedFrom?: number;
   loadedThrough?: number;
+  /** Independently validated resident intervals, including their explicit source gaps. */
+  residentRanges?: Array<{from:number;to:number}>;
+  /** Unknown/unloaded intervals; never implied to contain no walls. */
+  unloadedRanges?: Array<{from:number;to:number}>;
   /** Confirmed extent of received prepared segments; not whole-view coverage. */
   presentationThrough?: number;
   gaps: Array<{ from: number; to: number; reason: string }>;
@@ -192,6 +198,8 @@ export interface OrderWallArchiveStatus {
   reason?: string;
 }
 export interface OrderWallSegment {
+  /** Display ownership only. Exact financial episode fields remain untouched. */
+  residentRange?: {from:number;to:number;sourceId:string;revision:string};
   id: string;
   /** Stable selected-candidate identity from the versioned server profile. */
   archiveEntryId?: string;

@@ -1,0 +1,133 @@
+<!doctype html><meta charset="utf-8"><title>Explicit retained-wall renderer fixture</title><canvas width="1200" height="600"></canvas>
+<script type="module">
+import {OrderWallsPrimitive} from '/src/chart/order-walls.ts';
+import {DEFAULT_ORDER_WALLS_SETTINGS} from '/src/feed/order-walls.ts';
+import {OrderWallsArchiveService} from '/src/feed/order-walls-archive-service.ts';
+window.createProtocolWallWorker=()=>new Worker(new URL('./wall-protocol-worker.js',import.meta.url),{type:'module'});
+window.createResidentWallService=(emit,fetcher,now)=>new OrderWallsArchiveService(emit,fetcher,now);
+const base=1704067200000;
+window.runWallNavigation=async(retained,segments=2500)=>{
+ const canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d');
+ const settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native'};
+ const source=Array.from({length:segments},(_,i)=>{const start=base+(i%120)*900000;return {id:`wall-${i}`,archiveEntryId:`entry-${i}`,epoch:1,side:i%2?'ask':'bid',price:90+(i%200)*.1,start,end:start+900000,peakUsd:1000,meanUsd:500,durationMs:900000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'rank-exit',detectionMode:'top-levels',rank:1,valueRunsTruncated:false,valueRuns:Array.from({length:8},(_,j)=>({at:start+j*100000,usd:100+(i%20)*10+j*20,quantity:1,rank:1,percentile:null}))};});
+ let from=0,span=120,low=89,high=111;
+ const rc={timeScale:{visibleRange:()=>({from,to:from+span}),indexToX:i=>(i-from)*1200/span,xToIndex:x=>x*span/1200+from},priceScale:{priceRange:()=>({min:low,max:high}),options:{mode:'linear'},priceToY:p=>(high-p)*600/(high-low),yToPrice:y=>high-y*(high-low)/600},dataLayer:{indexToTimeFloat:i=>base/1000+i*900,timeToIndexFloat:t=>(t-base/1000)/900},plotWidth:1200,plotHeight:600,dpr:1,theme:{background:'#000',axisText:'#aaa'}};
+ const p=new OrderWallsPrimitive(settings,900000,true,6,()=>true,false,retained);p.attached({requestUpdate(){}});p.setSnapshot(source,{state:'live',tickSize:.1,lastConfirmedAt:base+120*900000});
+ const begin=performance.now();let frames=0;for(;frames<10000;frames++){ctx.clearRect(0,0,1200,600);p.draw(ctx,rc);if(!p.diagnostics().pendingPaintWork&&p.diagnostics().inputRevision===p.diagnostics().paintedRevision)break;if(frames%20===0)await new Promise(r=>setTimeout(r,0));}
+ const initial=performance.now()-begin,before=p.diagnostics(),times=[],blank=[];if(retained&&!before.retainedRenderer.active)throw Error('Retained GPU route was not active: '+JSON.stringify(before.retainedRenderer));
+ for(let i=0;i<90;i++){from=5*Math.sin(i/8);span=110+10*Math.cos(i/8);low=89+Math.sin(i/7);high=111+Math.sin(i/7);ctx.clearRect(0,0,1200,600);const t=performance.now();p.draw(ctx,rc);times.push(performance.now()-t);const pixels=ctx.getImageData(0,0,1200,600).data;blank.push(!pixels.some((v,n)=>n%4===3&&v));await new Promise(r=>requestAnimationFrame(r));}
+ const after=p.diagnostics();p.detached();return {retained,segments,runs:segments*8,initial,initialFrames:frames,before,after,times,blankFrames:blank.filter(Boolean).length,userAgent:navigator.userAgent,dpr:devicePixelRatio};
+};
+
+window.checkWallGpuCorrectness=async()=>{
+ const canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d',{willReadFrequently:true});
+ const reference=document.createElement('canvas');reference.width=1200;reference.height=600;const ref=reference.getContext('2d',{willReadFrequently:true});
+ const results=[];
+ for(const dpr of [1,2])for(const mode of ['linear','logarithmic']){
+  canvas.width=reference.width=1200*dpr;canvas.height=reference.height=600*dpr;
+  let origin=.11,scale=100,lo=99.9,hi=100.3;
+  const knots=[0,900,1800,3600,4500,5400,6300,7200,8100,9000,9900,10800,11700,12600];
+  const timeAt=i=>{const at=Math.max(0,Math.min(knots.length-2,Math.floor(i)));return base/1000+knots[at]+(i-at)*(knots[at+1]-knots[at]);};
+  const indexAt=t=>{let i=0;while(i<knots.length-2&&timeAt(i+1)<=t)i++;return i+(t-timeAt(i))/(timeAt(i+1)-timeAt(i));};
+  const transform=p=>mode==='logarithmic'?Math.log10(p):p;
+  const rc={timeScale:{visibleRange:()=>({from:origin,to:origin+1200/scale}),indexToX:i=>(i-origin)*scale,xToIndex:x=>x/scale+origin},priceScale:{options:{mode},priceRange:()=>({min:lo,max:hi}),priceToY:p=>(transform(hi)-transform(p))*600/(transform(hi)-transform(lo)),yToPrice:y=>{const v=transform(hi)-y*(transform(hi)-transform(lo))/600;return mode==='logarithmic'?10**v:v;}},dataLayer:{indexToTimeFloat:timeAt,timeToIndexFloat:indexAt},plotWidth:1200,plotHeight:600,dpr,theme:{background:'#000',axisText:'#aaa'}};
+  const source=Array.from({length:20},(_,i)=>{const start=(timeAt(1)+(i%3)*30)*1000;return {id:'precise-'+i,archiveEntryId:'entry-'+i,epoch:1,side:i%2?'ask':'bid',price:100+i*.01,start,end:timeAt(8)*1000,peakUsd:1000,meanUsd:500,durationMs:timeAt(8)*1000-start,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'rank-exit',detectionMode:'top-levels',rank:1,valueRunsTruncated:i===0,valueRuns:Array.from({length:5},(_,j)=>({at:start+(j+(i===0?1:0))*400000,usd:100+i*10+j*20,quantity:1,rank:1,percentile:null}))};});
+  const status={state:'live',tickSize:.01,lastConfirmedAt:timeAt(10)*1000,archive:{from:base,to:timeAt(12)*1000,loadedThrough:timeAt(10)*1000,state:'complete',requestComplete:true,rangeComplete:true,exact:true,gaps:[]}},settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native'};
+  const gpu=new OrderWallsPrimitive(settings,900000,true,6,()=>true,false,true),old=new OrderWallsPrimitive(settings,900000,true,0,()=>true,false,false);gpu.attached({requestUpdate(){}});old.attached({requestUpdate(){}});
+  const before=JSON.stringify(source);gpu.setSnapshot(source,status);old.setSnapshot(source,status);
+  for(let i=0;i<100;i++){ctx.clearRect(0,0,canvas.width,canvas.height);gpu.draw(ctx,rc);if(!gpu.diagnostics().pendingPaintWork)break;}
+  if(!gpu.diagnostics().retainedRenderer.active)throw Error('GPU unavailable');
+  const built=gpu.diagnostics().retainedRenderer.builds,uploads=gpu.diagnostics().retainedRenderer.bufferUploads;
+  for(let step=0;step<8;step++){
+   origin=.11+step*.035;scale=100+step*20;
+   ctx.clearRect(0,0,canvas.width,canvas.height);ref.clearRect(0,0,reference.width,reference.height);gpu.draw(ctx,rc);old.draw(ref,rc);
+   const actual=ctx.getImageData(0,0,canvas.width,canvas.height).data,expected=ref.getImageData(0,0,reference.width,reference.height).data;
+   let coreSamples=0,maxCoreError=0,maxAlphaError=0,maxCoverageWidthError=0,maxCentreError=0,mismatches=[];
+   for(const segment of source){const at=segment.valueRuns[2].at+200000,x=Math.floor(rc.timeScale.indexToX(indexAt(at/1000))*dpr),y=Math.floor(rc.priceScale.priceToY(segment.price)*dpr);
+    if(x<0||x>=canvas.width||y<0||y>=canvas.height)continue;const pixel=(y*canvas.width+x)*4;
+    if([...actual.slice(pixel,pixel+4)].some((v,c)=>Math.abs(v-expected[pixel+c])>3))mismatches.push({id:segment.id,x,y,actual:[...actual.slice(pixel,pixel+4)],expected:[...expected.slice(pixel,pixel+4)]});
+    for(let c=0;c<3;c++)maxCoreError=Math.max(maxCoreError,Math.abs(actual[pixel+c]-expected[pixel+c]));
+    maxAlphaError=Math.max(maxAlphaError,Math.abs(actual[pixel+3]-expected[pixel+3]));
+    let sumA=0,sumB=0,centreA=0,centreB=0;
+    for(let row=Math.max(0,y-5*dpr);row<Math.min(canvas.height,y+5*dpr);row++){const a=actual[(row*canvas.width+x)*4+3],b=expected[(row*canvas.width+x)*4+3];sumA+=a;sumB+=b;centreA+=(row+.5)*a;centreB+=(row+.5)*b;}
+    maxCoverageWidthError=Math.max(maxCoverageWidthError,Math.abs(sumA-sumB)/(.85*255));
+    maxCentreError=Math.max(maxCentreError,Math.abs(centreA/sumA-centreB/sumB));coreSamples++;
+    const hit=gpu.orderWallAt(x/dpr,y/dpr);if(!hit||hit.segment.id!==segment.id)throw Error('Hover mismatch '+segment.id+' '+hit?.segment.id);
+   }
+   if(maxCoreError>5||maxCoverageWidthError>.27||maxCentreError>.25)throw Error('Core color/position mismatch '+JSON.stringify({dpr,mode,step,maxCoreError,maxAlphaError,maxCoverageWidthError,maxCentreError,mismatches:mismatches.slice(0,6),gpu:gpu.diagnostics().retainedRenderer,reference:{min:old.diagnostics().referenceMinimum,max:old.diagnostics().referenceMaximum}}));
+   results.push({dpr,mode,step,coreSamples,maxCoreError,maxAlphaError,maxCoverageWidthError,maxCentreError});
+  }
+  if(gpu.diagnostics().retainedRenderer.builds!==built||gpu.diagnostics().retainedRenderer.bufferUploads!==uploads)throw Error('Camera rebuilt resources');
+  if(JSON.stringify(source)!==before)throw Error('Renderer mutated exact source');
+  origin+=.1;if(gpu.orderWallAt(300,rc.priceScale.priceToY(source[1].price))!==null)throw Error('Unpainted camera produced an inspection hit');gpu.draw(ctx,rc);
+  gpu.setSnapshot(JSON.parse(before),status);gpu.draw(ctx,rc);if(gpu.diagnostics().retainedRenderer.builds!==built)throw Error('Equivalent snapshot rebuilt resources');
+  const owned=source.map(segment=>({...segment,residentRange:{from:base,to:timeAt(12)*1000,sourceId:segment.id,revision:'owned-proof'}}));
+  gpu.patch(owned.map(segment=>({id:segment.id,segment,replaceValueRuns:true})),status);gpu.draw(ctx,rc);
+  if(gpu.diagnostics().retainedRenderer.builds!==built||gpu.diagnostics().retainedRenderer.bufferUploads!==uploads)throw Error('Adopting already-fenced history rebuilt unchanged geometry');
+
+  gpu.patch([{id:source[0].id,segment:null}],status);ctx.clearRect(0,0,canvas.width,canvas.height);gpu.draw(ctx,rc);if(gpu.orderWallAt(300,rc.priceScale.priceToY(source[0].price))?.segment.id===source[0].id)throw Error('Removed wall remains inspectable');
+  const changed={...source[1],price:100.25,valueRuns:source[1].valueRuns.map(run=>({...run,usd:999999}))};gpu.patch([{id:changed.id,segment:changed,replaceValueRuns:true}],status);
+  for(let i=0;i<100;i++){ctx.clearRect(0,0,canvas.width,canvas.height);gpu.draw(ctx,rc);if(!gpu.diagnostics().pendingPaintWork)break;}
+  if(gpu.orderWallAt(300,rc.priceScale.priceToY(changed.price))?.segment.id!==changed.id)throw Error('Corrected wall not inspectable at new price');
+  gpu.detached();old.detached();
+ }
+ const {wallGpuResourceUsage}=await import('/src/chart/wall-gpu-resources.ts');return {results,resources:wallGpuResourceUsage()};
+};
+
+// Exercise Canvas -> retained GPU -> corrected GPU -> mixed Canvas without
+// changing the camera/settings. Fallback must not reuse stale Canvas geometry.
+window.checkWallMixedTransition=async()=>{
+ const canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d');canvas.width=1200;canvas.height=600;
+ const rc={timeScale:{visibleRange:()=>({from:0,to:12}),indexToX:i=>i*100,xToIndex:x=>x/100},priceScale:{priceRange:()=>({min:90,max:110}),options:{mode:'linear'},priceToY:p=>(110-p)*30,yToPrice:y=>110-y/30},dataLayer:{indexToTimeFloat:i=>base/1000+i*900,timeToIndexFloat:t=>(t-base/1000)/900},plotWidth:1200,plotHeight:600,dpr:1,theme:{background:'#000',axisText:'#aaa'}};
+ const row={id:'top',epoch:1,side:'bid',price:95,start:base,end:base+9000000,peakUsd:1000,meanUsd:1000,durationMs:9000000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'rank-exit',detectionMode:'top-levels',rank:1,valueRunsTruncated:false,valueRuns:[{at:base,usd:1000,quantity:10,rank:1,percentile:null}]};
+ const legacy={...row,id:'legacy',price:105,detectionMode:'threshold',percentile:100,valueRuns:[{at:base,usd:1000,percentile:100}]};
+ const status={state:'live',tickSize:.1,lastConfirmedAt:base+9000000},settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native'};
+ const p=new OrderWallsPrimitive(settings,900000,true,6,()=>true,false,true);p.attached({requestUpdate(){}});
+ const draw=()=>{for(let i=0;i<100;i++){ctx.clearRect(0,0,1200,600);p.draw(ctx,rc);if(!p.diagnostics().pendingPaintWork)return;}throw Error('Mixed transition did not drain');};
+ try{
+  p.setSnapshot([row,legacy],status);draw();if(p.orderWallAt(300,450)?.segment.price!==95)throw Error('Initial Canvas row missing');
+  p.patch([{id:'legacy',segment:null}],status);draw();if(!p.diagnostics().retainedRenderer.active)throw Error('GPU route not exercised');
+  const corrected={...row,price:97};p.patch([{id:'top',segment:corrected,replaceValueRuns:true}],status);draw();if(p.orderWallAt(300,390)?.segment.price!==97)throw Error('GPU correction missing');
+  p.patch([{id:'legacy',segment:legacy}],status);draw();if(p.diagnostics().retainedRenderer.active)throw Error('Mixed route did not fall back');
+  const correctedHit=p.orderWallAt(300,390),staleHit=p.orderWallAt(300,450),legacyHit=p.orderWallAt(300,150);
+  if(correctedHit?.segment.price!==97||staleHit!==null||legacyHit?.segment.id!=='legacy')throw Error('Mixed fallback reused stale geometry '+JSON.stringify({correctedHit,staleHit,legacyHit}));
+  return {correctedPrice:correctedHit.segment.price,staleHit,legacyId:legacyHit.segment.id,pending:p.diagnostics().pendingPaintWork};
+ }finally{p.detached();}
+};
+
+window.checkWallResourceLifecycle=async()=>{
+ const {wallGpuResourceUsage}=await import('/src/chart/wall-gpu-resources.ts');
+ const canvas=document.querySelector('canvas');canvas.width=1200;canvas.height=600;const ctx=canvas.getContext('2d');
+ const settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native'};
+ const rc={timeScale:{visibleRange:()=>({from:0,to:120}),indexToX:i=>i*10,xToIndex:x=>x/10},priceScale:{priceRange:()=>({min:90,max:110}),options:{mode:'linear'},priceToY:p=>(110-p)*30,yToPrice:y=>110-y/30},dataLayer:{indexToTimeFloat:i=>base/1000+i*900,timeToIndexFloat:t=>(t-base/1000)/900},plotWidth:1200,plotHeight:600,dpr:1,theme:{background:'#000',axisText:'#aaa'}};
+ const source=Array.from({length:600},(_,i)=>({id:'owned-'+i,archiveEntryId:'entry-'+i,epoch:1,side:i%2?'ask':'bid',price:95+(i%80)*.1,start:base,end:base+100000000,peakUsd:1000,meanUsd:500,durationMs:100000000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'rank-exit',detectionMode:'top-levels',rank:1,valueRunsTruncated:false,valueRuns:[{at:base,usd:1000+i,quantity:1,rank:1,percentile:null}]}));
+ const status={state:'live',tickSize:.1,lastConfirmedAt:base+100000000};
+ const drain=p=>{for(let i=0;i<100;i++){ctx.clearRect(0,0,1200,600);p.draw(ctx,rc);if(!p.diagnostics().pendingPaintWork)return;}throw Error('Resource preparation did not drain');};
+ const priority=new OrderWallsPrimitive(settings,900000,true,1,()=>true,false,true);priority.attached({requestUpdate(){}});
+ const large=Array.from({length:5000},(_,i)=>({...source[i%source.length],id:'bulk-'+i}));priority.setSnapshot(large,status);
+ const point={...source[0],id:'independent-current',currentSelection:true,presentationKind:'current-snapshot',start:base+100000000,end:null,durationMs:0,valueRuns:[{at:base+100000000,usd:2000,quantity:2,rank:1,percentile:null}]};
+ priority.patch([{id:point.id,segment:point}],status);priority.draw(ctx,rc);
+ const priorityResult=priority.diagnostics().retainedRenderer;if(priorityResult.visibleCurrent!==1||priorityResult.pending<1)throw Error('Current bootstrap waited for complete history preparation');priority.detached();
+ const samples=[];
+ for(let cycle=0;cycle<4;cycle++){
+  const charts=Array.from({length:8},()=>{const p=new OrderWallsPrimitive(settings,900000,true,6,()=>true,false,true);p.attached({requestUpdate(){}});p.setSnapshot(source,status);drain(p);return p;});
+  if(window.wallResourceHeapSample)await window.wallResourceHeapSample(cycle,'open');
+  const full=wallGpuResourceUsage();if(full.contexts!==1||full.owners!==8)throw Error('Charts did not share one context');
+  if(cycle&&full.bufferBytes!==samples[0].full.bufferBytes)throw Error('Retained GPU bytes grew across reopen cycles');
+  const p=charts[0],before=p.diagnostics().retainedRenderer;
+  p.setSettings({...settings,opacity:.5,colorMode:'side',highContrast:true});drain(p);
+  if(p.diagnostics().retainedRenderer.builds!==before.builds||p.diagnostics().retainedRenderer.bufferUploads!==before.bufferUploads)throw Error('Style rebuilt immutable resources');
+  const changed={...source[599],currentSelection:true,presentationKind:'current-snapshot',start:base+100000000,durationMs:0,end:null,valueRuns:[{...source[599].valueRuns[0],at:base+100000000,usd:2000}]};
+  p.patch([{id:changed.id,segment:changed,replaceValueRuns:true}],{...status,lastConfirmedAt:base+100001000});drain(p);
+  const after=p.diagnostics().retainedRenderer;if(after.builds-before.builds>2||after.visibleCurrent<1)throw Error('Layer migration exceeded affected chunks or did not paint');
+  const live={...changed,start:changed.start+1000,valueRuns:[{...changed.valueRuns[0],at:changed.start+1000,usd:3000}]};p.patch([{id:live.id,segment:live,replaceValueRuns:true}],{...status,lastConfirmedAt:base+100002000});drain(p);
+  if(p.diagnostics().retainedRenderer.historyBuilds!==after.historyBuilds||p.diagnostics().retainedRenderer.currentBuilds!==after.currentBuilds+1)throw Error('Current update rebuilt history');
+  charts[3].detached();charts[3].detached();const partial=wallGpuResourceUsage();if(partial.owners!==7||partial.bufferBytes>=full.bufferBytes)throw Error('One chart disposal did not release its ownership');
+  drain(charts[7]);if(!charts[7].diagnostics().retainedRenderer.active)throw Error('Sibling disposal invalidated another chart');
+  for(const chart of charts)chart.detached();const empty=wallGpuResourceUsage();if(empty.contexts||empty.owners||empty.bufferBytes)throw Error('Final disposal retained resources');
+  if(window.wallResourceHeapSample)await window.wallResourceHeapSample(cycle,'disposed');
+  samples.push({full,partial,empty,currentChangedChunks:after.builds-before.builds});
+ }
+ return {samples,priorityResult};
+};
+</script>

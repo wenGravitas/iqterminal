@@ -1,0 +1,232 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.23.4/bin/node",
+      "/home/daz/workarea/iqterminal-persistent-walls/node_modules/.pnpm/@playwright+test@1.64.0/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.wall-navigation.config.ts",
+      "--grep",
+      "eight charts|real archive adapter"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal-persistent-walls/playwright.wall-navigation.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/daz/workarea/iqterminal-persistent-walls/scripts/test-browser-i3-setup.mjs",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "wall-retained-navigation.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": "wall-retained-navigation.spec.ts",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4189",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4173",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--class=IQTerminalPerf",
+              "--name=IQTerminalPerf",
+              "--ozone-platform=x11",
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          },
+          "headless": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/persistent-wall-navigation/compiled-browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm exec vite preview --outDir dist-wall-navigation --host 127.0.0.1 --port 4189 --strictPort",
+      "url": "http://127.0.0.1:4189",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "wall-retained-navigation.spec.ts",
+      "file": "wall-retained-navigation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "eight charts share bounded resources and release them through reopen and current updates",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6318,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"controlled-resource-lifecycle\",\"samples\":[{\"full\":{\"contexts\":1,\"owners\":8,\"bufferBytes\":211200,\"bufferLimit\":67108864,\"surfaceBytes\":2880000,\"lost\":false},\"partial\":{\"contexts\":1,\"owners\":7,\"bufferBytes\":184800,\"bufferLimit\":67108864,\"surfaceBytes\":2880000,\"lost\":false},\"empty\":{\"contexts\":0,\"owners\":0,\"bufferBytes\":0,\"bufferLimit\":67108864,\"surfaceBytes\":0,\"lost\":false},\"currentChangedChunks\":2},{\"full\":{\"contexts\":1,\"owners\":8,\"bufferBytes\":211200,\"bufferLimit\":67108864,\"surfaceBytes\":2880000,\"lost\":false},\"partial\":{\"contexts\":1,\"owners\":7,\"bufferBytes\":184800,\"bufferLimit\":67108864,\"surfaceBytes\":2880000,\"lost\":false},\"empty\":{\"contexts\":0,\"owners\":0,\"bufferBytes\":0,\"bufferLimit\":67108864,\"surfaceBytes\":0,\"lost\":false},\"currentChangedChunks\":2},{\"full\":{\"contexts\":1,\"owners\":8,\"bufferBytes\":211200,\"bufferLimit\":67108864,\"surfaceBytes\":2880000,\"lost\":false},\"partial\":{\"contexts\":1,\"owners\":7,\"bufferBytes\":184800,\"bufferLimit\":67108864,\"surfaceBytes\":2880000,\"lost\":false},\"empty\":{\"contexts\":0,\"owners\":0,\"bufferBytes\":0,\"bufferLimit\":67108864,\"surfaceBytes\":0,\"lost\":false},\"currentChangedChunks\":2},{\"full\":{\"contexts\":1,\"owners\":8,\"bufferBytes\":211200,\"bufferLimit\":67108864,\"surfaceBytes\":2880000,\"lost\":false},\"partial\":{\"contexts\":1,\"owners\":7,\"bufferBytes\":184800,\"bufferLimit\":67108864,\"surfaceBytes\":2880000,\"lost\":false},\"empty\":{\"contexts\":0,\"owners\":0,\"bufferBytes\":0,\"bufferLimit\":67108864,\"surfaceBytes\":0,\"lost\":false},\"currentChangedChunks\":2}],\"priorityResult\":{\"active\":true,\"builds\":1,\"historyBuilds\":0,\"currentBuilds\":1,\"frames\":1,\"mappingInvalidations\":0,\"uploadedBytes\":44,\"bufferUploads\":2,\"drawCalls\":1,\"maxPrepareMs\":35.900000005960464,\"lastPrepareMs\":35.900000005960464,\"lastPaintMs\":46.399999998509884,\"visibleSpans\":1,\"visibleHistorical\":0,\"visibleCurrent\":1,\"bytes\":68,\"referenceMin\":2000,\"referenceMax\":2000,\"failure\":\"\",\"pending\":20,\"chunks\":21,\"sources\":5001,\"retainedSpans\":1,\"contextLost\":false,\"sharedGpuBytes\":44,\"sharedOwners\":1}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T14:10:34.859Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-bb450306ba9c59151f86",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "title": "compiled chart retains overlap while its real archive adapter fetches only missing intervals",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15372,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"compiled-real-adapter-controlled-source-not-live\",\"initial\":{\"reads\":[{\"from\":1794813300000,\"to\":1794923100000}],\"renderer\":{\"active\":true,\"builds\":3,\"historyBuilds\":1,\"currentBuilds\":2,\"frames\":4,\"mappingInvalidations\":0,\"uploadedBytes\":792,\"bufferUploads\":6,\"drawCalls\":2,\"maxPrepareMs\":20.799999997019768,\"lastPrepareMs\":5.0999999940395355,\"lastPaintMs\":4.200000002980232,\"visibleSpans\":16,\"visibleHistorical\":16,\"visibleCurrent\":0,\"bytes\":1884,\"referenceMin\":166450,\"referenceMax\":167550,\"failure\":\"\",\"pending\":0,\"chunks\":2,\"sources\":17,\"retainedSpans\":17,\"contextLost\":false,\"sharedGpuBytes\":748,\"sharedOwners\":1}},\"pending\":{\"renderer\":{\"active\":true,\"builds\":3,\"historyBuilds\":1,\"currentBuilds\":2,\"frames\":5,\"mappingInvalidations\":0,\"uploadedBytes\":792,\"bufferUploads\":6,\"drawCalls\":2,\"maxPrepareMs\":20.799999997019768,\"lastPrepareMs\":6,\"lastPaintMs\":1.6000000014901161,\"visibleSpans\":16,\"visibleHistorical\":16,\"visibleCurrent\":0,\"bytes\":1884,\"referenceMin\":166450,\"referenceMax\":167550,\"failure\":\"\",\"pending\":0,\"chunks\":2,\"sources\":17,\"retainedSpans\":17,\"contextLost\":false,\"sharedGpuBytes\":748,\"sharedOwners\":1},\"reads\":[{\"from\":1794813300000,\"to\":1794923100000},{\"from\":1794798900000,\"to\":1794813300000}],\"status\":{\"state\":\"live\",\"coverage\":{\"from\":1794802500000,\"to\":1794912300000,\"complete\":false,\"partial\":true},\"archive\":{\"profileId\":\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",\"state\":\"loading\",\"from\":1794802500000,\"to\":1794912300000,\"rangeComplete\":false,\"market\":\"perpetual\",\"feed\":\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\",\"aggregation\":\"native\",\"availableFrom\":1794726900000,\"confirmedTo\":1794923099999,\"gaps\":[],\"requestedBandPercent\":10,\"profileBandPercent\":10,\"requestedTopN\":8,\"exact\":true,\"profileVersion\":1,\"algorithmVersion\":1,\"schemaVersion\":1,\"midpoint\":\"83500\",\"requestComplete\":false,\"loadedThrough\":1794923099999,\"loadedFrom\":1794813300000,\"residentRanges\":[{\"from\":1794813300000,\"to\":1794923100000}],\"unloadedRanges\":[{\"from\":1794802500000,\"to\":1794813300000}],\"gapsTruncated\":false,\"reason\":\"Retained walls remain available while missing history loads.\",\"profileStatus\":\"ready\"},\"message\":\"Retained walls remain available while missing history loads.\",\"lastConfirmedAt\":1794924658857,\"currentSubscribed\":true},\"empty\":false,\"current\":[{\"after\":0,\"cursor\":100,\"at\":1794924657444},{\"after\":100,\"cursor\":101,\"at\":1794924658857}]},\"advancing\":{\"current\":[{\"after\":0,\"cursor\":100,\"at\":1794924657444},{\"after\":100,\"cursor\":101,\"at\":1794924658857},{\"after\":101,\"cursor\":102,\"at\":1794924659867}],\"status\":{\"state\":\"live\",\"message\":\"Retained walls remain available while missing history loads.\",\"coverage\":{\"from\":1794802500000,\"to\":1794912300000,\"complete\":false,\"partial\":true},\"archive\":{\"profileId\":\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",\"state\":\"loading\",\"requestComplete\":false,\"rangeComplete\":false,\"from\":1794802500000,\"to\":1794912300000,\"market\":\"perpetual\",\"aggregation\":\"native\",\"gaps\":[],\"requestedBandPercent\":10,\"profileBandPercent\":10,\"requestedTopN\":8,\"exact\":true,\"loadedFrom\":1794813300000,\"loadedThrough\":1794923099999,\"residentRanges\":[{\"from\":1794813300000,\"to\":1794923100000}],\"unloadedRanges\":[{\"from\":1794802500000,\"to\":1794813300000}],\"gapsTruncated\":false,\"reason\":\"Retained walls remain available while missing history loads.\",\"profileStatus\":\"ready\",\"midpoint\":\"83500\"},\"lastConfirmedAt\":1794924659867,\"currentSubscribed\":true},\"renderer\":{\"active\":true,\"builds\":4,\"historyBuilds\":1,\"currentBuilds\":3,\"frames\":6,\"mappingInvalidations\":0,\"uploadedBytes\":836,\"bufferUploads\":8,\"drawCalls\":2,\"maxPrepareMs\":20.799999997019768,\"lastPrepareMs\":0.6000000014901161,\"lastPaintMs\":6.0999999940395355,\"visibleSpans\":16,\"visibleHistorical\":16,\"visibleCurrent\":0,\"bytes\":1884,\"referenceMin\":166450,\"referenceMax\":167550,\"failure\":\"\",\"pending\":0,\"chunks\":2,\"sources\":17,\"retainedSpans\":17,\"contextLost\":false,\"sharedGpuBytes\":748,\"sharedOwners\":1}},\"final\":{\"reads\":[{\"from\":1794813300000,\"to\":1794923100000},{\"from\":1794798900000,\"to\":1794813300000}],\"diagnostics\":[{\"id\":\"chart-binance\",\"chunks\":2,\"segments\":32,\"runs\":32,\"bytes\":24576,\"limits\":{\"chunks\":8,\"segments\":100000,\"runs\":1000000,\"bytes\":307200000},\"viewport\":{\"from\":1794813300000,\"to\":1794923100000,\"followLive\":false},\"missing\":[]}],\"renderer\":{\"active\":true,\"builds\":5,\"historyBuilds\":2,\"currentBuilds\":3,\"frames\":8,\"mappingInvalidations\":0,\"uploadedBytes\":2244,\"bufferUploads\":10,\"drawCalls\":2,\"maxPrepareMs\":20.799999997019768,\"lastPrepareMs\":4.5,\"lastPaintMs\":0.6000000014901161,\"visibleSpans\":16,\"visibleHistorical\":16,\"visibleCurrent\":0,\"bytes\":2716,\"referenceMin\":166450,\"referenceMax\":167550,\"failure\":\"\",\"pending\":0,\"chunks\":2,\"sources\":33,\"retainedSpans\":33,\"contextLost\":false,\"sharedGpuBytes\":1452,\"sharedOwners\":1},\"status\":{\"state\":\"live\",\"coverage\":{\"from\":1794813300000,\"to\":1794923100000,\"complete\":true,\"partial\":false},\"archive\":{\"profileId\":\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",\"state\":\"complete\",\"from\":1794813300000,\"to\":1794923100000,\"rangeComplete\":true,\"market\":\"perpetual\",\"feed\":\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\",\"aggregation\":\"native\",\"availableFrom\":1794712500000,\"confirmedTo\":1794813299999,\"gaps\":[],\"requestedBandPercent\":10,\"profileBandPercent\":10,\"requestedTopN\":8,\"exact\":true,\"profileVersion\":1,\"algorithmVersion\":1,\"schemaVersion\":1,\"midpoint\":\"83500\",\"requestComplete\":true,\"loadedThrough\":1794923099999,\"loadedFrom\":1794798900000,\"residentRanges\":[{\"from\":1794798900000,\"to\":1794813300000},{\"from\":1794813300000,\"to\":1794923100000}],\"unloadedRanges\":[],\"gapsTruncated\":false,\"profileStatus\":\"ready\"},\"lastConfirmedAt\":1794924659867,\"currentSubscribed\":true}}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T14:10:45.530Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-1ed5f13f3cffff3ca2a6",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 77,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-17T14:10:27.402Z",
+    "duration": 34896.109,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

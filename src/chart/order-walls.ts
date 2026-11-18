@@ -1,3 +1,4 @@
+import {RetainedWallRenderer} from './wall-retained-renderer';
 import {OrderWallRankIndex} from '../feed/order-wall-rank';
 import {yieldHistoryTask,historyTaskYieldMode} from '../feed/history-task-yield';
 import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
@@ -32,6 +33,10 @@ export function wallProjectionMappingKey(rc:PrimitiveRenderContext):string|undef
 
 export class OrderWallsPrimitive implements IPrimitive {
   private host?:PrimitiveHost;
+  private retained?:RetainedWallRenderer;
+  private retainedActive=false;
+  private retainedFailure='';
+  private retainedFailedRevision=-1;
   private settings:OrderWallsSettings;
   private intervalMs:number;
   private status:OrderWallStatus={state:'loading'};
@@ -79,7 +84,7 @@ export class OrderWallsPrimitive implements IPrimitive {
   private geometryEpoch=0;
   private workStats={slices:0,steps:0,cancelled:0,activeMs:0,lastProjectionElapsedMs:0,lastReferenceElapsedMs:0,lastSliceMs:0,maxSliceMs:0,backgroundMs:0,maxBackgroundMs:0,yieldMode:'not-scheduled',phase:'idle' as 'idle'|'projection'|'reference'|'paint'};
 
-  constructor(settings:OrderWallsSettings,intervalMs:number,private readonly cachePaintPaths=true,private readonly preparationBudgetMs=6,private readonly canPrepare:()=>boolean=()=>true,private readonly backgroundPreparation=true){this.settings={...settings};this.intervalMs=intervalMs;}
+  constructor(settings:OrderWallsSettings,intervalMs:number,private readonly cachePaintPaths=true,private readonly preparationBudgetMs=6,private readonly canPrepare:()=>boolean=()=>true,private readonly backgroundPreparation=true,private readonly persistentRendering=false){this.settings={...settings};this.intervalMs=intervalMs;}
   zOrder(){return 'normal' as const;}
   autoscaleInfo(){return null;}
   attached(host:PrimitiveHost){this.host=host;}
@@ -90,7 +95,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     // and must not invalidate tens of thousands of closed value geometries.
     const keys=Object.keys(settings) as Array<keyof OrderWallsSettings>;
     if(keys.length===Object.keys(this.settings).length&&keys.every(key=>Object.is(settings[key],this.settings[key]))){this.stats.settingsNoops++;return;}
-    this.inputRevision++;this.settings={...settings};this.trimHistory();this.referenceDirty=true;this.version++;this.host?.requestUpdate();}
+    this.inputRevision++;this.settings={...settings};if(settings.mode!=='top-levels'){this.retained?.dispose();this.retained=undefined;this.retainedActive=false;}this.trimHistory();this.referenceDirty=true;this.version++;this.host?.requestUpdate();}
   setInterval(intervalMs:number){if(this.intervalMs!==intervalMs){this.inputRevision++;this.intervalMs=intervalMs;this.transformKey='';this.host?.requestUpdate();}}
   setStatus(status:OrderWallStatus){
     this.inputRevision++;
@@ -101,10 +106,12 @@ export class OrderWallsPrimitive implements IPrimitive {
   setSnapshot(segments:OrderWallSegment[],status:OrderWallStatus){
     this.inputRevision++;
     this.status={...status};this.archiveEpisodeHistoryLimited=status.episodeHistoryLimited===true;
-    this.clearEmptyProjection();this.openIds.clear();this.closedDirectOrder.clear();this.closedArchiveOrder.clear();this.sizes.clear();this.segments.clear();
+    this.clearEmptyProjection(true);this.openIds.clear();this.closedDirectOrder.clear();this.closedArchiveOrder.clear();this.sizes.clear();this.segments.clear();
     for(const segment of segments)if(validSegment(segment)&&!this.beforeRetention(segment)){this.segments.set(segment.id,segment);if(segment.end===null)this.openIds.add(segment.id);}
     for(const segment of [...this.segments.values()].filter(s=>s.end!==null).sort((a,b)=>a.end!-b.end!))this.rememberClosed(segment);
     this.trimHistory();this.status=this.effectiveStatus(status);
+    if([...this.segments.values()].some(segment=>segment.detectionMode!=='top-levels')){this.retained?.dispose();this.retained=undefined;}
+    this.retained?.reconcile(this.segments);if(!this.segments.size){this.retained?.dispose();this.retained=undefined;}
     this.dirty=new Set(this.segments.keys());this.version++;this.transformKey='';this.measureBytes();this.host?.requestUpdate();
   }
   patch(patches:OrderWallPatch[],status:OrderWallStatus){
@@ -116,10 +123,11 @@ export class OrderWallsPrimitive implements IPrimitive {
         this.closedDirectOrder.delete(patch.id);this.closedArchiveOrder.delete(patch.id);continue;
       }
       const previous=this.segments.get(patch.id),next=patch.segment;
+      if(next.detectionMode!=='top-levels'){this.retained?.dispose();this.retained=undefined;this.retainedActive=false;}
       this.segments.set(patch.id,next);if(next.end===null)this.openIds.add(patch.id);else this.openIds.delete(patch.id);
       const shifted=Boolean(previous&&(previous.valueRunsTruncated!==next.valueRunsTruncated||
         (previous.valueRuns[0]&&next.valueRuns[0]&&previous.valueRuns[0].at!==next.valueRuns[0].at)));
-      if(!previous||patch.replaceValueRuns===true||shifted||previous.price!==next.price||previous.start!==next.start){this.dirty.add(patch.id);this.dirtyGeneration.set(patch.id,++this.geometryEpoch);this.tailDirty.delete(patch.id);}
+      if(!previous||patch.replaceValueRuns===true||shifted||previous.price!==next.price||previous.start!==next.start){this.retained?.change(next,-1);this.dirty.add(patch.id);this.dirtyGeneration.set(patch.id,++this.geometryEpoch);this.tailDirty.delete(patch.id);}
       else this.markTail(patch.id,Math.max(0,next.valueRuns.length-(patch.valuePoints?.length??0)-1));
     }
     for(const patch of patches){const next=this.segments.get(patch.id);if(next?.end!==null&&next)this.rememberClosed(next);
@@ -127,6 +135,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     this.trimHistory();this.status=this.effectiveStatus(status);this.advanceOpenTails(prior);if(!this.segments.size)this.clearEmptyProjection();this.host?.requestUpdate();
   }
   private removeProjection(id:string){
+    this.retained?.remove(id);
     // Removal can race a first path build before its membership set exists.
     this.closedPaintEpoch++;
     this.removeDrawables(id);this.dirty.delete(id);this.dirtyGeneration.delete(id);this.tailDirty.delete(id);this.referenceIds.delete(id);
@@ -134,7 +143,8 @@ export class OrderWallsPrimitive implements IPrimitive {
     const extent=this.referenceExtents.get(id);
     if(extent){this.countReference(extent.min,-1);this.countReference(extent.max,-1);this.referenceExtents.delete(id);}
   }
-  private clearEmptyProjection(){
+  private clearEmptyProjection(preserveRetained=false){
+    if(!preserveRetained){this.retained?.dispose();this.retained=undefined;this.retainedActive=false;}
     this.cancelPreparation();this.dirtyGeneration.clear();
     this.paintedViewport=undefined;this.paintPaths=undefined;this.paintInvalid=true;this.paintKey='';this.paintCounts={historical:0,current:0};
     this.closedPaintPaths=undefined;this.closedPaintKey='';this.closedPaintInvalid=true;
@@ -188,12 +198,13 @@ export class OrderWallsPrimitive implements IPrimitive {
   private advanceOpenTails(prior:OrderWallStatus){
     const current=prior.lastConfirmedAt!==this.status.lastConfirmedAt,archive=this.archivePaintThrough(prior)!==this.archivePaintThrough(this.status);
     if(!current&&!archive)return;
-    for(const id of this.openIds){const segment=this.segments.get(id);if(segment&&(segment.archiveEntryId&&!segment.currentSelection?archive:current))this.markTail(id,Math.max(0,segment.valueRuns.length-1));}
+    for(const id of this.openIds){const segment=this.segments.get(id);if(segment&&(segment.archiveEntryId&&!segment.currentSelection?archive:current))this.markTail(id,Math.max(0,segment.valueRuns.length-1),true);}
   }
-  private markTail(id:string,index:number){if(this.dirty.has(id)&&!this.drawWork)return;this.tailDirty.set(id,Math.min(index,this.tailDirty.get(id)??index));}
+  private markTail(id:string,index:number,statusOnly=false){const source=this.segments.get(id);if(source){if(statusOnly)this.retained?.refreshHorizon(source);else this.retained?.change(source,index);}if(this.dirty.has(id)&&!this.drawWork)return;this.tailDirty.set(id,Math.min(index,this.tailDirty.get(id)??index));}
 
   draw(ctx:CanvasRenderingContext2D,rc:PrimitiveRenderContext){
     if(!this.settings.enabled||!this.segments.size)return;
+    if(this.drawRetained(ctx,rc))return;
     const started=performance.now(),range=rc.timeScale.visibleRange(),prices=rc.priceScale.priceRange(),dpr=rc.dpr;
     // Primitive hit inputs are plot-local CSS pixels, like indexToX/projected lines.
     // Only drawing coordinates are multiplied by DPR.
@@ -205,7 +216,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     const key=[this.version,this.intervalMs,prices.min,prices.max,rc.plotWidth,rc.plotHeight,dpr,this.width(),axis].join(':');
     if(key!==this.transformKey){if(this.drawWork)this.referenceDirty=true;this.cancelPreparation();this.paintPaths=undefined;this.paintCounts={historical:0,current:0};this.paintInvalid=true;this.paintKey='';this.paintedViewport=undefined;if(this.settings.visibleRangeOnly)this.referenceDirty=true;this.closedPaintInvalid=true;this.drawable.clear();this.nonTopDrawables=0;this.drawableKeys.clear();this.tailDirty.clear();this.dirty=new Set(this.segments.keys());this.transformKey=key;this.stats.rebuilds++;}
     let preparedRevision=this.inputRevision,pending=false;
-    let budgeted=Boolean(this.host&&this.preparationBudgetMs>0&&mapping!==undefined&&this.settings.mode==='top-levels'&&this.cachePaintPaths&&typeof Path2D!=='undefined'&&typeof Path2D.prototype.addPath==='function');
+    let budgeted=Boolean(!this.persistentRendering&&this.host&&this.preparationBudgetMs>0&&mapping!==undefined&&this.settings.mode==='top-levels'&&this.cachePaintPaths&&typeof Path2D!=='undefined'&&typeof Path2D.prototype.addPath==='function');
     if(budgeted){
       this.stats.lastProjectMs=0;this.stats.lastReferenceMs=0;
       if(!this.preparedWork){
@@ -501,10 +512,13 @@ export class OrderWallsPrimitive implements IPrimitive {
         if(!previous||line.from>previous.from)active.set(id,line);
       }
     }
+    this.paintPriceLines(ctx,rc,[...active.values()]);
+  }
+  private paintPriceLines(ctx:CanvasRenderingContext2D,rc:PrimitiveRenderContext,active:WallDrawable[]){
     const dpr=rc.dpr,occupied:number[]=[];
     ctx.font=`${10*dpr}px ui-monospace, monospace`;ctx.textBaseline='middle';ctx.textAlign='right';
     // Strongest labels win crowded rows; guides stay aligned with actual wall prices.
-    const lines=[...active.values()].map(line=>({line,segment:this.segments.get(line.segment.id)!})).sort((a,b)=>(b.segment.valueRuns.at(-1)?.usd??0)-(a.segment.valueRuns.at(-1)?.usd??0));
+    const lines=active.map(line=>({line,segment:this.segments.get(line.segment.id)!})).sort((a,b)=>(b.segment.valueRuns.at(-1)?.usd??0)-(a.segment.valueRuns.at(-1)?.usd??0));
     for(const {line,segment} of lines){
       const value=orderWallValuePointAt(segment,Math.min(line.to,this.segmentTo(segment)));
       if(!value||!Number.isFinite(value.usd)||line.y<8||line.y>rc.plotHeight-8)continue;
@@ -581,7 +595,9 @@ export class OrderWallsPrimitive implements IPrimitive {
     const line=this.project(segment,index,from,to,value.percentile,projection);if(!line)return;
     this.paintInvalid=true;this.setDrawable(line);const keys=this.drawableKeys.get(segment.id)??[];keys.push(line.key);this.drawableKeys.set(segment.id,keys);
   }
+  private segmentFrom(segment:OrderWallSegment){return segment.residentRange?.from??(segment.archiveEntryId&&!segment.currentSelection?this.status.archive?.from:undefined)??-Infinity;}
   private segmentTo(segment:OrderWallSegment){
+    if(segment.residentRange)return Math.min(segment.residentRange.to-1,segment.end??segment.start+Math.max(0,segment.durationMs));
     if(segment.end!==null)return segment.end;
     if(segment.presentationKind==='current-snapshot')return segment.start;
     if(segment.currentSelection===true)return this.status.lastConfirmedAt??segment.start;
@@ -604,7 +620,7 @@ export class OrderWallsPrimitive implements IPrimitive {
   }
   private project(segment:OrderWallSegment,runIndex:number,from:number,to:number,percentile:number|null,projection:WallProjectionContext):WallDrawable|null{
     const {rc,low,high,y,visibleFrom,visibleTo,timeToIndexFloat}=projection;
-    from=Math.max(from,segment.start+(segment.presentationKind==='current-snapshot'?0:this.settings.minDurationMs));
+    from=Math.max(from,this.segmentFrom(segment),segment.start+(segment.presentationKind==='current-snapshot'?0:this.settings.minDurationMs));
     // A current seed is an observed point, not an observed duration. Use the
     // existing one-pixel minimum stroke without extending its source time.
     if(to<from||to===from&&segment.currentSelection!==true)return null;
@@ -618,7 +634,44 @@ export class OrderWallsPrimitive implements IPrimitive {
     return {key,segment,runIndex,from,to,percentile,usd:segment.valueRuns[runIndex]?.usd??null,x:Math.max(0,x),right:Math.min(rc.plotWidth,right),y,low,high,paintOrder:0};
   }
 
+  private drawRetained(ctx:CanvasRenderingContext2D,rc:PrimitiveRenderContext){
+    this.retainedActive=false;
+    if(this.retainedFailedRevision===this.inputRevision||!this.persistentRendering||this.settings.mode!=='top-levels'||typeof ctx.drawImage!=='function'||typeof rc.priceScale.yToPrice!=='function')return false;
+    if(!this.retained){
+      if([...this.segments.values()].some(segment=>segment.detectionMode!=='top-levels'))return false;
+      this.retained=RetainedWallRenderer.create(segment=>this.segmentTo(segment),()=>this.host?.requestUpdate(),segment=>this.segmentFrom(segment));
+      if(!this.retained){this.retainedFailure='WebGL2 unavailable; synchronous Canvas fallback';this.retainedFailedRevision=this.inputRevision;return false;}this.retained.reconcile(this.segments);
+    }
+    const started=performance.now();
+    if(!this.retained.draw(ctx,rc,this.settings,this.width(),this.preparationBudgetMs)){
+      this.retainedFailure=this.retained.stats.failure;this.retainedFailedRevision=this.inputRevision;this.retained.dispose();this.retained=undefined;this.transformKey='';return false;
+    }
+    this.retainedActive=true;this.retainedFailure='';this.cancelPreparation();
+    // GPU updates do not maintain the old Canvas drawables. If mixed data or
+    // context loss selects Canvas later, rebuild it from the current exact rows
+    // even when the camera/settings have not changed in between.
+    this.transformKey='';
+    this.dirty.clear();this.tailDirty.clear();this.referenceIds.clear();this.referenceDirty=false;
+    const metrics=this.retained.stats;
+    this.reference={min:metrics.referenceMin,max:metrics.referenceMax};
+    if(this.settings.showPriceLines){
+      const lines:WallDrawable[]=[];
+      for(const id of this.openIds){const segment=this.segments.get(id);if(!segment)continue;const projection=this.projectionContext(segment,rc);if(!projection)continue;
+        const index=segment.valueRuns.length-1,run=segment.valueRuns[index];
+        const line=this.project(segment,index,run?.at??segment.start,this.segmentTo(segment),run?.percentile??null,projection);if(line)lines.push(line);}
+      ctx.save();ctx.beginPath();ctx.rect(0,0,rc.plotWidth*rc.dpr,rc.plotHeight*rc.dpr);ctx.clip();this.paintPriceLines(ctx,rc,lines);ctx.restore();
+    }
+    this.stats.draws++;this.stats.segments=this.segments.size;this.stats.visible=metrics.visibleSpans;this.stats.visibleCurrent=metrics.visibleCurrent;this.stats.visibleHistorical=metrics.visibleHistorical;this.stats.strokes=metrics.drawCalls;
+    this.stats.lastProjectMs=metrics.lastPrepareMs;this.stats.lastPaintMs=metrics.lastPaintMs;
+    if(!this.retained.pending){this.paintedRevision=this.inputRevision;this.paintedAtMono=performance.now();}
+    const range=rc.timeScale.visibleRange(),prices=rc.priceScale.priceRange();
+    this.paintedViewport={fromMs:rc.dataLayer.indexToTimeFloat(range.from)*1000,toMs:rc.dataLayer.indexToTimeFloat(range.to)*1000,minPrice:prices.min,maxPrice:prices.max,plotWidth:rc.plotWidth,plotHeight:rc.plotHeight};
+    const elapsed=performance.now()-started;this.durations.push(elapsed);if(this.durations.length>512)this.durations.shift();this.stats.renderMs+=elapsed;this.stats.maxRenderMs=Math.max(this.stats.maxRenderMs,elapsed);
+    return true;
+  }
+
   orderWallAt(x:number,y:number):OrderWallHit|null{
+    if(this.retainedActive)return this.retained?.hit(x,y,this.width(),this.settings)??null;
     if(this.drawWork||this.preparedWork||!this.transformKey)return null;
     let best:WallDrawable|undefined,bestDistance=Infinity;
     const tolerance=Math.max(4,this.settings.thicknessPx/2+2);
@@ -633,7 +686,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     const segment=this.segments.get(best.segment.id)??best.segment;
     return {segment,x,y,at,priceLow:best.low,priceHigh:best.high,percentile:orderWallValuePointAt(segment,at)?.percentile??null};
   }
-  diagnostics(){const sorted=[...this.durations].sort((a,b)=>a-b);return {...this.stats,paintedViewport:this.paintedViewport?{...this.paintedViewport}:undefined,inputRevision:this.inputRevision,paintedRevision:this.paintedRevision,paintedAtMono:this.paintedAtMono,pendingProjectionSegments:this.dirty.size+this.tailDirty.size+(this.drawWork||this.preparedWork?1:0),pendingPaintWork:Boolean(this.drawWork||this.preparedWork),queuedPreparation:Boolean(this.preparationTask),preparation:{...this.workStats},retainedPaintPaths:this.paintPaths?.length??0,retainedClosedPaintPaths:this.closedPaintPaths?.length??0,retainedClosedPaintSegments:this.closedPaintMembers.size,pendingClosedPaintSegments:this.closedPaintDirty.size,retainedSegments:this.segments.size,openSegments:this.openIds.size,retainedReferenceSegments:this.referenceExtents.size,referenceExtentValues:this.referenceCounts.size,pendingReferenceSegments:this.referenceIds.size,referenceMinimum:this.reference.min,referenceMaximum:this.reference.max,retainedDrawables:this.drawable.size,p95RenderMs:sorted[Math.floor((sorted.length-1)*.95)]??0};}
+  diagnostics(){const sorted=[...this.durations].sort((a,b)=>a-b);return {...this.stats,retainedRenderer:this.retained?{active:this.retainedActive,...this.retained.diagnostics()}:{active:false,failure:this.retainedFailure},paintedViewport:this.paintedViewport?{...this.paintedViewport}:undefined,inputRevision:this.inputRevision,paintedRevision:this.paintedRevision,paintedAtMono:this.paintedAtMono,pendingProjectionSegments:(this.retained?.pending??0)+this.dirty.size+this.tailDirty.size+(this.drawWork||this.preparedWork?1:0),pendingPaintWork:Boolean(this.retained?.pending||this.drawWork||this.preparedWork),queuedPreparation:Boolean(this.preparationTask),preparation:{...this.workStats},retainedPaintPaths:this.paintPaths?.length??0,retainedClosedPaintPaths:this.closedPaintPaths?.length??0,retainedClosedPaintSegments:this.closedPaintMembers.size,pendingClosedPaintSegments:this.closedPaintDirty.size,retainedSegments:this.segments.size,openSegments:this.openIds.size,retainedReferenceSegments:this.referenceExtents.size,referenceExtentValues:this.referenceCounts.size,pendingReferenceSegments:this.referenceIds.size,referenceMinimum:this.reference.min,referenceMaximum:this.reference.max,retainedDrawables:this.drawable.size,p95RenderMs:sorted[Math.floor((sorted.length-1)*.95)]??0};}
   private measureOne(id:string){const before=this.sizes.get(id)??0,s=this.segments.get(id);const next=s?192+s.valueRuns.length*40:0;this.stats.bytes+=next-before;if(next)this.sizes.set(id,next);else this.sizes.delete(id);}
   private measureBytes(){this.stats.bytes=0;this.sizes.clear();for(const id of this.segments.keys())this.measureOne(id);this.referenceDirty=true;}
 }
