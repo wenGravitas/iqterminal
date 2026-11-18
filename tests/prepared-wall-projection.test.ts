@@ -396,7 +396,7 @@ test.each([true,false])('cached manifest proof changed=%s removes only disproved
   service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmCompactEntries:1,warmBuilds:0}));const before=[...displayedWalls(events,'seed').values()];service.unsubscribe('seed');phase=1;
   service.subscribe('warm',request);await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1)?.status.message).toMatch(changed?/source changed/:/503/));
   expect(events.filter(e=>e.ids?.includes('warm')).at(-1).status.archive.requestComplete).toBe(false);
-  expect(displayedWalls(events,'warm').size).toBe(changed?0:f.full.segments.length);expect(bad.calls.some(path=>path.endsWith('/projection-batch'))).toBe(false);
+  await vi.waitFor(()=>expect(displayedWalls(events,'warm').size).toBe(changed?0:f.full.segments.length));expect(bad.calls.some(path=>path.endsWith('/projection-batch'))).toBe(false);
   phase=2;service.retry('warm');
   await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1)?.status.archive.requestComplete).toBe(true));
   const financial=(rows:any[])=>rows.map(({currentSelection:_selection,...row})=>row).sort((a,b)=>a.id.localeCompare(b.id));
