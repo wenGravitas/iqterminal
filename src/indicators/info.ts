@@ -10,6 +10,7 @@ import { EFFORT_RESULT_ID } from '../effort-result/settings';
 import { MARKET_CONDITIONS_ID } from '../market-conditions/settings';
 import { OPEN_INTEREST_ID } from './open-interest-data';
 import { DAILY_VWAP_ID } from './daily-vwap';
+import { KEY_LEVELS_ID } from './key-levels';
 import { TRADE_BUBBLES_ID } from '../trade-bubbles/model';
 
 export interface IndicatorInfoOptions {
@@ -50,6 +51,9 @@ export function indicatorInfoText(instance: Pick<IndicatorInstance, 'definitionI
     }
     case DAILY_VWAP_ID:
       explanation = `Shows the average price weighted by candle volume${settings.bands === false ? '.' : ', with bands showing how far price moves from it.'} It restarts at UTC midnight.`;
+      break;
+    case KEY_LEVELS_ID:
+      explanation = 'Shows the previous UTC day high and low, plus today’s UTC open, from canonical daily candles. Previous-day rays start at the UTC boundary when those values became known.';
       break;
     case EFFORT_RESULT_ID:
       explanation = 'Highlights heavy buying or selling when price moves little. It is a rough guide, not a trading signal.';

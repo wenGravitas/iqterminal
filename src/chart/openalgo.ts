@@ -8,6 +8,8 @@ import {PositioningRangePreview,type PositioningRange} from './positioning-range
 import {paneHeaderSlots,PANE_HEADER_ACTION_SPACE,netPositioningOptionsWidth}from './pane-header';
 import { DailyVwapPrimitive } from './daily-vwap';
 import type { DailyVwapSettings } from '../indicators/daily-vwap';
+import { KeyLevelsPrimitive } from './key-levels';
+import type { KeyLevelSettings } from '../indicators/key-levels';
 import { otherFootprintTotals } from '../footprint-totals-tooltip';
 import { anchorTimeAxisToPrimary } from './primary-time-axis';
 import { effectiveCurrency } from '../currency-display';
@@ -100,6 +102,7 @@ export class OpenAlgoCandleChart {
   private orderWalls: OrderWallsPrimitive | null = null;
   private tpoProfile: TpoProfilePrimitive | null = null;
   private dailyVwap: DailyVwapPrimitive | null = null;
+  private keyLevels: KeyLevelsPrimitive | null = null;
   private dailyVwapInterval = 60;
   private netPositioningPanes = new Map<string, { series: SeriesApi; primitive: NetPositioningPane; paneIndex: number }>();
   onNetPositioningVenueToggle?: (id: string, venue: NetPositioningVenue) => void;
@@ -719,6 +722,13 @@ export class OpenAlgoCandleChart {
     else this.dailyVwap.configure(settings);
     this.dailyVwap.setData(intervalSeconds < 86400 ? this.series.getData() : [], intervalSeconds);
   }
+  setKeyLevels(settings: KeyLevelSettings | null, candles: readonly Candle[] = []) {
+    if (!settings) { if (this.keyLevels) this.chart.removePrimitive(this.keyLevels); this.keyLevels = null; return; }
+    if (!this.keyLevels) { this.keyLevels = new KeyLevelsPrimitive(settings); this.chart.addPrimitive(this.keyLevels, { anchor: 'primary-pane' }); }
+    else this.keyLevels.configure(settings);
+    this.keyLevels.setData(candles);
+  }
+  keyLevelsDiagnostics() { return this.keyLevels?.diagnostics() ?? { mounted:false, levels:[], candles:0 }; }
   dailyVwapDiagnostics() { return { ...(this.dailyVwap?.diagnostics() ?? { mounted: false }), intervalSeconds: this.dailyVwapInterval }; }
   setTpoSnapshot(sessions: TpoSession[], naked: TpoNakedLevel[], asOf = 0) { this.tpoProfile?.setSnapshot(sessions, naked, asOf); }
   patchTpo(sessions: TpoSession[], naked: TpoNakedLevel[], asOf = 0) { this.tpoProfile?.patch(sessions, naked, asOf); }
@@ -1339,6 +1349,8 @@ export class OpenAlgoCandleChart {
     this.orderWalls = null;
     if (this.dailyVwap) this.chart.removePrimitive(this.dailyVwap);
     this.dailyVwap = null;
+    if (this.keyLevels) this.chart.removePrimitive(this.keyLevels);
+    this.keyLevels = null;
     this.chart.removePrimitive(this.watchZones);
     this.chart.removePrimitive(this.axisGrid);
     this.chart.removePrimitive(this.executionHoverRay);

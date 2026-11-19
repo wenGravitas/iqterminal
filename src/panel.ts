@@ -1,5 +1,6 @@
 import { workspacePanelVisible, onWorkspaceVisibilityChange } from './workspaces/visibility';
 import {pastCandleViewport} from './feed/candle-viewport';
+import type { Candle } from './feed/protocol';
 import {NativeCandleStartupView,NativeCandleVersions,retainNativeViewport} from './feed/native-candle-state';
 import { workspacePanelStorage } from './workspaces/panel-storage';
 import {restoredHistoryViewport} from './feed/restore-bootstrap';
@@ -27,6 +28,8 @@ import { OpenInterestView } from './indicators/open-interest-view';
 import { OpenInterestControls } from './indicators/open-interest-controls';
 import { OrderFlowPaneView, type OrderFlowPaneState, type OrderFlowRow } from './indicators/order-flow-pane-view';
 import { DAILY_VWAP_ID, DEFAULT_DAILY_VWAP, dailyVwapSettings } from './indicators/daily-vwap';
+import { KEY_LEVELS_ID, DEFAULT_KEY_LEVELS, keyLevelSettings } from './indicators/key-levels';
+import { KeyLevelsControls } from './indicators/key-levels-controls';
 import { DailyVwapControls } from './indicators/daily-vwap-controls';
 import { FloatingDrawingToolbar, floatingDrawingToolbarSettings, type FloatingDrawingToolbarSettings } from './chart/floating-drawing-toolbar';
 import { renderFootprintTotalsTooltip } from './footprint-totals-tooltip';
@@ -534,6 +537,8 @@ export class CandlePanel implements IContentRenderer {
   }
   private subscriptions: { dispose(): void }[] = [];
   private release?: () => void;
+  private releaseKeyLevels?: () => void;
+  private keyLevelCandles: Candle[] = [];
   private releaseFootprint?: () => void;
   private params!: IDockviewPanelProps;
   private selection!: PanelConfig;
@@ -546,6 +551,7 @@ export class CandlePanel implements IContentRenderer {
   private toolbarResizeObserver?: ResizeObserver;
   private chartFooterObserver?: MutationObserver;
   private abort = new AbortController();
+  private readonly keyLevelsControls = new KeyLevelsControls((id, settings) => this.changeIndicator(id, { settings: { ...settings } }), this.abort.signal);
   private hoveredBar: Bar | null = null;
   private hoveredFootprint: FootprintHover | null = null;
   private candles: import('./feed/protocol').Candle[] = [];
@@ -3886,10 +3892,31 @@ export class CandlePanel implements IContentRenderer {
     const instance = this.nativeIndicator(DAILY_VWAP_ID);
     this.engine.setDailyVwap(instance?.visible ? dailyVwapSettings(instance.settings) : null, duration[this.selection.interval] / 1000);
   }
+  private syncKeyLevels() {
+    if (!this.engine || this.dead) return;
+    const instance = this.nativeIndicator(KEY_LEVELS_ID);
+    const enabled = Boolean(instance?.visible);
+    if (!enabled || this.feed.isFixtureMode()) {
+      this.releaseKeyLevels?.(); this.releaseKeyLevels = undefined; this.keyLevelCandles = [];
+      this.engine.setKeyLevels(null); return;
+    }
+    if (!this.releaseKeyLevels) {
+      const epoch = this.selectionEpoch, series = { ...this.selection, interval: '1d' as const };
+      this.releaseKeyLevels = this.feed.subscribe(`${this.params.api.id}:utc-key-levels`, series, event => {
+        if (this.dead || epoch !== this.selectionEpoch) return;
+        if (event.type === 'status') { if (event.status.state === 'failed') { this.keyLevelCandles = []; const current=this.nativeIndicator(KEY_LEVELS_ID); this.engine?.setKeyLevels(keyLevelSettings(current?.settings), []); } return; }
+        if (event.type !== 'snapshot' && event.type !== 'patch') return;
+        if (event.type === 'snapshot' && !event.merge) this.keyLevelCandles = [...event.candles];
+        else { const byTime = new Map(this.keyLevelCandles.map(c=>[c.t,c])); for (const candle of event.candles) byTime.set(candle.t,candle); this.keyLevelCandles = [...byTime.values()].sort((a,b)=>a.t-b.t).slice(-30); }
+        const current=this.nativeIndicator(KEY_LEVELS_ID); this.engine?.setKeyLevels(current?.visible ? keyLevelSettings(current.settings) : null, this.keyLevelCandles);
+      });
+    }
+    this.engine.setKeyLevels(keyLevelSettings(instance!.settings), this.keyLevelCandles);
+  }
 
   private syncNativeIndicators() {
     if (!this.engine || this.dead) return;
-    this.syncDailyVwap(); this.syncCvd(); this.syncLiquidations(); this.syncTradeBubbles();
+    this.syncDailyVwap(); this.syncKeyLevels(); this.syncCvd(); this.syncLiquidations(); this.syncTradeBubbles();
     const oldMode = this.engine.displayMode;
     this.applyFootprintOptions(); this.engine.setBasePriceVisible(this.selection.basePriceVisible);
     this.engine.setDisplayMode(this.selection.type, true);
@@ -4126,6 +4153,7 @@ export class CandlePanel implements IContentRenderer {
         : definitionId === CVD_ID ? { ...cvdSettings(undefined) }
         : definitionId === TRADE_BUBBLES_ID ? { ...tradeBubbleSettings(undefined) }
         : definitionId === DAILY_VWAP_ID ? { ...DEFAULT_DAILY_VWAP }
+        : definitionId === KEY_LEVELS_ID ? { ...DEFAULT_KEY_LEVELS }
         : definitionId === MARKET_CONDITIONS_ID ? { ...DEFAULT_CONDITIONS }
         : definitionId === FOOTPRINT_TOTALS_ID ? { ...DEFAULT_FOOTPRINT_TOTALS_SETTINGS }
         : definitionId === FOOTPRINT_ID ? { rowPrice: this.selection.rowPrice, units: this.selection.footprintUnits, view: this.selection.footprint }
@@ -4177,6 +4205,7 @@ export class CandlePanel implements IContentRenderer {
       return;
     }
     if (instance.definitionId === DAILY_VWAP_ID) { this.vwapControls.open(instance.instanceId, dailyVwapSettings(instance.settings)); return; }
+    if (instance.definitionId === KEY_LEVELS_ID) { this.keyLevelsControls.open(instance.instanceId,keyLevelSettings(instance.settings)); return; }
     if (instance.definitionId === EFFORT_RESULT_ID) { this.effortView?.openSettings(); return; }
     if (instance.definitionId === MARKET_CONDITIONS_ID) {
       if (this.conditionsView) this.conditionsView.openSettings();
@@ -5240,6 +5269,7 @@ export class CandlePanel implements IContentRenderer {
 
   private subscribe() {
     this.release?.();
+    this.releaseKeyLevels?.(); this.releaseKeyLevels = undefined; this.keyLevelCandles = [];
     const epoch = ++this.selectionEpoch;
     this.nativeCandleVersions.clear();this.nativeCandleDataEpoch=0;this.nativeCandleDemand=undefined;this.nativeCandleViewKey='';
     const selection = this.selection;
@@ -6113,6 +6143,7 @@ export class CandlePanel implements IContentRenderer {
     this.coreObjectProviderReleases.forEach(release => release()); this.coreObjectProviderReleases = [];
     for (const release of this.scriptObjectProviderReleases.values()) release(); this.scriptObjectProviderReleases.clear();
     this.release?.();
+    this.releaseKeyLevels?.(); this.releaseKeyLevels = undefined; this.keyLevelCandles = []; this.keyLevelsControls.dispose();
     this.releaseHeatmap?.(); this.heatmapGeneration++; this.heatmapControls.dispose();
     this.effortView?.dispose(); this.effortView = undefined;
     this.liquidationsView?.dispose(); this.liquidationsView=undefined;this.hiddenLiquidationControls?.dispose();this.hiddenLiquidationControls=undefined;

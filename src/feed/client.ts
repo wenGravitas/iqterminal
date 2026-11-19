@@ -10,6 +10,7 @@ import type { MonitoredFeedMode, MonitoredFeedStatus } from './observed-status';
 const feedDiagnosticsEnabled = import.meta.env.DEV || import.meta.env.VITE_DIAGNOSTICS === '1';
 type FeedStatusMeta = Pick<MonitoredFeedStatus, 'key' | 'kind' | 'source' | 'label' | 'mode'>;
 export class FeedClient {
+  isFixtureMode() { return this.fixtureMode; }
   private effortClaims=new Map<string,{resolve:(value:boolean)=>void;timer:ReturnType<typeof setTimeout>}>();
   claimEffort(key:string,eventId:string,state:import('../effort-result/engine').EventState){if(this.effortClaims.size>=8)return Promise.resolve(false);const id=`effort-claim:${++this.sequence}`;return new Promise<boolean>(resolve=>{const timer=setTimeout(()=>{this.effortClaims.delete(id);resolve(false);},8000);this.effortClaims.set(id,{resolve,timer});this.send({type:'effort-claim',id,key,eventId,state});});}
   private effortExports=new Map<string,{resolve:(value:import('../effort-result/engine').SavedEffort)=>void;reject:(error:Error)=>void;timer:ReturnType<typeof setTimeout>}>();

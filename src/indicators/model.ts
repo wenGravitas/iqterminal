@@ -2,6 +2,7 @@ import { JOURNAL_DEFINITION } from '../journal/indicator';
 import { LIQUIDATIONS_ID, liquidationSettings } from '../liquidations/settings';
 import { CVD_ID,cvdSettings } from '../feed/cvd';
 import { DAILY_VWAP_ID, DEFAULT_DAILY_VWAP, dailyVwapSettings } from './daily-vwap';
+import { KEY_LEVELS_ID, DEFAULT_KEY_LEVELS, keyLevelSettings } from './key-levels';
 import { EFFORT_RESULT_ID, DEFAULT_EFFORT, effortSettings, effortRecord } from '../effort-result/settings';
 import { MARKET_CONDITIONS_ID, DEFAULT_CONDITIONS, conditionsSettings } from '../market-conditions/settings';
 import { validStudyPins, type StudyPin, type ScriptInputView } from '../scripts/host';
@@ -134,6 +135,9 @@ export const NATIVE_DEFINITIONS: readonly IndicatorDefinition[] = [
   { id: DAILY_VWAP_ID, name: 'Daily VWAP', description: 'UTC daily candle-volume weighted price with deviation bands', category: 'Volume', implementation: 'builtin',
     settingsVersion: 1, defaults: { ...DEFAULT_DAILY_VWAP }, settingsSchema: Object.entries(DEFAULT_DAILY_VWAP).map(([key,value]) => ({key,label:key,kind:typeof value,defaultValue:value})),
     placements: ['overlay'], dataRequirements: ['candles'], sourceBinding: 'chart', multiplicity: 'single', capabilities: {editScript:false,duplicate:false} },
+  { id: KEY_LEVELS_ID, name: 'UTC Key Levels', description: 'Previous UTC day high/low and current UTC day open from canonical daily candles', category: 'Price', implementation: 'builtin', settingsVersion: 1,
+    defaults: { ...DEFAULT_KEY_LEVELS }, settingsSchema: Object.entries(DEFAULT_KEY_LEVELS).map(([key,value])=>({key,label:key==='previousHigh'?'Previous day high (PDH)':key==='previousLow'?'Previous day low (PDL)':'Today open (DO)',kind:'boolean',defaultValue:value})),
+    placements: ['overlay'], dataRequirements: ['canonical-daily-candles'], sourceBinding: 'chart', multiplicity: 'single', capabilities: {editScript:false,duplicate:false} },
   {id:EFFORT_RESULT_ID,name:'Effort–Result',description:'Persistent directional flow stalls · Binance BTCUSDT USD-M · trade-price proxy',category:'Order Flow',implementation:'builtin',settingsVersion:1,defaults:effortRecord(DEFAULT_EFFORT),settingsSchema:Object.entries(DEFAULT_EFFORT).map(([key,value])=>({key:key==='retentionDays'?key:`${key==='pane'?'presentation':typeof value==='boolean'?'notifications':'calculation'}.${key}`,label:key,kind:typeof value,defaultValue:value})),placements:['overlay','pane'],dataRequirements:['normalized-executions'],sourceBinding:'chart',multiplicity:'single',capabilities:{editScript:false,duplicate:false}},
   { id: MARKET_CONDITIONS_ID, name: 'Market Conditions', description: 'Completed-candle volatility regimes and heuristic tradeability · OHLC only', category: 'Trend', implementation: 'builtin',
     settingsVersion: 1, defaults: { ...DEFAULT_CONDITIONS }, settingsSchema: Object.entries(DEFAULT_CONDITIONS).map(([key,value]) => ({ key, label: key, kind: Array.isArray(value) ? 'multi' : typeof value, defaultValue: value })), placements: ['pane'], dataRequirements: ['candles'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
@@ -283,6 +287,7 @@ export function validateInstances(value: unknown): IndicatorInstance[] {
     if (copy.definitionId === OPEN_INTEREST_ID && copy.settingsVersion === 1) copy.settings = { ...openInterestSettings(copy.settings) };
     if (copy.definitionId === TRADE_BUBBLES_ID && copy.settingsVersion === 1) copy.settings = { ...tradeBubbleSettings(copy.settings) };
     if (copy.definitionId === DAILY_VWAP_ID && copy.settingsVersion === 1) copy.settings = { ...dailyVwapSettings(copy.settings) };
+    if (copy.definitionId === KEY_LEVELS_ID && copy.settingsVersion === 1) copy.settings = { ...keyLevelSettings(copy.settings) };
     if (copy.definitionId === TPO_ID && copy.settingsVersion === 1) copy.settings = { ...tpoIndicatorSettings(copy.settings) };
     if (NET_POSITIONING_IDS.includes(copy.definitionId as typeof NET_POSITIONING_IDS[number]) && copy.settingsVersion === 1) copy.settings = { ...netPositioningSettings(copy.settings) };
     else if (LEGACY_NET_POSITIONING_IDS.includes(copy.definitionId as typeof LEGACY_NET_POSITIONING_IDS[number]) && copy.settingsVersion === 1) copy.settings = { ...netPositioningBaseSettings(copy.settings) };
