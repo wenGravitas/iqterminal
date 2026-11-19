@@ -2,6 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { restoreValue } from '../src/layout';
 
 describe('layout persistence', () => {
+  it('restores the singleton account planner with public-empty layout params only', () => {
+    const layout = { grid: {}, panels: { 'trading-accounts': { id: 'trading-accounts', contentComponent: 'trading-foundation', params: {} } } };
+    expect(restoreValue(JSON.stringify({ version: 11, layout }))).toEqual(layout);
+    expect(restoreValue(JSON.stringify({ version: 10, layout }))).toBeNull();
+    layout.panels['trading-accounts'].params = { token: 'never-layout-data' };
+    expect(restoreValue(JSON.stringify({ version: 11, layout }))).toBeNull();
+  });
   const layoutFor = (params: unknown) => ({
     grid: {},
     panels: {

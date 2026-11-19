@@ -26,6 +26,10 @@ components:
 
 # Design System: Basis Terminal
 
+### Trading Accounts
+
+Trading Accounts is an Operate pane within the existing terminal. It inherits flat square native controls, system monospace, theme tokens and thin Dockview borders. Destination selection and collapsed identity details precede a compact, scrollable risk plan with per-account allocations and clearly labelled simulated outcomes. Testnet entry review uses a named native dialog showing the complete public execution identity and entry-only scope, with focus placed on the TESTNET confirmation field. Service tokens remain session-only.
+
 ## Overview
 
 **Creative North Star: "The Quiet Market Instrument"**

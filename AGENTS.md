@@ -1,6 +1,6 @@
 # Terminal T0
 
-Follow /home/daz/.codex/AGENTS.md for Luna Max routing and bounded Sol adviser escalation. Do not alter model configuration or substitute a different model silently.
+Follow /home/daz/.codex/AGENTS.md for Sol Max routing and bounded Astra adviser escalation. Do not alter model configuration or substitute a different model silently.
 
 Keep this milestone narrow: dockable candle charts for native Binance BTCUSDT USD-M perpetual and Hyperliquid BTC perpetual only. No React, third-party chart engine, trade execution, indicators, footprints, script runtime, AI, backend, or speculative WASM abstraction.
 

@@ -35,6 +35,7 @@ import { MarketComparisonPanel } from './market-comparison/panel';
 import { defaultMarketComparisonConfig } from './market-comparison/model';
 import { TradingController } from './trading/controller';
 import { TradingPanel, type TradingPanelView } from './trading/panel';
+import { TradingFoundationPanel } from './trading/foundation/panel';
 import { TRADING_PANEL_ID } from './trading/model';
 
 const diagnosticsEnabled = import.meta.env.DEV || import.meta.env.VITE_DIAGNOSTICS === '1';
@@ -138,6 +139,15 @@ function addHyperliquidTrading() {
   save();
 }
 
+function addTradingAccounts() {
+  const existing = dock.getPanel('trading-accounts');
+  if (existing) { existing.api.setActive(); return; }
+  dock.addPanel({ id: 'trading-accounts', component: 'trading-foundation', title: 'Trading Accounts', params: {},
+    position: dock.activePanel ? { referencePanel: dock.activePanel, direction: 'right' } : undefined,
+    initialWidth: Math.min(520, Math.max(340, Math.round(root.clientWidth / 2))), minimumWidth: 280, minimumHeight: 220 });
+  save();
+}
+
 const tradingWidgetSpecs: Record<Exclude<TradingPanelView, 'trade'>, { id: string; title: string }> = {
   positions: { id: 'hyperliquid-positions', title: 'Positions · HL BTC' },
   'open-orders': { id: 'hyperliquid-open-orders', title: 'Open Orders · HL BTC' },
@@ -236,6 +246,7 @@ dock = createDockview(root, {
     if(options.name==='liquidation-ticker')return new LiquidationTickerPanel(feed,scheduler,notifications,save,focusLiquidation);
     if(options.name==='level-watch'){watchPanel=new LevelWatchPanel(feed,save,focusWatch);return watchPanel;}
     if(options.name==='order-book'||options.name==='depth-matrix') return new OrderBookPanel(feed,save);
+    if (options.name === 'trading-foundation') return new TradingFoundationPanel({ fixtureMode: fixture, openLegacy: addHyperliquidTrading });
     if (options.name === 'hyperliquid-trading' || options.name.startsWith('hyperliquid-trading-')) {
       const view = options.name === 'hyperliquid-trading' ? 'trade' : options.name.slice('hyperliquid-trading-'.length) as TradingPanelView;
       if (!(view in { trade: true, positions: true, 'open-orders': true, 'order-history': true, 'trade-history': true })) throw new Error('Unknown trading widget type');
@@ -294,6 +305,7 @@ window.addEventListener('keydown', event => { if (!marketPulse.isOpen() && !conn
 window.addEventListener('iqterminal-watch-zone',event=>openWatches((event as CustomEvent).detail),{signal:abort.signal});
 const releaseWatches=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?feed.subscribeWatches((snapshot,error)=>{if(snapshot){watchSnapshot=snapshot;for(const panel of panels.values())panel.setWatchZones(error?snapshot.watches.map(w=>({...w,quality:'stale'})):snapshot.watches);if(!error&&!document.hidden)for(const e of snapshot.events??[]){if(e.kind!=='confirmed'||!e.value.fresh||Date.now()-e.at>3000)continue;void feed.watchRequest<{claimed:boolean}>('/claim',{eventId:e.id}).then(result=>{if(result.claimed)notifications.deliver({eventId:String(e.id),ruleId:'level-watch:'+e.watchId,owner:'level-watch',timeMs:e.at,fresh:true,title:`${e.value.encounter?.definition.name??'Level Watch'} — reclaim confirmed`,text:e.value.reason??'Experimental rule gates met',sound:'chime',volume:.5,toast:true});}).catch(()=>{});}}}):undefined;
 tradingStatusButton.addEventListener('click', () => addHyperliquidTrading(), { signal: abort.signal });
+const tradingAccountsButton = document.createElement('button'); tradingAccountsButton.id = 'trading-accounts'; tradingAccountsButton.textContent = 'Accounts'; tradingAccountsButton.title = 'Named trading accounts, allocation previews and group rehearsal'; tradingAccountsButton.addEventListener('click', addTradingAccounts, { signal: abort.signal }); document.querySelector('#commands')?.append(tradingAccountsButton);
 document.querySelector('#notifications')!.addEventListener('click', () => notifications.open(), { signal: abort.signal });
 const journalButton = document.createElement('button'); journalButton.id = 'open-journal'; journalButton.textContent = 'Journal'; journalButton.title = 'Open the daily trading journal'; journalButton.addEventListener('click', () => journal.open()); document.querySelector('#commands')?.append(journalButton);
 window.addEventListener(THEME_EVENT, () => dock.updateOptions({ theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: dockviewColorScheme(), gap: 4, dndTabIndicator: 'line' } }), { signal: abort.signal });
@@ -302,7 +314,7 @@ window.addEventListener('online', () => feed.send({ type: 'online', online: true
 window.addEventListener('offline', () => feed.send({ type: 'online', online: false }), { signal: abort.signal });
 
 const registry = widgetRegistry({ chart: addChart, comparison: addMarketComparison, ticker: addTicker, liquidations: addLiquidationTicker, depth: addDepthMatrix,
- trading: addHyperliquidTrading, positions: () => addHyperliquidTradingWidget('positions'), orders: () => addHyperliquidTradingWidget('open-orders'),
+ trading: addHyperliquidTrading, accounts: addTradingAccounts, positions: () => addHyperliquidTradingWidget('positions'), orders: () => addHyperliquidTradingWidget('open-orders'),
  orderHistory: () => addHyperliquidTradingWidget('order-history'), tradeHistory: () => addHyperliquidTradingWidget('trade-history'), watches: openWatches,
  editor: () => { const existing = dock.getPanel('script-editor'); if (existing) { existing.api.setActive(); return; } const panel = dock.activePanel && panels.get(dock.activePanel.id) || panels.values().next().value; if (panel) openEditor([...panels].find(([,value]) => value === panel)![0]); },
  journal: () => journal.open(),

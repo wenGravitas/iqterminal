@@ -1,0 +1,259 @@
+{
+  "checkedAt": "2026-11-19T04:38:35.974Z",
+  "evidence": "read-only public REST; no customer account authorization and no signed order submission",
+  "lighterSignerCommit": "71dc79cd3cd499825f88b01adede2fe8aa183955",
+  "lighterTestnetChainId": 300,
+  "records": [
+    {
+      "venue": "hyperliquid",
+      "environment": "testnet",
+      "endpoint": "https://api.hyperliquid-testnet.xyz",
+      "markets": [
+        {
+          "base": "BTC",
+          "status": "public-read-ok",
+          "elapsedMs": 3583,
+          "spec": {
+            "venue": "hyperliquid",
+            "environment": "testnet",
+            "base": "BTC",
+            "quote": "USDC",
+            "payoff": "linear",
+            "marketId": 3,
+            "sizeDecimals": 5,
+            "priceDecimals": 1,
+            "significantFigures": 5,
+            "minSize": "0.00001",
+            "minNotional": "10",
+            "maxLeverage": "40",
+            "makerFeeBps": "1.5",
+            "takerFeeBps": "4.5",
+            "capabilities": {
+              "limit": true,
+              "protectedIoc": true,
+              "postOnly": true,
+              "modify": true,
+              "reduceOnly": true,
+              "conditionalExits": true,
+              "nativeTwap": false,
+              "signing": "testnet-service"
+            }
+          },
+          "quote": {
+            "venue": "hyperliquid",
+            "environment": "testnet",
+            "base": "BTC",
+            "bid": "61992.0",
+            "ask": "61993.0",
+            "mark": "62039.0",
+            "triggerSource": "Hyperliquid mark",
+            "asOf": 1795063095877
+          }
+        },
+        {
+          "base": "ETH",
+          "status": "public-read-ok",
+          "elapsedMs": 6492,
+          "spec": {
+            "venue": "hyperliquid",
+            "environment": "testnet",
+            "base": "ETH",
+            "quote": "USDC",
+            "payoff": "linear",
+            "marketId": 4,
+            "sizeDecimals": 4,
+            "priceDecimals": 2,
+            "significantFigures": 5,
+            "minSize": "0.0001",
+            "minNotional": "10",
+            "maxLeverage": "25",
+            "makerFeeBps": "1.5",
+            "takerFeeBps": "4.5",
+            "capabilities": {
+              "limit": true,
+              "protectedIoc": true,
+              "postOnly": true,
+              "modify": true,
+              "reduceOnly": true,
+              "conditionalExits": true,
+              "nativeTwap": false,
+              "signing": "testnet-service"
+            }
+          },
+          "quote": {
+            "venue": "hyperliquid",
+            "environment": "testnet",
+            "base": "ETH",
+            "bid": "1784.0",
+            "ask": "1784.1",
+            "mark": "1784.2",
+            "triggerSource": "Hyperliquid mark",
+            "asOf": 1795063102366
+          }
+        }
+      ]
+    },
+    {
+      "venue": "hyperliquid",
+      "environment": "mainnet",
+      "endpoint": "https://api.hyperliquid.xyz",
+      "markets": [
+        {
+          "base": "BTC",
+          "status": "public-read-ok",
+          "elapsedMs": 3560,
+          "spec": {
+            "venue": "hyperliquid",
+            "environment": "mainnet",
+            "base": "BTC",
+            "quote": "USDC",
+            "payoff": "linear",
+            "marketId": 0,
+            "sizeDecimals": 5,
+            "priceDecimals": 1,
+            "significantFigures": 5,
+            "minSize": "0.00001",
+            "minNotional": "10",
+            "maxLeverage": "40",
+            "makerFeeBps": "1.5",
+            "takerFeeBps": "4.5",
+            "capabilities": {
+              "limit": true,
+              "protectedIoc": true,
+              "postOnly": true,
+              "modify": true,
+              "reduceOnly": true,
+              "conditionalExits": true,
+              "nativeTwap": false,
+              "signing": "none"
+            }
+          },
+          "quote": {
+            "venue": "hyperliquid",
+            "environment": "mainnet",
+            "base": "BTC",
+            "bid": "63472.0",
+            "ask": "63473.0",
+            "mark": "63472.0",
+            "triggerSource": "Hyperliquid mark",
+            "asOf": 1795063095964
+          }
+        },
+        {
+          "base": "ETH",
+          "status": "public-read-ok",
+          "elapsedMs": 7890,
+          "spec": {
+            "venue": "hyperliquid",
+            "environment": "mainnet",
+            "base": "ETH",
+            "quote": "USDC",
+            "payoff": "linear",
+            "marketId": 1,
+            "sizeDecimals": 4,
+            "priceDecimals": 2,
+            "significantFigures": 5,
+            "minSize": "0.0001",
+            "minNotional": "10",
+            "maxLeverage": "25",
+            "makerFeeBps": "1.5",
+            "takerFeeBps": "4.5",
+            "capabilities": {
+              "limit": true,
+              "protectedIoc": true,
+              "postOnly": true,
+              "modify": true,
+              "reduceOnly": true,
+              "conditionalExits": true,
+              "nativeTwap": false,
+              "signing": "none"
+            }
+          },
+          "quote": {
+            "venue": "hyperliquid",
+            "environment": "mainnet",
+            "base": "ETH",
+            "bid": "1799.3",
+            "ask": "1799.4",
+            "mark": "1799.3",
+            "triggerSource": "Hyperliquid mark",
+            "asOf": 1795063103854
+          }
+        }
+      ]
+    },
+    {
+      "venue": "lighter",
+      "environment": "testnet",
+      "endpoint": "https://api.testnet.lighter.xyz",
+      "markets": [
+        {
+          "base": "BTC",
+          "status": "unavailable",
+          "elapsedMs": 12575,
+          "error": "fetch failed"
+        },
+        {
+          "base": "ETH",
+          "status": "unavailable",
+          "elapsedMs": 10492,
+          "error": "fetch failed"
+        }
+      ]
+    },
+    {
+      "venue": "lighter",
+      "environment": "mainnet",
+      "endpoint": "https://mainnet.zklighter.elliot.ai",
+      "markets": [
+        {
+          "base": "BTC",
+          "status": "public-read-ok",
+          "elapsedMs": 7788,
+          "spec": {
+            "venue": "lighter",
+            "environment": "mainnet",
+            "base": "BTC",
+            "quote": "USDC",
+            "payoff": "linear",
+            "marketId": 1,
+            "sizeDecimals": 5,
+            "priceDecimals": 1,
+            "significantFigures": null,
+            "minSize": "0.00007",
+            "minNotional": "10.000000",
+            "maxLeverage": "20",
+            "makerFeeBps": "0",
+            "takerFeeBps": "0",
+            "capabilities": {
+              "limit": true,
+              "protectedIoc": true,
+              "postOnly": true,
+              "modify": true,
+              "reduceOnly": true,
+              "conditionalExits": true,
+              "nativeTwap": false,
+              "signing": "none"
+            }
+          },
+          "quote": {
+            "venue": "lighter",
+            "environment": "mainnet",
+            "base": "BTC",
+            "bid": "63478.7",
+            "ask": "63479.9",
+            "mark": "63477.9",
+            "triggerSource": "Lighter mark",
+            "asOf": 1795063100264
+          }
+        },
+        {
+          "base": "ETH",
+          "status": "unavailable",
+          "elapsedMs": 15710,
+          "error": "fetch failed"
+        }
+      ]
+    }
+  ]
+}

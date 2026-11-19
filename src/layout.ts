@@ -2,7 +2,7 @@ import type { SerializedDockview } from 'dockview-core';
 import { validSeries } from './feed/protocol';
 import { orderBookSettings,migrateOrderBookPanel } from './order-book/settings';
 import { validMarketComparisonConfig } from './market-comparison/model';
-export const LAYOUT_VERSION=10;
+export const LAYOUT_VERSION=11;
 export const STORAGE_KEY='basis.layout.v1';export const PANEL_BUDGET=8;
 function emptyPlainObject(value:unknown):boolean{
   if(value===null||typeof value!=='object'||Array.isArray(value))return false;
@@ -11,7 +11,7 @@ function emptyPlainObject(value:unknown):boolean{
 }
 export function restoreValue(raw:string|null):SerializedDockview|null {
   if(!raw||raw.length>100000)return null;
-  try {const saved=JSON.parse(raw);if(![1,2,3,4,5,6,7,8,9,10].includes(saved.version)||!saved.layout||typeof saved.layout!=='object')return null;const l=saved.layout as SerializedDockview;
+  try {const saved=JSON.parse(raw);if(![1,2,3,4,5,6,7,8,9,10,11].includes(saved.version)||!saved.layout||typeof saved.layout!=='object')return null;const l=saved.layout as SerializedDockview;
     if(!l.panels||typeof l.panels!=='object'||Array.isArray(l.panels)||!l.grid||Object.keys(l.panels).length>PANEL_BUDGET+31)return null;
     if(l.floatingGroups?.length||l.popoutGroups?.length)return null;
     let charts=0, comparisons=0, editors=0, tickers=0, watches=0, depthMatrices=0, liquidations=0, trading=0, tradingWidgets=0, journals=0;
@@ -20,6 +20,7 @@ export function restoreValue(raw:string|null):SerializedDockview|null {
       if(p.contentComponent==='candle'&&/^chart-[a-z0-9-]+$/i.test(id)&&validSeries(p.params)&&['candle','footprint'].includes((p.params as {type?:string})?.type ?? '')){charts++;continue;}
       if(saved.version>=6&&/^market-comparison-[a-z0-9-]+$/i.test(id)&&p.contentComponent==='market-comparison'&&validMarketComparisonConfig(p.params)){comparisons++;continue;}
       if(saved.version>=7&&id==='hyperliquid-trading'&&p.contentComponent==='hyperliquid-trading'&&(p.params===undefined||emptyPlainObject(p.params))){trading++;continue;}
+      if(saved.version>=11&&id==='trading-accounts'&&p.contentComponent==='trading-foundation'&&(p.params===undefined||emptyPlainObject(p.params))){continue;}
       const tradingViews: Record<string,string> = {
         'hyperliquid-positions': 'positions', 'hyperliquid-open-orders': 'open-orders',
         'hyperliquid-order-history': 'order-history', 'hyperliquid-trade-history': 'trade-history',
