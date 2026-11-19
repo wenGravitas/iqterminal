@@ -1,7 +1,7 @@
 export interface WidgetDefinition { id: string; component: string; singletonId: string | null; existing(): boolean; label: string; category: string; icon: string; description: string; singleton: boolean; create(): void; unavailable(): string | null }
 export interface WidgetActions {
   chart(): void; comparison(): void; ticker(): void; liquidations(): void; depth(): void;
-  trading(): void; positions(): void; orders(): void; orderHistory(): void; tradeHistory(): void;
+  trading(): void; accounts?(): void; positions(): void; orders(): void; orderHistory(): void; tradeHistory(): void;
   watches(): void; journal(): void; editor(): void; count(component: string): number; has(id: string): boolean;
 }
 
@@ -15,6 +15,7 @@ export function widgetRegistry(actions: WidgetActions): WidgetDefinition[] {
     ['liquidations', 'Liquidations', 'Orderflow', 'target', 'Liquidation event tape', false, actions.liquidations, limit('liquidation-ticker')],
     ['depth', 'Order Book', 'Liquidity', 'grid', 'Compact ladder or individual synchronized depth columns', false, actions.depth, () => actions.count('order-book')+actions.count('depth-matrix')>=8?'Maximum 8 Order Book widgets in this workspace':null],
     ['trading', 'Hyperliquid Trading', 'Trading', 'market', 'Open the global trading account panel', true, actions.trading, () => null],
+    ...(actions.accounts ? [['accounts', 'Trading Accounts', 'Trading', 'market', 'Named accounts, risk plans and group rehearsal', true, actions.accounts, () => null] as [string, string, string, string, string, boolean, () => void, () => string | null]] : []),
     ['positions', 'Positions', 'Trading', 'layers', 'Current account positions', true, actions.positions, () => null],
     ['orders', 'Open Orders', 'Trading', 'layers', 'Current account open orders', true, actions.orders, () => null],
     ['order-history', 'Order History', 'Trading', 'bars', 'Local order attempt history', true, actions.orderHistory, () => null],
@@ -25,12 +26,12 @@ export function widgetRegistry(actions: WidgetActions): WidgetDefinition[] {
   ];
   const components: Record<string, string> = {
     chart: 'candle', comparison: 'market-comparison', ticker: 'trade-ticker', liquidations: 'liquidation-ticker', depth: 'order-book',
-    trading: 'hyperliquid-trading', positions: 'hyperliquid-trading-positions', orders: 'hyperliquid-trading-open-orders',
+    trading: 'hyperliquid-trading', accounts: 'trading-foundation', positions: 'hyperliquid-trading-positions', orders: 'hyperliquid-trading-open-orders',
     'order-history': 'hyperliquid-trading-order-history', 'trade-history': 'hyperliquid-trading-trade-history',
     watches: 'level-watch', journal: 'global-journal', editor: 'script-editor',
   };
   const singletons: Record<string, string> = {
-    trading: 'hyperliquid-trading', positions: 'hyperliquid-positions', orders: 'hyperliquid-open-orders',
+    trading: 'hyperliquid-trading', accounts: 'trading-accounts', positions: 'hyperliquid-positions', orders: 'hyperliquid-open-orders',
     'order-history': 'hyperliquid-order-history', 'trade-history': 'hyperliquid-trade-history',
     watches: 'level-watch', journal: 'global-journal', editor: 'script-editor',
   };

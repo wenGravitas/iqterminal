@@ -26,6 +26,10 @@ components:
 
 # Design System: Basis Terminal
 
+### Trading Accounts
+
+Trading Accounts is an Operate pane within the existing terminal. It inherits flat square native controls, system monospace, theme tokens and thin Dockview borders. Destination selection and collapsed identity details precede a compact, scrollable risk plan with per-account allocations and clearly labelled simulated outcomes. Testnet entry review uses a named native dialog showing the complete public execution identity and entry-only scope, with focus placed on the TESTNET confirmation field. Service tokens remain session-only.
+
 ## Overview
 
 **Creative North Star: "The Quiet Market Instrument"**
@@ -126,7 +130,7 @@ Empty chart and indicator panes show a compact five-bar signal animation with th
 
 Small directional zone segments begin at actual candidate availability, with a diamond marker and restrained R/B/U/? outcome notation. Buy-flow stalls use resistance red and sell-flow stalls support green. Segments stop at resolution; candles retain their original appearance. A compact status/evidence button has its own reserved chart-footer row below the plot and footprint totals. Hover evidence uses a flat theme surface and expandable provenance; the optional signed pane labels intensity as descriptive and shows warm-up/quality feedback rather than plotting missing observations as zero.
 
-POC uses a solid one-pixel rectangular row border. VAH/VAL use thinner dashed horizontal guides with matching endpoints, including the central candle gutter, guide extensions and chart-edge clipping. Both use light muted lavender on Dark and deeper mauve on Ivory. With value-area guides hidden, the border retains compact clearance from the painted POC cells.
+POC uses a solid one-pixel rectangular row border whose width follows the painted bid/ask cells, with two CSS pixels of clearance before backing-pixel alignment. This remains independent of value-area visibility. VAH/VAL retain their dashed horizontal guide endpoints, central candle gutter, extensions and chart-edge clipping. Both use light muted lavender on Dark and deeper mauve on Ivory.
 
 ### Floating drawing toolbar
 

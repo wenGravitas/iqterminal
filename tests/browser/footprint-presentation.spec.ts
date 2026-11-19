@@ -194,10 +194,8 @@ test('18-level footprint shows distinct VAH and VAL with transparent histogram b
   const levelStroke = rendered.strokes.at(-1)!;
   expect(levelStroke.color).toBe('#b5a0cd'); expect(levelStroke.width).toBe(1);
   expect(levelStroke.points).toHaveLength(4);
-  expect(pocStroke.points[0][0]).toBe(levelStroke.points[0][0]);
-  expect(pocStroke.points[2][0]).toBe(levelStroke.points[1][0]);
-  expect(pocStroke.points[0][0]).toBe(levelStroke.points[2][0]);
-  expect(pocStroke.points[2][0]).toBe(levelStroke.points[3][0]);
+  expect(pocStroke.points[0][0]).toBeGreaterThan(levelStroke.points[0][0]);
+  expect(pocStroke.points[2][0]).toBeLessThan(levelStroke.points[1][0]);
   expect(levelStroke.points[0][1]).toBe(levelStroke.points[1][1]);
   expect(levelStroke.points[2][1]).toBe(levelStroke.points[3][1]);
   expect(levelStroke.points[0][1]).not.toBe(levelStroke.points[2][1]);
@@ -205,12 +203,15 @@ test('18-level footprint shows distinct VAH and VAL with transparent histogram b
     .filter((rect: any) => rect.alpha === rendered.opacity && Math.abs(rect.y + rect.height / 2 - rendered.expectedPocY) <= 1)
     .map((rect: any) => [`${rect.x}:${rect.y}:${rect.width}:${rect.height}`, rect])).values()] as any[];
   expect(pocFills).toHaveLength(2);
+  const paintedLeft = Math.min(...pocFills.map(rect => rect.x)), paintedRight = Math.max(...pocFills.map(rect => rect.x + rect.width));
+  expect(Math.abs(paintedLeft - pocStroke.points[0][0] - pocStroke.width / 2 - 2 * rendered.dpr)).toBeLessThanOrEqual(.500001);
+  expect(Math.abs(pocStroke.points[2][0] - pocStroke.width / 2 - paintedRight - 2 * rendered.dpr)).toBeLessThanOrEqual(.500001);
   expect(rendered.totals).toEqual([]);
   expect(rendered.options.statsRows).toEqual([]);
-  await page.screenshot({ path: '/tmp/footprint-poc-aligned.png' });
+  await page.screenshot({ path: '/tmp/footprint-poc-adaptive-dark.png' });
   await selectTheme(page, 'light');
   await page.waitForTimeout(150);
-  await page.screenshot({ path: '/tmp/footprint-poc-aligned-light.png' });
+  await page.screenshot({ path: '/tmp/footprint-poc-adaptive-light.png' });
 });
 
 test('delta profile applies native presentation without restarting collection and persists', async ({ page }) => {
