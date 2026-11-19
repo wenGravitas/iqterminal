@@ -84,12 +84,7 @@ export class TerminalFootprint extends Footprint {
     return [alignMarker(left), alignMarker(right)];
   }
   private pocHorizontalBounds(left: number, right: number, centreY: number): [number, number] {
-    // Share the VAH/VAL endpoint geometry, including gutter, extension,
-    // clipping and backing-pixel alignment, rather than the proportional fills.
-    if (this.style.showValueArea) return [
-      this.alignStroke(this.extendProfileLevel(left, 'left')),
-      this.alignStroke(this.extendProfileLevel(right, 'right')),
-    ];
+    // POC follows this row's painted cells; VAH/VAL retain their own guide geometry.
     const tolerance = Math.max(1, this.dpr);
     const rowCells = [this.previousCellPaint, this.lastCellPaint].filter((cell): cell is PaintedCell => !!cell
       && Math.abs(cell.y + cell.height / 2 - centreY) <= tolerance
@@ -171,6 +166,9 @@ export class TerminalFootprint extends Footprint {
           if (key === 'strokeStyle') this.valueAreaPath = this.style.showValueArea && value === this.style.valueAreaColor;
           this.cellText = key === 'font' ? value === `${this.style.font * this.dpr}px ui-monospace, SFMono-Regular, Menlo, monospace` : this.cellText;
           if (key === 'font' && value === `${this.style.font * this.dpr}px ui-monospace, SFMono-Regular, Menlo, monospace`) {
+            // The native renderer starts each price row here. A zero side must
+            // not borrow the preceding row's paint, even when rows share pixels.
+            this.previousCellPaint = null; this.lastCellPaint = null;
             value = `600 ${this.cellFontPx}px ${FOOTPRINT_FONT_FAMILY}`;
           }
           return Reflect.set(target, key, value, target);

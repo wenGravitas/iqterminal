@@ -28,6 +28,15 @@ function expectPocMarkers(path: RecordedPath2D) {
   expect(right).toBeGreaterThan(left);
 }
 
+function expectPocCellClearance(path: RecordedPath2D, cells: number[][], dpr: number) {
+  expect(cells.length).toBeGreaterThan(0);
+  const stroke = Math.max(1, Math.round(dpr));
+  const left = Math.min(...cells.map(([x]) => x)), right = Math.max(...cells.map(([x, , width]) => x + width));
+  // Backing-pixel alignment can move the requested two-CSS-pixel gap by half a device pixel.
+  expect(Math.abs(left - path.commands[0]!.x - stroke / 2 - 2 * dpr)).toBeLessThanOrEqual(.500001);
+  expect(Math.abs(path.commands[2]!.x - stroke / 2 - right - 2 * dpr)).toBeLessThanOrEqual(.500001);
+}
+
 test('installed footprint draws larger fitted text and translucent cells without fading text or footer', () => {
   const p = new TerminalFootprint({ ...DEFAULT_FOOTPRINT_OPTIONS, font: 9, widthFactor: .96, pocStyle: 'outline', statsPosition: 'bottom', statsRows: ['volume', 'delta'] });
   p.setBars([{ time: 0, delta: 32710, rowSize: 25, open: 100, high: 110, low: 100, close: 110, cells: [{ price: 112.5, bidVol: 3990, askVol: 36700 }] }]);
@@ -164,8 +173,9 @@ test('native value area draws distinct readable VAH and VAL boundaries beside th
   expect(pocOutlines).toHaveLength(1);
   expect(pocOutlines[0]).toMatchObject({ color: '#b5a0cd', alpha: 1, width: 1, dash: [] });
   expectPocMarkers(pocOutlines[0]!.path);
-  expect(pocOutlines[0]!.path.commands[0]!.x).toBe(points[0]![0]);
-  expect(pocOutlines[0]!.path.commands[2]!.x).toBe(points[1]![0]);
+  expect(pocOutlines[0]!.path.commands[0]!.x).toBeGreaterThan(points[0]![0]);
+  expect(pocOutlines[0]!.path.commands[2]!.x).toBeLessThan(points[1]![0]);
+  const pocWithValueArea = pocOutlines[0]!.path.commands;
   expect(cellFillAlphas.length).toBeGreaterThan(0);
   expect(cellFillAlphas.every(alpha => alpha === .3)).toBe(true);
   expect(candleFillAlphas.length).toBe(2);
@@ -175,6 +185,7 @@ test('native value area draws distinct readable VAH and VAL boundaries beside th
 
   p.setOptions({ showValueArea: false }); valueAreaStrokes.length = 0; pocOutlines.length = 0; p.draw(ctx, rc);
   expect(valueAreaStrokes).toHaveLength(0); expect(pocOutlines).toHaveLength(1);
+  expect(pocOutlines[0]!.path.commands).toEqual(pocWithValueArea);
   p.setOptions({ showValueArea: true, showPoc: false }); valueAreaStrokes.length = 0; pocOutlines.length = 0; p.draw(ctx, rc);
   expect(valueAreaStrokes).toHaveLength(1); expect(pocOutlines).toHaveLength(0);
 });
@@ -324,8 +335,10 @@ for (const dpr of [1, 2]) {
     expect(outlines).toHaveLength(1);
     expect(outlines[0]).toMatchObject({ color: '#795a96', width: dpr, dash: [] });
     expectPocMarkers(outlines[0]!.path);
-    expect(outlines[0]!.path.commands[0]!.x).toBe(lines[0]![0]);
-    expect(outlines[0]!.path.commands[2]!.x).toBe(lines[1]![0]);
+    const pocY = rc.priceScale.priceToY(p.stats()[0]!.poc) * dpr;
+    expectPocCellClearance(outlines[0]!.path, rects.filter(([, y, , height]) => Math.abs(y + height / 2 - pocY) <= dpr), dpr);
+    expect(outlines[0]!.path.commands[0]!.x).toBeGreaterThan(lines[0]![0]);
+    expect(outlines[0]!.path.commands[2]!.x).toBeLessThan(lines[1]![0]);
     expect(outlines[0]!.path.commands.every(({ x, y }) => Number.isInteger(x - offset) && Number.isInteger(y - offset))).toBe(true);
   });
 }
@@ -507,7 +520,7 @@ test('POC markers keep two CSS pixels of ink clearance from painted POC cells ac
   }
 });
 
-test('POC marks align with VA guide endpoints through pan and edge clipping',()=>{
+test('POC follows painted cells while VA guide endpoints pan and clip independently',()=>{
   const p=new TerminalFootprint({...DEFAULT_FOOTPRINT_OPTIONS,cellStyle:'profile',displayMode:'volume',widthFactor:.5,showCandle:false,showPoc:true,pocStyle:'outline',showValueArea:true,valueAreaColor:'#ffffff',statsRows:[],tableRows:[]});
   p.setBars([{time:0,rowSize:25,delta:3,cells:[{price:112.5,bidVol:0,askVol:2},{price:87.5,bidVol:0,askVol:1}]}]);
   const lines:number[][]=[],outlines:RecordedPath2D[]=[],fills:number[][]=[];let pending:number[]|null=null;
@@ -518,16 +531,60 @@ test('POC marks align with VA guide endpoints through pan and edge clipping',()=
   expect(lines).toHaveLength(4);expect(outlines).toHaveLength(1);expectPocMarkers(outlines[0]!);
   expect(lines[1][0]-lines[0][0]).toBe(116);expect(lines[3][0]-lines[2][0]).toBe(116);
   expect((lines[1][0]+lines[0][0])/2).toBe(150.5);expect((lines[3][0]+lines[2][0])/2).toBe(150.5);
-  expect(outlines[0]!.commands[0]!.x).toBe(lines[0][0]);expect(outlines[0]!.commands[2]!.x).toBe(lines[1][0]);
+  expect(outlines[0]!.commands[0]!.x).toBe(97.5);expect(outlines[0]!.commands[2]!.x).toBe(202.5);
   lines.length=0;outlines.length=0;fills.length=0;rc.plotWidth=205;p.draw(ctx,rc);
   expect(lines).toHaveLength(4);expect(outlines).toHaveLength(1);
   expect(lines[0][0]).toBe(92.5);expect(lines[1][0]).toBe(205.5);expect(lines[2][0]).toBe(92.5);expect(lines[3][0]).toBe(205.5);
-  expect(outlines[0]!.commands[2]!.x).toBe(lines[1][0]);
-  expect(outlines[0]!.commands[0]!.x).toBe(lines[0][0]);
+  expect(outlines[0]!.commands[0]!.x).toBe(97.5);expect(outlines[0]!.commands[2]!.x).toBe(202.5);
+  lines.length=0;outlines.length=0;fills.length=0;rc.plotWidth=199;p.draw(ctx,rc);
+  expect(outlines[0]!.commands[0]!.x).toBe(97.5);expect(outlines[0]!.commands[2]!.x).toBe(199.5);
   lines.length=0;outlines.length=0;fills.length=0;rc.plotWidth=600;rc.timeScale.indexToX=()=>50;p.draw(ctx,rc);
   expect(lines).toHaveLength(4);expect(outlines).toHaveLength(1);
   expect(lines[0][0]).toBe(.5);expect(lines[1][0]).toBe(108.5);expect(lines[2][0]).toBe(.5);expect(lines[3][0]).toBe(108.5);
-  expect(outlines[0]!.commands[0]!.x).toBe(lines[0][0]);
+  expect(outlines[0]!.commands[0]!.x).toBe(.5);expect(outlines[0]!.commands[2]!.x).toBe(102.5);
+});
+
+for (const dpr of [1, 2]) for (const showValueArea of [false, true]) for (const showCandle of [false, true]) {
+  test(`profile POC tracks asymmetric and zero-side updates with VA ${showValueArea}, candle ${showCandle}, DPR ${dpr}`, () => {
+    const p = new TerminalFootprint({ ...DEFAULT_FOOTPRINT_OPTIONS, cellStyle: 'profile', displayMode: 'bidask', widthFactor: .8,
+      showCandle, showPoc: true, pocStyle: 'outline', showValueArea, statsRows: [], tableRows: [] });
+    const fills: number[][] = [], paths: RecordedPath2D[] = [], guides: number[][] = []; let pending: number[] | null = null;
+    const canvas: any = { globalAlpha: 1, font: '', measureText: () => ({ width: 1 }),
+      roundRect(...args: number[]) { pending = args.slice(0, 4); }, fill() { if (pending) fills.push(pending); pending = null; },
+      stroke(path?: RecordedPath2D) { if (path) paths.push(path); }, moveTo(...args: number[]) { guides.push(args); }, lineTo(...args: number[]) { guides.push(args); } };
+    const ctx = new Proxy(canvas, { get: (target, key) => key in target ? target[key] : () => {} });
+    const rc: any = { dpr, plotWidth: 600, plotHeight: 400, theme: { background: '#090909', axisText: '#cccccc', upColor: '#58a65c', downColor: '#ad5858' },
+      timeScale: { barSpacing: 200, visibleRange: () => ({ from: 0, to: 1 }), indexToX: () => 150 },
+      priceScale: { priceRange: () => ({ min: 50, max: 175 }), priceToY: (price: number) => 600 - price * 3 }, dataLayer: { timeToIndex: () => 0 } };
+    const widths: number[] = []; let firstGuides: number[][] | undefined;
+    for (const [bidVol, askVol] of [[5, 95], [60, 40], [0, 110], [110, 0]]) {
+      p.setBars([{ time: 0, rowSize: 25, delta: askVol - bidVol, cells: [{ price: 150, bidVol: 70, askVol: 0 }, { price: 125, bidVol, askVol }, { price: 100, bidVol: 0, askVol: 50 }] }]);
+      fills.length = 0; paths.length = 0; guides.length = 0; p.draw(ctx, rc);
+      expect(paths).toHaveLength(1); expect(p.stats()[0]!.poc).toBe(125);
+      const pocY = rc.priceScale.priceToY(125) * dpr, cells = fills.filter(([, y, , height]) => Math.abs(y + height / 2 - pocY) <= dpr);
+      expect(cells).toHaveLength(bidVol && askVol ? 2 : 1); expectPocCellClearance(paths[0], cells, dpr);
+      widths.push(paths[0].commands[2].x - paths[0].commands[0].x);
+      if (!firstGuides) firstGuides = guides.map(point => [...point]);
+      else expect(guides.map(point => point[0])).toEqual(firstGuides.map(point => point[0]));
+    }
+    expect(widths[1]).toBeGreaterThan(widths[0]); expect(widths[2]).toBeLessThan(widths[1]); expect(widths[3]).toBe(widths[2]);
+    expect(guides).toHaveLength(showValueArea ? 4 : 0);
+  });
+}
+
+for (const dpr of [1, 2]) test(`zero-side POC does not inherit a preceding row painted on the same pixels at DPR ${dpr}`, () => {
+  const p = new TerminalFootprint({ ...DEFAULT_FOOTPRINT_OPTIONS, cellStyle: 'profile', displayMode: 'bidask', showCandle: false,
+    showPoc: true, pocStyle: 'outline', showValueArea: true, statsRows: [], tableRows: [] });
+  p.setBars([{ time: 0, rowSize: 25, delta: 10, cells: [{ price: 150, bidVol: 20, askVol: 0 }, { price: 125, bidVol: 0, askVol: 30 }] }]);
+  const fills: number[][] = [], paths: RecordedPath2D[] = []; let pending: number[] | null = null;
+  const canvas: any = { globalAlpha: 1, font: '', measureText: () => ({ width: 1 }), roundRect(...args: number[]) { pending = args.slice(0, 4); },
+    fill() { if (pending) fills.push(pending); pending = null; }, stroke(path?: RecordedPath2D) { if (path) paths.push(path); } };
+  const ctx = new Proxy(canvas, { get: (target, key) => key in target ? target[key] : () => {} });
+  const rc: any = { dpr, plotWidth: 600, plotHeight: 400, theme: { background: '#090909', axisText: '#cccccc', upColor: '#58a65c', downColor: '#ad5858' },
+    timeScale: { barSpacing: 200, visibleRange: () => ({ from: 0, to: 1 }), indexToX: () => 150 },
+    priceScale: { priceRange: () => ({ min: 0, max: 200 }), priceToY: (price: number) => 200 - price * .02 }, dataLayer: { timeToIndex: () => 0 } };
+  p.draw(ctx, rc); expect(fills).toHaveLength(2); expect(paths).toHaveLength(1);
+  expectPocCellClearance(paths[0], [fills[1]], dpr);
 });
 
 test('large profile labels do not erase a smaller proportional bid bar', () => {
