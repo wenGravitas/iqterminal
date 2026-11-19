@@ -1,0 +1,11 @@
+# Shared development branch consolidation
+
+All outstanding local work was consolidated into `main`, then used to establish the shared `dev` branch. This includes Trading Foundation R1, adaptive footprint POC bounds, four-sided workspace borders, chart-footer layout stability, net-positioning alignment/labels, tab-render caching, and staging/order-book adjustments.
+
+Historical `perf/native-price-cache-control` changes were already integrated under different commits. Its conflicting versions were superseded by the consolidated implementation; its temporary counterfactual cache-disable experiment was not restored. The bootstrap acknowledgment fix remains integrated with presentation cache injection enabled. Historical `codex/order-walls-r2` code was superseded by the current archive implementation; its remaining frontend parser receipt was retained. Both histories are now ancestors of main rather than pending branches. Archive branch names remain recovery references.
+
+Combined verification: 166 unit-test files passed, 3 skipped; 1,537 tests passed, 1 expected failure and 3 skipped. Typecheck and diagnostic production build passed. Restricted signing service regressions passed 15/15 and Python bridge conformance passed 3/3 without signed venue actions. Four trading browser cases, adaptive POC canvas case, chart-footer stability case, and eight border cases passed (14 total). A temporary browser configuration initially used fixture storage for the wrong origin; its border checks were rerun with correctly scoped storage and all eight passed. Existing build chunk-size advisories remain.
+
+Local client: `/home/daz/workarea/iqterminal` on `dev`, supervised by `iqterminal-dev-staging-client.service`, loopback port 5173. Existing staging tunnel retained. Page and proxied history health returned HTTP 200. The old trading-only client was stopped; no remote service was restarted or deployed. The trading feature worktree is retained as a clean recovery checkout, not the active development location.
+
+Future work follows AGENTS.md: use `dev` in the primary checkout, do not create separate feature branches/worktrees, and merge/push main only when requested. Signed testnet venue acceptance remains separately documented in trading-foundation-r1.md; consolidation does not certify real order acceptance or production trading.
