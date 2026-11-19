@@ -1,0 +1,15 @@
+/* Dockview's always-rendered chart overlays must remain below tab menus. */
+.dv-popover-anchor { z-index: 10000; }
+.workspace-border-toggle { flex: 0 0 20px; width: 20px; height: 24px; padding: 2px; }
+.workspace-border-toggle[hidden] { display: none; }
+.workspace-border-targets { position: fixed; z-index: 9999; pointer-events: none; }
+.workspace-border-targets[hidden] { display: none; }
+.workspace-border-targets > div { position: absolute; display: flex; align-items: center; justify-content: center; background: var(--chrome); border: 1px solid var(--divider); color: var(--text); font-size: 10px; }
+.workspace-border-targets > [data-side=left] { left: 0; top: 24px; bottom: 24px; width: 24px; writing-mode: vertical-rl; }
+.workspace-border-targets > [data-side=right] { right: 0; top: 24px; bottom: 24px; width: 24px; writing-mode: vertical-rl; }
+.workspace-border-targets > [data-side=top] { left: 0; right: 0; top: 0; height: 24px; }
+.workspace-border-targets > [data-side=bottom] { left: 0; right: 0; bottom: 0; height: 24px; }
+.workspace-border-targets[data-active=left] > [data-side=left],
+.workspace-border-targets[data-active=right] > [data-side=right],
+.workspace-border-targets[data-active=top] > [data-side=top],
+.workspace-border-targets[data-active=bottom] > [data-side=bottom] { background: var(--control); border-color: var(--focus); }

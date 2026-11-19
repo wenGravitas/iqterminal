@@ -1,0 +1,53 @@
+{
+  "base": "http://127.0.0.1:5173/market-data",
+  "samples": [
+    {
+      "market": "spot",
+      "round": 0,
+      "state": "live",
+      "cursor": 27707767,
+      "epoch": 1795008123144,
+      "at": 1795008224943,
+      "ageMs": 925,
+      "rows": 160,
+      "reference": "63979.505000000005",
+      "cumulativeVersion": 1
+    },
+    {
+      "market": "spot",
+      "round": 1,
+      "state": "live",
+      "cursor": 27707789,
+      "epoch": 1795008123144,
+      "at": 1795008227144,
+      "ageMs": 795,
+      "rows": 160,
+      "reference": "63979.505000000005",
+      "cumulativeVersion": 1
+    },
+    {
+      "market": "perpetual",
+      "round": 0,
+      "state": "live",
+      "cursor": 31528273,
+      "epoch": 1795008082516,
+      "at": 1795008227887,
+      "ageMs": 1219,
+      "rows": 160,
+      "reference": "63939.45",
+      "cumulativeVersion": 1
+    },
+    {
+      "market": "perpetual",
+      "round": 1,
+      "state": "live",
+      "cursor": 31528296,
+      "epoch": 1795008082516,
+      "at": 1795008230233,
+      "ageMs": 843,
+      "rows": 160,
+      "reference": "63939.45",
+      "cumulativeVersion": 1
+    }
+  ]
+}

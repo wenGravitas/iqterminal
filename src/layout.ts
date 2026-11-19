@@ -1,3 +1,4 @@
+import { validBorderState } from './workspaces/border-state';
 import type { SerializedDockview } from 'dockview-core';
 import { validSeries } from './feed/protocol';
 import { orderBookSettings,migrateOrderBookPanel } from './order-book/settings';
@@ -37,6 +38,7 @@ export function restoreValue(raw:string|null):SerializedDockview|null {
       return null;
     }
     if(charts+comparisons>PANEL_BUDGET||editors>1||tickers>8||watches>1||depthMatrices>8||liquidations>8||trading>1||tradingWidgets>4||journals>1)return null;
+    if(!validBorderState(l))return null;
     return l;
   }catch{return null;}
 }

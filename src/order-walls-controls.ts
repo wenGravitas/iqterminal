@@ -15,6 +15,8 @@ import { instrumentLabel } from './feed/protocol';
 export class OrderWallsControls {
   readonly dialog = document.createElement('dialog');
   readonly notice = document.createElement('div');
+  private noticeText = document.createElement('div');
+  private noticeLines = [document.createElement('span'), document.createElement('span')];
   private form = document.createElement('form');
   private fields = document.createElement('div');
   private inputs = new Map<string, HTMLInputElement | HTMLSelectElement>();
@@ -36,6 +38,9 @@ export class OrderWallsControls {
     this.dialog.className = 'indicator-settings order-walls-settings';
     this.dialog.setAttribute('aria-label', 'Order Walls settings');
     this.notice.className = 'order-walls-notice';
+    this.noticeText.className = 'order-walls-notice-text';
+    this.noticeText.append(...this.noticeLines);
+    this.notice.append(this.noticeText);
     this.notice.setAttribute('role', 'status');
     this.notice.setAttribute('aria-live', 'polite');
     this.resumeHistoryButton.type = 'button';
@@ -196,10 +201,14 @@ export class OrderWallsControls {
       else if (status.valueHistoryLimited || status.episodeHistoryLimited) message = 'Some earlier order history is unavailable.';
       else if (status.provisional) message = 'Order sizes are still updating.';
     }
-    this.notice.replaceChildren(document.createTextNode(message));
-    if (canResumeHistory) this.notice.append(this.resumeHistoryButton);
+    const lines = message.split('\n');
+    this.noticeLines.forEach((line, index) => { const text = lines[index] ?? ''; if (line.textContent !== text) line.textContent = text; });
+    if (canResumeHistory && this.resumeHistoryButton.parentElement !== this.notice) this.notice.append(this.resumeHistoryButton);
+    else if (!canResumeHistory) this.resumeHistoryButton.remove();
     this.notice.title = message+(this.status?.archive?.residentRanges?`\nResident: ${this.status.archive.residentRanges.map(range=>`${archiveTime(range.from)}–${archiveTime(range.to)}`).join(', ')}\nUnloaded: ${this.status.archive.unloadedRanges?.map(range=>`${archiveTime(range.from)}–${archiveTime(range.to)}`).join(', ')||'none'}`:'');
-    this.notice.hidden = !this.noticeAllowed || !message;
+    // Background loading/coverage changes must not resize every chart canvas.
+    // Reserve this two-line slot while the indicator is attached and visible.
+    this.notice.hidden = !this.noticeAllowed;
     if (this.fitButton) this.fitButton.disabled = !this.noticeAllowed || !this.supported || this.current.mode !== 'top-levels' || this.status?.state !== 'live';
   }
 

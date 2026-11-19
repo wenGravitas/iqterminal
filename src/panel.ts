@@ -1,3 +1,4 @@
+import { workspacePanelVisible, onWorkspaceVisibilityChange } from './workspaces/visibility';
 import {pastCandleViewport} from './feed/candle-viewport';
 import {NativeCandleStartupView,NativeCandleVersions,retainNativeViewport} from './feed/native-candle-state';
 import { workspacePanelStorage } from './workspaces/panel-storage';
@@ -1191,7 +1192,7 @@ export class CandlePanel implements IContentRenderer {
     this.chartFooterObserver = new MutationObserver(() => this.syncChartFooterVisibility());
     this.chartFooterObserver.observe(this.chartFooter, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
     this.syncChartFooterVisibility();
-    this.subscriptions.push(params.api.onDidVisibilityChange(() => this.visibility()));
+    this.subscriptions.push(onWorkspaceVisibilityChange(params.api, () => this.visibility()));
     document.addEventListener('visibilitychange', () => this.syncNetPositioning(), { signal: this.abort.signal });
     window.addEventListener(CURRENCY_EVENT, () => { this.cancelIndicatorTooltip(); this.applyFootprintOptions(); this.syncFootprintTotals(); this.syncNetPositioning(); syncCurrencyControl(this.footprintUnits, this.selection.footprintUnits); this.renderActiveIndicators(); this.updateStatus(); this.engine?.refreshCaptionCurrency(); }, { signal: this.abort.signal });
     window.addEventListener(TIMEZONE_EVENT, () => this.cancelIndicatorTooltip(), { signal: this.abort.signal });
@@ -5765,7 +5766,7 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private visibility() {
-    const nextVisible = this.params.api.isVisible;
+    const nextVisible = workspacePanelVisible(this.params.api);
     if (this.visible && !nextVisible) this.engine?.capturePendingView();
     this.visible = nextVisible;
     this.journalBridge?.configure();
@@ -5957,7 +5958,9 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private syncChartFooterVisibility() {
-    const hasVisibleRow = [...this.chartFooter.children].some(child => !(child as HTMLElement).hidden);
+    // The connection/history row keeps its space when its text clears. Retry
+    // and recovery are data events, not requests to resize all indicator panes.
+    const hasVisibleRow = [...this.chartFooter.children].some(child => child === this.statusNode || !(child as HTMLElement).hidden);
     if (this.chartFooter.hidden === hasVisibleRow) this.chartFooter.hidden = !hasVisibleRow;
   }
 

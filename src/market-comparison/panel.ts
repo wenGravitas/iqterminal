@@ -1,3 +1,4 @@
+import { workspacePanelVisible, onWorkspaceVisibilityChange } from '../workspaces/visibility';
 import type { ComparisonHandle, CrosshairMoveEvent, SeriesApi, Chart as OpenAlgoChart, SeriesDataItem, IPrimitive } from 'openalgo-charts';
 import { comparisonController, createChart, epochMsToUtcSeconds } from 'openalgo-charts';
 import type { IDockviewPanelProps, IContentRenderer, DockviewGroupPanel } from 'dockview-core';
@@ -190,10 +191,10 @@ export class MarketComparisonPanel implements IContentRenderer {
         this.chartHost?.invalidate();
       }),
     ].map(dispose => ({ dispose })));
-    this.listeners.push(params.api.onDidVisibilityChange(() => this.setDockVisible(params.api.isVisible)),
+    this.listeners.push(onWorkspaceVisibilityChange(params.api, () => this.setDockVisible(workspacePanelVisible(params.api))),
       params.api.onDidGroupChange(() => this.syncMinimumWidth()),
       params.api.onDidDimensionsChange(() => { this.chartHost?.invalidate(); }));
-    this.setDockVisible(params.api.isVisible);
+    this.setDockVisible(workspacePanelVisible(params.api));
     this.syncControls();
     this.syncSubscription();
     this.refresh();

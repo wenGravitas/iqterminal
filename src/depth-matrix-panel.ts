@@ -1,3 +1,4 @@
+import { workspacePanelVisible, onWorkspaceVisibilityChange } from './workspaces/visibility';
 import {orderBookSettings,serializeOrderBookSettings,ORDER_BOOK_GROUPS,type OrderBookSettings} from './order-book/settings';
 import {CompactOrderBook} from './order-book/compact';
 import type {OrderBookProjection} from './order-book/projection';
@@ -114,9 +115,9 @@ export class OrderBookPanel implements IContentRenderer {
     params.api.setTitle('Order Book');
     this.syncSettingsControls();
     this.renderSources();
-    this.dockVisible = params.api.isVisible;
-    this.listeners.push(params.api.onDidVisibilityChange(() => {
-      this.dockVisible = params.api.isVisible; this.updateVisibility();
+    this.dockVisible = workspacePanelVisible(params.api);
+    this.listeners.push(onWorkspaceVisibilityChange(params.api, () => {
+      this.dockVisible = workspacePanelVisible(params.api); this.updateVisibility();
     }), params.api.onDidDimensionsChange(() => { this.markVisibleRows(); this.draw(); }));
     window.addEventListener(CURRENCY_EVENT, () => { this.syncSettingsControls(); this.markVisibleRows(); this.draw(); }, { signal: this.abort.signal });
     window.addEventListener('basis-theme-change', () => { this.markVisibleRows(); this.draw(); }, { signal: this.abort.signal });

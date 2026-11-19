@@ -17,7 +17,7 @@ export function restoredHistoryViewport(selection:RestoreFeedSelection){
 export function startVisibleChartFeeds(feed:Pick<FeedClient,'subscribe'|'subscribeFootprint'|'subscribeOrderWalls'>&Partial<Pick<FeedClient,'requestFootprintViewport'|'requestCandleViewport'>>,layout:SerializedDockview,normalize:(value:unknown)=>RestoreFeedSelection,preloadHistory=false){
  const scope=`restore-${++restoreSequence}`;
  const visible=new Set<string>(),releases:Array<()=>void>=[];
- const visit=(node:any)=>{if(node?.type==='leaf'){const id=node.data?.activeView??node.data?.views?.[0];if(typeof id==='string')visible.add(id);}else for(const child of node?.data??[])visit(child);};visit(layout.grid.root);
+ const visit=(node:any)=>{if(node?.type==='leaf'){const id=node.data?.activeView??node.data?.views?.[0];if(typeof id==='string')visible.add(id);}else for(const child of node?.data??[])visit(child);};visit(layout.grid.root);for(const edge of Object.values(layout.edgeGroups??{})){if(edge?.visible&&!edge.collapsed&&edge.group)visit({type:'leaf',data:edge.group});}
  try{for(const id of [...visible].slice(0,8)){
   const panel=layout.panels[id];if(panel?.contentComponent!=='candle')continue;
   const selection=normalize(panel.params);if(selection.venue!=='binance')continue;
@@ -50,5 +50,5 @@ export function restoreFeedPlan(layout:SerializedDockview,normalize:(value:unkno
   const s=normalize(panel.params);if(s.venue!=='binance')return;keys.push(keyOf(s));
   if(s.type==='footprint'||s.indicators.some(i=>i.definitionId==='native.footprint-totals'&&i.visible))keys.push(footprintKeyOf(s,s.rowPrice)+':'+JSON.stringify(s.historyViewport??null));
   const wall=s.indicators.find(i=>i.definitionId==='native.order-walls'&&i.visible);if(wall)keys.push('walls:'+JSON.stringify([s.market,orderWallsSettings(wall.settings),restoredHistoryViewport(s)??null]));
- }else for(const child of node?.data??[])visit(child);};visit(layout.grid.root);return keys.sort().join('|');
+ }else for(const child of node?.data??[])visit(child);};visit(layout.grid.root);for(const edge of Object.values(layout.edgeGroups??{})){if(edge?.visible&&!edge.collapsed&&edge.group)visit({type:'leaf',data:edge.group});}return keys.sort().join('|');
 }

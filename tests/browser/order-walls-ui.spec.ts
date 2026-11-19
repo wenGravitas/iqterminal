@@ -361,3 +361,51 @@ test('current snapshot tooltip reports one selected state without inventing epis
   await expect(panel.locator('.heatmap-readout')).toHaveText(result.text);
   await page.screenshot({path:`${process.env.IQ_HISTORY_CAPTURE_DIR??'artifacts/pi-history-r1/verified-wall-revisions-r1'}/current-snapshot-ui-fixture.png`});
 });
+
+test('background wall and connection status changes retain every pane canvas size', async ({page}) => {
+  test.setTimeout(60_000);
+  await page.setViewportSize({width:1366,height:900});
+  await page.goto('/?fixture=1&fixtureTime=now');
+  await page.waitForFunction(() => (window as any).__terminal?.stats().panels.every((p:any) => p.bars >= 1000));
+  await page.evaluate(() => {
+    const t=(window as any).__terminal;
+    t.feed.subscribeOrderWalls=()=>()=>{};
+    t.feed.subscribeFootprint=()=>()=>{};
+  });
+  const panel=page.locator('.candle-panel').first();
+  await addIndicator(panel,'Order Walls');
+  await addIndicator(panel,'Footprint Totals');
+  for (const width of [1366,760]) {
+    await page.setViewportSize({width,height:900});
+    await expect.poll(() => page.evaluate(() => {
+      const t=(window as any).__terminal,p=[...t.panels.values()][0] as any;
+      const workspace=document.querySelector('#workspace')!;
+      return t.dock.width === workspace.clientWidth && t.dock.height === workspace.clientHeight
+        && Math.abs(p.engine.chart.panes().reduce((sum:number,pane:any)=>sum+pane.base.mediaHeight,0)-p.chart.clientHeight)<1;
+    })).toBe(true);
+    const samples=await page.evaluate(async () => {
+      const p=[...(window as any).__terminal.panels.values()][0] as any;
+      const frame=()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve())));
+      const sizes=()=>p.engine.chart.panes().map((pane:any)=>[pane.base.element.width,pane.base.element.height,pane.top.element.width,pane.top.element.height]);
+      const results=[];
+      const archive={profileId:'geometry-fixture',market:p.selection.market,from:1800000000000,to:1800000060000,gaps:[],requestedBandPercent:10,profileBandPercent:10,requestedTopN:8,exact:true};
+      for (const state of ['loading','partial','ready','partial','ready','loading']) {
+        p.orderWallsControls.setStatus({state:'live',lastConfirmedAt:1800000050000,archive:{...archive,state,requestComplete:state==='ready',retryable:state==='partial',reason:state==='partial'?'A long bounded history status '.repeat(25):undefined}});
+        p.status={...p.status,state:state==='partial'?'stale':'live',nativeHistory:undefined};
+        p.footprintStatus={...p.footprintStatus,state:'live',history:undefined};
+        p.updateStatus();
+        await frame();
+        results.push({sizes:sizes(),noticeHeight:p.orderWallsControls.notice.getBoundingClientRect().height,retry:!!p.orderWallsControls.notice.querySelector('button'),title:p.orderWallsControls.notice.title});
+      }
+      return results;
+    });
+    expect(samples[0]!.sizes.length).toBeGreaterThan(1);
+    for(const sample of samples) {
+      expect(sample.sizes).toEqual(samples[0]!.sizes);
+      expect(sample.noticeHeight).toBe(24);
+    }
+    expect(samples[1]!.retry).toBe(true);
+    expect(samples[2]!.retry).toBe(false);
+    expect(samples[1]!.title).toContain('A long bounded history status');
+  }
+});

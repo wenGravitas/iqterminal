@@ -39,7 +39,7 @@ Deterministic fixture selection is explicit (`?fixture=1` in development/diagnos
 
 Panel diagnostics expose bounded synchronous render durations and input-to-render-completion samples. They do **not** measure compositor presentation or certify 60fps. Foreground Pi acceptance requires approximately 100 visible rows, two live books, alone and alongside Single: p95 synchronous paint ≤8ms and p95 interaction-to-paint ≤50ms, plus initial usable render, book age, long tasks, memory trend and request counts. Headless fixtures and captured checkpoints are separate evidence.
 
-No production merge or deployment is included. Existing shared staging servers require the companion optional cumulative endpoint. The isolated read-only candidate passed live UI checks; see the handoff for its scope and measured headless limitations. The repository currently refuses headed test browsers because desktop isolation is unverified; resolve that operational gate before foreground Pi acceptance.
+The initial isolated read-only candidate passed live UI checks. The merged backend is now deployed to the normal staging endpoint; see [deployment verification](order-book-staging-deployment.md). Earlier candidate results remain historical evidence. The repository currently refuses headed test browsers because desktop isolation is unverified; resolve that operational gate before foreground Pi acceptance.
 
 ## Follow-ups
 
@@ -47,6 +47,6 @@ Multi-venue adapters (including venue-specific quantity normalization and covera
 
 Reference helpers were adapted from liquiditymapperfast at `6126de1cf249df9ed19a598d19939f39dd4301ba`; MIT attribution is in the dependency notices and public licenses. The reference repository contained no pinned Compact screenshot, so screenshot parity remains unverified.
 
-Deployment order: deploy and verify the companion backend before this frontend. Both modes share the cumulative-enabled subscription once a reference is pinned. An older backend rejects these parameters (verified HTTP 400 on the current staging route); the client marks the request failure rather than silently substituting unproven prefixes.
+Deployment order: deploy and verify the companion backend before this frontend. Both modes share the cumulative-enabled subscription once a reference is pinned. An older backend rejects these parameters; the client marks the request failure rather than silently substituting unproven prefixes.
 
-For the isolated review adapter, set `VITE_DEPTH_MATRIX_API_URL=http://127.0.0.1:18940` while leaving `VITE_CURRENT_API_URL=http://127.0.0.1:18781` on the normal staging tunnel. The adapter serves only Depth Matrix snapshots; routing all current requests through it breaks Order Walls preparation and live archive requests. Set `VITE_HISTORY_TILES=1` for staging prepared history; the legacy archive endpoint rejects ranges longer than seven days.
+The normal staging current lane now serves Order Book through `/market-data/v1/depth-matrix` → local port 18781 → staging port 18780. No Order Book-specific target or adapter is required. Keep `VITE_HISTORY_TILES=1` for staging prepared history; the legacy archive endpoint rejects ranges longer than seven days. See `docs/order-book-staging-deployment.md` for the deployed build and verification.

@@ -5,10 +5,16 @@ import { canonicalSeries, instrumentLabel, instrumentOf, marketOf } from './feed
 export class CompactChartTab extends DefaultTab {
   override init(params: GroupPanelPartInitParameters) {
     super.init(params);
+    let renderedKey: string | undefined;
     const render = () => {
       const content = this.element.querySelector<HTMLElement>('.dv-default-tab-content')!;
       const series = params.api.component === 'candle' ? canonicalSeries(params.api.getParameters()) : null;
       const position = params.api.group.panels.findIndex(panel => panel.id === params.api.id) + 1;
+      const key = JSON.stringify([position, params.api.title, series && [series.venue, marketOf(series), instrumentOf(series).native, series.interval]]);
+      // Layout events also fire throughout splitter drags. Keep tab DOM and
+      // venue images resident unless their displayed content actually changed.
+      if (key === renderedKey) return;
+      renderedKey = key;
       const number = document.createElement('span'); number.className = 'chart-tab-number'; number.textContent = position > 0 ? String(position) : '';
       number.setAttribute('aria-hidden', 'true');
       const label = document.createElement('span'); label.className = 'chart-tab-ticker';

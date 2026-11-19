@@ -1,0 +1,53 @@
+{
+  "base": "http://127.0.0.1:18780",
+  "samples": [
+    {
+      "market": "spot",
+      "round": 0,
+      "state": "live",
+      "cursor": 27707080,
+      "epoch": 1795008123144,
+      "at": 1795008156343,
+      "ageMs": 526,
+      "rows": 160,
+      "reference": "63980.005000000005",
+      "cumulativeVersion": 1
+    },
+    {
+      "market": "spot",
+      "round": 1,
+      "state": "live",
+      "cursor": 27707096,
+      "epoch": 1795008123144,
+      "at": 1795008157942,
+      "ageMs": 466,
+      "rows": 160,
+      "reference": "63980.005000000005",
+      "cumulativeVersion": 1
+    },
+    {
+      "market": "perpetual",
+      "round": 0,
+      "state": "live",
+      "cursor": 31527585,
+      "epoch": 1795008082516,
+      "at": 1795008157915,
+      "ageMs": 538,
+      "rows": 160,
+      "reference": "63951.25",
+      "cumulativeVersion": 1
+    },
+    {
+      "market": "perpetual",
+      "round": 1,
+      "state": "live",
+      "cursor": 31527600,
+      "epoch": 1795008082516,
+      "at": 1795008159445,
+      "ageMs": 541,
+      "rows": 160,
+      "reference": "63951.25",
+      "cumulativeVersion": 1
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+# Idle chart canvas resets from status layout
+
+Background history/connection updates could resize the complete chart without user input. The Order Walls notice wrapped long status text and grew when its Resume history button appeared. The ordinary status row alternated between absent, 12px text and a 20px Retry button. Each footer-height change reached the chart ResizeObserver, resized/cleared all pane canvases, and refitted Footprint Totals.
+
+Order Walls now reserves two 12px lines while attached and visible, with independently ellipsized text and a separate retry control. The title retains the complete message and resident/unloaded ranges. The connection/history status row reserves 20px once it resides below a populated chart; clearing its text hides its content without collapsing the row. Removing or hiding an indicator can still intentionally alter layout.
+
+A 30-second headless live staging sample with Order Walls and Footprint Totals recorded seven container resizes before the change and filled a bounded 100-entry canvas-size-assignment trace. The corresponding after sample recorded zero container resizes and zero canvas-size assignments. Both retained live candle, wall and pane updates. Raw traces: `artifacts/chart-footer-stability/{before,after}.json`. These observations establish layout stability for the sampled workload, not foreground FPS or uninterrupted feed reliability.
+
+The regression in `tests/browser/order-walls-ui.spec.ts` cycles loading/partial/ready history, long messages, Resume history and connection Retry at desktop and narrow widths, checking all panes' base/overlay bitmap dimensions. Typecheck and production build pass. Run fixture browser checks against an explicit diagnostic build or the development server; a normal production build intentionally does not expose the test diagnostics.
+
+Validation completed: the scoped history-status and Resume history checks passed, and the new desktop/narrow pane-size regression passed after explicitly waiting for Dockview's intentional viewport resize. The initial fixture run against a nondiagnostic production preview could not access test diagnostics; subsequent fixture checks used the development server with explicit fixture selection. The running client at port 5173 contains the fix. No backend changes or Git pushes were needed.

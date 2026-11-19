@@ -1,3 +1,4 @@
+import { workspacePanelVisible, onWorkspaceVisibilityChange } from '../workspaces/visibility';
 import { currentTheme, isLightTheme, THEME_EVENT } from '../theme';
 import type { IContentRenderer, IDockviewPanelProps } from 'dockview-core';
 import type { FeedClient } from '../feed/client';
@@ -151,7 +152,7 @@ export class LiquidationTickerPanel implements IContentRenderer {
   init(props: IDockviewPanelProps) {
     this.props = props;
     this.settings = liquidationSettings(props.params);
-    this.listeners.push(props.api.onDidVisibilityChange(event => { this.visible = event.isVisible; if (this.visible) this.scheduler.invalidate(this); else { this.tooltipDwell.clear(); this.hoverCard.hidden = true; } }), props.api.onDidDimensionsChange(() => this.scheduler.invalidate(this)));
+    this.listeners.push(onWorkspaceVisibilityChange(props.api, () => { this.visible = workspacePanelVisible(props.api); if (this.visible) this.scheduler.invalidate(this); else { this.tooltipDwell.clear(); this.hoverCard.hidden = true; } }), props.api.onDidDimensionsChange(() => this.scheduler.invalidate(this)));
     this.syncColumns(); this.renderToolbar();
     this.release = this.feed.subscribeLiquidations(props.api.id, this.request(), batch => {
       if (this.dead) return;

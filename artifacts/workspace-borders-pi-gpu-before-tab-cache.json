@@ -1,0 +1,33 @@
+{
+  "environment": "Raspberry Pi 5 Chromium headless; fixture data; baseline is equivalent central pane resize",
+  "renderer": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)",
+  "idle": {
+    "p50": 16.699999999999818,
+    "p95": 16.799999999999727,
+    "max": 16.800000000000182,
+    "chartFrameIntervals": [
+      183.4000000000001
+    ],
+    "longTasks": [
+      67
+    ]
+  },
+  "baseline": {
+    "p50": 33.30000000000018,
+    "p95": 33.400000000000546,
+    "max": 50.100000000000364,
+    "chartFrameIntervals": [],
+    "longTasks": []
+  },
+  "resizing": {
+    "p50": 33.30000000000109,
+    "p95": 66.69999999999982,
+    "max": 116.59999999999945,
+    "chartFrameIntervals": [],
+    "longTasks": [
+      51,
+      50,
+      59
+    ]
+  }
+}

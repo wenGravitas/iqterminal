@@ -1,0 +1,29 @@
+{
+  "changed": [
+    "/iqterminal-history-api",
+    "/iqterminal-server",
+    "/iqterminal-spot-server"
+  ],
+  "protectedUnchanged": 34,
+  "services": [
+    {
+      "name": "/iqterminal-history-api",
+      "image": "sha256:29d8ac001398f7920862981886a45c8a0ca28803cdbdc7220308fb3df4d5a89d",
+      "revision": "9b8cc2cafb349d6ecd29a0022e7246ec95ebc3aa",
+      "health": "healthy"
+    },
+    {
+      "name": "/iqterminal-server",
+      "image": "sha256:29d8ac001398f7920862981886a45c8a0ca28803cdbdc7220308fb3df4d5a89d",
+      "revision": "9b8cc2cafb349d6ecd29a0022e7246ec95ebc3aa",
+      "health": "healthy"
+    },
+    {
+      "name": "/iqterminal-spot-server",
+      "image": "sha256:29d8ac001398f7920862981886a45c8a0ca28803cdbdc7220308fb3df4d5a89d",
+      "revision": "9b8cc2cafb349d6ecd29a0022e7246ec95ebc3aa",
+      "health": "healthy"
+    }
+  ],
+  "historyBuild": "9b8cc2cafb349d6ecd29a0022e7246ec95ebc3aa"
+}

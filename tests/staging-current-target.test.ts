@@ -35,9 +35,8 @@ test('rejects half-configured prepared wall routing',async()=>{
  vi.stubEnv('VITE_WALL_HISTORY_API_URL','http://127.0.0.1:18882');
  await expect(loadConfigFromFile({command:'serve',mode:'staging'},resolve('vite.config.ts'))).rejects.toThrow('configured together');
 });
-test('review depth adapter does not capture wall or live routes',async()=>{
- vi.stubEnv('VITE_CURRENT_API_URL','http://127.0.0.1:18781');vi.stubEnv('VITE_DEPTH_MATRIX_API_URL','http://127.0.0.1:18940');
+test('Order Book uses the normal current lane alongside wall and live routes',async()=>{
+ vi.stubEnv('VITE_CURRENT_API_URL','http://127.0.0.1:18781');
  const loaded=await loadConfigFromFile({command:'serve',mode:'staging'},resolve('vite.config.ts'));const p=loaded!.config.server!.proxy!;
- expect((p['/market-data/v1/depth-matrix'] as ProxyOptions).target).toBe('http://127.0.0.1:18940');
- for(const path of ['/market-data/v1/stream','/market-data/v1/order-walls/archive/current','/market-data/v2/history/walls/reader'])expect((p[path] as ProxyOptions).target).toBe('http://127.0.0.1:18781');
+ for(const path of ['/market-data/v1/depth-matrix','/market-data/v1/stream','/market-data/v1/order-walls/archive/current','/market-data/v2/history/walls/reader'])expect((p[path] as ProxyOptions).target).toBe('http://127.0.0.1:18781');
 });

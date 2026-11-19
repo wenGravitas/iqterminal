@@ -1,3 +1,5 @@
+import './workspaces/borders.css';
+import { borderMenu, installBorders, BorderHeaderAction } from './workspaces/borders';
 import {startVisibleChartFeeds} from './feed/restore-bootstrap';
 import { WorkspaceManager, browserWorkspaceStorage } from './workspaces/manager';
 import { bindWorkspacePanelStorage } from './workspaces/panel-storage';
@@ -213,6 +215,8 @@ function openJournal(options?: JournalOpenOptions) {
 dock = createDockview(root, {
   theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: dockviewColorScheme(), gap: 4, dndTabIndicator: 'line' },
   disableFloatingGroups: true,
+  dndEdges: { activationSize: { type: 'pixels', value: 24 }, size: { type: 'pixels', value: 24 } },
+  createRightHeaderActionComponent: group => new BorderHeaderAction(group),
   // Avoid native drag-image capture stalls on Linux Chromium. Dockview keeps
   // tab/group docking and hit testing on its supported pointer backend.
   dndStrategy: 'pointer',
@@ -272,8 +276,10 @@ dock = createDockview(root, {
     element.append(text, button);
     return { element, init() {}, dispose() { button.onclick = null; } };
   },
-  getTabContextMenuItems: () => ['close', 'closeOthers', 'closeAll'],
+  getTabContextMenuItems: ({ panel }) => [...borderMenu(dock, panel), 'separator', 'close', 'closeOthers', 'closeAll'],
 });
+
+const workspaceBorders = installBorders(dock, root);
 
 workspaceManager = new WorkspaceManager(browserWorkspaceStorage(), {
   capture: () => {
@@ -369,6 +375,7 @@ function dispose() {
   releaseTradingStatus();
   marketPulse.dispose();
   listeners.forEach(listener => listener.dispose());
+  workspaceBorders.dispose();
   dock.dispose();
   releaseWorkspaceStorage();
   scheduler.dispose(); notifications.dispose();

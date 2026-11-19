@@ -1,0 +1,1147 @@
+{
+  "invalidations": {
+    "    at Zo._invalidateWrite (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11417:14)\n    at Zo._updateBar (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11439:378)\n    at Object.update (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11362:27)\n    at OpenAlgoCandleChart.applyPatch (http://127.0.0.1:5173/src/chart/openalgo.ts:1385:16)": 96,
+    "    at Object.requestUpdate (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11637:15)\n    at OrderWallsPrimitive.setSnapshot (http://127.0.0.1:5173/src/chart/order-walls.ts:254:14)\n    at OpenAlgoCandleChart.setOrderWallSnapshot (http://127.0.0.1:5173/src/chart/openalgo.ts:985:20)\n    at http://127.0.0.1:5173/src/panel.ts:6994:70": 1,
+    "    at Object.requestUpdate (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11637:15)\n    at RetainedWallRenderer.invalidate (http://127.0.0.1:5173/src/chart/order-walls.ts:1392:103)\n    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:384:29)\n    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)": 8,
+    "    at Object.requestUpdate (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11637:15)\n    at FootprintTotalsPane.setAnalysisSummaries (http://127.0.0.1:5173/src/chart/footprint-totals.ts:157:14)\n    at OpenAlgoCandleChart.applyFootprintAnalysisSummaries (http://127.0.0.1:5173/src/chart/openalgo.ts:848:73)\n    at OpenAlgoCandleChart.setFootprintAnalysisSummaries (http://127.0.0.1:5173/src/chart/openalgo.ts:844:8)": 51,
+    "    at Object.requestUpdate (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11637:15)\n    at FootprintTotalsPane.setStats (http://127.0.0.1:5173/src/chart/footprint-totals.ts:233:14)\n    at OpenAlgoCandleChart.refreshVisibleFootprint (http://127.0.0.1:5173/src/chart/openalgo.ts:1525:73)\n    at footprintRefresh (http://127.0.0.1:5173/src/chart/openalgo.ts:214:32)": 36,
+    "    at Object.requestUpdate (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11637:15)\n    at OrderWallsPrimitive.patch (http://127.0.0.1:5173/src/chart/order-walls.ts:300:14)\n    at OpenAlgoCandleChart.patchOrderWalls (http://127.0.0.1:5173/src/chart/openalgo.ts:1029:20)\n    at http://127.0.0.1:5173/src/panel.ts:6994:142": 48,
+    "    at Object.requestUpdate (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11637:15)\n    at CandleElapsedTimer.tick (http://127.0.0.1:5173/src/chart/candle-elapsed-timer.ts:51:14)\n    at OpenAlgoCandleChart.tickCandleTimer (http://127.0.0.1:5173/src/chart/openalgo.ts:148:40)\n    at http://127.0.0.1:5173/src/panel.ts:1637:18": 30,
+    "    at ma.applySize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:13748:184)\n    at ResizeObserver.<anonymous> (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3745:21)": 7,
+    "    at ma.setPaneWeight (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:13758:102)\n    at OpenAlgoCandleChart.fitFootprintTotalsPane (http://127.0.0.1:5173/src/chart/openalgo.ts:799:15)\n    at http://127.0.0.1:5173/src/chart/openalgo.ts:777:64": 7,
+    "    at Zo._invalidateWrite (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11414:78)\n    at Zo._updateBar (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11439:378)\n    at Object.update (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11362:27)\n    at OpenAlgoCandleChart.applyPatch (http://127.0.0.1:5173/src/chart/openalgo.ts:1385:16)": 1
+  },
+  "resizes": [
+    {
+      "width": 1516,
+      "height": 840
+    },
+    {
+      "width": 1516,
+      "height": 848
+    },
+    {
+      "width": 1516,
+      "height": 860
+    },
+    {
+      "width": 1516,
+      "height": 852
+    },
+    {
+      "width": 1516,
+      "height": 860
+    },
+    {
+      "width": 1516,
+      "height": 852
+    },
+    {
+      "width": 1516,
+      "height": 860
+    }
+  ],
+  "canvasSizes": [
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 748,
+      "value": 737,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 748,
+      "value": 737,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 104,
+      "value": 103,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 104,
+      "value": 103,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1436,
+      "value": 1436,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:209:22)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 728,
+      "value": 717,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:210:23)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 737,
+      "value": 736,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 737,
+      "value": 736,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 103,
+      "value": 104,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 103,
+      "value": 104,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1436,
+      "value": 1436,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:209:22)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 717,
+      "value": 716,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:210:23)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 736,
+      "value": 743,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 736,
+      "value": 743,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 104,
+      "value": 105,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 104,
+      "value": 105,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1436,
+      "value": 1436,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:209:22)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 716,
+      "value": 723,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:210:23)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 743,
+      "value": 744,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 743,
+      "value": 744,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 105,
+      "value": 104,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 105,
+      "value": 104,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1436,
+      "value": 1436,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:209:22)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 723,
+      "value": 724,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:210:23)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 744,
+      "value": 755,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 744,
+      "value": 755,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 104,
+      "value": 105,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 104,
+      "value": 105,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1436,
+      "value": 1436,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:209:22)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 724,
+      "value": 735,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:210:23)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 755,
+      "value": 756,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 755,
+      "value": 756,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 105,
+      "value": 104,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 105,
+      "value": 104,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1436,
+      "value": 1436,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:209:22)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 735,
+      "value": 736,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:210:23)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 756,
+      "value": 749,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 756,
+      "value": 749,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 104,
+      "value": 103,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 104,
+      "value": 103,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1436,
+      "value": 1436,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:209:22)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 736,
+      "value": 729,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:210:23)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 749,
+      "value": 748,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 749,
+      "value": 748,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 103,
+      "value": 104,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 103,
+      "value": 104,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1436,
+      "value": 1436,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:209:22)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 729,
+      "value": 728,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:210:23)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 748,
+      "value": 755,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 748,
+      "value": 755,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 104,
+      "value": 105,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 104,
+      "value": 105,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1436,
+      "value": 1436,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:209:22)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 728,
+      "value": 735,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:210:23)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 755,
+      "value": 756,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 755,
+      "value": 756,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 105,
+      "value": 104,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:48)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1516,
+      "value": 1516,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:22)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 105,
+      "value": 104,
+      "stack": [
+        "    at d.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:180:96)",
+        "    at Bi.resize (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:3141:74)",
+        "    at http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11062:155",
+        "    at Array.forEach (<anonymous>)"
+      ]
+    },
+    {
+      "key": "width",
+      "old": 1436,
+      "value": 1436,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:209:22)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    },
+    {
+      "key": "height",
+      "old": 735,
+      "value": 736,
+      "stack": [
+        "    at WallGpuDevice.begin (http://127.0.0.1:5173/src/chart/wall-gpu-resources.ts:210:23)",
+        "    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:343:15)",
+        "    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)",
+        "    at OrderWallsPrimitive.draw (http://127.0.0.1:5173/src/chart/order-walls.ts:485:12)"
+      ]
+    }
+  ],
+  "calls": {}
+}

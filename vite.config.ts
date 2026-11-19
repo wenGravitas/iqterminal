@@ -10,8 +10,6 @@ export default defineConfig(({ mode }) => {
   if(watchTarget){const target=new URL(watchTarget);if(target.protocol!=='http:'||!['127.0.0.1','localhost'].includes(target.hostname)||target.username||target.password||target.search||target.hash||target.pathname!=='/')throw Error('Watch development target must be an unauthenticated loopback HTTP origin');}
   const currentTarget=process.env.VITE_CURRENT_API_URL??'http://127.0.0.1:18781';
   {const target=new URL(currentTarget);if(target.protocol!=='http:'||!['127.0.0.1','localhost'].includes(target.hostname)||target.username||target.password||target.search||target.hash||target.pathname!=='/')throw Error('Current development target must be an unauthenticated loopback HTTP origin');}
-  const depthMatrixTarget=process.env.VITE_DEPTH_MATRIX_API_URL??currentTarget;
-  {const target=new URL(depthMatrixTarget);if(target.protocol!=='http:'||!['127.0.0.1','localhost'].includes(target.hostname)||target.username||target.password||target.search||target.hash||target.pathname!=='/')throw Error('Depth Matrix development target must be an unauthenticated loopback HTTP origin');}
   const historyTarget=process.env.VITE_HISTORY_API_URL;
   if(historyTarget){const target=new URL(historyTarget);if(target.protocol!=='http:'||!['127.0.0.1','localhost'].includes(target.hostname)||target.username||target.password||target.search||target.hash||target.pathname!=='/')throw Error('History development target must be an unauthenticated loopback HTTP origin');}
   const wallHistoryTarget=process.env.VITE_WALL_HISTORY_API_URL,wallControlTarget=process.env.VITE_WALL_CONTROL_API_URL;
@@ -39,7 +37,7 @@ export default defineConfig(({ mode }) => {
     '/market-data/v1/order-walls/archive/current': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v1/effort-result': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v1/health': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/depth-matrix': { target: depthMatrixTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v1/depth-matrix': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
     // Candle/Footprint snapshots are history responses. Keep their transfers
     // off the live SSH TCP connection so they cannot delay stream heartbeats.
     '/market-data/v1/footprints': { target: historyTarget??'http://127.0.0.1:18780', agent:historyAgent, configure:observeStagingProxy, proxyTimeout:60000, rewrite: path => path.replace(/^\/market-data/, '') },

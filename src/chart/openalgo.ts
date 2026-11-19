@@ -400,7 +400,7 @@ export class OpenAlgoCandleChart {
       const primitive = new NetPositioningPane(id,(x,spacing,dpr)=>{
         if(this.mode==='footprint'){const width=footprintColumn(this.footprintOptions,spacing).column;return {left:x-width/2,width};}
         const g=candleGeometry(x,spacing,dpr);return {left:g.bodyX/dpr,width:g.bodyW/dpr};
-      });
+      },this.chart.dataLayer);
       const series = this.chart.addSeries('histogram', { paneIndex, priceScaleId: 'right', style: { visible: false } });
       series.priceScale().setOptions({ minMove: 0, minPrecision: 6 });
       primitive.setPriceScale(series.priceScale());

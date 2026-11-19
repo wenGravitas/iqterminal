@@ -239,7 +239,7 @@ it.each([1, 2])('places signed amount glyphs outside complete stacks at DPR %s',
   }
 });
 
-it.each([1, 2])('keeps narrow three-digit labels visible at clipped pane edges without overlaps at DPR %s', dpr => {
+it.each([1, 2])('keeps complete three-digit labels visible when their bars have room at DPR %s', dpr => {
   for (const side of ['longs', 'shorts'] as const) {
     const pane = new NetPositioningPane(`narrow-${side}`);
     pane.setSettings('price-oi', ['binance'], 60_000, 'stacked', 'auto', side === 'longs', side === 'shorts');
@@ -254,7 +254,7 @@ it.each([1, 2])('keeps narrow three-digit labels visible at clipped pane edges w
       measureText: () => ({ width: 26 * dpr, actualBoundingBoxAscent: 9 * dpr, actualBoundingBoxDescent: 3 * dpr }),
       fillText(this: { fillStyle: string }, text: string, x: number, y: number) { if (/^\d+$/.test(text)) labels.push({ text, x, y, color: this.fillStyle }); },
     } as unknown as CanvasRenderingContext2D;
-    pane.draw(ctx, { dpr, plotWidth: 180, plotHeight: 150, timeScale: { visibleRange: () => ({ from: 0, to: 2 }), barSpacing: 32, indexToX: (i: number) => 50 + i * 32 },
+    pane.draw(ctx, { dpr, plotWidth: 180, plotHeight: 150, timeScale: { visibleRange: () => ({ from: 0, to: 2 }), barSpacing: 40, indexToX: (i: number) => 50 + i * 40 },
       priceScale: { priceToY: (value: number) => 35 - value * .2 }, theme: { axisText: '#aaa', background: '#090909' } } as any);
     expect(labels.map(label => label.text).sort()).toEqual(['123', '456']);
     expect(labels.every(label => label.x >= 0 && label.x <= 180 * dpr)).toBe(true);
@@ -272,5 +272,65 @@ it.each([1,2])('uses the host column geometry without a 64px cap at DPR %s',dpr=
  for(const spacing of [80,160,300]){
   pane.draw(ctx,{dpr,plotWidth:500,plotHeight:300,timeScale:{visibleRange:()=>({from:0,to:1}),barSpacing:spacing,indexToX:()=>250},priceScale:{priceToY:(v:number)=>200-v},theme:{}} as any);
   const g=(pane as any).geometry[0];expect(g.left).toBeCloseTo(Math.round((250-spacing*.76/2)*dpr)/dpr);expect(g.right-g.left).toBeCloseTo((Math.round((250+spacing*.76/2)*dpr)-Math.round((250-spacing*.76/2)*dpr))/dpr);
+ }
+});
+
+
+it.each([1, 2])('shows a complete amount or nothing as its column compresses at DPR %s', dpr => {
+  for (const display of ['stacked', 'grouped'] as const) {
+    const pane = new NetPositioningPane('complete-amount', (x, spacing) => ({left:x-spacing/2,width:spacing}));
+    pane.setSettings('price-oi', ['binance'], 60_000, display, 'auto', true, true);
+    pane.setHostSnapshot([{t:0,closed:true}]);
+    pane.setSnapshot([{timeMs:0,venues:{binance:venueValue('binance',250)}}]);
+    for (const spacing of [40,26,24,16,8,40]) {
+      const amounts:string[]=[];
+      const ctx:any={save(){},restore(){},beginPath(){},rect(){},clip(){},moveTo(){},lineTo(){},stroke(){},fillRect(){},strokeRect(){},
+        measureText:()=>({width:24*dpr,actualBoundingBoxLeft:12*dpr,actualBoundingBoxRight:12*dpr,actualBoundingBoxAscent:9*dpr,actualBoundingBoxDescent:3*dpr}),
+        fillText:(text:string)=>{if (/^\d/.test(text)) amounts.push(text);}};
+      pane.draw(ctx,{dpr,plotWidth:200,plotHeight:300,timeScale:{visibleRange:()=>({from:0,to:1}),barSpacing:spacing,indexToX:()=>100},theme:{axisText:'#aaa',background:'#090909'}} as any);
+      expect(amounts).toEqual(spacing>=26?['250','250']:[]);
+      expect(pane.diagnostics().visibleBarsDrawn).toBe(2);
+    }
+  }
+});
+
+it('keeps amounts, hover identity and visible scales on their timestamps as the shared axis gains history', () => {
+  let times = [-60, 0, 30, 60, 90, 120];
+  const axis = {get baseIndex(){return times.length-1;},indexToTime:(index:number)=>times[index]};
+  const pane = new NetPositioningPane('shared-axis',(x,spacing)=>({left:x-spacing/2,width:spacing}),axis);
+  pane.setSettings('price-oi',['binance'],60_000,'stacked','auto',true,false);
+  pane.setHostSnapshot([{t:0,closed:true},{t:60_000,closed:true},{t:120_000,closed:true}]);
+  pane.setSnapshot([0,60_000,120_000].map((timeMs,i)=>({timeMs,venues:{binance:venueValue('binance',[192,238,17][i]!)}})));
+  for(const offset of [0,2]) {
+    if(offset) times=[-180,-120,...times];
+    const from=3+offset,to=3.5+offset;
+    pane.setVisibleRange(from,to);
+    const labels:string[]=[];
+    const ctx:any={save(){},restore(){},beginPath(){},rect(){},clip(){},moveTo(){},lineTo(){},stroke(){},fillRect(){},strokeRect(){},
+      measureText:()=>({width:24,actualBoundingBoxAscent:9,actualBoundingBoxDescent:3}),fillText:(text:string)=>{if(/^\d/.test(text))labels.push(text);}};
+    pane.draw(ctx,{dpr:1,plotWidth:300,plotHeight:300,dataLayer:axis,timeScale:{visibleRange:()=>({from,to}),barSpacing:60,indexToX:(index:number)=>100+(index-from)*60},theme:{axisText:'#aaa',background:'#090909'}} as any);
+    expect(labels).toEqual(['238']);
+    expect(pane.diagnostics().visibleScaleBySide.longs.max).toBe(238);
+    expect(pane.diagnostics().visibleScaleBars).toBe(1);
+    const bar=(pane as any).geometry[0];
+    expect(bar.timeMs).toBe(60_000);expect(bar.value).toBe(238);
+    expect(pane.hoverSummary((bar.left+bar.right)/2,(bar.top+bar.bottom)/2)?.timeMs).toBe(60_000);
+  }
+});
+
+it.each([1,2])('never replaces a hidden 238 contribution with a visible 17 in the same stack at DPR %s',dpr=>{
+ const pane=new NetPositioningPane('mixed-digits',(x,spacing)=>({left:x-spacing/2,width:spacing}));
+ pane.setSettings('price-oi',['binance','hyperliquid'],60000,'stacked','auto',true,true);
+ pane.setHostSnapshot([{t:0,closed:true}]);
+ pane.setSnapshot([{timeMs:0,venues:{binance:venueValue('binance',238),hyperliquid:venueValue('hyperliquid',17)}}]);
+ for(const spacing of [40,22,18,8,40]) {
+  const labels:string[]=[];
+  const ctx:any={save(){},restore(){},beginPath(){},rect(){},clip(){},moveTo(){},lineTo(){},stroke(){},fillRect(){},strokeRect(){},
+   measureText:(text:string)=>({width:text.length*8*dpr,actualBoundingBoxAscent:9*dpr,actualBoundingBoxDescent:3*dpr}),fillText:(text:string)=>{if(/^\d/.test(text))labels.push(text);}};
+  pane.draw(ctx,{dpr,plotWidth:300,plotHeight:400,timeScale:{visibleRange:()=>({from:0,to:1}),barSpacing:spacing,indexToX:()=>150},theme:{axisText:'#aaa',background:'#090909'}} as any);
+  expect(labels).toEqual(spacing===40?['238','17','238','17']:[]);
+  expect(pane.diagnostics().visibleBarsDrawn).toBe(4);
+  const source=(pane as any).geometry.find((g:any)=>g.sourceId==='binance'&&g.side==='longs');
+  expect(pane.hoverSummary((source.left+source.right)/2,(source.top+source.bottom)/2)?.sources.map(s=>s.value)).toEqual([238,17]);
  }
 });

@@ -9,6 +9,7 @@ import { groupedSourceSlot, layoutNetPositioningSources, netPositioningBands, ro
 const VENUE_ORDER: readonly NetPositioningVenue[] = ['binance', 'hyperliquid', 'bybit'];
 const PANE_HEADER_HEIGHT = 30;
 const MAX_HOST_BARS = 5_000;
+type PositioningTimeAxis = Pick<PrimitiveRenderContext['dataLayer'], 'baseIndex' | 'indexToTime'>;
 
 export function netPositioningVenueSlot(venue: NetPositioningVenue) { return VENUE_ORDER.indexOf(venue); }
 
@@ -93,7 +94,7 @@ export class NetPositioningPane implements IPrimitive {
   private appliedMarginTop = .1;
   private renderedBands: NetPositioningBand[] = [];
 
-  constructor(readonly id: string, private columnGeometry=(x:number,spacing:number,dpr:number)=>{const g=candleGeometry(x,spacing,dpr);return {left:g.bodyX/dpr,width:g.bodyW/dpr};}) {}
+  constructor(readonly id: string, private columnGeometry=(x:number,spacing:number,dpr:number)=>{const g=candleGeometry(x,spacing,dpr);return {left:g.bodyX/dpr,width:g.bodyW/dpr};}, private readonly timeAxis?: PositioningTimeAxis) {}
   zOrder() { return 'normal' as const; }
   attached(host: PrimitiveHost) { this.host = host; }
   detached() { this.host = undefined; }
@@ -161,7 +162,7 @@ export class NetPositioningPane implements IPrimitive {
 
   setVisibleRange(from: number, to: number) {
     if (!Number.isFinite(from) || !Number.isFinite(to)) return;
-    if (this.visibleFrom === from && this.visibleTo === to) return;
+    if (this.visibleFrom === from && this.visibleTo === to && !this.timeAxis) return;
     this.visibleFrom = from; this.visibleTo = to;
     this.recomputeVisibleScale(); this.geometry = [];
     this.host?.requestUpdate();
@@ -225,14 +226,22 @@ export class NetPositioningPane implements IPrimitive {
     return { min: -1, max: 1 };
   }
 
+  private *visibleHostTimes() {
+    const from = Math.max(0, Math.floor(this.visibleFrom));
+    const to = Math.min(this.timeAxis ? this.timeAxis.baseIndex + 1 : this.hostTimes.length, Math.ceil(this.visibleTo));
+    for (let index = from; index < to; index++) {
+      const seconds = this.timeAxis?.indexToTime(index);
+      const time = this.timeAxis ? seconds === undefined ? undefined : seconds * 1000 : this.hostTimes[index];
+      if (time !== undefined && this.hostClosed.has(time)) yield time;
+    }
+  }
+
   private recomputeVisibleScale() {
     const scales: Record<NetPositioningSide, SideScale> = {
       longs: { min: 0, max: 0, hasZero: false }, shorts: { min: 0, max: 0, hasZero: false },
     };
-    const from = Math.max(0, Math.floor(this.visibleFrom));
-    const to = Math.min(this.hostTimes.length, Math.ceil(this.visibleTo));
-    for (let index = from; index < to; index++) {
-      const candle = this.candles.get(this.hostTimes[index]!); if (!candle) continue;
+    for (const time of this.visibleHostTimes()) {
+      const candle = this.candles.get(time); if (!candle) continue;
       for (const side of ['longs', 'shorts'] as const) {
         const sources = this.sourceValues(candle, side), layout = layoutNetPositioningSources(sources, this.display), scale = scales[side];
         if (sources.some(source => source.value === 0)) scale.hasZero = true;
@@ -263,7 +272,8 @@ export class NetPositioningPane implements IPrimitive {
     if (rc.plotWidth <= 0 || rc.plotHeight <= 0) return;
     const range = rc.timeScale.visibleRange();
     const from = Math.max(0, Math.floor(range.from) - 1);
-    const to = Math.min(this.hostTimes.length, Math.ceil(range.to) + 1);
+    const axis = this.timeAxis ?? rc.dataLayer;
+    const to = Math.min(axis ? axis.baseIndex + 1 : this.hostTimes.length, Math.ceil(range.to) + 1);
     const spacing = rc.timeScale.barSpacing;
     const dpr = Number.isFinite(rc.dpr) && rc.dpr > 0 ? rc.dpr : 1;
     const baselineStrokeWidth = Math.max(1, Math.round(dpr));
@@ -309,13 +319,33 @@ export class NetPositioningPane implements IPrimitive {
     }
     const amountLabels: { text: string; x: number; y: number; color: string; alpha: number; left: number; right: number; top: number; bottom: number }[] = [];
     for (let index = from; index < to; index++) {
-      const timeMs = this.hostTimes[index]; if (timeMs === undefined) continue;
+      // Native candles and the chart's shared axis can have different indices
+      // when other series add history. Bind values/hit targets to UTC time.
+      const seconds = axis?.indexToTime(index);
+      const timeMs = axis ? seconds === undefined ? undefined : seconds * 1000 : this.hostTimes[index];
+      if (timeMs === undefined || !this.hostClosed.has(timeMs)) continue;
       const bar = this.candles.get(timeMs); if (!bar) continue;
       const x = rc.timeScale.indexToX(index);
       const column=this.columnGeometry(x,spacing,rc.dpr),groupWidth=Math.max(1/rc.dpr,column.width),centre=column.left+groupWidth/2;
       if (centre + groupWidth / 2 < 0 || centre - groupWidth / 2 > rc.plotWidth) continue;
       for (const band of bands) {
         const layout = layoutNetPositioningSources(this.sourceValues(bar, band.side), this.display);
+        // A smaller source label must not replace a larger source's label as
+        // one shared stack narrows (e.g. 238 + 17 appearing to become 17).
+        // Hover labels identify one source explicitly; grouped bars are separate.
+        let completeStackFits = true;
+        if (this.display === 'stacked' && this.labels === 'auto') {
+          ctx.font = `600 ${12 * dpr}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
+          ctx.textAlign = 'center';
+          const left = roundDprBoundary(column.left,dpr), right = Math.max(left+1,roundDprBoundary(column.left+groupWidth,dpr));
+          const anchor = (left+right)/2, cellLeft = centre*dpr-spacing*dpr/2, cellRight = centre*dpr+spacing*dpr/2;
+          completeStackFits = layout.segments.every(segment => {
+            if (segment.value === null || segment.sign === 'zero') return true;
+            const metrics = ctx.measureText(Math.round(Math.abs(segment.value)).toLocaleString('en-US'));
+            return anchor-Math.max(metrics.width/2,metrics.actualBoundingBoxLeft??0) >= Math.max(0,cellLeft,left)+dpr
+              && anchor+Math.max(metrics.width/2,metrics.actualBoundingBoxRight??0) <= Math.min(rc.plotWidth*dpr,cellRight,right)-dpr;
+          });
+        }
         const scale = bandScales.get(band.side) ?? 0;
         const yForValue = (value: number) => band.baseline - value * scale;
         for (const segment of layout.segments) {
@@ -354,9 +384,10 @@ export class NetPositioningPane implements IPrimitive {
               Math.max(0, rightPx - leftPx - inset * 2), Math.max(0, segmentBottomPx - segmentTopPx - inset * 2));
           }
           const labelText = Math.round(Math.abs(segment.value)).toLocaleString('en-US');
-          const labelVisible = this.labels === 'auto' ? true : this.labels === 'hover' && isHovered;
+          const labelVisible = this.labels === 'auto' ? completeStackFits : this.labels === 'hover' && isHovered;
           if (labelVisible && segment.sign !== 'zero') {
             ctx.font = `600 ${12 * dpr}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
+            ctx.textAlign = 'center';
             const metrics = ctx.measureText(labelText);
             const textHeight = Math.max(metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent, 12 * dpr);
             const ascent = Math.max(metrics.actualBoundingBoxAscent, 9 * dpr), descent = Math.max(metrics.actualBoundingBoxDescent, 3 * dpr);
@@ -367,12 +398,16 @@ export class NetPositioningPane implements IPrimitive {
               : segment.sign === 'positive' ? topPx : bottomPx;
             const offset = 3 * dpr + row * (textHeight + 2 * dpr);
             const x = (leftPx + rightPx) / 2;
-            const textLeft = x - metrics.width / 2, textRight = x + metrics.width / 2;
+            const textLeft = x - Math.max(metrics.width / 2, metrics.actualBoundingBoxLeft ?? 0);
+            const textRight = x + Math.max(metrics.width / 2, metrics.actualBoundingBoxRight ?? 0);
             const topLimit = (band.top + 15) * dpr;
             const bottomLimit = (band.bottom - 2) * dpr;
-            const cellWidth = Math.max(spacing, groupWidth) * dpr;
+            const cellWidth = spacing * dpr;
             const cellLeft = centre * dpr - cellWidth / 2, cellRight = centre * dpr + cellWidth / 2;
-            if (metrics.width <= cellWidth && textLeft >= Math.max(0, cellLeft) && textRight <= Math.min(rc.plotWidth * dpr, cellRight)
+            // A financial amount is indivisible: never let a narrow source bar,
+            // neighbouring column or plot edge expose only some of its digits.
+            const inset = dpr;
+            if (textLeft >= Math.max(0, cellLeft, leftPx) + inset && textRight <= Math.min(rc.plotWidth * dpr, cellRight, rightPx) - inset
               && bottomLimit - topLimit >= ascent + descent) {
               const outsideY = segment.sign === 'positive' ? edge - offset - descent : edge + offset + ascent;
               const visibleTop = Math.max(topPx, topLimit), visibleBottom = Math.min(bottomPx, bottomLimit);
@@ -492,7 +527,7 @@ export class NetPositioningPane implements IPrimitive {
     return { currency: this.currency, mounted: Boolean(this.host), sides: ['longs', 'shorts'] as const, method: this.method, venues: [...this.venues],
       showLongs: this.showLongs, showShorts: this.showShorts, reverseOrder: this.reverseOrder, candleCount: this.candles.size,
       visibleDraws: this.drawCount, visibleBarsDrawn: this.barsDrawn, sourcePatches: this.patches, snapshots: this.snapshots,
-      display: this.display, labels: this.labels, visibleScaleBars: this.hostTimes.slice(Math.max(0, Math.floor(this.visibleFrom)), Math.min(this.hostTimes.length, Math.ceil(this.visibleTo))).filter(time => this.candles.has(time)).length,
+      display: this.display, labels: this.labels, visibleScaleBars: [...this.visibleHostTimes()].filter(time => this.candles.has(time)).length,
       renderedBands: this.renderedBands.map(band => ({ ...band })),
       visibleScaleBySide: { longs: { ...this.visibleScale.longs }, shorts: { ...this.visibleScale.shorts } },
       visibleScaleMinBtc: visibleMin, visibleScaleMaxBtc: visibleMax, maxAbsBtc: Math.max(Math.abs(visibleMin), Math.abs(visibleMax)),

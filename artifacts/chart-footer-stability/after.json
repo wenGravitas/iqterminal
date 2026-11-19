@@ -1,0 +1,14 @@
+{
+  "invalidations": {
+    "    at Object.requestUpdate (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11637:15)\n    at OrderWallsPrimitive.setSnapshot (http://127.0.0.1:5173/src/chart/order-walls.ts:254:14)\n    at OpenAlgoCandleChart.setOrderWallSnapshot (http://127.0.0.1:5173/src/chart/openalgo.ts:985:20)\n    at http://127.0.0.1:5173/src/panel.ts?t=1795012454786:6994:70": 1,
+    "    at Object.requestUpdate (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11637:15)\n    at RetainedWallRenderer.invalidate (http://127.0.0.1:5173/src/chart/order-walls.ts:1392:103)\n    at RetainedWallRenderer.draw (http://127.0.0.1:5173/src/chart/wall-retained-renderer.ts:384:29)\n    at OrderWallsPrimitive.drawRetained (http://127.0.0.1:5173/src/chart/order-walls.ts:1401:22)": 7,
+    "    at Zo._invalidateWrite (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11417:14)\n    at Zo._updateBar (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11439:378)\n    at Object.update (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11362:27)\n    at OpenAlgoCandleChart.applyPatch (http://127.0.0.1:5173/src/chart/openalgo.ts:1385:16)": 114,
+    "    at Object.requestUpdate (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11637:15)\n    at FootprintTotalsPane.setAnalysisSummaries (http://127.0.0.1:5173/src/chart/footprint-totals.ts:157:14)\n    at OpenAlgoCandleChart.applyFootprintAnalysisSummaries (http://127.0.0.1:5173/src/chart/openalgo.ts:848:73)\n    at OpenAlgoCandleChart.setFootprintAnalysisSummaries (http://127.0.0.1:5173/src/chart/openalgo.ts:844:8)": 49,
+    "    at Object.requestUpdate (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11637:15)\n    at FootprintTotalsPane.setStats (http://127.0.0.1:5173/src/chart/footprint-totals.ts:233:14)\n    at OpenAlgoCandleChart.refreshVisibleFootprint (http://127.0.0.1:5173/src/chart/openalgo.ts:1525:73)\n    at footprintRefresh (http://127.0.0.1:5173/src/chart/openalgo.ts:214:32)": 38,
+    "    at Object.requestUpdate (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11637:15)\n    at OrderWallsPrimitive.patch (http://127.0.0.1:5173/src/chart/order-walls.ts:300:14)\n    at OpenAlgoCandleChart.patchOrderWalls (http://127.0.0.1:5173/src/chart/openalgo.ts:1029:20)\n    at http://127.0.0.1:5173/src/panel.ts?t=1795012454786:6994:142": 37,
+    "    at Object.requestUpdate (http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=219027ed:11637:15)\n    at CandleElapsedTimer.tick (http://127.0.0.1:5173/src/chart/candle-elapsed-timer.ts:51:14)\n    at OpenAlgoCandleChart.tickCandleTimer (http://127.0.0.1:5173/src/chart/openalgo.ts:148:40)\n    at http://127.0.0.1:5173/src/panel.ts?t=1795012454786:1637:18": 23
+  },
+  "resizes": [],
+  "canvasSizes": [],
+  "calls": {}
+}
