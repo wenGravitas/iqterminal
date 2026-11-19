@@ -1,0 +1,16 @@
+{
+  "result": "passed",
+  "source": "captured staging current gzip; no network request",
+  "wireBytes": 1905,
+  "decodedBytes": 8943,
+  "identityBytes": 8943,
+  "wireToIdentityRatio": 0.213,
+  "contentEncoding": "gzip",
+  "pageCount": 1,
+  "accountedBytes": 1905,
+  "market": "spot",
+  "profileId": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+  "watermark": 14535956,
+  "headValid": true,
+  "hasMore": false
+}
