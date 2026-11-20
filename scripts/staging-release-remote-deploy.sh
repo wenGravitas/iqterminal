@@ -52,7 +52,7 @@ tagged_base_image_id=$(docker image inspect "$base_image" --format '{{.Id}}')
 base_node=$(docker run --rm --network none --entrypoint node "$base_image" --version)
 echo "Backend runtime base image=$base_image imageId=$base_image_id node=$base_node"
 curl --fail --silent --show-error --max-time 5 http://127.0.0.1:18780/v1/health >/dev/null
-curl --fail --silent --show-error --max-time 5 http://127.0.0.1:18892/health >/dev/null
+curl --fail --silent --show-error --max-time 5 http://127.0.0.1:18892/v2/history/health >/dev/null
 
 candidate_port=
 for candidate in 4180 4181 4182; do
