@@ -34,14 +34,14 @@ if [[ "$remote_bundle_hash" == absent ]]; then
   ssh -o BatchMode=yes "$staging_host" "sudo -n install -d -o root -g root -m 0755 '$staging_root' '$staging_root/releases' '$staging_root/logs' '$staging_root/deployments' && sudo -n install -d -o '$remote_uid' -g '$remote_gid' -m 0755 '$remote_upload'"
   upload_owned=1
   tar -C "$release_dir" -czf - . | ssh -o BatchMode=yes "$staging_host" "tar -xzf - -C '$remote_upload'"
-  ssh -o BatchMode=yes "$staging_host" "cd '$remote_upload' && sha256sum --status -c bundle.sha256 && sudo -n chown -R root:root '$remote_upload' && sudo -n chmod -R a-w '$remote_upload' && sudo -n mv -T -- '$remote_upload' '$remote_release'"
+  ssh -o BatchMode=yes "$staging_host" "cd '$remote_upload' && sha256sum --status -c bundle.sha256 && sudo -n chown -R root:root '$remote_upload' && sudo -n chmod -R a+rX,a-w '$remote_upload' && sudo -n mv -T -- '$remote_upload' '$remote_release'"
   upload_owned=0
   trap - EXIT
 elif [[ "$remote_bundle_hash" != "$local_bundle_hash" ]]; then
   echo 'Remote release directory is incomplete or has different bundle contents; refusing to overwrite it.' >&2
   exit 2
 fi
-ssh -o BatchMode=yes "$staging_host" "sudo -n bash -c 'cd \"$remote_release\" && sha256sum --status -c bundle.sha256'"
+ssh -o BatchMode=yes "$staging_host" "sudo -n chmod -R a+rX,a-w '$remote_release' && sudo -n bash -c 'cd \"$remote_release\" && sha256sum --status -c bundle.sha256'"
 ssh -o BatchMode=yes "$staging_host" sudo -n bash -s -- "$release_id" "$https_port" "$staging_root" < "$repo_root/scripts/staging-release-remote-deploy.sh"
 
 echo "Published https://$(ssh -o BatchMode=yes "$staging_host" 'tailscale status --json | python3 -c "import json,sys;print(json.load(sys.stdin)[\"Self\"][\"DNSName\"].rstrip(\".\"))"'):$https_port/"
