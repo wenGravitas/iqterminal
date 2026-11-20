@@ -20,7 +20,7 @@ release_id=$(node -e "const m=require(process.argv[1]);process.stdout.write(m.re
 remote_release="$staging_root/releases/$release_id"
 echo "Uploading immutable IQTerminal release $release_id to $staging_host:$remote_release"
 local_bundle_hash=$(sha256sum "$release_dir/bundle.sha256" | cut -d' ' -f1)
-remote_bundle_hash=$(ssh -o BatchMode=yes "$staging_host" "if [ -f '$remote_release/bundle.sha256' ]; then sha256sum '$remote_release/bundle.sha256' | cut -d' ' -f1; elif [ -e '$remote_release' ]; then printf incomplete; else printf absent; fi")
+remote_bundle_hash=$(ssh -o BatchMode=yes "$staging_host" "if sudo -n test -f '$remote_release/bundle.sha256'; then sudo -n sha256sum '$remote_release/bundle.sha256' | cut -d' ' -f1; elif sudo -n test -e '$remote_release'; then printf incomplete; else printf absent; fi")
 if [[ "$remote_bundle_hash" == absent ]]; then
   remote_upload="$staging_root/releases/.$release_id.incoming.$$"
   upload_owned=0
@@ -31,7 +31,7 @@ if [[ "$remote_bundle_hash" == absent ]]; then
   remote_uid=$(ssh -o BatchMode=yes "$staging_host" 'id -u')
   remote_gid=$(ssh -o BatchMode=yes "$staging_host" 'id -g')
   [[ "$remote_uid" =~ ^[0-9]+$ && "$remote_gid" =~ ^[0-9]+$ ]] || { echo 'Could not identify the SSH upload owner.' >&2; exit 2; }
-  ssh -o BatchMode=yes "$staging_host" "sudo -n install -d -o root -g root -m 0755 '$staging_root' '$staging_root/releases' '$staging_root/logs' '$staging_root/deployments' && sudo -n mkdir -- '$remote_upload' && sudo -n chown '$remote_uid:$remote_gid' '$remote_upload'"
+  ssh -o BatchMode=yes "$staging_host" "sudo -n install -d -o root -g root -m 0755 '$staging_root' '$staging_root/releases' '$staging_root/logs' '$staging_root/deployments' && sudo -n install -d -o '$remote_uid' -g '$remote_gid' -m 0755 '$remote_upload'"
   upload_owned=1
   tar -C "$release_dir" -czf - . | ssh -o BatchMode=yes "$staging_host" "tar -xzf - -C '$remote_upload'"
   ssh -o BatchMode=yes "$staging_host" "cd '$remote_upload' && sha256sum --status -c bundle.sha256 && sudo -n chown -R root:root '$remote_upload' && sudo -n chmod -R a-w '$remote_upload' && sudo -n mv -T -- '$remote_upload' '$remote_release'"
@@ -41,7 +41,7 @@ elif [[ "$remote_bundle_hash" != "$local_bundle_hash" ]]; then
   echo 'Remote release directory is incomplete or has different bundle contents; refusing to overwrite it.' >&2
   exit 2
 fi
-ssh -o BatchMode=yes "$staging_host" "cd '$remote_release' && sha256sum --status -c bundle.sha256"
+ssh -o BatchMode=yes "$staging_host" "sudo -n bash -c 'cd \"$remote_release\" && sha256sum --status -c bundle.sha256'"
 ssh -o BatchMode=yes "$staging_host" sudo -n bash -s -- "$release_id" "$https_port" "$staging_root" < "$repo_root/scripts/staging-release-remote-deploy.sh"
 
 echo "Published https://$(ssh -o BatchMode=yes "$staging_host" 'tailscale status --json | python3 -c "import json,sys;print(json.load(sys.stdin)[\"Self\"][\"DNSName\"].rstrip(\".\"))"'):$https_port/"
