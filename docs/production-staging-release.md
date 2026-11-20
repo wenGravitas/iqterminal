@@ -43,6 +43,8 @@ The first build is for benchmarking. The second is the normal diagnostics-off st
 
 The immutable release directory name is `<frontend-sha>-<backend-sha>` with `-diag` for the benchmark build. It contains the actual production `dist/`, runtime server, route manifest, container recipe, `release.json`, and `bundle.sha256`. Build output defaults to `~/.local/share/iqterminal-staging/releases`; `IQ_RELEASE_OUTPUT` can select another directory. The client bundle contains no service credentials or signing material.
 
+The wall API serializes numeric aggregation settings as numbers (for example `50`) while its canonical profile ID uses the unit suffix (`agg-50usdt`). The frontend normalizes that wire value before validating current and historical profile identity; keep the shared projection source and its generated compatibility hash synchronized with the backend copy. A health response alone does not validate this profile contract.
+
 ## Deploy and verify
 
 The deployment script uses the staging account's existing non-interactive sudo access for the root-owned `/opt/iqterminal-frontend` release directory and service switch. It stages each upload in that same filesystem, validates checksums, makes the release read-only, and renames it into place atomically. It refuses to overwrite an existing release with different contents, validates Compose configuration, builds the small static-server image from the already-installed Node runtime, starts a spare loopback port, checks the container and proxied market-data health, then switches Tailscale Serve. The previous known-good release and its image remain available for rollback. Deployment records and logs are stored under `/opt/iqterminal-frontend`.

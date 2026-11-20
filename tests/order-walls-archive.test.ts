@@ -28,7 +28,7 @@ const request = (patch: Partial<OrderWallsArchiveRequest> = {}) => ({
   market: 'binance-spot' as const, from, to, settings: orderWallsSettings({ ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true, mode: 'top-levels' }),
   ...patch,
 });
-const profile = (market: OrderWallMarket = 'binance-spot', bandPercent = 10, aggregation = 'native', id?: string,
+const profile = (market: OrderWallMarket = 'binance-spot', bandPercent = 10, aggregation: string | number = 'native', id?: string,
   confirmationMs = 0, selectionTopN = 10, minimumNotionalUsd: string | null = null) => {
   const spot = market === 'binance-spot', instrument = profiles[market as keyof typeof profiles].instrument;
   const feed = preparedDepthFeed(spot ? 'spot' : 'perpetual');
@@ -122,6 +122,36 @@ describe('Order Walls archive profile selection', () => {
     const shortSlugFetcher = vi.fn(async () => new Response(JSON.stringify(shortSlug), { status: 200 }));
     await expect(loadOrderWallsArchive({ request: request({ market: 'binance-perp', settings }),
       fetcher: shortSlugFetcher as unknown as typeof fetch })).rejects.toThrow('Invalid Order Walls archive page contract');
+  });
+
+  it('accepts the backend numeric aggregation shape for current and historical pages', async () => {
+    const settings = orderWallsSettings({ ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true, mode: 'top-levels', aggregation: 50 });
+    const currentRequest = orderWallsArchiveCurrentRequest(request({ market: 'binance-perp', settings }))!;
+    const current = {
+      version: 1, profile: profile('binance-perp', 10, 50), market: 'perpetual', instrument: 'binance:perpetual:BTCUSDT',
+      feed: preparedDepthFeed('perpetual'), watermark: 20,
+      head: { cursor: 20, at: to - 1, epoch: 1, midpoint: '78016.00', valid: true },
+      state: { bids: [], asks: [] },
+      page: { after: 0, nextAfter: 20, hasMore: false, lastAt: to - 1, limit: 256, sameMillisecondClosed: true },
+      patches: [], profileStatus: 'ready',
+      coverage: { availableFrom: from - 1_000, confirmedTo: to - 1, status: 'partial', partial: true, gaps: [] },
+    };
+    let poller!: OrderWallsArchiveCurrentPoller;
+    const currentPage = new Promise<void>((resolve, reject) => {
+      poller = new OrderWallsArchiveCurrentPoller({ request: currentRequest,
+        fetcher: vi.fn(async () => new Response(JSON.stringify(current), { status: 200 })) as unknown as typeof fetch,
+        onPage: page => { expect(page.profile.aggregation).toBe(50); poller.stop(); resolve(); },
+        onStatus: status => { if (status.message) reject(new Error(status.message)); },
+      });
+    });
+    poller.start();
+    try { await currentPage; } finally { poller.stop(); }
+
+    const historical = page({ profile: profile('binance-perp', 10, 50), market: 'perpetual',
+      instrument: 'binance:perpetual:BTCUSDT', feed: preparedDepthFeed('perpetual') });
+    const result = await loadOrderWallsArchive({ request: request({ market: 'binance-perp', settings }),
+      fetcher: vi.fn(async () => new Response(JSON.stringify(historical), { status: 200 })) as unknown as typeof fetch });
+    expect(result.status.archive).toMatchObject({ state: 'complete', exact: true, aggregation: '50usdt' });
   });
 
   it('does not claim that Top10 in a 10% band exactly answers a narrower band', () => {

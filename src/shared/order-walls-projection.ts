@@ -86,7 +86,7 @@ export interface OrderWallsArchiveProfile {
   venue: 'binance';
   instrument: string;
   feed: string;
-  aggregation: string;
+  aggregation: string | number;
   bandPercent: number;
   midpointBasis: string;
   topN: number;

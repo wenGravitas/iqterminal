@@ -112,7 +112,7 @@ export interface OrderWallsArchiveProfile {
   venue: 'binance';
   instrument: string;
   feed: string;
-  aggregation: string;
+  aggregation: string | number;
   bandPercent: number;
   midpointBasis: string;
   topN: number;
@@ -601,7 +601,8 @@ async function loadBoundedOrderWallsArchive(options: OrderWallsArchiveLoadOption
       : serverState === 'complete' && (locallyLimited || sourceCoveragePartial || !extentCovered) ? 'partial' : serverState;
     const archive = { ...archiveStatus(request, availability, summaryState, pageCoverage), exact: true,
       ...(profileStatus ? { profileStatus } : {}),
-      market: page.profile.market, feed: page.profile.feed, aggregation: page.profile.aggregation,
+      market: page.profile.market, feed: page.profile.feed,
+      aggregation: canonicalProfileAggregation(page.profile.aggregation) ?? String(page.profile.aggregation),
       profileVersion: page.profile.version, algorithmVersion: page.profile.algorithmVersion, schemaVersion: page.profile.schemaVersion,
       midpoint: lastMidpoint, requestComplete: !page.page.hasMore, rangeComplete,
       ...(page.page.hasMore ? { resumeAfter: page.page.nextAfter } : {}) };
@@ -1047,12 +1048,20 @@ function validateUnavailableIdentity(page: OrderWallsArchivePage, expected: Expe
 function profileBasisMatches(profile: OrderWallsArchiveProfile, expected: ExpectedArchiveProfile) {
   return Boolean(profile && profile.id === expected.id && profile.version === 1 && profile.venue === 'binance'
     && profile.market === expected.market && profile.instrument === expected.instrument && profile.feed === expected.feed
-    && profile.aggregation === expected.aggregation && profile.bandPercent === expected.bandPercent
+    && canonicalProfileAggregation(profile.aggregation) === expected.aggregation && profile.bandPercent === expected.bandPercent
     && profile.midpointBasis === 'best-observed-bid-ask' && profile.topN === 10
     && profile.algorithmVersion === 1 && profile.schemaVersion === 1
     && profile.confirmationMs === expected.confirmationMs && profile.selectionTopN === expected.selectionTopN
     && profile.minimumNotionalUsd === expected.minimumNotionalUsd);
 }
+
+function canonicalProfileAggregation(value: string | number): string | undefined {
+  if (value === 'native') return 'native';
+  const raw = typeof value === 'number' ? String(value) : value.replace(/usdt$/i, '');
+  const amount = Number(raw);
+  return Number.isFinite(amount) && amount > 0 ? `${canonicalPercent(amount)}usdt` : undefined;
+}
+
 export function orderWallsArchiveDerivationsExact(profile: OrderWallsArchiveProfile, settings: OrderWallsSettings) {
   const common = Array.isArray(profile.exactDerivations?.bandPercent) && profile.exactDerivations.bandPercent.includes(settings.searchRangePercent)
     && profile.exactDerivations.minimumNotional === true && profile.exactDerivations.confirmation === true;
