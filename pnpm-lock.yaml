@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
+  openalgo-charts@2.6.0:
+    hash: cc8cac21eeefd17485c0832122db1d1fc1b76b0489f6e30b9fc87913d09bcc12
+    path: patches/openalgo-charts@2.6.0.patch
   openalgo-script@0.8.1:
     hash: fc356156003d785193ee977fd90ef972484a71199caf7f63e0e1fa68c8b48fff
     path: patches/openalgo-script@0.8.1.patch
@@ -27,10 +30,10 @@ importers:
         version: 8.4.1
       openalgo-charts:
         specifier: 2.6.0
-        version: 2.6.0
+        version: 2.6.0(patch_hash=cc8cac21eeefd17485c0832122db1d1fc1b76b0489f6e30b9fc87913d09bcc12)
       openalgo-script:
         specifier: 0.8.1
-        version: 0.8.1(patch_hash=fc356156003d785193ee977fd90ef972484a71199caf7f63e0e1fa68c8b48fff)(openalgo-charts@2.6.0)
+        version: 0.8.1(patch_hash=fc356156003d785193ee977fd90ef972484a71199caf7f63e0e1fa68c8b48fff)(openalgo-charts@2.6.0(patch_hash=cc8cac21eeefd17485c0832122db1d1fc1b76b0489f6e30b9fc87913d09bcc12))
       viem:
         specifier: 2.57.13
         version: 2.57.13(typescript@7.0.2)
@@ -977,11 +980,11 @@ snapshots:
 
   obug@2.2.1: {}
 
-  openalgo-charts@2.6.0: {}
+  openalgo-charts@2.6.0(patch_hash=cc8cac21eeefd17485c0832122db1d1fc1b76b0489f6e30b9fc87913d09bcc12): {}
 
-  openalgo-script@0.8.1(patch_hash=fc356156003d785193ee977fd90ef972484a71199caf7f63e0e1fa68c8b48fff)(openalgo-charts@2.6.0):
+  openalgo-script@0.8.1(patch_hash=fc356156003d785193ee977fd90ef972484a71199caf7f63e0e1fa68c8b48fff)(openalgo-charts@2.6.0(patch_hash=cc8cac21eeefd17485c0832122db1d1fc1b76b0489f6e30b9fc87913d09bcc12)):
     optionalDependencies:
-      openalgo-charts: 2.6.0
+      openalgo-charts: 2.6.0(patch_hash=cc8cac21eeefd17485c0832122db1d1fc1b76b0489f6e30b9fc87913d09bcc12)
 
   ox@0.14.59(typescript@7.0.2):
     dependencies:

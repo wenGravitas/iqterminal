@@ -1,2 +1,3 @@
 patchedDependencies:
+  openalgo-charts@2.6.0: patches/openalgo-charts@2.6.0.patch
   openalgo-script@0.8.1: patches/openalgo-script@0.8.1.patch
