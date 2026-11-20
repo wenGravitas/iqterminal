@@ -45,7 +45,7 @@ The immutable release directory name is `<frontend-sha>-<backend-sha>` with `-di
 
 ## Deploy and verify
 
-The deployment script uploads a release once and refuses to overwrite an existing release with different contents. It validates checksums and Compose configuration, builds the small static-server image from the already-installed Node runtime, starts a spare loopback port, checks the container and proxied market-data health, then switches Tailscale Serve. The previous known-good release and its image remain available for rollback. Deployment records and logs are stored under `/opt/iqterminal-frontend`.
+The deployment script uses the staging account's existing non-interactive sudo access for the root-owned `/opt/iqterminal-frontend` release directory and service switch. It stages each upload in that same filesystem, validates checksums, makes the release read-only, and renames it into place atomically. It refuses to overwrite an existing release with different contents, validates Compose configuration, builds the small static-server image from the already-installed Node runtime, starts a spare loopback port, checks the container and proxied market-data health, then switches Tailscale Serve. The previous known-good release and its image remain available for rollback. Deployment records and logs are stored under `/opt/iqterminal-frontend`.
 
 ```sh
 pnpm deploy:staging:release -- <absolute-release-directory>
