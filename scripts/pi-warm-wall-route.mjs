@@ -51,7 +51,7 @@ for(let run=1;run<=samples;run++){
  try{
   await startProfile();await page.goto(base,{waitUntil:'domcontentloaded',timeout:15000});cold=await observe(seedObservationMs);await stopProfile('cold');
   await page.evaluate(()=>window.__terminal.feed.send({type:'diagnostics'}));await page.waitForTimeout(200);environment=await page.evaluate(()=>({fixture:window.__terminal.feed.diagnostics?.fixture,config:window.__terminal.feed.diagnostics?.staging?.config}));
-  assert.equal(environment.fixture,false);assert.deepEqual(environment.config,{dataMode:'staging',historyTiles:true,build});
+  assert.equal(environment.fixture,false);for(const [key,value] of Object.entries({dataMode:'staging',historyTiles:true,build}))assert.equal(environment.config?.[key],value,`Unexpected staging client setting: ${key}`);
   await page.screenshot({path:dir+`/run-${run}-cold.png`});
   if(cold.complete!==null){
    const wait=performance.now();do{await page.evaluate(()=>window.__terminal.feed.send({type:'diagnostics'}));await page.waitForTimeout(100);cacheReady=await page.evaluate(()=>window.__terminal.feed.diagnostics.orderWallsArchive);if(cacheReady.warmCompactEntries>0&&cacheReady.warmBuilds===0)break;}while(performance.now()-wait<10000);
