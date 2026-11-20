@@ -87,7 +87,7 @@ The previous container is health-checked before the route changes. The script ve
 
 ## Repeatable Order Walls benchmark
 
-Use the same Pi, Chromium version, release build, BTCUSDT instrument, timeframes, viewport, representative 30-hour ranges, browser cache policy, and sample count for each route. Record Pi load, memory, CPU frequency, temperature, throttling flags, container CPU/memory, ClickHouse load, API health counters, and the exact release manifest. Keep Vite development and production artifacts separate.
+Use the same Pi, Chromium version, release build, BTCUSDT instrument, market-specific timeframe, pinned history range, viewport, browser cache policy, and sample count for each route. The active references use the same two-hour window for Spot 5m and USD-M 15m; the optional Spot 30-hour stress reference is selected with `IQ_WARM_CASE=walls-30h-spot-5m`. The retired November 3 references lacked a current retained carry-in anchor. Record Pi load, memory, CPU frequency, temperature, throttling flags, container CPU/memory, ClickHouse load, API health counters, and the exact release manifest. Keep Vite development and production artifacts separate.
 
 Run the three paths independently:
 
@@ -112,7 +112,7 @@ IQ_WARM_SAMPLES=1 IQ_WARM_OUTPUT_DIR=/tmp/iqterminal-benchmark/b-spot \
   node scripts/pi-warm-wall-route.mjs
 ```
 
-Repeat with distinct labels for A/B/C and both markets; change `IQ_WARM_URL` to `http://127.0.0.1:5173` for A or the private HTTPS URL for C, and use `IQ_WARM_MARKET=perpetual` for USD-M. Use one observation per fresh label. The script records cold useful wall paint, exact completion, complete counts and source coverage, cache admission, reopen timing, network response traces, long tasks, frame intervals, Chromium identity, Pi resources, screenshots, and errors. It checks representative dataset fingerprints, so an incomplete or changed dataset cannot be presented as a cache hit.
+Repeat with distinct labels for A/B/C and both markets; change `IQ_WARM_URL` to `http://127.0.0.1:5173` for A or the private HTTPS URL for C, and use `IQ_WARM_MARKET=perpetual` for USD-M. Use one observation per fresh label. The optional `IQ_WARM_CASE=walls-30h-spot-5m` selects the deeper Spot history stress. The script records cold useful wall paint, exact completion, complete counts and source coverage, cache admission, reopen timing, network response traces, long tasks, frame intervals, Chromium identity, Pi resources, screenshots, and errors. It checks representative dataset fingerprints, so an incomplete or changed dataset cannot be presented as a cache hit.
 
 Run `scripts/order-walls-bench.mjs` with `--mode=staging --case=candles-order-walls --samples=1 --url=<URL> --artifact-dir=/tmp/iqterminal-benchmark/<route> --output=/tmp/iqterminal-benchmark/<route>/order-walls.json` for the broader pan/zoom/revisit/live-update flow. It also opens a second chart with the same instrument, timeframe, and history selection, measures the complete wall load and cache hits, switches back and forth between tabs, then closes it while checking that the original chart retains its history. The harness keeps its screenshots beside the JSON. Record cold and warm navigations separately. For direct measurement, capture navigation/content, worker start, history discovery and preparation, API headers/body transfer, decode/import, cache lookup, first useful paint, fully validated paint, viewport revisit, chart switching/reopening, and live-update delay. Preserve provisional versus complete-render states.
 

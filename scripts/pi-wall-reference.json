@@ -1,19 +1,65 @@
 {
-  "version": 1,
+  "version": 2,
   "cases": {
+    "walls-2h-spot-5m": {
+      "from": 1795128300000,
+      "to": 1795135500000,
+      "sourceFrom": 1795128000000,
+      "sourceTo": 1795135800000,
+      "sourceToken": "ccdf4a1a72553667b4c5e8a482e9ef9b5d0935abbc94200d73506db0f41b1064",
+      "segments": 213,
+      "valueRuns": 1863,
+      "gaps": 0,
+      "hash": "126f9e5cb228db9a5134c1b8abd227e76bb2529a95e25d164c22212cc00be95a",
+      "evidence": "staging Chromium calibration on 2026-11-20; stable two-hour window; exact archive, no gaps"
+    },
+    "walls-2h-perp-15m": {
+      "from": 1795128300000,
+      "to": 1795135500000,
+      "sourceFrom": 1795127400000,
+      "sourceTo": 1795136400000,
+      "sourceToken": "4b82c90f6cbc3d66790dfbc759bb92507de6bde8b39e57522f8005c8fc7c2513",
+      "segments": 1283,
+      "valueRuns": 7493,
+      "gaps": 2,
+      "hash": "30655f6331e59138ad48e4ef911af8f997e6eefe7ab58a3378d9e80e92fa33b5",
+      "evidence": "staging Chromium calibration on 2026-11-20; stable two-hour window; exact archive with two shared disk watermark gaps"
+    },
     "walls-30h-spot-5m": {
-      "from": 1793696400000, "to": 1793804400000,
-      "sourceFrom": 1793696100000, "sourceTo": 1793804700000,
+      "from": 1795026600000,
+      "to": 1795134600000,
+      "sourceFrom": 1795026300000,
+      "sourceTo": 1795134900000,
+      "sourceToken": "ac37b2aba9202aa42f09e11db48f8dc4fa4354d653aef5c737ae3b540a32e995",
+      "segments": 7226,
+      "valueRuns": 38895,
+      "gaps": 18,
+      "hash": "1f99b5467792a6b0a1e4f585ce0dcad50f056e0aaa708475bdabf1362d19d072",
+      "evidence": "staging Chromium calibration on 2026-11-20; stable thirty-hour stress window with eighteen observed depth continuity gaps"
+    }
+  },
+  "retiredCases": {
+    "walls-30h-spot-5m": {
+      "from": 1793696400000,
+      "to": 1793804400000,
+      "sourceFrom": 1793696100000,
+      "sourceTo": 1793804700000,
       "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
-      "segments": 8293, "valueRuns": 49154, "gaps": 35,
-      "evidence": "backend 9bb4d7b wall-admission-staging original-projector exact reference"
+      "segments": 8293,
+      "valueRuns": 49154,
+      "gaps": 35,
+      "reason": "Current staging source proof has no retained carry-in anchor for this range."
     },
     "walls-30h-perp-15m": {
-      "from": 1793696400000, "to": 1793804400000,
-      "sourceFrom": 1793695500000, "sourceTo": 1793805300000,
+      "from": 1793696400000,
+      "to": 1793804400000,
+      "sourceFrom": 1793695500000,
+      "sourceTo": 1793805300000,
       "sourceToken": "96b070b7571b23df67826ad0c2d0364f8e891205f5d1115ee79932b96333a70e",
-      "segments": 23850, "valueRuns": 104112, "gaps": 47,
-      "evidence": "backend 5dd8b93 wall-preparation-coordinator original-projector exact reference"
+      "segments": 23850,
+      "valueRuns": 104112,
+      "gaps": 47,
+      "reason": "Current staging source proof has no retained carry-in anchor for this range."
     }
   }
 }
