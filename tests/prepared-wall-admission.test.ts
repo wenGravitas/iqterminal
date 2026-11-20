@@ -72,3 +72,14 @@ test('oversized views explain the source-proof bound without fetching or silentl
  await expect(run(fetcher as typeof fetch,undefined,{request:{...request,to:request.from+48*3600000}})).resolves.toBeNull();
  expect(fetcher).toHaveBeenCalledOnce();
 });
+test('ready discovery transfers a separate reader lease and cancellation releases it before adoption',async()=>{
+ vi.useFakeTimers();const abort=new AbortController(),calls:Array<{method?:string;consumer?:string}>=[];
+ const fetcher=(async(input,init)=>{if(init?.method==='DELETE'){calls.push({method:'DELETE',consumer:new URL(String(input),'http://test').searchParams.get('consumer')!});return new Response('{}');}
+  const consumer=new Headers(init?.headers).get('X-IQ-Wall-Reader-Consumer')!;calls.push({consumer});return new Response(JSON.stringify({state:'ready',readerLease:{version:1,leaseMs:15000,acquired:{version:1,leaseMs:15000,consumer,canonicalKey:'a'.repeat(64)}}}));}) as typeof fetch;
+ const found=await run(fetcher,abort.signal);expect(found.readerAcquired.consumer).toBe(calls[0].consumer);expect(calls).toHaveLength(1);
+ abort.abort();await vi.advanceTimersByTimeAsync(0);expect(calls[1]).toEqual({method:'DELETE',consumer:found.readerAcquired.consumer});
+});
+test('adoption transfers cancellation and expiration ownership to the ordinary renewing reader',async()=>{
+ vi.useFakeTimers();const calls:unknown[]=[],abort=new AbortController();const fetcher=(async(_input,init)=>{calls.push(init?.method??'GET');const consumer=new Headers(init?.headers).get('X-IQ-Wall-Reader-Consumer');return new Response(JSON.stringify({state:'ready',readerLease:{acquired:{consumer}}}));}) as typeof fetch;
+ const found=await run(fetcher,abort.signal);found.readerAcquired.adopt();abort.abort();await vi.advanceTimersByTimeAsync(16000);expect(calls).toEqual(['GET']);
+});

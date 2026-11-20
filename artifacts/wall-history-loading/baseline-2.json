@@ -1,0 +1,502 @@
+{
+  "mode": "baseline",
+  "pair": 3,
+  "evidence": "real staging data through local development proxy; isolated headless Chromium profile; no fixtures",
+  "performanceAcceptance": false,
+  "origin": "http://127.0.0.1:5173",
+  "from": 1795122000000,
+  "to": 1795148100000,
+  "fullPaintAndDiagnosticsMs": 19316.935571,
+  "firstWallPaintMs": null,
+  "finalWallPaintMs": 19188.700000001118,
+  "requests": [
+    {
+      "at": 5840.3674599999995,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1795121700000&to=1795148400000"
+    },
+    {
+      "at": 7550.61187,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/reader"
+    },
+    {
+      "at": 8621.740876,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/projection-batch?market=perpetual&key=1e9ec6747607fc9214b35276c790117878cf349ec34b707f918d4018bd257f36&start=0&version=3"
+    },
+    {
+      "at": 12561.013050000001,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/reader"
+    },
+    {
+      "at": 17006.038992,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/source?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1795121700000&to=1795148400000"
+    },
+    {
+      "at": 17567.113161,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/reader"
+    },
+    {
+      "at": 17699.572121,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/preparation?consumer=c3f8183b-dcb8-4c21-a0cf-bb277a0e681f"
+    }
+  ],
+  "events": [
+    {
+      "at": 7182.851373,
+      "status": 200,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1795121700000&to=1795148400000"
+    },
+    {
+      "at": 8500.547739000001,
+      "status": 200,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/reader"
+    },
+    {
+      "at": 12911.165959999998,
+      "status": 200,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/projection-batch?market=perpetual&key=1e9ec6747607fc9214b35276c790117878cf349ec34b707f918d4018bd257f36&start=0&version=3"
+    },
+    {
+      "at": 13152.617557000001,
+      "status": 200,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/reader"
+    },
+    {
+      "at": 17643.965798,
+      "status": 200,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/source?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1795121700000&to=1795148400000"
+    },
+    {
+      "at": 18812.948589,
+      "status": 200,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/preparation?consumer=c3f8183b-dcb8-4c21-a0cf-bb277a0e681f"
+    }
+  ],
+  "finished": [
+    {
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/reader",
+      "timing": {
+        "startTime": 1795156124885.108,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 1.611,
+        "responseStart": 928.788,
+        "responseEnd": 941.214
+      }
+    },
+    {
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/projection-batch?market=perpetual&key=1e9ec6747607fc9214b35276c790117878cf349ec34b707f918d4018bd257f36&start=0&version=3",
+      "timing": {
+        "startTime": 1795156125956.828,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 6.298,
+        "responseStart": 4256.847,
+        "responseEnd": 7844.366
+      }
+    },
+    {
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/source?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1795121700000&to=1795148400000",
+      "timing": {
+        "startTime": 1795156134332.0342,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 1.715,
+        "responseStart": 632.19,
+        "responseEnd": 659.73
+      }
+    }
+  ],
+  "startup": [
+    {
+      "at": 866.3000000007451,
+      "type": "order-wall-subscribe",
+      "id": "order-walls:restore-1:walls:chart-history-repair:3"
+    },
+    {
+      "at": 6343.800000000745,
+      "type": "order-wall-subscribe",
+      "id": "order-walls:restore-2:walls:chart-history-repair:6"
+    },
+    {
+      "at": 6729.5,
+      "type": "order-wall-subscribe",
+      "id": "order-walls:chart-history-repair:9"
+    },
+    {
+      "at": 6742.10000000149,
+      "type": "order-wall-unsubscribe",
+      "id": "order-walls:chart-history-repair:9"
+    },
+    {
+      "at": 6760.200000001118,
+      "type": "order-wall-subscribe",
+      "id": "order-walls:chart-history-repair:10"
+    },
+    {
+      "at": 6828.10000000149,
+      "type": "order-wall-unsubscribe",
+      "id": "order-walls:restore-2:walls:chart-history-repair:6"
+    },
+    {
+      "at": 6829.9000000003725,
+      "type": "order-wall-unsubscribe",
+      "id": "order-walls:restore-1:walls:chart-history-repair:3"
+    }
+  ],
+  "slowestStartupResources": [
+    {
+      "name": "http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=ef4f440e",
+      "start": 2163.60000000149,
+      "duration": 1773.5,
+      "transfer": 2499871,
+      "body": 2499571
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/chart/drawing-templates.ts",
+      "start": 2925.4000000003725,
+      "duration": 1755.2000000011176,
+      "transfer": 47682,
+      "body": 47382
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/chart/drawing-settings.ts",
+      "start": 2925.10000000149,
+      "duration": 1750.699999999255,
+      "transfer": 23687,
+      "body": 23387
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/chart/openalgo.ts",
+      "start": 2907.60000000149,
+      "duration": 1729.0999999996275,
+      "transfer": 244551,
+      "body": 244251
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/scripts/host.ts",
+      "start": 2924.300000000745,
+      "duration": 1703.699999999255,
+      "transfer": 181857,
+      "body": 181557
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/scripts/input-controls.ts",
+      "start": 2924.60000000149,
+      "duration": 1703.5999999996275,
+      "transfer": 6543,
+      "body": 6243
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/chart/folder-icon-picker.ts",
+      "start": 2907.9000000003725,
+      "duration": 1676.4000000003725,
+      "transfer": 14427,
+      "body": 14127
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/ticker/execution-drawing.ts",
+      "start": 2907.300000000745,
+      "duration": 1672.4000000003725,
+      "transfer": 4713,
+      "body": 4413
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/trading/chart-overlay.ts",
+      "start": 2923.9000000003725,
+      "duration": 1667,
+      "transfer": 79366,
+      "body": 79066
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/effort-result/storage.ts",
+      "start": 3088,
+      "duration": 1644.4000000003725,
+      "transfer": 6444,
+      "body": 6144
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/feed/history-wire.ts",
+      "start": 3088.7000000011176,
+      "duration": 1644,
+      "transfer": 12845,
+      "body": 12545
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/feed/net-positioning.ts",
+      "start": 2907,
+      "duration": 1642.300000000745,
+      "transfer": 46658,
+      "body": 46358
+    }
+  ],
+  "correctness": {
+    "range": {
+      "from": 1795122000,
+      "to": 1795148100
+    },
+    "referenceValidated": true,
+    "referenceBars": 50,
+    "median": 7755924.385499995,
+    "strength": 3.4415334950018903,
+    "wallSegments": 3627,
+    "wallEarliest": 1795121698493,
+    "wallStatus": {
+      "state": "gap",
+      "message": "Depth continuity gaps are present in the requested range",
+      "coverage": {
+        "from": 1795121700000,
+        "to": 1795148400000,
+        "complete": false,
+        "partial": true,
+        "reason": "Depth continuity gaps are present in the requested range"
+      },
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "partial",
+        "from": 1795121700000,
+        "to": 1795148400000,
+        "rangeComplete": false,
+        "market": "perpetual",
+        "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+        "aggregation": "native",
+        "availableFrom": 1793506604584,
+        "confirmedTo": 1795148400000,
+        "gaps": [
+          {
+            "from": 1795122965589,
+            "to": 1795122965589,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1795123645038,
+            "to": 1795123645038,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "from": 1795124844927,
+            "to": 1795124844927,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "from": 1795125084946,
+            "to": 1795125084946,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "from": 1795129915162,
+            "to": 1795129915162,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "from": 1795133514996,
+            "to": 1795133514996,
+            "reason": "Shared disk watermark"
+          }
+        ],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "reason": "Depth continuity gaps are present in the requested range",
+        "requestComplete": true,
+        "loadedThrough": 1795148400000,
+        "profileVersion": 1,
+        "algorithmVersion": 1,
+        "schemaVersion": 1,
+        "midpoint": "61713.95",
+        "eligibleTo": 1795148400000,
+        "horizonAt": 1795156118244
+      },
+      "currentSubscribed": false
+    },
+    "wallDiagnostics": {
+      "draws": 39,
+      "rebuilds": 0,
+      "patchProjects": 0,
+      "segments": 3627,
+      "visible": 8629,
+      "visibleHistorical": 8629,
+      "visibleCurrent": 0,
+      "bytes": 1625944,
+      "renderMs": 504.09999999962747,
+      "maxRenderMs": 256.7999999988824,
+      "strokes": 53,
+      "lastProjectMs": 0.2000000011175871,
+      "lastReferenceMs": 0,
+      "lastPaintMs": 3.300000000745058,
+      "referenceRebuilds": 0,
+      "referenceSegments": 0,
+      "referenceValueScans": 0,
+      "paintCacheHits": 0,
+      "paintCacheBuilds": 0,
+      "paintStyleVisits": 0,
+      "closedPaintCacheHits": 0,
+      "closedPaintCacheBuilds": 0,
+      "closedPaintCacheAppends": 0,
+      "closedPaintStyleVisits": 0,
+      "settingsNoops": 8,
+      "mappingChecks": 0,
+      "mappingFallbacks": 0,
+      "retainedRenderer": {
+        "active": true,
+        "builds": 55,
+        "historyBuilds": 55,
+        "currentBuilds": 0,
+        "frames": 39,
+        "mappingInvalidations": 0,
+        "uploadedBytes": 1034000,
+        "bufferUploads": 110,
+        "drawCalls": 53,
+        "maxPrepareMs": 64.30000000074506,
+        "lastPrepareMs": 0.2000000011175871,
+        "lastPaintMs": 3.300000000745058,
+        "visibleSpans": 8629,
+        "visibleHistorical": 8629,
+        "visibleCurrent": 0,
+        "bytes": 1133644,
+        "referenceMin": 368128.4534,
+        "referenceMax": 53031838.41,
+        "failure": "",
+        "pending": 0,
+        "chunks": 53,
+        "sources": 3627,
+        "retainedSpans": 23235,
+        "contextLost": false,
+        "sharedGpuBytes": 1022340,
+        "sharedOwners": 1
+      },
+      "paintedViewport": {
+        "fromMs": 1795122000000,
+        "toMs": 1795148100000,
+        "minPrice": 61078.125,
+        "maxPrice": 62796.875,
+        "plotWidth": 1436,
+        "plotHeight": 764
+      },
+      "inputRevision": 21,
+      "paintedRevision": 21,
+      "paintedAtMono": 19188.700000001118,
+      "pendingProjectionSegments": 0,
+      "pendingPaintWork": false,
+      "queuedPreparation": false,
+      "preparation": {
+        "slices": 0,
+        "steps": 0,
+        "cancelled": 0,
+        "activeMs": 0,
+        "lastProjectionElapsedMs": 0,
+        "lastReferenceElapsedMs": 0,
+        "lastSliceMs": 0,
+        "maxSliceMs": 0,
+        "backgroundMs": 0,
+        "maxBackgroundMs": 0,
+        "yieldMode": "not-scheduled",
+        "phase": "idle"
+      },
+      "retainedPaintPaths": 0,
+      "retainedClosedPaintPaths": 0,
+      "retainedClosedPaintSegments": 0,
+      "pendingClosedPaintSegments": 0,
+      "retainedSegments": 3627,
+      "openSegments": 16,
+      "retainedReferenceSegments": 0,
+      "referenceExtentValues": 0,
+      "pendingReferenceSegments": 0,
+      "referenceMinimum": 368128.4534,
+      "referenceMaximum": 53031838.41,
+      "retainedDrawables": 0,
+      "p95RenderMs": 15.300000000745058,
+      "mounted": true,
+      "archiveSegments": 3627,
+      "directSegments": 0,
+      "valueRuns": 23239,
+      "archiveValueRuns": 23239,
+      "directValueRuns": 0,
+      "valueHistoryLimited": false,
+      "episodeHistoryLimited": false
+    },
+    "errors": []
+  },
+  "finalization": [
+    {
+      "request": {
+        "market": "binance-perp",
+        "from": 1795121700000,
+        "to": 1795148400000
+      },
+      "settled": true,
+      "failed": false,
+      "hasProjector": false,
+      "preparedRevisionReused": false,
+      "preparedFinalization": {
+        "importedParts": 14,
+        "fetchedParts": 14,
+        "reusedParts": 0,
+        "reusedCanonicalBytes": 0,
+        "assemblyRecords": 3627,
+        "checkpointOrderElapsedMs": 9.600000001490116,
+        "validationElapsedMs": 105.29999999888241,
+        "validationYieldMs": 29.699999999254942,
+        "presentationOrderElapsedMs": 31.40000000037253,
+        "mutableProjectorRestored": false,
+        "manifestFingerprintMs": 22
+      },
+      "eligibleRange": {
+        "to": 1795148400000,
+        "horizonAt": 1795156118244
+      }
+    }
+  ],
+  "timing": {
+    "totalPages": 14,
+    "retainedSamples": 14,
+    "completeSample": true,
+    "p50": {
+      "responseHeadersMs": 0,
+      "responseBodyReadMs": 0.09999999962747097,
+      "jsonParseMs": 2,
+      "validationMs": 25.100000001490116,
+      "projectorApplyMs": 11.399999998509884,
+      "updateCallbackMs": 4.200000001117587,
+      "eventLoopYieldDelayMs": 3.099999999627471,
+      "responseBytes": 305906
+    },
+    "p95": {
+      "responseHeadersMs": 4316.5999999996275,
+      "responseBodyReadMs": 1615.2999999988824,
+      "jsonParseMs": 10.300000000745058,
+      "validationMs": 55.899999998509884,
+      "projectorApplyMs": 46.09999999962747,
+      "updateCallbackMs": 17.300000000745058,
+      "eventLoopYieldDelayMs": 32.80000000074506,
+      "responseBytes": 934198
+    },
+    "max": {
+      "responseHeadersMs": 4316.5999999996275,
+      "responseBodyReadMs": 1615.2999999988824,
+      "jsonParseMs": 10.300000000745058,
+      "validationMs": 55.899999998509884,
+      "projectorApplyMs": 46.09999999962747,
+      "updateCallbackMs": 17.300000000745058,
+      "eventLoopYieldDelayMs": 32.80000000074506,
+      "responseBytes": 934198
+    }
+  },
+  "mainThreadApply": {
+    "footprintMs": 227.60000000149012,
+    "heatmapMs": 0,
+    "orderWallsMs": 151.0000000037253,
+    "footprintBatches": 24,
+    "heatmapBatches": 0,
+    "orderWallsBatches": 19
+  }
+}

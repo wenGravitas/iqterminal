@@ -553,3 +553,19 @@ test('invalid resolved metadata releases the admitted consumer before failing th
  await expect(discoverPreparedWallHistory(requested,fetcher,new AbortController().signal,settings,{resolveEligibility:true})).rejects.toThrow(/bounds/);
  await vi.waitFor(()=>expect(calls.filter(c=>c.method==='DELETE')).toHaveLength(1));expect(new URL(calls.find(c=>c.method==='DELETE')!.url,'http://test').searchParams.get('consumer')).toBe(calls[0].consumer);
 });
+test('adopted discovery reader identity protects content and final source without a second acquisition',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),t=transport(f),identities:Headers[]=[];let token='',released=0,posts=0;
+ const fetcher:typeof fetch=async(input,init)=>{const path=new URL(String(input),'http://test').pathname;
+  if(init?.method==='DELETE'){released++;return new Response('{}');}
+  if(path.endsWith('/reader')){posts++;throw Error('Unexpected second reader acquisition');}
+  if(path.endsWith('/discover')){token=new Headers(init?.headers).get('X-IQ-Wall-Reader-Consumer')!;const body=await(await t.fetcher(input,init)).json();return Response.json({...body,readerLease:{version:1,leaseMs:15000,acquired:{version:1,leaseMs:15000,consumer:token,canonicalKey:f.manifest.key}}});}
+  identities.push(new Headers(init?.headers));return t.fetcher(input,init);
+ };
+ const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher,eligibleHistory:true});
+ expect(result.status.archive?.requestComplete).toBe(true);expect(posts).toBe(0);expect(identities.length).toBeGreaterThan(0);expect(identities.every(h=>h.get('X-IQ-Wall-Reader')===token)).toBe(true);await vi.waitFor(()=>expect(released).toBe(1));
+});
+test('an acquired discovery lease is released immediately when the requested bootstrap fence cannot be covered',async()=>{
+ const f=fixture(),release=vi.fn(),adopt=vi.fn();
+ const reader=await preparedWallReader({...request,watermark:50,head:{...newHead,cursor:50}},vi.fn() as any,new AbortController().signal,undefined,settings,{discovery:{...f.discovery,readerAcquired:{release,adopt}}});
+ expect(reader).toBeNull();expect(release).toHaveBeenCalledOnce();expect(adopt).not.toHaveBeenCalled();
+});

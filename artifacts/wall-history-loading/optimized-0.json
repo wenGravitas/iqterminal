@@ -1,0 +1,484 @@
+{
+  "mode": "optimized",
+  "pair": 1,
+  "evidence": "real staging data through local development proxy; isolated headless Chromium profile; no fixtures",
+  "performanceAcceptance": false,
+  "origin": "http://127.0.0.1:5173",
+  "from": 1795122000000,
+  "to": 1795148100000,
+  "fullPaintAndDiagnosticsMs": 15383.196525,
+  "firstWallPaintMs": null,
+  "finalWallPaintMs": 15220.39999999851,
+  "requests": [
+    {
+      "at": 5785.289848,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1795121700000&to=1795148400000"
+    },
+    {
+      "at": 9453.611337,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/projection-batch?market=perpetual&key=1e9ec6747607fc9214b35276c790117878cf349ec34b707f918d4018bd257f36&start=0&version=3"
+    },
+    {
+      "at": 10772.870986,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/reader"
+    },
+    {
+      "at": 12274.739314,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/source?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1795121700000&to=1795148400000"
+    },
+    {
+      "at": 13537.261844,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/preparation?consumer=34560301-4723-4649-8f32-f58c423fcbad"
+    }
+  ],
+  "events": [
+    {
+      "at": 9209.447168,
+      "status": 200,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1795121700000&to=1795148400000"
+    },
+    {
+      "at": 10845.138246,
+      "status": 200,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/projection-batch?market=perpetual&key=1e9ec6747607fc9214b35276c790117878cf349ec34b707f918d4018bd257f36&start=0&version=3"
+    },
+    {
+      "at": 12145.075915000001,
+      "status": 200,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/reader"
+    },
+    {
+      "at": 13504.221066,
+      "status": 200,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/source?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1795121700000&to=1795148400000"
+    }
+  ],
+  "finished": [
+    {
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/projection-batch?market=perpetual&key=1e9ec6747607fc9214b35276c790117878cf349ec34b707f918d4018bd257f36&start=0&version=3",
+      "timing": {
+        "startTime": 1795156050029.3591,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 1.181,
+        "responseStart": 1378.912,
+        "responseEnd": 2381.22
+      }
+    },
+    {
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/reader",
+      "timing": {
+        "startTime": 1795156051341.7202,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 1.564,
+        "responseStart": 1331.531,
+        "responseEnd": 1336.291
+      }
+    },
+    {
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/source?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1795121700000&to=1795148400000",
+      "timing": {
+        "startTime": 1795156052849.663,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 3.458,
+        "responseStart": 1209.194,
+        "responseEnd": 1221.837
+      }
+    }
+  ],
+  "startup": [
+    {
+      "at": 1087.699999999255,
+      "type": "order-wall-subscribe",
+      "id": "order-walls:restore-1:walls:chart-history-repair:3"
+    },
+    {
+      "at": 6267.0999999996275,
+      "type": "order-wall-subscribe",
+      "id": "order-walls:restore-2:walls:chart-history-repair:6"
+    },
+    {
+      "at": 6608.0999999996275,
+      "type": "order-wall-subscribe",
+      "id": "order-walls:chart-history-repair:9"
+    },
+    {
+      "at": 6613.299999998882,
+      "type": "order-wall-unsubscribe",
+      "id": "order-walls:chart-history-repair:9"
+    },
+    {
+      "at": 6624.199999999255,
+      "type": "order-wall-subscribe",
+      "id": "order-walls:chart-history-repair:10"
+    },
+    {
+      "at": 6665.0999999996275,
+      "type": "order-wall-unsubscribe",
+      "id": "order-walls:restore-2:walls:chart-history-repair:6"
+    },
+    {
+      "at": 6667,
+      "type": "order-wall-unsubscribe",
+      "id": "order-walls:restore-1:walls:chart-history-repair:3"
+    }
+  ],
+  "slowestStartupResources": [
+    {
+      "name": "http://127.0.0.1:5173/src/indicators/tpo-settings.ts",
+      "start": 2813.699999999255,
+      "duration": 2102,
+      "transfer": 25490,
+      "body": 25190
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/feed/history-tile-cache.ts",
+      "start": 2813.39999999851,
+      "duration": 2085.4000000003725,
+      "transfer": 9452,
+      "body": 9152
+    },
+    {
+      "name": "http://127.0.0.1:5173/node_modules/.vite/deps/openalgo-charts.js?v=ef4f440e",
+      "start": 2191,
+      "duration": 2083.89999999851,
+      "transfer": 2499871,
+      "body": 2499571
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/chart/footprint-delta-flips.ts",
+      "start": 2808.5,
+      "duration": 2080.699999999255,
+      "transfer": 59355,
+      "body": 59055
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/feed/prepared-footprints.ts",
+      "start": 2808.2999999988824,
+      "duration": 2076.0999999996275,
+      "transfer": 66230,
+      "body": 65930
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/feed/history-trace.ts",
+      "start": 2808,
+      "duration": 2070.0999999996275,
+      "transfer": 12286,
+      "body": 11986
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/trading/foundation/simulator.ts",
+      "start": 2762.199999999255,
+      "duration": 2053.9000000003725,
+      "transfer": 29492,
+      "body": 29192
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/trading/foundation/confirmation.ts",
+      "start": 2761.89999999851,
+      "duration": 2044.2000000011176,
+      "transfer": 2142,
+      "body": 1842
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/feed/native-candle-history.ts",
+      "start": 2807.7999999988824,
+      "duration": 2011.5999999996275,
+      "transfer": 36902,
+      "body": 36602
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/journal/import-export.ts",
+      "start": 2837.89999999851,
+      "duration": 2003.800000000745,
+      "transfer": 27790,
+      "body": 27490
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/trading/foundation/risk.ts",
+      "start": 2761.5999999996275,
+      "duration": 1992.0999999996275,
+      "transfer": 32827,
+      "body": 32527
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/trading/foundation/client.ts",
+      "start": 2760.7999999988824,
+      "duration": 1986.300000000745,
+      "transfer": 6003,
+      "body": 5703
+    }
+  ],
+  "correctness": {
+    "range": {
+      "from": 1795122000,
+      "to": 1795148100
+    },
+    "referenceValidated": true,
+    "referenceBars": 50,
+    "median": 7755924.385499995,
+    "strength": 3.4415334950018903,
+    "wallSegments": 3627,
+    "wallEarliest": 1795121698493,
+    "wallStatus": {
+      "state": "gap",
+      "message": "Depth continuity gaps are present in the requested range",
+      "coverage": {
+        "from": 1795121700000,
+        "to": 1795148400000,
+        "complete": false,
+        "partial": true,
+        "reason": "Depth continuity gaps are present in the requested range"
+      },
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "partial",
+        "from": 1795121700000,
+        "to": 1795148400000,
+        "rangeComplete": false,
+        "market": "perpetual",
+        "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+        "aggregation": "native",
+        "availableFrom": 1793506604584,
+        "confirmedTo": 1795148400000,
+        "gaps": [
+          {
+            "from": 1795122965589,
+            "to": 1795122965589,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1795123645038,
+            "to": 1795123645038,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "from": 1795124844927,
+            "to": 1795124844927,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "from": 1795125084946,
+            "to": 1795125084946,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "from": 1795129915162,
+            "to": 1795129915162,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "from": 1795133514996,
+            "to": 1795133514996,
+            "reason": "Shared disk watermark"
+          }
+        ],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "reason": "Depth continuity gaps are present in the requested range",
+        "requestComplete": true,
+        "loadedThrough": 1795148400000,
+        "profileVersion": 1,
+        "algorithmVersion": 1,
+        "schemaVersion": 1,
+        "midpoint": "61713.95",
+        "eligibleTo": 1795148400000,
+        "horizonAt": 1795156043080
+      },
+      "currentSubscribed": false
+    },
+    "wallDiagnostics": {
+      "draws": 23,
+      "rebuilds": 2,
+      "patchProjects": 32,
+      "segments": 3627,
+      "visible": 8629,
+      "visibleHistorical": 8629,
+      "visibleCurrent": 0,
+      "bytes": 1625944,
+      "renderMs": 331.2999999988824,
+      "maxRenderMs": 120,
+      "strokes": 53,
+      "lastProjectMs": 1.200000001117587,
+      "lastReferenceMs": 0.09999999962747097,
+      "lastPaintMs": 2.699999999254942,
+      "referenceRebuilds": 2,
+      "referenceSegments": 0,
+      "referenceValueScans": 0,
+      "paintCacheHits": 4,
+      "paintCacheBuilds": 2,
+      "paintStyleVisits": 1,
+      "closedPaintCacheHits": 0,
+      "closedPaintCacheBuilds": 2,
+      "closedPaintCacheAppends": 0,
+      "closedPaintStyleVisits": 0,
+      "settingsNoops": 9,
+      "mappingChecks": 6,
+      "mappingFallbacks": 0,
+      "retainedRenderer": {
+        "active": true,
+        "builds": 53,
+        "historyBuilds": 53,
+        "currentBuilds": 0,
+        "frames": 17,
+        "mappingInvalidations": 0,
+        "uploadedBytes": 1022340,
+        "bufferUploads": 106,
+        "drawCalls": 53,
+        "maxPrepareMs": 12.900000000372529,
+        "lastPrepareMs": 1.200000001117587,
+        "lastPaintMs": 2.699999999254942,
+        "visibleSpans": 8629,
+        "visibleHistorical": 8629,
+        "visibleCurrent": 0,
+        "bytes": 1133644,
+        "referenceMin": 368128.4534,
+        "referenceMax": 53031838.41,
+        "failure": "",
+        "pending": 0,
+        "chunks": 53,
+        "sources": 3627,
+        "retainedSpans": 23235,
+        "contextLost": false,
+        "sharedGpuBytes": 1022340,
+        "sharedOwners": 1
+      },
+      "paintedViewport": {
+        "fromMs": 1795122000000,
+        "toMs": 1795148100000,
+        "minPrice": 61078.125,
+        "maxPrice": 62796.875,
+        "plotWidth": 1436,
+        "plotHeight": 764
+      },
+      "inputRevision": 21,
+      "paintedRevision": 21,
+      "paintedAtMono": 15220.39999999851,
+      "pendingProjectionSegments": 0,
+      "pendingPaintWork": false,
+      "queuedPreparation": false,
+      "preparation": {
+        "slices": 0,
+        "steps": 0,
+        "cancelled": 0,
+        "activeMs": 0,
+        "lastProjectionElapsedMs": 0,
+        "lastReferenceElapsedMs": 0,
+        "lastSliceMs": 0,
+        "maxSliceMs": 0,
+        "backgroundMs": 0,
+        "maxBackgroundMs": 0,
+        "yieldMode": "not-scheduled",
+        "phase": "idle"
+      },
+      "retainedPaintPaths": 1,
+      "retainedClosedPaintPaths": 0,
+      "retainedClosedPaintSegments": 0,
+      "pendingClosedPaintSegments": 0,
+      "retainedSegments": 3627,
+      "openSegments": 16,
+      "retainedReferenceSegments": 1,
+      "referenceExtentValues": 1,
+      "pendingReferenceSegments": 0,
+      "referenceMinimum": 368128.4534,
+      "referenceMaximum": 53031838.41,
+      "retainedDrawables": 1,
+      "p95RenderMs": 17.100000001490116,
+      "mounted": true,
+      "archiveSegments": 3627,
+      "directSegments": 0,
+      "valueRuns": 23239,
+      "archiveValueRuns": 23239,
+      "directValueRuns": 0,
+      "valueHistoryLimited": false,
+      "episodeHistoryLimited": false
+    },
+    "errors": []
+  },
+  "finalization": [
+    {
+      "request": {
+        "market": "binance-perp",
+        "from": 1795121700000,
+        "to": 1795148400000
+      },
+      "settled": true,
+      "failed": false,
+      "hasProjector": false,
+      "preparedRevisionReused": false,
+      "preparedFinalization": {
+        "importedParts": 14,
+        "fetchedParts": 14,
+        "reusedParts": 0,
+        "reusedCanonicalBytes": 0,
+        "assemblyRecords": 3627,
+        "checkpointOrderElapsedMs": 21.699999999254942,
+        "validationElapsedMs": 63.5,
+        "validationYieldMs": 9.199999999254942,
+        "presentationOrderElapsedMs": 19.5,
+        "mutableProjectorRestored": false,
+        "manifestFingerprintMs": 11.900000000372529
+      },
+      "eligibleRange": {
+        "to": 1795148400000,
+        "horizonAt": 1795156043080
+      }
+    }
+  ],
+  "timing": {
+    "totalPages": 14,
+    "retainedSamples": 14,
+    "completeSample": true,
+    "p50": {
+      "responseHeadersMs": 0,
+      "responseBodyReadMs": 0,
+      "jsonParseMs": 1.900000000372529,
+      "validationMs": 10.300000000745058,
+      "projectorApplyMs": 8.499999998137355,
+      "updateCallbackMs": 3.299999998882413,
+      "eventLoopYieldDelayMs": 2.099999999627471,
+      "responseBytes": 305906
+    },
+    "p95": {
+      "responseHeadersMs": 1426.5999999996275,
+      "responseBodyReadMs": 639.0999999996275,
+      "jsonParseMs": 6.100000001490116,
+      "validationMs": 40.09999999962747,
+      "projectorApplyMs": 42.59999999962747,
+      "updateCallbackMs": 16.100000001490116,
+      "eventLoopYieldDelayMs": 35,
+      "responseBytes": 934198
+    },
+    "max": {
+      "responseHeadersMs": 1426.5999999996275,
+      "responseBodyReadMs": 639.0999999996275,
+      "jsonParseMs": 6.100000001490116,
+      "validationMs": 40.09999999962747,
+      "projectorApplyMs": 42.59999999962747,
+      "updateCallbackMs": 16.100000001490116,
+      "eventLoopYieldDelayMs": 35,
+      "responseBytes": 934198
+    }
+  },
+  "mainThreadApply": {
+    "footprintMs": 66.80000000074506,
+    "heatmapMs": 0,
+    "orderWallsMs": 192.60000000149012,
+    "footprintBatches": 12,
+    "heatmapBatches": 0,
+    "orderWallsBatches": 19
+  }
+}

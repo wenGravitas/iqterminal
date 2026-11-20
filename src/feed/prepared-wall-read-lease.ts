@@ -4,9 +4,9 @@ import {HistoryScheduler} from './history-scheduler';
 export const wallReadControlScheduler=new HistoryScheduler(1);
 const endpoint='/market-data/v2/history/walls/reader';
 export interface PreparedWallReadLease {consumer:string;signal:AbortSignal;assertActive:()=>void;release:()=>void}
-export async function acquirePreparedWallReadLease(identity:{canonicalKey:string;projectionKey?:string},fetcher:typeof fetch,signal:AbortSignal):Promise<PreparedWallReadLease>{
+export async function acquirePreparedWallReadLease(identity:{canonicalKey:string;projectionKey?:string},fetcher:typeof fetch,signal:AbortSignal,initial?:{consumer:string;sentAt:number;response:any}):Promise<PreparedWallReadLease>{
  if(!/^[a-f0-9]{64}$/.test(identity.canonicalKey)||identity.projectionKey!==undefined&&!/^[a-f0-9]{64}$/.test(identity.projectionKey))throw Error('Invalid wall reader lease identity');
- const consumer=crypto.randomUUID(),abort=new AbortController();let timer:ReturnType<typeof setTimeout>|undefined,expires=0,closed=false,failure:Error|undefined;
+ const consumer=initial?.consumer??crypto.randomUUID(),abort=new AbortController();let timer:ReturnType<typeof setTimeout>|undefined,expires=0,closed=false,failure:Error|undefined;
  const combined=AbortSignal.any([signal,abort.signal]);
  const release=()=>{
   if(closed)return;closed=true;clearTimeout(timer);signal.removeEventListener('abort',release);abort.abort();
@@ -16,6 +16,11 @@ export async function acquirePreparedWallReadLease(identity:{canonicalKey:string
   }).catch(()=>{});
  };
  const assertActive=()=>{if(failure)throw failure;combined.throwIfAborted();if(closed||performance.now()>=expires){failure=Error('Wall history reader lease expired; Retry available with good bars retained');release();throw failure;}};
+ function acknowledge(response:any,sent:number){
+  if(response.version!==1||response.leaseMs!==15000||response.canonicalKey!==identity.canonicalKey||response.projectionKey!==identity.projectionKey)throw Error('Invalid wall reader lease identity');
+  expires=sent+response.leaseMs;assertActive();
+  timer=setTimeout(()=>{void renew().catch(error=>{failure=Error('Wall history reader lease lost; Retry available: '+String(error?.message??error).slice(0,200));release();});},Math.max(0,Math.min(5000,expires-performance.now()-10000)));
+ }
  async function renew(retried=false):Promise<void>{
   const sent=performance.now();
   let response;try{response=await wallReadControlScheduler.read(endpoint+'#'+consumer,'order-walls',AbortSignal.any([combined,AbortSignal.timeout(3000)]),async upstream=>{
@@ -27,11 +32,9 @@ export async function acquirePreparedWallReadLease(identity:{canonicalKey:string
    return JSON.parse(text);
   });
   }catch(error){const transient=error instanceof TypeError||['AbortError','TimeoutError'].includes((error as Error)?.name);if(!retried&&transient&&!combined.aborted&&expires-performance.now()>3000)return renew(true);throw error;}
-  if(response.version!==1||response.leaseMs!==15000||response.canonicalKey!==identity.canonicalKey||response.projectionKey!==identity.projectionKey)throw Error('Invalid wall reader lease identity');
-  // The send clock is conservative: no cross-host timestamp subtraction.
-  expires=sent+response.leaseMs;assertActive();
-  timer=setTimeout(()=>{void renew().catch(error=>{failure=Error('Wall history reader lease lost; Retry available: '+String(error?.message??error).slice(0,200));release();});},5000);
+  // Use the local send clock, including discovery latency for adopted leases.
+  acknowledge(response,sent);
  }
  signal.throwIfAborted();signal.addEventListener('abort',release,{once:true});
- try{await renew();return {consumer,signal:combined,assertActive,release};}catch(error){release();throw error;}
+ try{if(initial){if(!/^[a-zA-Z0-9._:-]{1,100}$/.test(consumer)||!Number.isFinite(initial.sentAt)||initial.sentAt<0||initial.sentAt>performance.now())throw Error('Invalid wall reader lease acquisition');acknowledge(initial.response,initial.sentAt);}else await renew();return {consumer,signal:combined,assertActive,release};}catch(error){release();throw error;}
 }

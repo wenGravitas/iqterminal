@@ -1,0 +1,456 @@
+{
+  "mode": "optimized",
+  "pair": 3,
+  "evidence": "real staging data through local development proxy; isolated headless Chromium profile; no fixtures",
+  "performanceAcceptance": false,
+  "origin": "http://127.0.0.1:5173",
+  "from": 1795122000000,
+  "to": 1795148100000,
+  "fullPaintAndDiagnosticsMs": 12694.321731999999,
+  "firstWallPaintMs": null,
+  "finalWallPaintMs": 12420.700000001118,
+  "requests": [
+    {
+      "at": 6494.232609999999,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1795121700000&to=1795148400000"
+    },
+    {
+      "at": 8228.662316,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/projection-batch?market=perpetual&key=1e9ec6747607fc9214b35276c790117878cf349ec34b707f918d4018bd257f36&start=0&version=3"
+    },
+    {
+      "at": 10228.282331,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/source?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1795121700000&to=1795148400000"
+    },
+    {
+      "at": 11503.487847999999,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/reader"
+    },
+    {
+      "at": 11582.76691,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/preparation?consumer=c94ded85-1ad2-4beb-a87b-790c522dc13c"
+    }
+  ],
+  "events": [
+    {
+      "at": 8060.449885,
+      "status": 200,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1795121700000&to=1795148400000"
+    },
+    {
+      "at": 9032.333596999999,
+      "status": 200,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/projection-batch?market=perpetual&key=1e9ec6747607fc9214b35276c790117878cf349ec34b707f918d4018bd257f36&start=0&version=3"
+    },
+    {
+      "at": 11539.926226999998,
+      "status": 200,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/source?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1795121700000&to=1795148400000"
+    },
+    {
+      "at": 12628.877641000001,
+      "status": 200,
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/preparation?consumer=c94ded85-1ad2-4beb-a87b-790c522dc13c"
+    }
+  ],
+  "finished": [
+    {
+      "url": "http://127.0.0.1:5173/market-data/v2/history/walls/projection-batch?market=perpetual&key=1e9ec6747607fc9214b35276c790117878cf349ec34b707f918d4018bd257f36&start=0&version=3",
+      "timing": {
+        "startTime": 1795156171234.8389,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.587,
+        "responseStart": 757.051,
+        "responseEnd": 980.529
+      }
+    }
+  ],
+  "startup": [
+    {
+      "at": 2080.4000000003725,
+      "type": "order-wall-subscribe",
+      "id": "order-walls:restore-1:walls:chart-history-repair:3"
+    },
+    {
+      "at": 6764.200000001118,
+      "type": "order-wall-subscribe",
+      "id": "order-walls:restore-2:walls:chart-history-repair:6"
+    },
+    {
+      "at": 6989.800000000745,
+      "type": "order-wall-subscribe",
+      "id": "order-walls:chart-history-repair:9"
+    },
+    {
+      "at": 6994.800000000745,
+      "type": "order-wall-unsubscribe",
+      "id": "order-walls:chart-history-repair:9"
+    },
+    {
+      "at": 7009.800000000745,
+      "type": "order-wall-subscribe",
+      "id": "order-walls:chart-history-repair:10"
+    },
+    {
+      "at": 7045.800000000745,
+      "type": "order-wall-unsubscribe",
+      "id": "order-walls:restore-2:walls:chart-history-repair:6"
+    },
+    {
+      "at": 7046.700000001118,
+      "type": "order-wall-unsubscribe",
+      "id": "order-walls:restore-1:walls:chart-history-repair:3"
+    }
+  ],
+  "slowestStartupResources": [
+    {
+      "name": "http://127.0.0.1:5173/src/effort-result/service.ts",
+      "start": 3421.7000000011176,
+      "duration": 1748.8999999985099,
+      "transfer": 23718,
+      "body": 23418
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/effort-result/settings.ts",
+      "start": 3421.0999999996275,
+      "duration": 1747.7000000011176,
+      "transfer": 8585,
+      "body": 8285
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/feed/comparison.ts",
+      "start": 3427.7000000011176,
+      "duration": 1744.8999999985099,
+      "transfer": 17917,
+      "body": 17617
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/feed/reconcile.ts",
+      "start": 3427.300000000745,
+      "duration": 1744.7999999988824,
+      "transfer": 6159,
+      "body": 5859
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/tooltip-dwell.ts",
+      "start": 2650.2000000011176,
+      "duration": 1743,
+      "transfer": 5500,
+      "body": 5200
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/liquidations/burst-ui.ts",
+      "start": 2650.0999999996275,
+      "duration": 1741.4000000003725,
+      "transfer": 49584,
+      "body": 49284
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/order-book/projection.ts",
+      "start": 3502.4000000003725,
+      "duration": 1737,
+      "transfer": 15088,
+      "body": 14788
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/timezone.ts",
+      "start": 2649.9000000003725,
+      "duration": 1736.699999999255,
+      "transfer": 14843,
+      "body": 14543
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/chart/drawing-settings.ts",
+      "start": 3385.300000000745,
+      "duration": 1729.2999999988824,
+      "transfer": 23687,
+      "body": 23387
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/chart/drawing-templates.ts",
+      "start": 3385.5999999996275,
+      "duration": 1727.1000000014901,
+      "transfer": 47682,
+      "body": 47382
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/scripts/host.ts",
+      "start": 3384.800000000745,
+      "duration": 1721.7999999988824,
+      "transfer": 181857,
+      "body": 181557
+    },
+    {
+      "name": "http://127.0.0.1:5173/src/scripts/input-controls.ts",
+      "start": 3385.0999999996275,
+      "duration": 1719.300000000745,
+      "transfer": 6543,
+      "body": 6243
+    }
+  ],
+  "correctness": {
+    "range": {
+      "from": 1795122000,
+      "to": 1795148100
+    },
+    "referenceValidated": true,
+    "referenceBars": 50,
+    "median": 7755924.385499995,
+    "strength": 3.4415334950018903,
+    "wallSegments": 3627,
+    "wallEarliest": 1795121698493,
+    "wallStatus": {
+      "state": "gap",
+      "message": "Depth continuity gaps are present in the requested range",
+      "coverage": {
+        "from": 1795121700000,
+        "to": 1795148400000,
+        "complete": false,
+        "partial": true,
+        "reason": "Depth continuity gaps are present in the requested range"
+      },
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "partial",
+        "from": 1795121700000,
+        "to": 1795148400000,
+        "rangeComplete": false,
+        "market": "perpetual",
+        "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+        "aggregation": "native",
+        "availableFrom": 1793506604584,
+        "confirmedTo": 1795148400000,
+        "gaps": [
+          {
+            "from": 1795122965589,
+            "to": 1795122965589,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "from": 1795123645038,
+            "to": 1795123645038,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "from": 1795124844927,
+            "to": 1795124844927,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "from": 1795125084946,
+            "to": 1795125084946,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "from": 1795129915162,
+            "to": 1795129915162,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "from": 1795133514996,
+            "to": 1795133514996,
+            "reason": "Shared disk watermark"
+          }
+        ],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "reason": "Depth continuity gaps are present in the requested range",
+        "requestComplete": true,
+        "loadedThrough": 1795148400000,
+        "profileVersion": 1,
+        "algorithmVersion": 1,
+        "schemaVersion": 1,
+        "midpoint": "61713.95",
+        "eligibleTo": 1795148400000,
+        "horizonAt": 1795156166286
+      },
+      "currentSubscribed": false
+    },
+    "wallDiagnostics": {
+      "draws": 20,
+      "rebuilds": 0,
+      "patchProjects": 0,
+      "segments": 3627,
+      "visible": 8629,
+      "visibleHistorical": 8629,
+      "visibleCurrent": 0,
+      "bytes": 1625944,
+      "renderMs": 367.39999999664724,
+      "maxRenderMs": 133.30000000074506,
+      "strokes": 53,
+      "lastProjectMs": 2.300000000745058,
+      "lastReferenceMs": 0,
+      "lastPaintMs": 8.799999998882413,
+      "referenceRebuilds": 0,
+      "referenceSegments": 0,
+      "referenceValueScans": 0,
+      "paintCacheHits": 0,
+      "paintCacheBuilds": 0,
+      "paintStyleVisits": 0,
+      "closedPaintCacheHits": 0,
+      "closedPaintCacheBuilds": 0,
+      "closedPaintCacheAppends": 0,
+      "closedPaintStyleVisits": 0,
+      "settingsNoops": 9,
+      "mappingChecks": 0,
+      "mappingFallbacks": 0,
+      "retainedRenderer": {
+        "active": true,
+        "builds": 53,
+        "historyBuilds": 53,
+        "currentBuilds": 0,
+        "frames": 20,
+        "mappingInvalidations": 0,
+        "uploadedBytes": 1022340,
+        "bufferUploads": 106,
+        "drawCalls": 53,
+        "maxPrepareMs": 32.40000000037253,
+        "lastPrepareMs": 2.300000000745058,
+        "lastPaintMs": 8.799999998882413,
+        "visibleSpans": 8629,
+        "visibleHistorical": 8629,
+        "visibleCurrent": 0,
+        "bytes": 1133644,
+        "referenceMin": 368128.4534,
+        "referenceMax": 53031838.41,
+        "failure": "",
+        "pending": 0,
+        "chunks": 53,
+        "sources": 3627,
+        "retainedSpans": 23235,
+        "contextLost": false,
+        "sharedGpuBytes": 1022340,
+        "sharedOwners": 1
+      },
+      "paintedViewport": {
+        "fromMs": 1795122000000,
+        "toMs": 1795148100000,
+        "minPrice": 61078.125,
+        "maxPrice": 62796.875,
+        "plotWidth": 1436,
+        "plotHeight": 764
+      },
+      "inputRevision": 21,
+      "paintedRevision": 21,
+      "paintedAtMono": 12420.700000001118,
+      "pendingProjectionSegments": 0,
+      "pendingPaintWork": false,
+      "queuedPreparation": false,
+      "preparation": {
+        "slices": 0,
+        "steps": 0,
+        "cancelled": 0,
+        "activeMs": 0,
+        "lastProjectionElapsedMs": 0,
+        "lastReferenceElapsedMs": 0,
+        "lastSliceMs": 0,
+        "maxSliceMs": 0,
+        "backgroundMs": 0,
+        "maxBackgroundMs": 0,
+        "yieldMode": "not-scheduled",
+        "phase": "idle"
+      },
+      "retainedPaintPaths": 0,
+      "retainedClosedPaintPaths": 0,
+      "retainedClosedPaintSegments": 0,
+      "pendingClosedPaintSegments": 0,
+      "retainedSegments": 3627,
+      "openSegments": 16,
+      "retainedReferenceSegments": 0,
+      "referenceExtentValues": 0,
+      "pendingReferenceSegments": 0,
+      "referenceMinimum": 368128.4534,
+      "referenceMaximum": 53031838.41,
+      "retainedDrawables": 0,
+      "p95RenderMs": 20.799999998882413,
+      "mounted": true,
+      "archiveSegments": 3627,
+      "directSegments": 0,
+      "valueRuns": 23239,
+      "archiveValueRuns": 23239,
+      "directValueRuns": 0,
+      "valueHistoryLimited": false,
+      "episodeHistoryLimited": false
+    },
+    "errors": []
+  },
+  "finalization": [
+    {
+      "request": {
+        "market": "binance-perp",
+        "from": 1795121700000,
+        "to": 1795148400000
+      },
+      "settled": true,
+      "failed": false,
+      "hasProjector": false,
+      "preparedRevisionReused": false,
+      "preparedFinalization": {
+        "importedParts": 14,
+        "fetchedParts": 14,
+        "reusedParts": 0,
+        "reusedCanonicalBytes": 0,
+        "assemblyRecords": 3627,
+        "checkpointOrderElapsedMs": 35.20000000111759,
+        "validationElapsedMs": 76.79999999888241,
+        "validationYieldMs": 10.899999996647239,
+        "presentationOrderElapsedMs": 25.90000000037253,
+        "mutableProjectorRestored": false,
+        "manifestFingerprintMs": 11.700000001117587
+      },
+      "eligibleRange": {
+        "to": 1795148400000,
+        "horizonAt": 1795156166286
+      }
+    }
+  ],
+  "timing": {
+    "totalPages": 14,
+    "retainedSamples": 14,
+    "completeSample": true,
+    "p50": {
+      "responseHeadersMs": 0,
+      "responseBodyReadMs": 0,
+      "jsonParseMs": 2.800000000745058,
+      "validationMs": 24.199999999254942,
+      "projectorApplyMs": 10.999999998137355,
+      "updateCallbackMs": 4,
+      "eventLoopYieldDelayMs": 7.399999998509884,
+      "responseBytes": 305906
+    },
+    "p95": {
+      "responseHeadersMs": 790.7000000011176,
+      "responseBodyReadMs": 14.299999998882413,
+      "jsonParseMs": 11.399999998509884,
+      "validationMs": 90.90000000037253,
+      "projectorApplyMs": 39.1999999973923,
+      "updateCallbackMs": 27.800000000745058,
+      "eventLoopYieldDelayMs": 59.30000000074506,
+      "responseBytes": 934198
+    },
+    "max": {
+      "responseHeadersMs": 790.7000000011176,
+      "responseBodyReadMs": 14.299999998882413,
+      "jsonParseMs": 11.399999998509884,
+      "validationMs": 90.90000000037253,
+      "projectorApplyMs": 39.1999999973923,
+      "updateCallbackMs": 27.800000000745058,
+      "eventLoopYieldDelayMs": 59.30000000074506,
+      "responseBytes": 934198
+    }
+  },
+  "mainThreadApply": {
+    "footprintMs": 84.80000000074506,
+    "heatmapMs": 0,
+    "orderWallsMs": 182.2999999988824,
+    "footprintBatches": 11,
+    "heatmapBatches": 0,
+    "orderWallsBatches": 18
+  }
+}

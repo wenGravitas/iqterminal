@@ -46,8 +46,23 @@ export async function discoverPreparedWallAdmission(options:{request:PreparedWal
  // truncate the visible range or misreport a capacity rejection as source loss.
  if(options.request.to-options.request.from>48*3600000)throw new PreparedWallPreparationError(
   'Wall history supports up to 48 hours per request. Zoom in to a smaller visible range to load history.', 'capacity',false);
- const {projection,fetcher,signal}=options,consumer=crypto.randomUUID();let request=options.request,url=options.url,eligibility:WallEligibleDiscovery|undefined,job:string|undefined,leased=false;
- const result=(found:any)=>eligibility?{...found,eligibility}:found;
+ const {projection,fetcher,signal}=options,consumer=crypto.randomUUID(),readerConsumer=crypto.randomUUID();let readerTransferred=false,readerSentAt=0,readerMayRetain=false;let request=options.request,url=options.url,eligibility:WallEligibleDiscovery|undefined,job:string|undefined,leased=false;
+ const releaseReader=()=>{
+  const cancel='/market-data/v2/history/walls/preparation?'+new URLSearchParams({consumer:readerConsumer});
+  void wallReadControlScheduler.read(cancel,'order-walls',AbortSignal.timeout(2000),async upstream=>{const r=await fetcher(cancel,{method:'DELETE',signal:upstream});await r.body?.cancel();}).catch(()=>{});
+ };
+ const result=(found:any)=>{
+  const value=eligibility?{...found,eligibility}:found;
+  if(found?.readerLease?.acquired){
+   const initial={consumer:readerConsumer,sentAt:readerSentAt,response:found.readerLease.acquired};
+   if(initial.response.consumer!==readerConsumer)throw Error('Invalid discovered wall reader consumer');
+   let released=false;const detach=()=>{clearTimeout(timer);signal.removeEventListener('abort',release);};
+   const release=()=>{if(released)return;released=true;detach();releaseReader();};
+   const timer=setTimeout(release,Math.max(0,readerSentAt+15000-performance.now()));signal.addEventListener('abort',release,{once:true});
+   readerTransferred=true;return {...value,readerAcquired:{...initial,release,adopt:detach}};
+  }
+  return value;
+ };
  const release=()=>{
   const cancel='/market-data/v2/history/walls/preparation?'+new URLSearchParams({consumer});
   void wallReadControlScheduler.read(cancel,'order-walls',AbortSignal.timeout(2000),async upstream=>{
@@ -57,18 +72,18 @@ export async function discoverPreparedWallAdmission(options:{request:PreparedWal
  };
  try{for(;;){
   const found=await historyScheduler.read(url+'#consumer='+consumer+(projection?'&projection='+WALL_PROJECTION_CORE_SHA256:''),'order-walls',signal,async upstream=>{
-   const headers:Record<string,string>={'X-IQ-Wall-Consumer':consumer,...(projection?{'X-IQ-Wall-Projection':WALL_PROJECTION_CORE_SHA256,'X-IQ-Wall-Projection-Only':'1'}:{}),...(job?{'X-IQ-Wall-Job':job}:{}),...(options.resolveEligibility&&!eligibility?{'X-IQ-Wall-Resolve-Eligible':'1'}:{}),
+   const headers:Record<string,string>={'X-IQ-Wall-Consumer':consumer,'X-IQ-Wall-Reader-Consumer':readerConsumer,...(projection?{'X-IQ-Wall-Projection':WALL_PROJECTION_CORE_SHA256,'X-IQ-Wall-Projection-Only':'1'}:{}),...(job?{'X-IQ-Wall-Job':job}:{}),...(options.resolveEligibility&&!eligibility?{'X-IQ-Wall-Resolve-Eligible':'1'}:{}),
     ...(options.retry?{'X-IQ-Wall-Retry':options.retry.token,...(options.retry.newRevision?{'X-IQ-Wall-New-Revision':'1'}:{})}:{})};
-   const response=await fetcher(url,{signal:upstream,headers});
-   if(!response.ok){if(response.status===404){await response.body?.cancel();return null;}throw await historyHttpError(response,upstream,'Prepared wall discovery');}
-   return options.decode(response,8*1024*1024);
+   readerMayRetain=true;readerSentAt=performance.now();const response=await fetcher(url,{signal:upstream,headers});
+   if(!response.ok){readerMayRetain=false;if(response.status===404){await response.body?.cancel();return null;}throw await historyHttpError(response,upstream,'Prepared wall discovery');}
+   const found=await options.decode(response,8*1024*1024);readerMayRetain=Boolean(found?.readerLease?.acquired);return found;
   });
   if(found?.preparation)leased=true;
   signal.throwIfAborted();
   if(options.resolveEligibility&&!eligibility){
    // Older gateways may ignore the opt-in. Let the caller use its explicit
    // horizon compatibility path; do not poll a future unbounded legacy job.
-   if(!found?.eligibility){if(found?.preparation)leased=true;return found;}
+   if(!found?.eligibility){if(found?.preparation)leased=true;return result(found);}
    eligibility=validateWallEligibleDiscovery(found.eligibility,options.request);request=eligibility.request;
    const pinned=new URL(url,'http://localhost');pinned.searchParams.set('to',String(request.to));url=pinned.pathname+pinned.search;
    if((found.state==='future')!==(request.to===request.from))throw Error('Invalid eligible wall discovery state');
@@ -84,5 +99,5 @@ export async function discoverPreparedWallAdmission(options:{request:PreparedWal
    return result(found);
   }
   options.onPreparation?.(value);await delay(p.pollMs,signal);
- }}finally{if(leased)release();}
+ }}finally{if(leased)release();if(readerMayRetain&&!readerTransferred)releaseReader();}
 }

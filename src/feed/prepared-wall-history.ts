@@ -108,6 +108,7 @@ export async function discoverPreparedWallHistory(request:PreparedWallRequest,fe
 export async function preparedWallReader(request:PreparedWallRequest,fetcher:typeof fetch,signal:AbortSignal,resumeSourceToken?:string,settings?:OrderWallsProjectionSettings,options:{discovery?:unknown;onPreparation?:(value:WallPreparationProgress)=>void;retry?:{token:string;newRevision?:boolean}}={}):Promise<PreparedWallReader|null>{
  const projection=Boolean(settings&&settings.topLevels===8&&!settings.minimumNotionalEnabled&&settings.minDurationMs===0);
  const found:any=options.discovery??await discoverPreparedWallHistory(request,fetcher,signal,settings,options);
+ const acquired=found?.readerAcquired;let adopted=false;try{
  if(!found||found.state!=='ready'){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
  if(!validSource(found.source,request))throw Error('Invalid prepared wall source validation');
  const source:Source=found.source;if(resumeSourceToken&&source.token!==resumeSourceToken)throw new PreparedWallSourceChangedError(true);
@@ -118,7 +119,8 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
  const target=request.watermark===undefined?source.head:request.head;
  if(!head(target)||target.cursor!==(request.watermark??source.watermark)||!sourceFitsFence(manifest,source,target)||target.cursor>source.watermark||target.at<request.to-1){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
  if(found.readerLease&&(found.readerLease.version!==1||found.readerLease.leaseMs!==15000))throw Error('Invalid wall reader lease capability');
- const lease=found.readerLease?await acquirePreparedWallReadLease({canonicalKey:manifest.key,...(projection&&found.projection?.manifest?.key?{projectionKey:found.projection.manifest.key}:{})},fetcher,signal):undefined;
+ const lease=found.readerLease?await acquirePreparedWallReadLease({canonicalKey:manifest.key,...(projection&&found.projection?.manifest?.key?{projectionKey:found.projection.manifest.key}:{})},fetcher,signal,acquired):undefined;
+ acquired?.adopt();adopted=true;
  if(lease){const original=fetcher;fetcher=(input,init)=>{const headers:Record<string,string>={};new Headers(init?.headers).forEach((value,key)=>headers[key]=value);headers['X-IQ-Wall-Reader']=lease.consumer;return original(input,{...init,headers});};}
  const abort=new AbortController(),consumer=AbortSignal.any([signal,abort.signal,...(lease?[lease.signal]:[])]);
  const assertActive=()=>{lease?.assertActive();consumer.throwIfAborted();};
@@ -198,4 +200,5 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
   }
   assertActive();return {...result,body};
  }};
+ }finally{if(!adopted)acquired?.release();}
 }

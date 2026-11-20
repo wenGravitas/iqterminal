@@ -33,3 +33,15 @@ test('malformed identity or oversized lease response fails explicitly with bound
 });
 test('one transient renewal timeout retries only inside the original acknowledged lease and keeps identity',async()=>{vi.useFakeTimers();let n=0;const consumers:string[]=[];const fetcher=(async(_url,init)=>{if(init?.method==='DELETE')return new Response('{}');const b=JSON.parse(String(init?.body));consumers.push(b.consumer);if(++n===2)throw new DOMException('Aborted','AbortError');return new Response(JSON.stringify({version:1,leaseMs:15000,...identity}));}) as typeof fetch;const lease=await acquirePreparedWallReadLease(identity,fetcher,new AbortController().signal);await vi.advanceTimersByTimeAsync(5000);lease.assertActive();expect(n).toBe(3);expect(new Set(consumers).size).toBe(1);lease.release();});
 test('two transient failures terminate; a timed-out initial acquisition has no unconfirmed lease to reuse',async()=>{vi.useFakeTimers();let n=0;const f=(async(_u,init)=>{if(init?.method==='DELETE')return new Response('{}');if(++n>1)throw new DOMException('Aborted','AbortError');return new Response(JSON.stringify({version:1,leaseMs:15000,...identity}));}) as typeof fetch;const lease=await acquirePreparedWallReadLease(identity,f,new AbortController().signal);await vi.advanceTimersByTimeAsync(5000);expect(n).toBe(3);expect(lease.signal.aborted).toBe(true);let first=0;await expect(acquirePreparedWallReadLease(identity,(async(_u,init)=>{if(init?.method==='DELETE')return new Response('{}');first++;throw new TypeError('Network');}) as typeof fetch,new AbortController().signal)).rejects.toThrow();expect(first).toBe(1);});
+test('adopts an independently validated discovery lease without another acquisition request and renews from the discovery send clock',async()=>{
+ vi.useFakeTimers();const s=source(),sentAt=performance.now();await vi.advanceTimersByTimeAsync(2000);
+ const lease=await acquirePreparedWallReadLease(identity,s.fetcher,new AbortController().signal,{consumer:'discovered-reader',sentAt,response:{version:1,leaseMs:15000,...identity}});
+ expect(s.calls).toHaveLength(0);lease.assertActive();await vi.advanceTimersByTimeAsync(3000);expect(s.calls).toHaveLength(1);expect(s.calls[0].body.consumer).toBe('discovered-reader');lease.release();
+});
+test('discovery adoption rejects wrong keys and already expired acknowledgments',async()=>{
+ vi.useFakeTimers();const s=source(),sentAt=performance.now();
+ await expect(acquirePreparedWallReadLease(identity,s.fetcher,new AbortController().signal,{consumer:'reader',sentAt,response:{version:1,leaseMs:15000,...identity,canonicalKey:'c'.repeat(64)}})).rejects.toThrow(/identity/);
+ await vi.advanceTimersByTimeAsync(15001);
+ await expect(acquirePreparedWallReadLease(identity,s.fetcher,new AbortController().signal,{consumer:'expired-reader',sentAt,response:{version:1,leaseMs:15000,...identity}})).rejects.toThrow(/expired/);
+ expect(s.calls.every(c=>c.method==='DELETE')).toBe(true);
+});

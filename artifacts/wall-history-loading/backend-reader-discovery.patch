@@ -1,0 +1,71 @@
+diff --git a/src/history-gateway.ts b/src/history-gateway.ts
+index 369f0e6..69be6e5 100644
+--- a/src/history-gateway.ts
++++ b/src/history-gateway.ts
+@@ -1,7 +1,7 @@
+ import {serveFootprintBatch,FOOTPRINT_BATCH_PATH} from './footprint-batch.ts';
+ import {wallBatchResponse,WALL_BATCH_PATH,WALL_BATCH_DELIVERY} from './wall-batch-delivery.ts';
+ import {wallProjectionBatchResponse,WALL_PROJECTION_BATCH_PATH,wallProjectionRoot,wallProjectionEncodingHealth,encodeWallDiscoveryBody} from './wall-projection-delivery.ts';
+-import {discoverAndPrepareWallView,WALL_PREPARATION_CANCEL_PATH} from './wall-preparation-gateway.ts';
++import {discoverAndPrepareWallView,retainDiscoveredWallReader,WALL_PREPARATION_CANCEL_PATH} from './wall-preparation-gateway.ts';
+ import {wallPreparationCommand,WALL_READ_LEASE_PATH} from './wall-preparation-control.ts';
+ import {wallSourceVersion,wallSourceRequest,wallSourceHorizon,wallHorizonRequest,WALL_HORIZON_PATH,WALL_SOURCE_PATH,WALL_DISCOVERY_PATH} from './wall-source-version.ts';
+ import {wallChunkResponse,wallChunkRoot,WALL_MANIFEST_PATH,WALL_PART_PATH} from './wall-chunk-delivery.ts';
+@@ -121,7 +121,7 @@ const server=http.createServer(async(req,res)=>{
+   const projectionOnly=header('x-iq-wall-projection-only');if(projectionOnly!==undefined&&projectionOnly!=='1')throw Error('Invalid projection-only wall capability');
+   const eligibility=header('x-iq-wall-resolve-eligible');if(eligibility!==undefined&&eligibility!=='1')throw Error('Invalid wall eligibility capability');
+   data=await discoverAndPrepareWallView(wallChunkRoot(request.market),wallProjectionRoot(request.market),request,{enabled:process.env.WALL_PREPARATION_ENABLED==='1',consumer:header('x-iq-wall-consumer'),capability:header('x-iq-wall-projection'),retryToken:header('x-iq-wall-retry'),newRevision:header('x-iq-wall-new-revision')==='1',job:header('x-iq-wall-job'),signal:abort.signal,resolveEligibility:eligibility==='1',projectionOnly:projectionOnly==='1',independentSources:process.env.IQ_WALL_PROJECTION_SOURCES==='1'});
+-  if(data.state==='ready'){if(data.representation!=='projection-v1')data.delivery=WALL_BATCH_DELIVERY;if(process.env.WALL_PREPARATION_ENABLED==='1')data.readerLease={version:1,leaseMs:15000};}
++  if(data.state==='ready'){if(data.representation!=='projection-v1')data.delivery=WALL_BATCH_DELIVERY;data=await retainDiscoveredWallReader(data,header('x-iq-wall-reader-consumer'),process.env.WALL_PREPARATION_ENABLED==='1',abort.signal);}
+  }
+  else if(u.pathname===WALL_HORIZON_PATH)data=await wallSourceHorizon(wallHorizonRequest(u));
+  else if(u.pathname===WALL_SOURCE_PATH)data=await wallSourceVersion(wallSourceRequest(u));
+diff --git a/src/wall-preparation-gateway.ts b/src/wall-preparation-gateway.ts
+index fa723c7..ee49112 100644
+--- a/src/wall-preparation-gateway.ts
++++ b/src/wall-preparation-gateway.ts
+@@ -67,3 +67,20 @@ async function discoverResolvedAndPrepareWallView(root:string,projectionRoot:str
+   throw error;
+  }
+ }
++
++/** Reuse the ordinary validated reader admission before returning ready metadata.
++ * Older clients omit the opt-in and retain the separate POST contract. */
++export async function retainDiscoveredWallReader(data:any,consumer:string|undefined,enabled:boolean,signal?:AbortSignal,command:typeof wallPreparationCommand=wallPreparationCommand){
++ if(consumer!==undefined&&!consumerValid(consumer))throw Error('Invalid discovery wall reader consumer');
++ if(data.state!=='ready'||!enabled)return data;
++ const readerLease:any={version:1,leaseMs:15000};
++ if(consumer){
++  const canonicalKey=(data.representation==='projection-v1'?data.sourceSnapshot:data.manifest)?.key;
++  const projectionKey=data.projection?.manifest?.key;
++  try{
++   readerLease.acquired={...await command('/retain',{consumer,canonicalKey,...(projectionKey?{projectionKey}:{})},signal),consumer};
++   signal?.throwIfAborted();
++  }catch(error){void command('/release',{consumer}).catch(()=>{});throw error;}
++ }
++ return {...data,readerLease};
++}
+diff --git a/tests/wall-preparation-gateway.test.ts b/tests/wall-preparation-gateway.test.ts
+index 42b57d3..1e49128 100644
+--- a/tests/wall-preparation-gateway.test.ts
++++ b/tests/wall-preparation-gateway.test.ts
+@@ -139,3 +139,19 @@ test('private continuation V2 publication retains the existing projection-v1 wir
+  const result=await discoverAndPrepareWallView('c','p',request,{enabled:true,consumer:'continued',projectionOnly:true,independentSources:true,capability:WALL_PROJECTION_CORE_SHA256},{...deps(),selected:async()=>({state:'ready',source:proof,sourceSnapshot:snapshot,projectionManifest:{key:'selected'}})} as any);
+  assert.equal(result.sourceSnapshot.version,1);assert.equal(result.sourceSnapshot.kind,'wall-projection-source-v1');assert.equal((result.sourceSnapshot as any).continuation,undefined);assert.equal((result.sourceSnapshot as any).parts,undefined);assert.deepEqual(result.sourceSnapshot.sourceProof,proof);
+ });
++
++test('ready discovery can retain the ordinary independently verified reader lease without changing legacy responses',async()=>{
++ const {retainDiscoveredWallReader}=await import('../src/wall-preparation-gateway.ts');
++ const canonicalKey='a'.repeat(64),projectionKey='b'.repeat(64),data={state:'ready',representation:'projection-v1',sourceSnapshot:{key:canonicalKey},projection:{manifest:{key:projectionKey}}},calls:any[]=[];
++ const command=async(path:string,input:any)=>{calls.push({path,input});return {version:1,leaseMs:15000,canonicalKey,projectionKey};};
++ const legacy=await retainDiscoveredWallReader(data,undefined,true,undefined,command as any);assert.deepEqual(legacy.readerLease,{version:1,leaseMs:15000});assert.equal(calls.length,0);
++ const ready=await retainDiscoveredWallReader(data,'reader-1',true,undefined,command as any);
++ assert.deepEqual(calls,[{path:'/retain',input:{consumer:'reader-1',canonicalKey,projectionKey}}]);assert.deepEqual(ready.readerLease.acquired,{version:1,leaseMs:15000,canonicalKey,projectionKey,consumer:'reader-1'});
++ assert.equal(await retainDiscoveredWallReader(data,'reader-1',false,undefined,command as any),data);
++ await assert.rejects(retainDiscoveredWallReader(data,'bad consumer',true,undefined,command as any),/Invalid/);
++});
++test('failed or cancelled discovery reader admission releases just that reader',async()=>{
++ const {retainDiscoveredWallReader}=await import('../src/wall-preparation-gateway.ts');const abort=new AbortController(),calls:string[]=[];
++ const command=async(path:string)=>{calls.push(path);if(path==='/retain')abort.abort();return {version:1,leaseMs:15000};};
++ await assert.rejects(retainDiscoveredWallReader({state:'ready',manifest:{key:'a'.repeat(64)}},'reader-1',true,abort.signal,command as any),/abort/i);assert.deepEqual(calls,['/retain','/release']);
++});
