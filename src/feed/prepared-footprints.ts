@@ -251,9 +251,10 @@ export class PreparedFootprints {
       if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
       if (!signal.aborted) publish(this.visibleBars(visibleTiles), visibleComplete(), true,
         this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes, revisionStates), progress());
-      // Strength warmup is optional. A failed or still-building older chunk
-      // leaves the visible tiles ready and lets the strength show unavailable.
-      if (!visiblePending) return;
+      // A building reference is still active demand after the visible cells
+      // become ready. Poll only its lower-priority chunks until it completes;
+      // failures leave the visible result ready and strength unavailable.
+      if (!visiblePending && (!analysisPending || analysisFailed)) return;
       await new Promise<void>((resolve, reject) => {
         const timer = setTimeout(done, 1000);
         function done() { signal.removeEventListener('abort', cancel); resolve(); }

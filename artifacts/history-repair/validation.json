@@ -1,0 +1,18 @@
+{
+  "regressionBeforeFix": "Ready visible footprints resolved while the reference chunk was still building; expected load to remain active.",
+  "focusedTests": {
+    "passed": 161,
+    "files": [
+      "tests/prepared-footprints.test.ts",
+      "tests/footprint-delta-flips.test.ts",
+      "tests/footprint-totals.test.ts",
+      "tests/order-walls-archive.test.ts",
+      "tests/order-walls-chart.test.ts",
+      "tests/restore-bootstrap.test.ts"
+    ]
+  },
+  "build": "pnpm build passed, including tsc --noEmit",
+  "liveBrowser": "combined-live.json; completed wall painting and exact 50-reference delta flip asserted",
+  "actualUserBrowserProfileInspected": false,
+  "performanceAcceptance": false
+}

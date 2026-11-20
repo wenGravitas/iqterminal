@@ -1,10 +1,51 @@
-import {test,expect} from 'vitest';
+import {test,expect,vi} from 'vitest';
 import {PreparedFootprints} from '../src/feed/prepared-footprints';
 class Cache {values=new Map<string,any>();async getMany(keys:string[]){return new Map(keys.filter(k=>this.values.has(k)).map(k=>[k,this.values.get(k)]));}async putMany(entries:{key:string;value:any}[]){for(const x of entries)this.values.set(x.key,x.value);}}
 const feed='binance:perpetual:BTCUSDT:aggregate-trade';
 test('closed footprint revisions replace rather than add and a correction can remove an empty bar',async()=>{const cache=new Cache();let revision=1,bar:any={time:900};const request:any=async()=>new Response(JSON.stringify({version:1,feed,state:'ready',tiles:[{from:900000,revision,bar}]}));const client=new PreparedFootprints(request,cache),signal=new AbortController().signal,events:any[]=[];await client.load(900000,1200000,'5m',10,signal,(bars,complete,validated)=>events.push({bars,complete,validated}));expect(events.at(-1)).toEqual({bars:[{time:900,revision:1}],complete:true,validated:true});revision=2;bar=null;events.length=0;await client.load(900000,1200000,'5m',10,signal,(bars,complete,validated)=>events.push({bars,complete,validated}));expect(events[0].validated).toBe(false);expect(events.at(-1)).toEqual({bars:[],complete:true,validated:true});});
 test('unavailable materialization produces an explicit error rather than permanent loading',async()=>{const client=new PreparedFootprints((async()=>new Response(JSON.stringify({version:1,feed,state:'unavailable',tiles:[]}))) as any,new Cache());await expect(client.load(900000,1200000,'5m',10,new AbortController().signal,()=>{})).rejects.toThrow('unavailable');});
+test('ready visible footprints keep polling a building delta-flip reference without rereading visible cells',async()=>{
+ vi.useFakeTimers();
+ const calls:number[]=[],events:any[]=[],cache=new Cache();let warmupReads=0,settled=false;
+ const tile=(from:number)=>({from,revision:1,bar:{time:from/1000,delta:20,quoteDelta:200,source:'binance-usdm-aggtrade',granularity:'aggregate-trade',coverage:'observed',gapBefore:false},coverage:{from,to:from+300000,complete:true,gaps:[]}});
+ const request:typeof fetch=async(input)=>{
+  const from=Number(new URL(String(input),'http://localhost').searchParams.get('from'));calls.push(from);
+  if(from===600000&&++warmupReads===1)return Response.json({version:1,feed,state:'building',tiles:[]});
+  return Response.json({version:1,feed,state:'ready',tiles:[tile(from)]});
+ };
+ const abort=new AbortController(),client=new PreparedFootprints(request,cache);
+ const work=client.load(900000,1200000,'5m',25,abort.signal,(bars,complete,validated,analysis)=>events.push({bars,complete,validated,analysis}),'perpetual',600000).then(()=>{settled=true;});
+ try{
+  await vi.advanceTimersByTimeAsync(0);
+  expect(events.at(-1)).toMatchObject({complete:true,validated:true,bars:[{time:900}]});
+  expect(calls).toEqual([900000,600000]);expect(settled).toBe(false);
+  await vi.advanceTimersByTimeAsync(1000);await work;
+  expect(calls).toEqual([900000,600000,600000]);expect(events.every(event=>event.complete)).toBe(true);
+  expect(events.at(-1).analysis.summaries).toHaveLength(2);
+  expect(events.at(-1).analysis.summaries.find((summary:any)=>summary.time===600)).toMatchObject({coverageEvidence:{validated:true}});
+  expect(cache.values.size).toBe(1);
+ }finally{abort.abort();await work.catch(()=>{});client.dispose();vi.useRealTimers();}
+});
 test('cancelled instrument generations cannot publish a late historical response',async()=>{let resolve!:(r:Response)=>void;const request:any=()=>new Promise<Response>(r=>resolve=r);const client=new PreparedFootprints(request,new Cache()),abort=new AbortController(),published:any[]=[];const work=client.load(900000,1200000,'5m',10,abort.signal,(...x)=>published.push(x));await new Promise(r=>setTimeout(r,0));abort.abort();await expect(work).rejects.toMatchObject({name:'AbortError'});resolve(new Response(JSON.stringify({version:1,feed,state:'ready',tiles:[]})));await new Promise(r=>setTimeout(r,0));expect(published).toEqual([]);});
+
+for(const end of ['unavailable','cancelled'] as const)test(`delta-flip warmup stops when ${end} and preserves ready visible footprints`,async()=>{
+ vi.useFakeTimers();const calls:number[]=[],events:any[]=[],abort=new AbortController();
+ const request:typeof fetch=async(input)=>{
+  const from=Number(new URL(String(input),'http://localhost').searchParams.get('from'));calls.push(from);
+  return Response.json({version:1,feed,state:from===900000?'ready':end==='unavailable'?'unavailable':'building',tiles:from===900000?[{from,revision:1,bar:{time:900}}]:[]});
+ };
+ const client=new PreparedFootprints(request,new Cache());
+ const work=client.load(900000,1200000,'5m',25,abort.signal,(bars,complete)=>events.push({bars,complete}),'perpetual',600000);
+ const result=work.then(()=>undefined,error=>error);
+ try{
+  await vi.advanceTimersByTimeAsync(0);
+  expect(events.at(-1)).toMatchObject({complete:true,bars:[{time:900}]});
+  if(end==='cancelled'){abort.abort();expect(await result).toMatchObject({name:'AbortError'});}
+  else expect(await result).toBeUndefined();
+  const count=events.length;await vi.advanceTimersByTimeAsync(2000);
+  expect(calls).toEqual([900000,600000]);expect(events).toHaveLength(count);
+ }finally{abort.abort();await result;client.dispose();vi.useRealTimers();}
+});
 
 test('Spot footprint history selects the Spot feed and keeps its tiles in a separate cache namespace',async()=>{
  const calls:string[]=[],cache=new Cache(),spotFeed='binance:spot:BTCUSDT:aggregate-trade';

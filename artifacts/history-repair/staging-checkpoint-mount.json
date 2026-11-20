@@ -1,0 +1,29 @@
+{
+  "image": "iqterminal-staging:9b8cc2cafb349d6ecd29a0022e7246ec95ebc3aa",
+  "health": "healthy",
+  "checkpointMount": "/opt/iqterminal/state:/state:ro",
+  "perpetual": {
+    "state": "ready",
+    "revisionState": "ready",
+    "error": null,
+    "tiles": 2,
+    "sourceValidation": {
+      "from": 1795143600000,
+      "to": 1795144200000,
+      "watermark": 3534512548
+    },
+    "jobs": []
+  },
+  "spot": {
+    "state": "ready",
+    "revisionState": "ready",
+    "error": null,
+    "tiles": 2,
+    "sourceValidation": {
+      "from": 1795143600000,
+      "to": 1795144200000,
+      "watermark": 4124011675
+    },
+    "jobs": []
+  }
+}

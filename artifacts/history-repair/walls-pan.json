@@ -1,0 +1,87 @@
+{
+  "evidence": "real staging data through Vite5173; fresh isolated headless profile; no fixtures",
+  "initialViewport": {
+    "from": 1795140900000,
+    "to": 1795148100000
+  },
+  "expandedViewport": {
+    "from": 1795122000000,
+    "to": 1795148100000
+  },
+  "result": "complete requested range including explicit gaps",
+  "segments": 4347,
+  "earliest": 1795119030000,
+  "archive": {
+    "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+    "state": "partial",
+    "from": 1795121700000,
+    "to": 1795148400000,
+    "rangeComplete": false,
+    "market": "perpetual",
+    "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+    "aggregation": "native",
+    "availableFrom": 1793506604584,
+    "confirmedTo": 1795140600000,
+    "gaps": [
+      {
+        "from": 1795122965589,
+        "to": 1795122965589,
+        "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+      },
+      {
+        "from": 1795123645038,
+        "to": 1795123645038,
+        "reason": "Shared disk watermark"
+      },
+      {
+        "from": 1795124844927,
+        "to": 1795124844927,
+        "reason": "Shared disk watermark"
+      },
+      {
+        "from": 1795125084946,
+        "to": 1795125084946,
+        "reason": "Shared disk watermark"
+      },
+      {
+        "from": 1795129915162,
+        "to": 1795129915162,
+        "reason": "Shared disk watermark"
+      },
+      {
+        "from": 1795133514996,
+        "to": 1795133514996,
+        "reason": "Shared disk watermark"
+      }
+    ],
+    "requestedBandPercent": 10,
+    "profileBandPercent": 10,
+    "requestedTopN": 8,
+    "exact": true,
+    "reason": "Loaded history includes explicit source gaps.",
+    "requestComplete": true,
+    "loadedThrough": 1795148399999,
+    "profileVersion": 1,
+    "algorithmVersion": 1,
+    "schemaVersion": 1,
+    "midpoint": "61363.05",
+    "eligibleTo": 1795140600000,
+    "horizonAt": 1795150597010,
+    "loadedFrom": 1795119030000,
+    "residentRanges": [
+      {
+        "from": 1795119030000,
+        "to": 1795140600000
+      },
+      {
+        "from": 1795140600000,
+        "to": 1795148400000
+      }
+    ],
+    "unloadedRanges": [],
+    "gapsTruncated": false
+  },
+  "visibleHistoricalSpans": 8571,
+  "pendingPaintWork": false,
+  "errors": []
+}
