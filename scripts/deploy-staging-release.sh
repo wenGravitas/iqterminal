@@ -2,6 +2,7 @@
 set -euo pipefail
 
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+if [[ "${1:-}" == -- ]]; then shift; fi
 release_dir=${1:?Usage: deploy-staging-release.sh <immutable-release-directory>}
 release_dir=$(realpath "$release_dir")
 staging_host=${IQ_STAGING_SSH_HOST:-staging}
