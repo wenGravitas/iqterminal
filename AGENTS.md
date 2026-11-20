@@ -1,6 +1,6 @@
 # IQ Terminal
 
-Follow /home/daz/.codex/AGENTS.md for Sol Max routing and bounded Astra adviser escalation. Do not alter model configuration or substitute a different model silently.
+Follow /home/daz/.codex/AGENTS.md for Sol routing (Low reasoning for workers/subagents) and bounded Astra adviser escalation. Do not alter model configuration or substitute a different model silently.
 
 Work within the current requested scope and preserve the existing native-DOM terminal architecture. Trading Foundation signing remains testnet-only; real venue acceptance and production trading require their separately documented authorization and validation.
 
