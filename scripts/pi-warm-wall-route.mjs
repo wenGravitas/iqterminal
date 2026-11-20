@@ -1,7 +1,7 @@
 /** Headless actual-route diagnostic. No headed windows; worker arrival alone
  * never certifies chart paint or the primary normal-Chromium Pi UX gates. */
 import assert from 'node:assert/strict';import {readFileSync,writeFileSync,appendFileSync,mkdirSync} from 'node:fs';import {createHash} from 'node:crypto';import {execFileSync} from 'node:child_process';import {performance} from 'node:perf_hooks';
-import {chromium} from './test-browser-launch.mjs';import {finishResponseTraces} from './benchmark-traces.mjs';
+import {chromium} from './test-browser-launch.mjs';import {finishResponseTraces} from './benchmark-traces.mjs';import {join,resolve} from 'node:path';
 if(process.env.IQ_WARM_WALL_ROUTE!=='1')throw Error('Explicit actual-route headless diagnostic opt-in required');
 const base=process.env.IQ_WARM_URL??'http://127.0.0.1:4183',label=process.env.IQ_WARM_LABEL,build=process.env.IQ_WARM_BUILD;
 assert.ok(label&&/^[a-zA-Z0-9_-]{1,80}$/.test(label));assert.ok(build&&/^[a-f0-9]{40}$/.test(build));execFileSync('git',['cat-file','-e',build+'^{commit}']);
@@ -10,7 +10,7 @@ const seedObservationMs=Number(process.env.IQ_WARM_SEED_OBSERVATION_MS??45000),r
 assert.ok(Number.isInteger(seedObservationMs)&&seedObservationMs>=12000&&seedObservationMs<=180000);assert.ok(['software','gles'].includes(renderer));
 const traceMapping=process.env.IQ_WARM_TRACE_MAPPING==='1';
 const interval=market==='spot'?'5m':'15m',step=market==='spot'?300000:900000,range={from:reference.from,to:reference.to},id='chart-route-warm',samples=Number(process.env.IQ_WARM_SAMPLES??5);assert.ok(Number.isInteger(samples)&&samples>=1&&samples<=5);
-const dir='artifacts/pi-history-r1/warm-route-'+label;mkdirSync(dir,{recursive:false});const executed=readFileSync(new URL(import.meta.url));writeFileSync(dir+'/executed.mjs',executed);
+const outputRoot=resolve(process.env.IQ_WARM_OUTPUT_DIR??'artifacts/pi-history-r1'),dir=join(outputRoot,'warm-route-'+label);mkdirSync(outputRoot,{recursive:true});mkdirSync(dir,{recursive:false});const executed=readFileSync(new URL(import.meta.url));writeFileSync(dir+'/executed.mjs',executed);
 const optionalRead=path=>{try{return readFileSync(path,'utf8').trim();}catch{return null;}};
 const optionalCommand=args=>{try{return execFileSync('vcgencmd',args,{encoding:'utf8',timeout:1000,stdio:['ignore','pipe','ignore']}).trim();}catch{return null;}};
 const resources=()=>({at:new Date().toISOString(),hardware:{thermalMilliC:optionalRead('/sys/class/thermal/thermal_zone0/temp'),cpuKHz:optionalRead('/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq'),governor:optionalRead('/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor'),throttleFlags:optionalCommand(['get_throttled'])},load:readFileSync('/proc/loadavg','utf8').trim(),mem:readFileSync('/proc/meminfo','utf8'),cpu:readFileSync('/proc/stat','utf8').split('\n').slice(0,5),swap:readFileSync('/proc/vmstat','utf8').split('\n').filter(s=>/^(pswpin|pswpout|pgmajfault) /.test(s))});

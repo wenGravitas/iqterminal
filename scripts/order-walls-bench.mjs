@@ -20,7 +20,8 @@ const option = (name, fallback) => process.argv.find(value => value.startsWith(`
 const mode = option('mode', 'fixture');
 const baseUrl = option('url', mode === 'staging' ? 'http://127.0.0.1:5181/' : 'http://127.0.0.1:5180/');
 const samples = Number(option('samples', '3'));
-const output = option('output', `artifacts/order-walls/${mode}.json`);
+const artifactDir = path.resolve(option('artifact-dir', 'artifacts/order-walls'));
+const output = path.resolve(option('output', path.join(artifactDir, `${mode}.json`)));
 const timeoutMs = Number(option('timeout-ms', '90000'));
 const liveMs = Number(option('live-ms', '10000'));
 const updates = Number(option('updates', '40'));
@@ -106,11 +107,17 @@ async function restoreStagingViewport(page, panelId, rangeMs, priceRange) {
 }
 const slug = value => value.replaceAll('+', '-').replaceAll(' ', '-').toLowerCase();
 const startedAt = new Date().toISOString();
+const sourceRevision = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
 const sourceHashesAtStart = await sourceFingerprint();
 const result = {
   schemaVersion: 1,
   mode,
   baseUrl,
+  sourceRevision,
+  artifacts: { directory: artifactDir, resultFile: output },
+  startup: [],
+  clientConfiguration: null,
+  productionRelease: null,
   selectedCase: selectedCase || null,
   startedAt,
   machine: { platform: os.platform(), arch: os.arch(), release: os.release(), node: process.version },
@@ -128,7 +135,7 @@ const result = {
   },
 };
 
-await mkdir('artifacts/order-walls', { recursive: true });
+await mkdir(artifactDir, { recursive: true });
 const executable = process.env.CHROMIUM_PATH || '/usr/bin/chromium';
 const requestedArgs = ['--class=IQTerminalPerf', '--no-sandbox', '--enable-webgl'];
 const ignoredDefaultArguments = ['--enable-unsafe-swiftshader'];
@@ -287,7 +294,25 @@ async function openPage({ fixture = false } = {}) {
   if (fixture) target.searchParams.set('fixture', '1');
   await page.goto(target.href, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForFunction(() => window.__terminal?.stats?.().panels?.length > 0, undefined, { timeout: 30000 });
-  return { context, page, errors, network, runtime };
+  const startup = await page.evaluate(() => {
+    const navigation = performance.getEntriesByType('navigation')[0];
+    const paints = performance.getEntriesByType('paint');
+    const elapsed = name => {
+      const value = paints.find(entry => entry.name === name)?.startTime;
+      return Number.isFinite(value) ? Math.round(value * 10) / 10 : null;
+    };
+    return { navigationStartedAt: new Date(performance.timeOrigin).toISOString(),
+      domContentLoadedMs: navigation?.domContentLoadedEventEnd ?? null,
+      loadEventMs: navigation?.loadEventEnd ?? null, firstPaintMs: elapsed('first-paint'),
+      firstContentfulPaintMs: elapsed('first-contentful-paint'), applicationReadyMs: Math.round(performance.now() * 10) / 10,
+      documentState: document.documentElement.dataset.appState ?? null, visibility: document.visibilityState };
+  });
+  let productionRelease = null;
+  try {
+    const response = await page.request.get(new URL('/__staging/release.json', baseUrl).href, { timeout: 3000 });
+    if (response.ok() && response.headers()['content-type']?.includes('application/json')) productionRelease = await response.json();
+  } catch { /* Vite development pages have no immutable release endpoint. */ }
+  return { context, page, errors, network, runtime, startup, productionRelease };
 }
 
 function trackNetwork(page) {
@@ -328,6 +353,7 @@ function trackNetwork(page) {
         startPerf: before.startPerf,
         durationMs: request.timing().responseEnd >= 0 ? request.timing().responseEnd - request.timing().requestStart : null,
         status: response?.status() ?? null,
+        serverTiming: response?.headers()['server-timing'] ?? null,
         contentLengthHeaderBytes: Number.isFinite(contentLength) && contentLength >= 0 ? contentLength : null,
         responseBodyBytes: sizes?.responseBodySize ?? null,
         transferSizeBytes: sizes?.responseBodySize !== undefined && sizes?.responseHeadersSize !== undefined
@@ -694,7 +720,7 @@ async function runFixture() {
       const sourceHashesAfter = await sourceFingerprint();
       const runtimeStability = runtimeChanges(runtime, runtimeBaseline);
       const explicitUpdateTimes = await page.evaluate(() => [...window.__orderWallsFixture.dispatchMs]);
-      const image = `artifacts/order-walls/fixture-${slug(scenario.id)}-sample-${sample}.png`;
+      const image = path.join(artifactDir, `fixture-${slug(scenario.id)}-sample-${sample}.png`);
       await page.screenshot({ path: image, fullPage: true });
       const wall = panelState(after, id)?.orderWalls;
       const heat = panelState(after, id)?.heatmap;
@@ -746,7 +772,10 @@ async function runFixture() {
 async function runStaging() {
   for (let sample = 1; sample <= samples; sample++) for (const scenario of caseOrder(sample)) {
     const sourceHashesBefore = await sourceFingerprint(), hostBefore = hostState();
-    const { context, page, errors, network, runtime } = await openPage();
+    const { context, page, errors, network, runtime, startup, productionRelease } = await openPage();
+    result.startup.push({ scenario: scenario.id, sample, ...startup,
+      workerEvents: runtime.events.workers.slice(), mainNavigations: runtime.events.mainNavigations.slice() });
+    if (productionRelease) result.productionRelease = productionRelease;
     let runtimeBaseline = null;
     try {
       const sampleStartedAt = new Date().toISOString();
@@ -760,6 +789,12 @@ async function runStaging() {
         throw new Error(initialDiagnostics.workerDiagnostics?.timedOutRequests
           ? 'No worker diagnostics ACK within the bounded 10-second staging readiness check.'
           : 'This page is not a staging-mode diagnostic build. Start Vite with VITE_DATA_MODE=staging and use __terminal diagnostics.');
+      }
+      const clientConfiguration = initialDiagnostics.worker?.staging?.config;
+      result.clientConfiguration = clientConfiguration ?? null;
+      if (clientConfiguration?.dataMode !== 'staging' || clientConfiguration.historyTiles !== true
+          || clientConfiguration.build !== sourceRevision) {
+        throw new Error(`Client staging configuration does not match this source revision: ${JSON.stringify(clientConfiguration)}`);
       }
       await startFrameProbe(page);
       const coldFrameStart = await frameMark(page);
@@ -914,23 +949,25 @@ async function runStaging() {
         await save();
         const liveAndPan = await exerciseStaging(page, id, scenario, network, liveMs);
         const rollover = scenario.id === 'candles-both' && sample === samples ? await waitForRollover(page, id, 70000) : null;
+        const chartSwitch = await exerciseChartSwitch(page, id, network, timeoutMs);
         await network.flush();
         const finalDiagnostics = await stats(page, { refreshWorker: true });
         const sourceHashesAfter = await sourceFingerprint(), runtimeStability = runtimeChanges(runtime, runtimeBaseline), hostAfter = hostState();
         const probe = await stopFrameProbe(page);
-        const image = `artifacts/order-walls/staging-${slug(scenario.id)}-sample-${sample}.png`;
+        const image = path.join(artifactDir, `staging-${slug(scenario.id)}-sample-${sample}.png`);
         await page.screenshot({ path: image, fullPage: true });
         const item = {
           scenario: scenario.id, sample, source: 'actual staging mode and live Binance USD-M perpetual source',
           timerBoundary: 'new ephemeral browser context; candle chart live; fixed 12-minute logical viewport and fixed price bounds; cold timer starts before the first native indicator attach and includes applying fixed $50 wall aggregation',
-          sourceHashesBefore, sourceHashesAfter,
+          sourceHashesBefore, sourceHashesAfter, startup,
           stability: { sourceStable: JSON.stringify(sourceHashesBefore) === JSON.stringify(sourceHashesAfter), ...runtimeStability,
             valid: JSON.stringify(sourceHashesBefore) === JSON.stringify(sourceHashesAfter) && runtimeStability.stable },
           host: { before: hostBefore, after: hostAfter }, wallAggregationDollars: 50,
           startedAt: sampleStartedAt,
           viewport: view,
           cold,
-          warm, liveAndPan, rollover,
+          warm, liveAndPan, rollover, chartSwitch,
+          ...(chartSwitch.valid ? {} : { failed: chartSwitch.reason }),
           final: { panels: finalDiagnostics.panels.map(p => ({ series: p.series, candleState: p.status?.state,
             latestCandle: p.last?.t ?? null, wall: p.orderWalls, heatmap: p.heatmap })), worker: finalDiagnostics.worker,
             historyApply: finalDiagnostics.historyApply, longTasks: finalDiagnostics.longTasks },
@@ -967,7 +1004,7 @@ async function runStaging() {
         const finalDiagnostics = await stats(page, { refreshWorker: true });
         const sourceHashesAfter = await sourceFingerprint(), runtimeStability = runtimeChanges(runtime, runtimeBaseline), hostAfter = hostState();
         const probe = await stopFrameProbe(page);
-        const image = `artifacts/order-walls/staging-${slug(scenario.id)}-sample-${sample}.png`;
+        const image = path.join(artifactDir, `staging-${slug(scenario.id)}-sample-${sample}.png`);
         await page.screenshot({ path: image, fullPage: true });
         const item = { scenario: scenario.id, sample, source: 'actual staging mode and live Binance USD-M perpetual candles',
           timerBoundary: 'new ephemeral browser context through chart setup; fixed 12-minute logical viewport and fixed price bounds',
@@ -1000,7 +1037,7 @@ async function runStaging() {
       const sourceStable = JSON.stringify(sourceHashesBefore) === JSON.stringify(sourceHashesAfter);
       const runtimeStability = runtimeBaseline ? runtimeChanges(runtime, runtimeBaseline) : null;
       const valid = sourceStable && (runtimeStability?.stable ?? true);
-      const image = `artifacts/order-walls/staging-${slug(scenario.id)}-sample-${sample}-error.png`;
+      const image = path.join(artifactDir, `staging-${slug(scenario.id)}-sample-${sample}-error.png`);
       try { await page.screenshot({ path: image, fullPage: true }); } catch { /* preserve the record when renderer capture is unavailable */ }
       const item = { scenario: scenario.id, sample, failed: error instanceof Error ? error.message : String(error), errors,
         diagnosticClass: error instanceof Error && /diagnostics ACK|Timeout 2000ms/.test(error.message)
@@ -1032,7 +1069,7 @@ async function recordStagingStop({ page, scenario, sample, sampleStartedAt, sour
   const sourceHashesAfter = await sourceFingerprint();
   const runtimeStability = runtimeBaseline ? runtimeChanges(runtime, runtimeBaseline) : null;
   const hostAfter = hostState();
-  const image = `artifacts/order-walls/staging-${slug(scenario.id)}-sample-${sample}-incomplete.png`;
+  const image = path.join(artifactDir, `staging-${slug(scenario.id)}-sample-${sample}-incomplete.png`);
   try { await page.screenshot({ path: image, fullPage: true }); } catch { /* keep diagnostic record even if the page is closing */ }
   const sourceStable = JSON.stringify(sourceHashesBefore) === JSON.stringify(sourceHashesAfter);
   const item = { scenario: scenario.id, sample, source: 'actual staging mode and live Binance USD-M perpetual source',
@@ -1059,7 +1096,7 @@ async function recordStagingStop({ page, scenario, sample, sampleStartedAt, sour
 async function footprintCoexistence(page, panel, panelId, errors) {
   const started = performance.now();
   const errorIndex = errors.length;
-  const smokeScreenshot = 'artifacts/order-walls/staging-both-footprint-coexistence.png';
+  const smokeScreenshot = path.join(artifactDir, 'staging-both-footprint-coexistence.png');
   const record = { scope: 'functional coexistence smoke after the measured candles + walls + heatmap case; excluded from performance timing',
     startedAt: new Date().toISOString(), passed: false, screenshot: smokeScreenshot };
   try {
@@ -1195,6 +1232,50 @@ async function waitFeature(page, id, feature, startPerf, timeout, onProgress = a
     complete: finalComplete, endStatus: feature === 'orderWalls' ? last?.wall?.status : last?.heatmap?.status,
     worker: last?.worker, workerDiagnostics: last?.workerDiagnostics, heatGroup: last?.heatGroup,
     historyApply: last?.historyApply };
+}
+
+async function exerciseChartSwitch(page, originalId, network, timeoutMs) {
+  const before = await stats(page, { refreshWorker: true });
+  const beforeWall = panelState(before, originalId)?.orderWalls;
+  const switchId = `chart-bench-switch-${Date.now()}`;
+  const params = await page.evaluate(id => JSON.parse(JSON.stringify(window.__terminal.panels.get(id).selection)), originalId);
+  const openedAt = performance.now(), loadStart = performance.now();
+  await page.evaluate(({ id, originalId, params }) => {
+    const dock = window.__terminal.dock;
+    dock.addPanel({ id, component: 'candle', tabComponent: 'compact-chart', title: 'Switch · BTCUSDT USD-M', params,
+      position: { referencePanel: dock.getPanel(originalId), direction: 'right' }, minimumWidth: 220, minimumHeight: 140 });
+    const original = dock.getPanel(originalId), next = dock.getPanel(id);
+    next.api.moveTo({ group: original.api.group });
+    next.api.setActive();
+  }, { id: switchId, originalId, params });
+  await page.waitForFunction(id => window.__terminal.dock.activePanel?.id === id, switchId, { timeout: 10000 });
+  const openedMs = Math.round(performance.now() - openedAt);
+  const panel = page.locator(`.candle-panel[data-panel-id="${switchId}"]`);
+  const load = await waitFeature(page, switchId, 'orderWalls', loadStart, timeoutMs);
+  const afterLoad = await stats(page, { refreshWorker: true });
+  const secondWall = panelState(afterLoad, switchId)?.orderWalls;
+  const switchBackStart = performance.now();
+  await page.evaluate(id => window.__terminal.dock.getPanel(id).api.setActive(), originalId);
+  await page.waitForFunction(id => window.__terminal.dock.activePanel?.id === id, originalId, { timeout: 10000 });
+  const switchBackMs = Math.round(performance.now() - switchBackStart);
+  const switchAgainStart = performance.now();
+  await page.evaluate(id => window.__terminal.dock.getPanel(id).api.setActive(), switchId);
+  await page.waitForFunction(id => window.__terminal.dock.activePanel?.id === id, switchId, { timeout: 10000 });
+  const switchAgainMs = Math.round(performance.now() - switchAgainStart);
+  const beforeClose = await stats(page, { refreshWorker: true });
+  const originalWall = panelState(beforeClose, originalId)?.orderWalls;
+  const valid = load.complete === true && (originalWall?.retainedSegments ?? 0) >= (beforeWall?.retainedSegments ?? 0)
+    && (originalWall?.status?.coverage?.complete === true || originalWall?.status?.state === 'live');
+  const record = { panelId: switchId, activeAtStart: true, openedMs, load, openCacheHitDelta:
+    (afterLoad.worker?.orderWalls?.cacheHits ?? 0) - (before.worker?.orderWalls?.cacheHits ?? 0),
+    activeSwitch: { toOriginalMs: switchBackMs, backToSwitchedChartMs: switchAgainMs },
+    originalWallBefore: beforeWall, switchedWall: secondWall, originalWallAfter: originalWall,
+    requests: requestSummary(network.records, loadStart),
+    reason: valid ? null : 'Switched chart did not reach complete wall history or original chart history was reduced', valid };
+  await page.evaluate(id => window.__terminal.dock.removePanel(window.__terminal.dock.getPanel(id)), switchId);
+  await page.waitForFunction(id => !window.__terminal.panels.has(id), switchId, { timeout: 10000 });
+  await page.waitForFunction(id => window.__terminal.dock.activePanel?.id === id, originalId, { timeout: 10000 });
+  return record;
 }
 
 async function exerciseStaging(page, id, scenario, network, liveWindowMs) {

@@ -1,5 +1,6 @@
 import {StagingProxyBudget} from './scripts/staging-proxy-budget.ts';
 import {observeStagingProxy} from './scripts/staging-proxy-observability.ts';
+import stagingProxyRoutes from './scripts/staging-proxy-routes.json' with { type: 'json' };
 import { Agent } from 'node:http';
 import { defineConfig, loadEnv, type UserConfig,type ProxyOptions } from 'vite';
 export default defineConfig(({ mode }) => {
@@ -22,29 +23,23 @@ export default defineConfig(({ mode }) => {
   // their aggregate at three and retains room for independent native reads.
   const historyAgent=staging?new Agent({keepAlive:true,maxSockets:2,maxTotalSockets:2,maxFreeSockets:2,timeout:60000}):undefined;
   const nativeHistoryAgent=staging?new Agent({keepAlive:true,maxSockets:2,maxTotalSockets:2,maxFreeSockets:2,timeout:60000}):undefined;
-  const proxy:Record<string,string|ProxyOptions>|undefined=staging?{
-    // Current-book recovery must not queue behind long historical reads.
-    '/market-data/v1/level-watches/stream': { target: watchTarget??currentTarget, agent:false, ws:true, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/level-watches': { target: watchTarget??currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/liquidations/stream': { target: liquidationTarget??currentTarget, agent:false, ws:true, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/liquidations': { target: liquidationTarget??historyTarget??'http://127.0.0.1:18780', agent:historyAgent, configure:observeStagingProxy, proxyTimeout:30000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v2/history/walls/reader': { target: wallControlTarget??currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v2/history/walls/preparation': { target: wallControlTarget??currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v2/history/walls': { target: wallHistoryTarget??historyTarget??'http://127.0.0.1:18780', agent:historyAgent, configure:observeStagingProxy, proxyTimeout:60000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v2/history/footprint-current': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v2/history/current': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v2/history/health': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/order-walls/archive/current': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/effort-result': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/health': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/depth-matrix': { target: currentTarget, agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    // Candle/Footprint snapshots are history responses. Keep their transfers
-    // off the live SSH TCP connection so they cannot delay stream heartbeats.
-    '/market-data/v1/footprints': { target: historyTarget??'http://127.0.0.1:18780', agent:historyAgent, configure:observeStagingProxy, proxyTimeout:60000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/native-candles': { target: nativeHistoryTarget??historyTarget??'http://127.0.0.1:18780', agent:nativeHistoryAgent, configure:observeStagingProxy, proxyTimeout:60000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/stream': { target: currentTarget, agent:false, ws:true, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data': { target: historyTarget??'http://127.0.0.1:18780', agent:historyAgent, configure:observeStagingProxy, ws: true, rewrite: path => path.replace(/^\/market-data/, '') },
-  }:undefined;
+  const targets={
+    current:currentTarget,
+    history:historyTarget??'http://127.0.0.1:18780',
+    wallHistory:wallHistoryTarget??'http://127.0.0.1:18882',
+    wallControl:wallControlTarget??currentTarget,
+    nativeHistory:nativeHistoryTarget??historyTarget??'http://127.0.0.1:18780',
+    liquidations:liquidationTarget??historyTarget??'http://127.0.0.1:18780',
+    liquidationStream:liquidationTarget??currentTarget,
+    watch:watchTarget??currentTarget,
+  } as const;
+  const agents={current:currentBookAgent,history:historyAgent,native:nativeHistoryAgent} as const;
+  type Route=typeof stagingProxyRoutes[number]&{upstream:keyof typeof targets;pool:keyof typeof agents|'none'};
+  const proxy:Record<string,string|ProxyOptions>|undefined=staging?Object.fromEntries((stagingProxyRoutes as Route[]).map(route=>[
+    route.path,{target:targets[route.upstream],...(route.pool==='none'?{agent:false}:{agent:agents[route.pool]}),
+      ...(route.websocket?{ws:true}:{}),...(!route.websocket||route.pool!=='none'?{configure:observeStagingProxy,proxyTimeout:route.timeoutMs}:{}),
+      rewrite:(path:string)=>path.replace(/^\/market-data/,'')},
+  ])):undefined;
   const proxyBudget=staging?new StagingProxyBudget(request=>{
     const match=Object.entries(proxy!).find(([path])=>request.url?.startsWith(path));
     const option=match?.[1];if(!option||typeof option==='string')return;

@@ -40,3 +40,15 @@ test('Order Book uses the normal current lane alongside wall and live routes',as
  const loaded=await loadConfigFromFile({command:'serve',mode:'staging'},resolve('vite.config.ts'));const p=loaded!.config.server!.proxy!;
  for(const path of ['/market-data/v1/depth-matrix','/market-data/v1/stream','/market-data/v1/order-walls/archive/current','/market-data/v2/history/walls/reader'])expect((p[path] as ProxyOptions).target).toBe('http://127.0.0.1:18781');
 });
+test('liquidation HTTP and WebSocket overrides keep their separate default lanes',async()=>{
+ vi.stubEnv('VITE_CURRENT_API_URL','http://127.0.0.1:18781');vi.stubEnv('VITE_HISTORY_API_URL','http://127.0.0.1:18780');
+ let loaded=await loadConfigFromFile({command:'serve',mode:'staging'},resolve('vite.config.ts')),p=loaded!.config.server!.proxy!;
+ expect((p['/market-data/v1/liquidations/stream'] as ProxyOptions).target).toBe('http://127.0.0.1:18781');
+ expect((p['/market-data/v1/liquidations'] as ProxyOptions).target).toBe('http://127.0.0.1:18780');
+ expect((p['/market-data/v1/stream'] as ProxyOptions).configure).toBeUndefined();
+ expect((p['/market-data'] as ProxyOptions).configure).toBeTypeOf('function');
+ vi.stubEnv('VITE_LIQUIDATION_API_URL','http://127.0.0.1:18786');
+ loaded=await loadConfigFromFile({command:'serve',mode:'staging'},resolve('vite.config.ts'));p=loaded!.config.server!.proxy!;
+ expect((p['/market-data/v1/liquidations/stream'] as ProxyOptions).target).toBe('http://127.0.0.1:18786');
+ expect((p['/market-data/v1/liquidations'] as ProxyOptions).target).toBe('http://127.0.0.1:18786');
+});

@@ -1,0 +1,20 @@
+[
+  { "path": "/market-data/v1/level-watches/stream", "upstream": "watch", "pool": "none", "timeoutMs": 12000, "websocket": true },
+  { "path": "/market-data/v1/level-watches", "upstream": "watch", "pool": "current", "timeoutMs": 12000 },
+  { "path": "/market-data/v1/liquidations/stream", "upstream": "liquidationStream", "pool": "none", "timeoutMs": 12000, "websocket": true },
+  { "path": "/market-data/v1/liquidations", "upstream": "liquidations", "pool": "history", "timeoutMs": 30000 },
+  { "path": "/market-data/v2/history/walls/reader", "upstream": "wallControl", "pool": "current", "timeoutMs": 12000 },
+  { "path": "/market-data/v2/history/walls/preparation", "upstream": "wallControl", "pool": "current", "timeoutMs": 12000 },
+  { "path": "/market-data/v2/history/walls", "upstream": "wallHistory", "pool": "history", "timeoutMs": 60000 },
+  { "path": "/market-data/v2/history/footprint-current", "upstream": "current", "pool": "current", "timeoutMs": 12000 },
+  { "path": "/market-data/v2/history/current", "upstream": "current", "pool": "current", "timeoutMs": 12000 },
+  { "path": "/market-data/v2/history/health", "upstream": "current", "pool": "current", "timeoutMs": 12000 },
+  { "path": "/market-data/v1/order-walls/archive/current", "upstream": "current", "pool": "current", "timeoutMs": 12000 },
+  { "path": "/market-data/v1/effort-result", "upstream": "current", "pool": "current", "timeoutMs": 12000 },
+  { "path": "/market-data/v1/health", "upstream": "current", "pool": "current", "timeoutMs": 12000 },
+  { "path": "/market-data/v1/depth-matrix", "upstream": "current", "pool": "current", "timeoutMs": 12000 },
+  { "path": "/market-data/v1/footprints", "upstream": "history", "pool": "history", "timeoutMs": 60000 },
+  { "path": "/market-data/v1/native-candles", "upstream": "nativeHistory", "pool": "native", "timeoutMs": 60000 },
+  { "path": "/market-data/v1/stream", "upstream": "current", "pool": "none", "timeoutMs": 12000, "websocket": true },
+  { "path": "/market-data", "upstream": "history", "pool": "history", "timeoutMs": 60000, "websocket": true }
+]
