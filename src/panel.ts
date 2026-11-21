@@ -1,3 +1,5 @@
+import {LIQUIDATION_MAP_ID,mapSettings} from './liquidation-map/model';
+import {LiquidationMapView} from './liquidation-map/view';
 import { workspacePanelVisible, onWorkspaceVisibilityChange } from './workspaces/visibility';
 import {pastCandleViewport} from './feed/candle-viewport';
 import {NativeCandleStartupView,NativeCandleVersions,retainNativeViewport} from './feed/native-candle-state';
@@ -485,6 +487,7 @@ export class CandlePanel implements IContentRenderer {
   private footprintForm = document.createElement('form');
   private footprintFields = document.createElement('div');
   private footprintBusy = false;
+  private liquidationMapView?:LiquidationMapView;
   private engine?: OpenAlgoCandleChart;
   private tradingChartOverlay?: HyperliquidTradingChartOverlay;
   private studyHost?: ScriptStudyHost;
@@ -1397,6 +1400,7 @@ export class CandlePanel implements IContentRenderer {
   private registerCoreObjectProviders() {
     if (!this.engine) return;
     const entries = [
+      {id:LIQUIDATION_MAP_ID,kind:'indicator' as const,name:'Liquidation Map'},
       { id: TRADE_BUBBLES_ID, kind: 'indicator' as const, name: 'Trade Bubbles' },
       { id: FOOTPRINT_ID, kind: 'profile' as const, name: 'Footprint' },
       { id: FOOTPRINT_TOTALS_ID, kind: 'indicator' as const, name: 'Footprint Totals' },
@@ -1489,7 +1493,7 @@ export class CandlePanel implements IContentRenderer {
     const dependent = this.selection.indicators.find(candidate => Object.values(candidate.numericInputs ?? {}).some(input => input.instanceId === instanceId));
     if (dependent) { this.activeIndicators.dataset.error = `Cannot remove ${instance.script?.title ?? instance.definitionId} while ${this.compositionSmaTitle(dependent)} depends on its output. Remove that study first.`; this.renderActiveIndicators(); return; }
     const cleanupTarget = instance.paneId ? this.compositionPlacement.captureManagedPane(instance.paneId) : null;
-    if (new Set<string>([TRADE_BUBBLES_ID, FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID, ORDER_WALLS_ID, TPO_ID]).has(instance.definitionId)) { this.removeIndicatorObject(instance.definitionId); return; }
+    if (new Set<string>([LIQUIDATION_MAP_ID, TRADE_BUBBLES_ID, FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID, ORDER_WALLS_ID, TPO_ID]).has(instance.definitionId)) { this.removeIndicatorObject(instance.definitionId); return; }
     const indicators = this.selection.indicators.filter(item => item.instanceId !== instanceId);
     const composition = removeCompositionMember(this.selection.composition, instanceId, indicators.map(item => item.instanceId));
     this.selection = config({ ...this.selection, ...(instance.definitionId === FOOTPRINT_ID ? { type: 'candle' as const } : {}), indicators, composition,
@@ -3864,6 +3868,8 @@ export class CandlePanel implements IContentRenderer {
     return undefined;
   }
 
+  private syncLiquidationMap(){if(!this.engine||this.dead)return;const instance=this.nativeIndicator(LIQUIDATION_MAP_ID);if(!instance){this.liquidationMapView?.dispose();this.liquidationMapView=undefined;return;}if(!this.liquidationMapView)this.liquidationMapView=new LiquidationMapView(this.chart,this.engine.chart,this.feed,this.selection,settings=>this.changeIndicator(instance.instanceId,{settings:{...settings}}),`${this.params.api.id}:${instance.instanceId}`);this.liquidationMapView.configure(instance.settings,this.selection);this.liquidationMapView.setVisible(instance.visible&&this.visible);}
+
   private syncTradeBubbles() {
     if (!this.engine || this.dead) return;
     const instance = this.nativeIndicator(TRADE_BUBBLES_ID);
@@ -3889,7 +3895,7 @@ export class CandlePanel implements IContentRenderer {
 
   private syncNativeIndicators() {
     if (!this.engine || this.dead) return;
-    this.syncDailyVwap(); this.syncCvd(); this.syncLiquidations(); this.syncTradeBubbles();
+    this.syncDailyVwap(); this.syncCvd(); this.syncLiquidations(); this.syncTradeBubbles(); this.syncLiquidationMap();
     const oldMode = this.engine.displayMode;
     this.applyFootprintOptions(); this.engine.setBasePriceVisible(this.selection.basePriceVisible);
     this.engine.setDisplayMode(this.selection.type, true);
@@ -4118,7 +4124,8 @@ export class CandlePanel implements IContentRenderer {
     const definition = nativeDefinition(definitionId); if (!definition) return;
     const existing = this.selection.indicators.find(i => i.definitionId === definitionId);
     if (!existing) {
-      const settings = definitionId === OPEN_INTEREST_ID ? { ...openInterestSettings(undefined) }
+      const settings = definitionId === LIQUIDATION_MAP_ID ? {...mapSettings(undefined)}
+        : definitionId === OPEN_INTEREST_ID ? { ...openInterestSettings(undefined) }
         : NET_POSITIONING_IDS.includes(definitionId as typeof NET_POSITIONING_IDS[number])
         ? netPositioningSettings({ venues: [this.selection.venue === 'hyperliquid' ? 'hyperliquid' as const : 'binance' as const] })
         : definitionId === EFFORT_RESULT_ID ? effortRecord(DEFAULT_EFFORT)
@@ -4150,6 +4157,7 @@ export class CandlePanel implements IContentRenderer {
     if (instance.definitionId === JOURNAL_INDICATOR_ID) { this.journalBridge?.openSettings(instance.settings); return; }
     if (instance.settingsVersion !== (nativeDefinition(instance.definitionId)?.settingsVersion ?? 1)) return;
     if (instance.definitionId === COMPOSITION_SMA_ID) { this.openCompositionSma(undefined, instance); return; }
+    if(instance.definitionId===LIQUIDATION_MAP_ID){this.liquidationMapView?.openSettings();return;}
     if (instance.definitionId === TRADE_BUBBLES_ID) { this.tradeBubblesView?.openSettings(); return; }
     if (instance.definitionId === LIQUIDATIONS_ID) {if(this.liquidationsView)this.liquidationsView.openSettings();else{this.hiddenLiquidationControls?.dispose();const controls=new LiquidationControls(this.element,settings=>this.changeIndicator(instance.instanceId,{settings:{...settings}}),'chart');this.hiddenLiquidationControls=controls;controls.dialog.addEventListener('close',()=>{controls.dispose();if(this.hiddenLiquidationControls===controls)this.hiddenLiquidationControls=undefined;},{once:true});controls.open(liquidationSettings(instance.settings));}return;}
     if (instance.definitionId === CVD_ID) {
@@ -5785,7 +5793,7 @@ export class CandlePanel implements IContentRenderer {
     this.studyHost?.setVisible(this.visible);
     this.orderFlowPaneView?.setVisible(this.visible);
     this.cvdData?.setHostVisible(this.visible);
-    this.conditionsView?.setVisible(this.visible); this.cvdView?.setVisible(this.visible); this.openInterestView?.setVisible(this.visible); this.openInterestData?.setHostVisible(this.visible); this.liquidationsView?.setVisible(this.visible);
+    this.liquidationMapView?.setVisible(this.visible&&Boolean(this.nativeIndicator(LIQUIDATION_MAP_ID)?.visible));this.conditionsView?.setVisible(this.visible); this.cvdView?.setVisible(this.visible); this.openInterestView?.setVisible(this.visible); this.openInterestData?.setHostVisible(this.visible); this.liquidationsView?.setVisible(this.visible);
     this.tradeBubblesView?.setHostVisible(this.visible);
     this.effortView?.setVisible(this.visible);
     if (this.engine) {
@@ -6126,6 +6134,7 @@ export class CandlePanel implements IContentRenderer {
     this.release?.();
     this.releaseHeatmap?.(); this.heatmapGeneration++; this.heatmapControls.dispose();
     this.effortView?.dispose(); this.effortView = undefined;
+    this.liquidationMapView?.dispose();this.liquidationMapView=undefined;
     this.liquidationsView?.dispose(); this.liquidationsView=undefined;this.hiddenLiquidationControls?.dispose();this.hiddenLiquidationControls=undefined;
     this.tradeBubblesView?.dispose(); this.tradeBubblesView = undefined;
     this.disposeOrderFlowPane();

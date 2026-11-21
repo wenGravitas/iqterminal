@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "environment": "Pi Chromium headless; actual staging observations; foreground acceptance unverified",
+  "url": "http://127.0.0.1:4183/",
+  "coldNavigationToDataMs": 4711,
+  "baseline": {
+    "frameIntervalP95": 33.400000000000546,
+    "frames": 169
+  },
+  "result": {
+    "residentBefore": 21,
+    "residentAfter": 21,
+    "emptyResidentFrames": 0,
+    "frameIntervalP95": 66.60000000000218,
+    "primitiveMsP95": 2.600000001490116,
+    "frameCount": 289,
+    "heapBefore": 13644585,
+    "heapAfter": 16682641,
+    "primitive": {
+      "draws": 485,
+      "lastMs": 1.300000000745058,
+      "maxMs": 34.099999997764826,
+      "cells": 612,
+      "columns": 21,
+      "sources": [
+        {
+          "venue": "hyperliquid",
+          "state": "observed-subset",
+          "message": "30 trade-discovered/configured accounts; inactive undiscovered positions excluded",
+          "asOf": 1795255148303,
+          "accounts": 30,
+          "freshQuantity": 837.4229099999999,
+          "staleQuantity": 0,
+          "locatedQuantity": 795.68287,
+          "oi": 36681.96322,
+          "coverageProxy": 0.011414641372621713,
+          "unknownQuantity": 0,
+          "quote": "USD"
+        },
+        {
+          "venue": "lighter",
+          "state": "observed-subset",
+          "message": "30 trade-discovered/configured accounts; inactive undiscovered positions excluded",
+          "asOf": 1795255158566,
+          "accounts": 30,
+          "freshQuantity": 182.51634,
+          "staleQuantity": 0,
+          "locatedQuantity": 182.26456000000002,
+          "oi": null,
+          "coverageProxy": null,
+          "unknownQuantity": 0,
+          "quote": "USDC"
+        },
+        {
+          "venue": "binance",
+          "state": "risk-unavailable",
+          "message": "Versioned Binance maintenance rules required for located estimates",
+          "asOf": 1795255159111,
+          "accounts": 0,
+          "freshQuantity": 0,
+          "staleQuantity": 0,
+          "locatedQuantity": 0,
+          "oi": 93447.494,
+          "coverageProxy": null,
+          "unknownQuantity": 186578.26400000014,
+          "quote": "USDT"
+        },
+        {
+          "venue": "bybit",
+          "state": "model-scenario",
+          "message": "Uncalibrated isolated scenarios; cross collateral unresolved",
+          "asOf": 1795255159585,
+          "accounts": 0,
+          "freshQuantity": 0,
+          "staleQuantity": 0,
+          "locatedQuantity": 0,
+          "oi": 34068.352,
+          "coverageProxy": null,
+          "unknownQuantity": 68028.35000000005,
+          "quote": "USDT"
+        },
+        {
+          "venue": "coinbase",
+          "state": "unavailable",
+          "message": "Derivatives OI timestamp, gateway pool identity and risk rules not verified",
+          "asOf": null,
+          "accounts": 0,
+          "freshQuantity": 0,
+          "staleQuantity": 0,
+          "locatedQuantity": 0,
+          "oi": null,
+          "coverageProxy": null,
+          "unknownQuantity": 0,
+          "quote": "USDT"
+        }
+      ]
+    }
+  },
+  "requests": [
+    {
+      "url": "http://127.0.0.1:4183/market-data/v1/liquidation-map/tiles?from=1795245780000&to=1795255260000&resolution=60000&priceWidth=100&after=0",
+      "status": 200
+    }
+  ],
+  "errors": [],
+  "loadAverage": "5.08 4.04 3.90 6/1238 142496"
+}

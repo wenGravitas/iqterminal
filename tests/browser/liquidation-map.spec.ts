@@ -1,0 +1,23 @@
+import { test, expect } from '@playwright/test';
+import { addIndicator } from './indicator-actions';
+test('Liquidation Map persists settings, hides the primitive, and disposes its view', async ({ page }) => {
+    page.on('pageerror', e => console.log('MAP PAGE ERROR', e.message));
+    await page.goto('/?fixture=1');
+    await page.waitForFunction(() => (window as any).__terminal?.panels.size > 0);
+    const panel = page.locator('.candle-panel').first();
+    await addIndicator(panel, 'Liquidation Map');
+    await panel.getByRole('button', { name: 'Liquidation Map settings', exact: true }).click();
+    const dialog = panel.getByRole('dialog', { name: 'Liquidation Map settings' });
+    await expect(dialog).toBeVisible();
+    await dialog.getByLabel('Price grouping (native quote)', { exact: true }).fill('250');
+    await dialog.getByRole('button', { name: 'Apply', exact: true }).click();
+    await expect(dialog).toBeHidden();
+    const settings = await page.evaluate(() => [...(window as any).__terminal.panels.values()][0].diagnostics().series.indicators.find((i: any) => i.definitionId === 'native.liquidation-map').settings);
+    expect(settings.priceWidth).toBe(250);
+    await panel.getByRole('button', { name: 'Hide Liquidation Map', exact: true }).click();
+    expect(await page.evaluate(() => [...(window as any).__terminal.panels.values()][0].liquidationMapView.primitive.visible)).toBe(false);
+    await panel.getByRole('button', { name: 'Show Liquidation Map', exact: true }).click();
+    await panel.getByRole('button', { name: 'Remove Liquidation Map', exact: true }).click();
+    await expect(panel.locator('[data-definition-id="native.liquidation-map"]')).toHaveCount(0);
+    expect(await page.evaluate(() => Boolean([...(window as any).__terminal.panels.values()][0].liquidationMapView))).toBe(false);
+});

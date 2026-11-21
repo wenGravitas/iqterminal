@@ -1,0 +1,87 @@
+{
+  "errors": [],
+  "results": [
+    {
+      "id": "chart-a325753e-6d47-4737-b77d-efec5605226a",
+      "map": {
+        "draws": 10,
+        "lastMs": 0.3999999985098839,
+        "maxMs": 1.800000000745058,
+        "cells": 2,
+        "columns": 2,
+        "sources": [
+          {
+            "venue": "hyperliquid",
+            "state": "observed-subset",
+            "message": "30 trade-discovered/configured accounts; inactive undiscovered positions excluded",
+            "asOf": 1795254090935,
+            "accounts": 30,
+            "freshQuantity": 836.8310799999999,
+            "staleQuantity": 0,
+            "locatedQuantity": 792.67185,
+            "oi": 36634.8548,
+            "coverageProxy": 0.011421241937063715,
+            "unknownQuantity": 0,
+            "quote": "USD"
+          },
+          {
+            "venue": "lighter",
+            "state": "observed-subset",
+            "message": "30 trade-discovered/configured accounts; inactive undiscovered positions excluded",
+            "asOf": 1795254049581,
+            "accounts": 30,
+            "freshQuantity": 195.9384,
+            "staleQuantity": 0,
+            "locatedQuantity": 193.80559000000002,
+            "oi": null,
+            "coverageProxy": null,
+            "unknownQuantity": 0,
+            "quote": "USDC"
+          },
+          {
+            "venue": "binance",
+            "state": "risk-unavailable",
+            "message": "Versioned Binance maintenance rules required for located estimates",
+            "asOf": 1795254050604,
+            "accounts": 0,
+            "freshQuantity": 0,
+            "staleQuantity": 0,
+            "locatedQuantity": 0,
+            "oi": 93332.961,
+            "coverageProxy": null,
+            "unknownQuantity": 186578.26400000014,
+            "quote": "USDT"
+          },
+          {
+            "venue": "bybit",
+            "state": "model-scenario",
+            "message": "Uncalibrated isolated scenarios; cross collateral unresolved",
+            "asOf": 1795254051097,
+            "accounts": 0,
+            "freshQuantity": 0,
+            "staleQuantity": 0,
+            "locatedQuantity": 0,
+            "oi": 34037.762,
+            "coverageProxy": null,
+            "unknownQuantity": 68075.52400000002,
+            "quote": "USDT"
+          },
+          {
+            "venue": "coinbase",
+            "state": "unavailable",
+            "message": "Derivatives OI timestamp, gateway pool identity and risk rules not verified",
+            "asOf": null,
+            "accounts": 0,
+            "freshQuantity": 0,
+            "staleQuantity": 0,
+            "locatedQuantity": 0,
+            "oi": null,
+            "coverageProxy": null,
+            "unknownQuantity": 0,
+            "quote": "USDT"
+          }
+        ]
+      }
+    }
+  ]
+}

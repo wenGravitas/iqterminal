@@ -1,4 +1,5 @@
 [
+  {"path": "/market-data/v1/liquidation-map", "upstream": "liquidationMap", "pool": "history", "timeoutMs": 30000},
   { "path": "/market-data/v1/level-watches/stream", "upstream": "watch", "pool": "none", "timeoutMs": 12000, "websocket": true },
   { "path": "/market-data/v1/level-watches", "upstream": "watch", "pool": "current", "timeoutMs": 12000 },
   { "path": "/market-data/v1/liquidations/stream", "upstream": "liquidationStream", "pool": "none", "timeoutMs": 12000, "websocket": true },

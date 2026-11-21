@@ -1,3 +1,4 @@
+import {LIQUIDATION_MAP_ID,mapSettings} from '../liquidation-map/model';
 import { JOURNAL_DEFINITION } from '../journal/indicator';
 import { LIQUIDATIONS_ID, liquidationSettings } from '../liquidations/settings';
 import { CVD_ID,cvdSettings } from '../feed/cvd';
@@ -118,6 +119,7 @@ export interface IndicatorInstance {
 export const DEFAULT_FOOTPRINT_VIEW = { displayMode: 'bidask' as const, cellStyle: 'ladder' as const, statsPosition: 'bottom' as const, opacity: .85, showCandle: true, showPoc: true, showValueArea: true, showDiagonalImbalances: true, stackedImbalances: false, imbalanceRatio: 3 as const, imbalanceThreshold: .01 };
 export const NATIVE_DEFINITIONS: readonly IndicatorDefinition[] = [
   JOURNAL_DEFINITION,
+  {id:LIQUIDATION_MAP_ID,name:'Liquidation Map',description:'Conditional observed and modelled BTC perpetual exposure with explicit source coverage',category:'Order Flow',implementation:'builtin',settingsVersion:1,defaults:{...mapSettings(undefined)},settingsSchema:[],placements:['overlay'],dataRequirements:['conditional-exposure'],sourceBinding:'chart',multiplicity:'single',capabilities:{editScript:false,duplicate:false}},
   {id:LIQUIDATIONS_ID,name:'Liquidations',description:'Actual reported long/short liquidations · Bybit bankruptcy prices / sampled Binance',category:'Order Flow',implementation:'builtin',settingsVersion:1,defaults:{...liquidationSettings(undefined)},settingsSchema:[],placements:['pane'],dataRequirements:['actual-liquidation-reports'],sourceBinding:'chart',multiplicity:'single',capabilities:{editScript:false,duplicate:false}},
   {id:CVD_ID,name:'Multi-Venue CVD',description:'Executed aggressor-side cumulative volume delta · historical/live · Spot and Perpetual',category:'Order Flow',implementation:'builtin',
    settingsVersion:1,defaults:{...cvdSettings(undefined)},settingsSchema:[{key:'anchor',label:'Reset mode',kind:'select',defaultValue:'daily'},{key:'units',label:'Quantity unit',kind:'select',defaultValue:'btc'}],
@@ -278,6 +280,7 @@ export function validateInstances(value: unknown): IndicatorInstance[] {
     if (copy.definitionId === MARKET_CONDITIONS_ID && copy.settingsVersion === 1) copy.settings = { ...conditionsSettings(copy.settings) };
     if (copy.definitionId === ORDER_WALLS_ID && [1,2].includes(copy.settingsVersion)) { copy.settings = { ...orderWallsSettings(copy.settingsVersion === 1 && !('mode' in copy.settings) ? { ...copy.settings, mode: 'threshold' } : copy.settings) }; copy.settingsVersion = 2; }
     if (copy.definitionId === FOOTPRINT_TOTALS_ID && copy.settingsVersion === 1) copy.settings = { ...footprintTotalsSettings(copy.settings) };
+    if(copy.definitionId===LIQUIDATION_MAP_ID&&copy.settingsVersion===1)copy.settings={...mapSettings(copy.settings)};
     if (copy.definitionId === LIQUIDATIONS_ID && copy.settingsVersion === 1) copy.settings = {...liquidationSettings(copy.settings)};
     if (copy.definitionId === CVD_ID && copy.settingsVersion === 1) copy.settings = { ...cvdSettings(copy.settings) };
     if (copy.definitionId === OPEN_INTEREST_ID && copy.settingsVersion === 1) copy.settings = { ...openInterestSettings(copy.settings) };

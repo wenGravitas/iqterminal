@@ -8,16 +8,17 @@ upstream_port=${IQ_STAGING_UPSTREAM_PORT:-18780}
 wall_upstream_port=${IQ_STAGING_WALL_UPSTREAM_PORT:-}
 wall_history_port=${IQ_STAGING_WALL_HISTORY_PORT:-18882}
 wall_control_port=${IQ_STAGING_WALL_CONTROL_PORT:-18883}
-ports=("$history_port" "$current_port" "$upstream_port")
+ports=("$history_port" "$current_port" "$upstream_port" "18894")
 if [ -n "$wall_upstream_port" ]; then ports+=("$wall_upstream_port" "$wall_history_port" "$wall_control_port"); fi
 for port in "${ports[@]}"; do
   if ! [[ "$port" =~ ^[1-9][0-9]{0,4}$ ]] || [ "$port" -gt 65535 ] || [ "$port" -lt 1024 ]; then
     echo 'Invalid private staging tunnel port (1024..65535 required).' >&2; exit 2
   fi
 done
+for binding in "$history_port" "$current_port"; do if [ "$binding" = "18894" ]; then echo "Staging data ports must not reuse Liquidation Map port 18894." >&2; exit 2; fi; done
 if [ "$history_port" = "$current_port" ]; then echo 'Staging history/current ports must differ.' >&2; exit 2; fi
 if [ -n "$wall_upstream_port" ]; then
-  bindings=("$history_port" "$current_port" "$wall_history_port" "$wall_control_port")
+  bindings=("$history_port" "$current_port" "$wall_history_port" "$wall_control_port" "18894")
   for ((i=0;i<${#bindings[@]};i++)); do for ((j=i+1;j<${#bindings[@]};j++)); do
     if [ "${bindings[i]}" = "${bindings[j]}" ]; then echo 'Staging local ports must differ.' >&2; exit 2; fi
   done; done
@@ -63,4 +64,5 @@ if [ -n "$wall_upstream_port" ]; then
   supervise "$wall_history_port" wall-history "$wall_upstream_port" & pids+=("$!")
   supervise "$wall_control_port" wall-control "$wall_upstream_port" & pids+=("$!")
 fi
+supervise "18894" liquidation-map "18894" & pids+=("$!")
 wait "${pids[@]}"

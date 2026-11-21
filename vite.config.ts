@@ -24,6 +24,7 @@ export default defineConfig(({ mode }) => {
   const historyAgent=staging?new Agent({keepAlive:true,maxSockets:2,maxTotalSockets:2,maxFreeSockets:2,timeout:60000}):undefined;
   const nativeHistoryAgent=staging?new Agent({keepAlive:true,maxSockets:2,maxTotalSockets:2,maxFreeSockets:2,timeout:60000}):undefined;
   const targets={
+    liquidationMap:'http://127.0.0.1:18894',
     current:currentTarget,
     history:historyTarget??'http://127.0.0.1:18780',
     wallHistory:wallHistoryTarget??'http://127.0.0.1:18882',

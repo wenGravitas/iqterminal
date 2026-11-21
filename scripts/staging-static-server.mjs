@@ -26,8 +26,8 @@ function assertLoopbackOrigin(value, label) {
 export function stagingUpstreams(preset = 'server', env = process.env) {
   if (preset !== 'server' && preset !== 'pi') throw new Error('IQ_TARGET_PRESET must be server or pi');
   const defaults = preset === 'server'
-    ? { current: '18780', history: '18780', wallHistory: '18892', wallControl: '18892', nativeHistory: '18780', liquidations: '18780', liquidationStream: '18780', watch: '18780' }
-    : { current: '18781', history: '18780', wallHistory: '18882', wallControl: '18883', nativeHistory: '18780', liquidations: '18780', liquidationStream: '18781', watch: '18781' };
+    ? { liquidationMap:'18894', current: '18780', history: '18780', wallHistory: '18892', wallControl: '18892', nativeHistory: '18780', liquidations: '18780', liquidationStream: '18780', watch: '18780' }
+    : { liquidationMap:'18894', current: '18781', history: '18780', wallHistory: '18882', wallControl: '18883', nativeHistory: '18780', liquidations: '18780', liquidationStream: '18781', watch: '18781' };
   const result = {};
   for (const key of Object.keys(defaults)) {
     const explicit = env[`IQ_UPSTREAM_${key.replace(/[A-Z]/g, letter => `_${letter}`).toUpperCase()}`];

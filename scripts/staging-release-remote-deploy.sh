@@ -25,9 +25,11 @@ if [[ -f "$active_file" ]]; then IFS=$'\t' read -r active_id active_port active_
 if [[ -f "$previous_file" ]]; then IFS=$'\t' read -r previous_id previous_port previous_container previous_image previous_image_id previous_https_port < "$previous_file"; fi
 
 if [[ -z "$active_id" ]]; then
-  serve_state=$(tailscale serve status 2>&1 || true)
-  if ! grep -q 'No serve config' <<<"$serve_state"; then
-    echo 'Refusing to replace an untracked Tailscale Serve configuration.' >&2; exit 3
+  serve_state=$(tailscale serve status --json)
+  # Scope first-deployment ownership to the requested port. Other private
+  # applications may already use separate Serve ports and must remain untouched.
+  if ! python3 -c 'import json,sys; c=json.load(sys.stdin); p=sys.argv[1]; valid=isinstance(c,dict) and isinstance(c.get("TCP",{}),dict) and isinstance(c.get("Web",{}),dict); busy=not valid or p in c.get("TCP",{}) or any(k.endswith(":"+p) for k in c.get("Web",{})); sys.exit(1 if busy else 0)' "$https_port" <<<"$serve_state"; then
+    echo "Refusing to replace an untracked Tailscale Serve configuration on HTTPS port $https_port." >&2; exit 3
   fi
   if ss -ltn 2>/dev/null | grep -Eq "[:.]${https_port}[[:space:]]"; then
     echo "HTTPS port $https_port is already bound by another local service; refusing to claim it." >&2; exit 3

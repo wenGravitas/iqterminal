@@ -1,3 +1,5 @@
+import {packMap} from '../liquidation-map/wire';
+import {LiquidationMapService} from './liquidation-map-service';
 import { LiquidationService } from './liquidation-service';
 import { BybitExecutionService } from './bybit-service';
 import { CvdService } from './cvd-service';
@@ -30,6 +32,7 @@ import { duration, marketOf, type Command, type Event, type Series } from './pro
 import type { OrderWallRequest } from './order-walls';
 import { MINUTE_MS, type TpoMinute } from '../indicators/tpo-engine';
 const scope=self as unknown as DedicatedWorkerGlobalScope;
+const liquidationMap=new LiquidationMapService(event=>{if(event.payload){const wire=packMap(event.payload);scope.postMessage({...event,payload:{...event.payload,columns:[]},wire},[wire.values.buffer]);}else scope.postMessage(event);});
 let fixture=false;
 let alignFixtureToNow=false;
 const fixtureOptions = () => ({
@@ -164,6 +167,9 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
   const c=event.data;
   if(c.type==='comparison-subscribe'||c.type==='comparison-unsubscribe'||c.type==='comparison-retry'){comparison.command(c);return;}
   if(c.type==='online')comparison.setOnline(c.online);
+  if(c.type==='liquidation-map-subscribe'||c.type==='liquidation-map-update'){liquidationMap.subscribe(c.id,c.from,c.to,c.settings);return;}
+  if(c.type==='liquidation-map-unsubscribe'){liquidationMap.unsubscribe(c.id);return;}
+  if(c.type==='liquidation-map-ack'){liquidationMap.ack(c.id);return;}
   if(c.type==='liquidation-subscribe'){liquidations.subscribe(c.id,c.request);return;}
   if(c.type==='liquidation-update'){liquidations.update(c.id,c.request);return;}
   if(c.type==='liquidation-unsubscribe'){liquidations.unsubscribe(c.id);return;}
