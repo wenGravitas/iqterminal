@@ -1,6 +1,6 @@
 import './workspaces/borders.css';
 import { borderMenu, installBorders, BorderHeaderAction } from './workspaces/borders';
-import {startVisibleChartFeeds} from './feed/restore-bootstrap';
+import {latestOnStartupLayout,startVisibleChartFeeds} from './feed/restore-bootstrap';
 import { WorkspaceManager, browserWorkspaceStorage } from './workspaces/manager';
 import { bindWorkspacePanelStorage } from './workspaces/panel-storage';
 import { TerminalFooter } from './workspaces/footer';
@@ -299,7 +299,7 @@ workspaceManager = new WorkspaceManager(browserWorkspaceStorage(), {
     return layout;
   },
   cancelPending: () => { clearTimeout(saveTimer); saveTimer = undefined; },
-  restore: layout => { startupFeed.reconcile(layout,chartConfig);const release=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?startVisibleChartFeeds(feed,layout,chartConfig):()=>{};try{dock.clear();editor=undefined;watchPanel=undefined;tradingPanel=undefined;dock.fromJSON(layout);}finally{release();} },
+  restore: layout => { const restored=restoring?latestOnStartupLayout(layout):layout;startupFeed.reconcile(restored,chartConfig);const release=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?startVisibleChartFeeds(feed,restored,chartConfig):()=>{};try{dock.clear();editor=undefined;watchPanel=undefined;tradingPanel=undefined;dock.fromJSON(restored);}finally{release();} },
 });
 const releaseWorkspaceStorage = bindWorkspacePanelStorage(workspaceManager);
 try { workspaceManager.start(); } finally {startupFeed.release();}

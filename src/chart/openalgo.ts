@@ -90,6 +90,7 @@ function toFootprintBar(bar: FootprintBar): OpenAlgoFootprintBar {
 }
 
 interface ViewAnchor { fromTime: number; toTime: number }
+const PRESENT_RIGHT_GUTTER_PX = 112;
 let drawingToolsRegistered = false;
 function isArchiveOrderWall(segment:OrderWallSegment){return segment.presentationKind!=='current-snapshot'&&typeof segment.archiveEntryId==='string'&&segment.archiveEntryId.length>0;}
 
@@ -1081,7 +1082,12 @@ export class OpenAlgoCandleChart {
 
   resetView() {
     if (this.mode === 'footprint') this.focusFootprintLatest();
-    else this.chart.resetScale();
+    else { this.chart.resetScale(); this.applyPresentRightGutter(); }
+  }
+
+  private applyPresentRightGutter() {
+    const spacing=this.chart.timeScale.barSpacing;
+    if(Number.isFinite(spacing)&&spacing>0)this.chart.timeScale.setRightOffset(PRESENT_RIGHT_GUTTER_PX/spacing);
   }
 
   /** Start a newly opened Footprint view at the live edge with readable columns. */
@@ -1089,7 +1095,7 @@ export class OpenAlgoCandleChart {
     if (this.mode !== 'footprint' || !this.footprintIndexSeries || !this.footprintTimes.length) return;
     this.chart.resetScale();
     this.chart.timeScale.setBarSpacing(112);
-    this.chart.timeScale.setRightOffset(1);
+    this.applyPresentRightGutter();
   }
 
   setRange(range: { from: number; to: number }) { this.chart.setVisibleLogicalRange(range); }

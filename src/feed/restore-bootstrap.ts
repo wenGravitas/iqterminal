@@ -12,6 +12,16 @@ export function restoredHistoryViewport(selection:RestoreFeedSelection){
  if(!wall)return undefined;const settings=orderWallsSettings(wall.settings);
  return settings.enabled&&settings.mode==='top-levels'&&settings.showHistory?selection.historyViewport:undefined;
 }
+/** Initial client startup always opens charts at the live edge. Preserve all
+ * other workspace state and leave later workspace switches untouched. */
+export function latestOnStartupLayout(layout:SerializedDockview):SerializedDockview {
+ const panels=Object.fromEntries(Object.entries(layout.panels).map(([id,panel])=>{
+  if(panel.contentComponent!=='candle'||!panel.params||typeof panel.params!=='object'||Array.isArray(panel.params))return[id,panel];
+  const params={...(panel.params as Record<string,unknown>)};delete params.historyViewport;
+  return[id,{...panel,params}];
+ }));
+ return{...layout,panels};
+}
 /** Join the same worker groups before synchronous chart construction. Temporary
  * consumers hold the cursor until the real visible panels have subscribed. */
 export function startVisibleChartFeeds(feed:Pick<FeedClient,'subscribe'|'subscribeFootprint'|'subscribeOrderWalls'>&Partial<Pick<FeedClient,'requestFootprintViewport'|'requestCandleViewport'>>,layout:SerializedDockview,normalize:(value:unknown)=>RestoreFeedSelection,preloadHistory=false){

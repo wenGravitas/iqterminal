@@ -1,6 +1,6 @@
 import {FeedClient} from './client';
 import {startupLayout,startupSelection} from './startup-selection';
-import {restoreFeedPlan,startVisibleChartFeeds} from './restore-bootstrap';
+import {latestOnStartupLayout,restoreFeedPlan,startVisibleChartFeeds} from './restore-bootstrap';
 import type {SerializedDockview} from 'dockview-core';
 import type {RestoreFeedSelection} from './restore-bootstrap';
 const query=new URL(location.href).searchParams;
@@ -13,7 +13,7 @@ export function prepareStartupFeed(){
  const feed=create();let release=()=>{},plan:string|undefined;
  if(import.meta.env.VITE_DATA_MODE==='staging'&&!fixtureSelected)try{
   const layout=startupLayout(localStorage);
-  if(layout){plan=restoreFeedPlan(layout,startupSelection);release=startVisibleChartFeeds(feed,layout,startupSelection,true);}
+  if(layout){const present=latestOnStartupLayout(layout);plan=restoreFeedPlan(present,startupSelection);release=startVisibleChartFeeds(feed,present,startupSelection,true);}
  }catch{/* Full UI owns storage/configuration recovery. */}
  let released=false,verifiedLayout:string|undefined;
  const cleanup=()=>{if(released)return;released=true;release();};

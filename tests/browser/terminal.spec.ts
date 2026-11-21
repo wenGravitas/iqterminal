@@ -9,6 +9,27 @@ test.beforeEach(async({page})=>{
   await page.waitForFunction(()=>(window as any).__terminal?.stats().panels.every((panel:any)=>panel.bars===5000&&panel.renderer.draws>0&&panel.autoPrice&&panel.max-panel.min>100));
 });
 
+test('Latest returns a historical chart to present with a 112px right gutter',async({page})=>{
+  const panel=page.locator('.candle-panel').first();
+  const latestIndex=await panel.evaluate(element=>{
+    const id=(element as HTMLElement).dataset.panelId!;return(window as any).__terminal.panels.get(id).engine.chart.dataLayer.baseIndex;
+  });
+  await panel.evaluate(element=>{
+    const id=(element as HTMLElement).dataset.panelId!;(window as any).__terminal.panels.get(id).engine.chart.timeScale.setRightOffset(-100);
+  });
+  await expect.poll(()=>panel.evaluate(element=>{
+    const id=(element as HTMLElement).dataset.panelId!;return(window as any).__terminal.panels.get(id).engine.visibleRange().to;
+  })).toBeLessThan(latestIndex);
+  await panel.getByRole('button',{name:'Latest',exact:true}).click();
+  const present=await panel.evaluate(element=>{
+    const id=(element as HTMLElement).dataset.panelId!,p=(window as any).__terminal.panels.get(id),d=p.diagnostics();
+    return{range:d.range,spacing:d.spacing,rightOffset:d.rightOffset,latestIndex:p.engine.chart.dataLayer.baseIndex,autoPrice:d.autoPrice};
+  });
+  expect(present.autoPrice).toBe(true);expect(present.range.to).toBeGreaterThan(present.latestIndex);
+  expect(present.range.to).toBeCloseTo(present.latestIndex+present.rightOffset,3);
+  expect(present.rightOffset*present.spacing).toBeCloseTo(112,0);
+});
+
 test('unified catalogue exposes native layers and keeps unsupported chart markets unchanged',async({page})=>{
   const panels=page.locator('.candle-panel');
   expect(await panels.first().locator('.chart-toolbar select').evaluateAll(selects=>selects.map(s=>s.getAttribute('aria-label')))).toEqual(['Timeframe']);
@@ -397,7 +418,10 @@ test('held mouse drags time and price, live patches preserve the view, Latest re
   expect(updated.min).toBeCloseTo(zoomed.min,1);expect(updated.max).toBeCloseTo(zoomed.max,1);
   await page.evaluate(()=>(window as any).__terminal.feed.send({type:'fixture',rate:0}));
   await page.getByRole('button',{name:'Latest',exact:true}).first().click();
-  expect((await read()).autoPrice).toBe(true);
+  const returned=await page.evaluate(()=>{const p=(window as any).__terminal.panels.values().next().value,d=p.diagnostics();return{autoPrice:d.autoPrice,range:d.range,spacing:d.spacing,rightOffset:d.rightOffset,latestIndex:p.engine.chart.dataLayer.baseIndex};});
+  expect(returned.autoPrice).toBe(true);expect(returned.rightOffset*returned.spacing).toBeCloseTo(112,0);
+  expect(returned.range.to).toBeGreaterThan(returned.latestIndex);
+  expect(returned.range.to).toBeCloseTo(returned.latestIndex+returned.rightOffset,3);
   await page.locator('.chart-stage').first().press('Home');expect((await read()).autoPrice).toBe(true);
   await page.mouse.dblclick(x,y);expect((await read()).autoPrice).toBe(true);
 });

@@ -1,8 +1,18 @@
 import {test,expect,vi} from 'vitest';
-import {startVisibleChartFeeds,restoredHistoryViewport,restoreFeedPlan} from '../src/feed/restore-bootstrap';
+import {startVisibleChartFeeds,restoredHistoryViewport,restoreFeedPlan,latestOnStartupLayout} from '../src/feed/restore-bootstrap';
 const selection=(patch:any={})=>({venue:'binance',market:'perpetual',interval:'1h',type:'footprint',rowPrice:25,indicators:[],...patch}) as any;
 function source(){const released:unknown[]=[],calls:unknown[][]=[];const sub=(...args:unknown[])=>{calls.push(args);return()=>released.push(args[0]);};return {feed:{subscribe:vi.fn(sub),subscribeFootprint:vi.fn(sub),subscribeOrderWalls:vi.fn(sub),requestCandleViewport:vi.fn()} as any,calls,released};}
 const layout=(panels:any,views:string[],activeView=views[0])=>({panels,grid:{root:{type:'leaf',data:{views,activeView}}}}) as any;
+test('client startup clears saved chart viewports on a copy of the workspace layout',()=>{
+ const saved={from:10*3600000,to:40*3600000},original=layout({
+  candle:{contentComponent:'candle',params:{...selection({type:'candle'}),historyViewport:saved,grid:true}},
+  other:{contentComponent:'ticker',params:{historyViewport:saved}},
+ },['candle']);
+ const present=latestOnStartupLayout(original);
+ const restoredParams=present.panels.candle.params!;
+ expect(restoredParams).toMatchObject({type:'candle',grid:true});expect(restoredParams.historyViewport).toBeUndefined();
+ expect(present.panels.other).toEqual(original.panels.other);expect(original.panels.candle.params.historyViewport).toEqual(saved);
+});
 test.each([true,false])('saved candle Top Levels starts its padded view through both restore phases (preload=%s)',preload=>{
  const {feed,released}=source();feed.requestFootprintViewport=vi.fn();const saved={from:10*3600000,to:40*3600000};
  const s=selection({type:'candle',historyViewport:saved,indicators:[{definitionId:'native.order-walls',visible:true,settings:{enabled:true,mode:'top-levels',showHistory:true}},{definitionId:'native.footprint-totals',visible:true}]});

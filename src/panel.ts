@@ -653,7 +653,7 @@ export class CandlePanel implements IContentRenderer {
     this.latest.className = 'chart-latest-button';
     this.latest.append(indicatorIcon('latest'));
     this.latest.setAttribute('aria-label', 'Latest');
-    this.latest.title = 'Return to the latest candle and restore price autoscale (Home or double click)';
+    this.latest.title = 'Return to the latest candle, restore price autoscale, and leave space on the right (Home or double click)';
     this.indicators.textContent = 'Indicators';
     this.indicators.title = 'Add a study or open the local OpenScript library';
     this.retry.textContent = 'Retry';
@@ -934,7 +934,7 @@ export class CandlePanel implements IContentRenderer {
     this.drawSettings.addEventListener('click', () => this.openDrawingSettings(), options);
     this.drawTemplates.addEventListener('click', () => this.openDrawingTemplates(), options);
     this.objectsToggle.addEventListener('click', () => this.toggleObjectsPanel(), options);
-    this.latest.addEventListener('click', () => this.selection.type === 'footprint' ? this.engine?.focusFootprintLatest() : this.engine?.resetView(), options);
+    this.latest.addEventListener('click', () => this.returnToPresent(), options);
     this.indicators.addEventListener('click', () => void this.openPicker(), options);
     this.retry.addEventListener('click', () => {
       const footprintFailed=this.footprintDataWanted()&&(this.footprintStatus.history?.error||['failed','stale'].includes(this.footprintStatus.state)||this.selection.type==='footprint');
@@ -995,7 +995,7 @@ export class CandlePanel implements IContentRenderer {
     }, options);
     this.drawingDialog.addEventListener('cancel', () => {}, options);
     this.templatesDialog.addEventListener('cancel', () => {}, options);
-    this.chart.addEventListener('dblclick', event => { if (!(event.target as HTMLElement).closest('.active-indicators')) this.engine?.resetView(); }, options);
+    this.chart.addEventListener('dblclick', event => { if (!(event.target as HTMLElement).closest('.active-indicators')) this.returnToPresent(); }, options);
     this.chart.addEventListener('dblclick',event=>{const rect=this.chart.getBoundingClientRect(),hit=this.positioningRangeAt(event.clientX-rect.left,event.clientY-rect.top);if(!hit)return;event.preventDefault();event.stopImmediatePropagation();if(hit.range)this.addPositioningRange(hit.range);},{...options,capture:true});
     this.chart.addEventListener('pointermove',event=>{this.indicatorHoverPointerType=event.pointerType;if(!this.indicatorPointerDown)this.indicatorTooltipBlockedUntilMove=false;},options);
     this.chart.addEventListener('pointerdown',()=>{this.takeNativeHistoryViewControl();this.indicatorPointerDown=true;this.indicatorTooltipBlockedUntilMove=true;this.cancelIndicatorTooltip();},options);
@@ -5134,7 +5134,7 @@ export class CandlePanel implements IContentRenderer {
       return;
     }
     const range = this.engine.visibleRange();
-    if (event.key === 'Home') this.engine.resetView();
+    if (event.key === 'Home') this.returnToPresent();
     else if (range && event.key === 'ArrowLeft') this.engine.setRange({ from: range.from - 4, to: range.to - 4 });
     else if (range && event.key === 'ArrowRight') this.engine.setRange({ from: range.from + 4, to: range.to + 4 });
     else if (event.key === '+' || event.key === '=') this.engine.zoom(1.2);
@@ -5215,6 +5215,17 @@ export class CandlePanel implements IContentRenderer {
     if(this.selection.type==='candle'&&this.pendingHistoryView&&this.candles.length){
       this.pendingHistoryView=undefined;this.resetViewOnSnapshot=false;
     }
+  }
+
+  private returnToPresent(){
+    this.takeNativeHistoryViewControl();
+    this.pendingHistoryView=undefined;
+    if(this.selection.historyViewport){
+      this.selection={...this.selection,historyViewport:undefined};
+      this.params.api.updateParameters(this.selection);
+    }
+    this.engine?.resetView();
+    this.save();
   }
 
   private restorePendingNativeHistoryView(){
