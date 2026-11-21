@@ -138,6 +138,7 @@ export class LiquidationMapService {
             if(!payload)throw Error('Missing Liquidation Map payload');
             const merged=[...columns.values()].sort((a,b)=>a.availableAt-b.availableAt), latest=merged.at(-1),carry=merged.filter(column=>column.availableAt<from&&column.availableAt>=from-Math.max(resolution,120000)).at(-1);
             payload={...payload,generation,from,to,resolution,priceWidth:settings.priceWidth,columns:merged.filter(column=>column===latest||column===carry||column.availableAt>=from&&column.availableAt<to).slice(-2048)};
+            if(payload.columns.reduce((n,c)=>n+c.cells.length,0)+(payload.profile?.cells.length??0)>MAX_CELLS)throw new MapCapacity('Liquidation Map history/profile cell budget');
             if(instrument){timings.workerElapsedMs=performance.now()-started;payload.acquisition=timings;}
             if(this.disposed)return payload;
             const bytes=JSON.stringify(payload).length*2;

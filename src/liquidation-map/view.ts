@@ -2,7 +2,7 @@ import type { Chart } from 'openalgo-charts';
 import type { FeedClient } from '../feed/client';
 import type { Series } from '../feed/protocol';
 import { instrumentOf } from '../feed/protocol';
-import { mapSettings, mapColumnAt, mapColumnEnd, type MapSettings, type MapPayload } from './model';
+import { mapSettings, mapColumnAt, freshProfile, mapColumnEnd, type MapSettings, type MapPayload } from './model';
 import { LiquidationMapPrimitive, selectedCells, exposureSummary } from './chart';
 import {renderMapTooltip} from './tooltip';
 import { MapControls } from './controls';
@@ -30,7 +30,7 @@ export class LiquidationMapView {
     const at = chart.dataLayer.indexToTimeFloat(chart.timeScale.xToIndex(e.point.x-plot.left))*1000;
     const inspectProfile = this.settings.profile && e.point.x >= plot.left + plot.width - Math.min(100, plot.width * .2);
     const inspectionAt = inspectProfile && !this.settings.profileCrosshair ? Infinity : at;
-    const column = mapColumnAt(this.primitive.columns, inspectionAt); if (this.settings.profileCrosshair) {
+    const column = inspectionAt===Infinity?freshProfile(this.primitive.profile??mapColumnAt(this.primitive.columns,Infinity)):mapColumnAt(this.primitive.columns,inspectionAt); if (this.settings.profileCrosshair) {
         this.primitive.profileTime = at;
         this.primitive.update();
     } if (!column || !inspectProfile && mapColumnEnd(column,undefined,this.primitive.settings.resolution) < at) {
@@ -53,7 +53,7 @@ export class LiquidationMapView {
     configure(value: unknown, series: Series) { this.tooltipKey='';this.tooltip.hidden=true;this.series = series; if (series.market === 'spot' || instrumentOf(series).base !== 'BTC') {
         this.subscription?.dispose();
         this.subscription = undefined;
-        this.primitive.columns = [];
+        this.primitive.columns = [];this.primitive.profile=undefined;
         this.payload = undefined;
         this.status.textContent = 'Liquidation Map requires BTC perpetuals';
         this.primitive.update();
@@ -86,11 +86,11 @@ export class LiquidationMapView {
                     this.status.textContent = batch.error + (this.primitive.columns.length?' · keeping loaded map':' · no map loaded; retrying');
                     return;
                 } if (!batch.payload)
-                    return; const generationChanged = this.payload && (this.payload.generation??0)!==(batch.payload.generation??0); const gridChanged = this.payload && (this.payload.priceWidth !== batch.payload.priceWidth); this.payload = batch.payload; this.primitive.settings = { ...this.settings, priceWidth: batch.payload.priceWidth, resolution: batch.payload.resolution }; const retained = new Map((gridChanged || generationChanged ? [] : this.primitive.columns).map(c => [c.availableAt, c])); for (const c of batch.payload.columns) {
+                    return; const generationChanged = this.payload && (this.payload.generation??0)!==(batch.payload.generation??0); const gridChanged = this.payload && (this.payload.priceWidth !== batch.payload.priceWidth); this.payload = batch.payload;this.primitive.profile=batch.payload.profile; this.primitive.settings = { ...this.settings, priceWidth: batch.payload.priceWidth, resolution: batch.payload.resolution }; const retained = new Map((gridChanged || generationChanged ? [] : this.primitive.columns).map(c => [c.availableAt, c])); for (const c of batch.payload.columns) {
                     const old = retained.get(c.availableAt);
                     if (!old || c.revision >= old.revision)
                         retained.set(c.availableAt, {...c,resolution:batch.payload.resolution});
-                } this.primitive.columns = [...retained.values()].sort((a, b) => a.availableAt - b.availableAt).slice(-2048); this.controls.sources = batch.payload.sources; this.status.textContent = `${batch.payload.resolution / 1000}s as-of cells · Native USD/USDT/USDC prices; no FX/basis conversion · ` + batch.payload.sources.filter(s => this.settings.venues.includes(s.venue)).map(s => `${s.venue}: ${s.state}${s.asOf ? ' ' + Math.max(0, Math.round((Date.now() - s.asOf) / 1000)) + 's' : ''}`).join(' · '); this.status.title = batch.payload.sources.map(s => `${s.venue}: ${s.message}`).join('\n'); this.primitive.update(); });
+                } this.primitive.columns = [...retained.values()].sort((a, b) => a.availableAt - b.availableAt).slice(-2048); this.controls.sources = batch.payload.sources; this.status.textContent = `${batch.payload.resolution / 1000}s as-of cells · Visible-price auto / fixed scale in settings · Native USD/USDT/USDC prices; no FX/basis conversion · ` + batch.payload.sources.filter(s => this.settings.venues.includes(s.venue)).map(s => `${s.venue}: ${s.state}${s.asOf ? ' ' + Math.max(0, Math.round((Date.now() - s.asOf) / 1000)) + 's' : ''}`).join(' · '); this.status.title = batch.payload.sources.map(s => `${s.venue}: ${s.message}`).join('\n'); this.primitive.update(); });
             } else
                 this.subscription.update(start, end, this.settings);
         }, 150);

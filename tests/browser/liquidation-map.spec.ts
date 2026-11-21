@@ -29,7 +29,7 @@ test('explicit fixture map hover and latest profile use matching stock timestamp
   clearTimeout(v.timer);v.subscription?.dispose();v.subscription=undefined;
   const plot=c.plotRect(c.primaryPaneIndex()),scale=c.panes()[c.primaryPaneIndex()].priceScale,range=scale.priceRange(),price=range.min+(range.max-range.min)*.04;
   const old=Math.floor(c.dataLayer.indexToTimeFloat(c.timeScale.xToIndex(plot.width*.5))*1000)-1000,latest=old+60000;
-  const cell={low:Math.floor(price/100)*100,high:Math.floor(price/100)*100+100,quantity:2,side:'long',venue:'hyperliquid',kind:'observed',scenario:'fixture',leverage:null,quote:'USD',nativePrice:price,modelVersion:'fixture-only',riskVersion:'fixture-only'};
+  const cell={freshUntil:Date.now()+120000,low:Math.floor(price/100)*100,high:Math.floor(price/100)*100+100,quantity:2,side:'long',venue:'hyperliquid',kind:'observed',scenario:'fixture',leverage:null,quote:'USD',nativePrice:price,modelVersion:'fixture-only',riskVersion:'fixture-only'};
   v.settings={...v.settings,minimum:0,profile:true,profileCrosshair:false};v.primitive.settings=v.settings;
   v.primitive.columns=[{at:old,availableAt:old,revision:1,cells:[cell],quality:['fixture-only']},{at:latest,availableAt:latest,revision:2,cells:[{...cell,quantity:4}],quality:['fixture-only']}];v.primitive.update();
   return{profileX:plot.left+plot.width-10,mapX:plot.left+plot.width*.5,y:plot.top+scale.priceToY(price),latest:new Date(latest).toISOString()};
@@ -58,4 +58,30 @@ test('explicit fixture shows a loading message until the first shared-worker res
   const status=panel.locator('.liquidation-map-status');await expect(status).toContainText('Loading Liquidation Map');await expect(status).toBeVisible();await page.screenshot({path:'/tmp/iq-map-loading-message.png'});
   release();await expect(status).toContainText('as-of cells');
  }finally{release();}
+});
+
+test('journal-generated fixture ends at native crossing and stays ended after rebound and browser reload',async({page})=>{
+ await page.addInitScript(()=>localStorage.setItem('basis.theme.v1','terminal'));
+ const {readFile}=await import('node:fs/promises');const replay=JSON.parse(await readFile(new URL('../fixtures/liquidation-map-retirement.json',import.meta.url),'utf8'));
+ expect(replay.fixtureOnly).toBe(true);expect(replay.reloadedCohorts).toBe(0);expect(replay.retiredLong).toBe(1);
+ const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+ const install=async(stage:'before'|'rebound')=>{
+  await page.waitForFunction(()=>[...(window as any).__terminal?.panels.values()??[]][0]?.diagnostics().bars>20);
+  const panel=page.locator('.candle-panel').first();if(!await panel.getByRole('button',{name:'Liquidation Map settings',exact:true}).count())await addIndicator(panel,'Liquidation Map');
+  return page.evaluate(({replay,stage})=>{
+   const p=[...(window as any).__terminal.panels.values()][0] as any,v=p.liquidationMapView,c=p.engine.chart;clearTimeout(v.timer);v.subscription?.dispose();v.subscription=undefined;
+   c.timeScale.setBarSpacing(60);c.timeScale.setRightOffset(0);const last=c.dataLayer.indexToTimeFloat(c.dataLayer.length-3)*1000;
+   const scale=c.panes()[c.primaryPaneIndex()].priceScale,range=JSON.parse(sessionStorage.getItem('iq-map-replay-range')??JSON.stringify(scale.priceRange()));sessionStorage.setItem('iq-map-replay-range',JSON.stringify(range));scale.setAutoScale(false);scale.setFixedRange(range);const low=Math.floor((range.min+(range.max-range.min)*.25)/5)*5;
+   const columns=(stage==='before'?replay.columns.slice(0,1):replay.columns).map((col:any)=>({...col,at:last+col.at-replay.base,availableAt:last+col.availableAt-replay.base,validUntil:stage==='before'?undefined:col.validUntil===undefined?undefined:last+col.validUntil-replay.base,cells:col.cells.map((cell:any)=>({...cell,low,high:low+5,nativePrice:low,freshUntil:Date.now()+120000,markSourceTime:Date.now()}))}));
+   v.settings={...v.settings,minimum:0,leverage:[10],profile:false,opacity:1,resolution:240000,priceWidth:5,fixedMaximum:1};v.primitive.settings=v.settings;v.primitive.columns=columns;v.primitive.profile={...columns.at(-1),cells:[]};v.primitive.geometry=undefined;v.primitive.update();
+   v.status.textContent='EXPLICIT JOURNAL REPLAY FIXTURE · native mark 100 → 89 at +50s → 101 at +150s · conserved unknown inventory';
+   return{last,until:columns[0].validUntil,cells:columns.map((c:any)=>c.cells.length)};
+  },{replay,stage});
+ };
+ await page.goto('/?fixture=1');const before=await install('before');expect(before.cells).toEqual([1]);
+ await page.waitForTimeout(100);await page.screenshot({path:'/tmp/iq-map-retirement-before.png'});
+ const after=await install('rebound');expect(after.until).toBe(after.last+50000);expect(after.cells).toEqual([1,0,0]);
+ await page.waitForTimeout(100);await page.screenshot({path:'/tmp/iq-map-retirement-rebound.png'});
+ await page.reload();const restored=await install('rebound');expect(restored.until).toBe(restored.last+50000);expect(restored.cells).toEqual([1,0,0]);
+ await page.waitForTimeout(100);await page.screenshot({path:'/tmp/iq-map-retirement-reload.png'});expect(errors).toEqual([]);
 });

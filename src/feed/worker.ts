@@ -32,7 +32,7 @@ import { duration, marketOf, type Command, type Event, type Series } from './pro
 import type { OrderWallRequest } from './order-walls';
 import { MINUTE_MS, type TpoMinute } from '../indicators/tpo-engine';
 const scope=self as unknown as DedicatedWorkerGlobalScope;
-const liquidationMap=new LiquidationMapService(event=>{if(event.payload){const wire=packMap(event.payload);scope.postMessage({...event,payload:{...event.payload,columns:[]},wire},[wire.values.buffer]);}else scope.postMessage(event);});
+const liquidationMap=new LiquidationMapService(event=>{if(event.payload){const wire=packMap(event.payload);scope.postMessage({...event,payload:{...event.payload,columns:[],profile:undefined},wire},[wire.values.buffer]);}else scope.postMessage(event);});
 let fixture=false;
 let alignFixtureToNow=false;
 const fixtureOptions = () => ({

@@ -1,5 +1,5 @@
 import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
-import { mapSettings, mapColumnAt, mapColumnEnd, type MapColumn, type MapSettings, type MapCell } from './model';
+import { mapSettings, mapColumnAt, mapColumnEnd, freshProfile, type MapColumn, type MapSettings, type MapCell } from './model';
 export function selectedCells(column: MapColumn, settings: MapSettings, quote: string) { return column.cells.filter(c => settings.venues.includes(c.venue) && (c.side === 'long' ? settings.longs : settings.shorts) && (c.kind === 'observed' ? settings.observed : settings.estimated) && (c.leverage === null ? settings.includeUnknownLeverage : settings.leverage.includes(c.leverage)) && (settings.units === 'BTC' || c.quote === quote&&c.quoteVerified!==false&&(c.venue!=='lighter'||c.quoteVerified===true))); }
 /** Alternative scenarios are averaged, never added as independent stock.
  * Leverage choices carry an equal explicit prior; turnover cases are alternatives. */
@@ -67,6 +67,7 @@ export class LiquidationMapPrimitive implements IPrimitive {
     visible = true;
     displayPriceWidth = 100;
     profileTime: number | null = null;
+    profile?:MapColumn;
     readonly metrics = { draws: 0, lastMs: 0, maxMs: 0, cells: 0 };
     zOrder() { return 'bottom' as const; }
     autoscaleInfo() { return null; }
@@ -83,7 +84,7 @@ export class LiquidationMapPrimitive implements IPrimitive {
         const factor = Number.isFinite(rowPixels) && rowPixels > 0 ? Math.max(1, 2 ** Math.ceil(Math.log2(2 / rowPixels))) : 1;
         const displayWidth = s.priceWidth * factor;
         this.displayPriceWidth = displayWidth;
-        const visible = this.columns.filter(c => c.availableAt < to && mapColumnEnd(c,undefined,s.resolution) >= from);
+        const visible = this.columns.filter((c,index) => c.availableAt < to && mapColumnEnd(c,this.columns[index+1],s.resolution) >= from);
         const key = JSON.stringify([s.venues, s.longs, s.shorts, s.observed, s.estimated, s.leverage, s.includeUnknownLeverage, s.units, this.quote, displayWidth]);
         const bins = (column: MapColumn) => { const cached = this.rowsCache.get(column); if (cached?.key === key)
             return cached.rows; const raw = exposureRows(column, s, this.quote), rows = new Map<number, number>(); for (const [price, amount] of raw) {
@@ -93,11 +94,11 @@ export class LiquidationMapPrimitive implements IPrimitive {
         let maximum = s.fixedMaximum;
         if (!maximum)
             for (const c of visible)
-                for (const amount of bins(c).values())
-                    maximum = Math.max(maximum, amount);
+                for (const [price,amount] of bins(c))
+                    if(price<priceRange.max&&price+displayWidth>priceRange.min)maximum = Math.max(maximum, amount);
         maximum = Math.max(maximum, 1e-12);
-        const profileColumn = mapColumnAt(this.columns, this.profileTime ?? Infinity), profile = profileColumn ? bins(profileColumn) : new Map<number, number>();
-        const profileMax = Math.max(1e-12, ...profile.values());
+        const profileColumn = this.profileTime===null?freshProfile(this.profile??mapColumnAt(this.columns,Infinity)):mapColumnAt(this.columns,this.profileTime), profile = profileColumn ? bins(profileColumn) : new Map<number, number>();
+        const profileMax = s.fixedMaximum||Math.max(1e-12, ...[...profile].filter(([price])=>price<priceRange.max&&price+displayWidth>priceRange.min).map(([,amount])=>amount));
         const anchor = this.columns[0]?.availableAt ?? 0, anchorX = rc.timeScale.indexToX(rc.dataLayer.timeToIndexFloat(anchor / 1000));
         const geometryKey = JSON.stringify([key, s.priceWidth, s.resolution, s.minimum, s.intensity, maximum, s.labels, rc.timeScale.barSpacing, priceRange, rc.plotWidth, rc.plotHeight, d, rc.dataLayer.length, rc.dataLayer.indexToTimeFloat(0), rc.dataLayer.indexToTimeFloat(rc.dataLayer.length - 1)]);
         const cached = !s.labels && this.geometry?.key === geometryKey && this.geometry.columns === this.columns ? this.geometry : undefined;
@@ -157,12 +158,13 @@ export class LiquidationMapPrimitive implements IPrimitive {
             ctx.textAlign = 'right';
             if (profileColumn)
                 ctx.fillText(`${new Date(profileColumn.availableAt).toISOString().slice(11, 19)} · ${s.units === 'BTC' ? 'BTC' : this.quote}`, rc.plotWidth * d, 12 * d);
+            ctx.fillText(!profile.size?'No fresh selected exposure':s.fixedMaximum?'Fixed intensity / profile scale':'Visible-price auto scale',rc.plotWidth*d,23*d);
             ctx.globalAlpha = s.opacity;
             for (const [price, amount] of profile) {
                 if (amount < s.minimum)
                     continue;
                 const y = rc.priceScale.priceToY(price + displayWidth), bottom = rc.priceScale.priceToY(price);
-                ctx.fillStyle = PALETTE[Math.max(0, Math.min(127, Math.floor(amount / maximum * s.intensity * 127)))];
+                ctx.fillStyle = PALETTE[Math.max(0, Math.min(127, Math.floor(amount / profileMax * s.intensity * 127)))];
                 const width = Math.min(100, rc.plotWidth * .2) * amount / profileMax;
                 ctx.fillRect((rc.plotWidth - width) * d, y * d, width * d, Math.max(1, bottom - y - 1) * d);
             }

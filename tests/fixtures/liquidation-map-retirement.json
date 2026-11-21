@@ -1,0 +1,988 @@
+{
+  "fixtureOnly": true,
+  "modelVersion": "conserved-cohorts-v4",
+  "historyVersion": 2,
+  "base": 1800000000000,
+  "marks": [
+    {
+      "venue": "bybit",
+      "kind": "point",
+      "price": 100,
+      "sourceTime": 1800000000000,
+      "receivedAt": 1800000000000,
+      "sourceTimeQuality": "venue-reported",
+      "epoch": "fixture-only",
+      "sequence": 1,
+      "source": "explicit-fixture/native-mark-path"
+    },
+    {
+      "venue": "bybit",
+      "kind": "point",
+      "price": 89,
+      "sourceTime": 1800000050000,
+      "receivedAt": 1800000050000,
+      "sourceTimeQuality": "venue-reported",
+      "epoch": "fixture-only",
+      "sequence": 2,
+      "source": "explicit-fixture/native-mark-path"
+    },
+    {
+      "venue": "bybit",
+      "kind": "point",
+      "price": 101,
+      "sourceTime": 1800000150000,
+      "receivedAt": 1800000150000,
+      "sourceTimeQuality": "venue-reported",
+      "epoch": "fixture-only",
+      "sequence": 3,
+      "source": "explicit-fixture/native-mark-path"
+    }
+  ],
+  "columns": [
+    {
+      "historyVersion": 2,
+      "at": 1800000000000,
+      "availableAt": 1800000000000,
+      "revision": 1,
+      "cells": [
+        {
+          "exposureId": "bybit:a0-L10:1800000000000:100:long",
+          "freshUntil": 1800000015000,
+          "retirementState": "conditional-model/active",
+          "markSourceTime": 1800000000000,
+          "markReceivedAt": 1800000000000,
+          "instrumentId": "bybit:bybit-linear:linear-perpetual:BTCUSDT",
+          "low": 90.45226130653266,
+          "high": 90.45226130653266,
+          "quantity": 1,
+          "side": "long",
+          "venue": "bybit",
+          "kind": "estimated",
+          "scenario": "a0-L10",
+          "leverage": 10,
+          "quote": "USDT",
+          "nativePrice": 90.45226130653266,
+          "modelVersion": "conserved-cohorts-v4",
+          "riskVersion": "fixture"
+        }
+      ],
+      "sources": [
+        {
+          "venue": "hyperliquid",
+          "state": "warming-up",
+          "message": "Awaiting recorded inputs",
+          "asOf": null,
+          "accounts": 0,
+          "freshQuantity": 0,
+          "staleQuantity": 0,
+          "locatedQuantity": 0,
+          "oi": null,
+          "coverageProxy": null,
+          "unknownQuantity": 0,
+          "quote": "USD",
+          "quarantinedQuantity": 0
+        },
+        {
+          "venue": "lighter",
+          "state": "warming-up",
+          "message": "Awaiting recorded inputs",
+          "asOf": null,
+          "accounts": 0,
+          "freshQuantity": 0,
+          "staleQuantity": 0,
+          "locatedQuantity": 0,
+          "oi": null,
+          "coverageProxy": null,
+          "unknownQuantity": 0,
+          "quote": "USDC",
+          "quarantinedQuantity": 0
+        },
+        {
+          "venue": "binance",
+          "state": "warming-up",
+          "message": "Awaiting recorded inputs",
+          "asOf": null,
+          "accounts": 0,
+          "freshQuantity": 0,
+          "staleQuantity": 0,
+          "locatedQuantity": 0,
+          "oi": null,
+          "coverageProxy": null,
+          "unknownQuantity": 0,
+          "quote": "USDT",
+          "unknownBreakdown": {
+            "bootstrap": 0,
+            "unresolved": 0,
+            "collateral": 0,
+            "retention": 0,
+            "legacy": 0,
+            "retired": 0,
+            "mark-gap": 0
+          },
+          "quarantinedQuantity": 0
+        },
+        {
+          "venue": "bybit",
+          "state": "model-scenario",
+          "message": "Awaiting recorded inputs",
+          "asOf": 1800000000000,
+          "accounts": 0,
+          "freshQuantity": 2,
+          "staleQuantity": 0,
+          "locatedQuantity": 0.05555555555555555,
+          "oi": 1,
+          "coverageProxy": null,
+          "unknownQuantity": 0.05555555555555555,
+          "quote": "USDT",
+          "unknownBreakdown": {
+            "bootstrap": 0.05555555555555555,
+            "unresolved": 0,
+            "collateral": 0,
+            "retention": 0,
+            "legacy": 0,
+            "retired": 0,
+            "mark-gap": 0
+          },
+          "mark": {
+            "venue": "bybit",
+            "kind": "point",
+            "price": 100,
+            "sourceTime": 1800000000000,
+            "receivedAt": 1800000000000,
+            "sourceTimeQuality": "venue-reported",
+            "epoch": "fixture-only",
+            "sequence": 1,
+            "source": "explicit-fixture/native-mark-path"
+          },
+          "quarantinedQuantity": 0
+        },
+        {
+          "venue": "coinbase",
+          "state": "unavailable",
+          "message": "Derivatives OI timestamp, gateway pool identity and risk rules not verified",
+          "asOf": null,
+          "accounts": 0,
+          "freshQuantity": 0,
+          "staleQuantity": 0,
+          "locatedQuantity": 0,
+          "oi": null,
+          "coverageProxy": null,
+          "unknownQuantity": 0,
+          "quote": "USDT",
+          "quarantinedQuantity": 0
+        }
+      ],
+      "scenarioCatalog": [
+        {
+          "venue": "binance",
+          "id": "a0-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "binance",
+          "id": "a0-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "binance",
+          "id": "a0-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "binance",
+          "id": "a0-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "binance",
+          "id": "a0-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "binance",
+          "id": "a0-L100",
+          "leverage": 100
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L100",
+          "leverage": 100
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L100",
+          "leverage": 100
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L100",
+          "leverage": 100
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L100",
+          "leverage": 100
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L100",
+          "leverage": 100
+        }
+      ],
+      "quality": [
+        "recorded-native-mark-streams/not-complete-intrastream-path",
+        "hyperliquid-mark-receipt-proxy",
+        "observed-subsets",
+        "uncalibrated-model-scenario-ranges",
+        "native-quote-price-basis",
+        "isolated-0.01BTC-position-approximation",
+        "funding-mark-proxy/conditional-fee-cases",
+        "cross-collateral-unresolved"
+      ],
+      "validUntil": 1800000050000
+    },
+    {
+      "historyVersion": 2,
+      "at": 1800000050000,
+      "availableAt": 1800000050000,
+      "revision": 2,
+      "cells": [],
+      "sources": [
+        {
+          "venue": "hyperliquid",
+          "state": "warming-up",
+          "message": "Awaiting recorded inputs",
+          "asOf": null,
+          "accounts": 0,
+          "freshQuantity": 0,
+          "staleQuantity": 0,
+          "locatedQuantity": 0,
+          "oi": null,
+          "coverageProxy": null,
+          "unknownQuantity": 0,
+          "quote": "USD",
+          "quarantinedQuantity": 0
+        },
+        {
+          "venue": "lighter",
+          "state": "warming-up",
+          "message": "Awaiting recorded inputs",
+          "asOf": null,
+          "accounts": 0,
+          "freshQuantity": 0,
+          "staleQuantity": 0,
+          "locatedQuantity": 0,
+          "oi": null,
+          "coverageProxy": null,
+          "unknownQuantity": 0,
+          "quote": "USDC",
+          "quarantinedQuantity": 0
+        },
+        {
+          "venue": "binance",
+          "state": "warming-up",
+          "message": "Awaiting recorded inputs",
+          "asOf": null,
+          "accounts": 0,
+          "freshQuantity": 0,
+          "staleQuantity": 0,
+          "locatedQuantity": 0,
+          "oi": null,
+          "coverageProxy": null,
+          "unknownQuantity": 0,
+          "quote": "USDT",
+          "unknownBreakdown": {
+            "bootstrap": 0,
+            "unresolved": 0,
+            "collateral": 0,
+            "retention": 0,
+            "legacy": 0,
+            "retired": 0,
+            "mark-gap": 0
+          },
+          "quarantinedQuantity": 0
+        },
+        {
+          "venue": "bybit",
+          "state": "model-scenario",
+          "message": "Awaiting recorded inputs",
+          "asOf": 1800000000000,
+          "accounts": 0,
+          "freshQuantity": 2,
+          "staleQuantity": 0,
+          "locatedQuantity": 0,
+          "oi": 1,
+          "coverageProxy": null,
+          "unknownQuantity": 0.1111111111111111,
+          "quote": "USDT",
+          "unknownBreakdown": {
+            "bootstrap": 0.05555555555555555,
+            "unresolved": 0,
+            "collateral": 0,
+            "retention": 0,
+            "legacy": 0,
+            "retired": 0.05555555555555555,
+            "mark-gap": 0
+          },
+          "mark": {
+            "venue": "bybit",
+            "kind": "point",
+            "price": 89,
+            "sourceTime": 1800000050000,
+            "receivedAt": 1800000050000,
+            "sourceTimeQuality": "venue-reported",
+            "epoch": "fixture-only",
+            "sequence": 2,
+            "source": "explicit-fixture/native-mark-path"
+          },
+          "quarantinedQuantity": 0
+        },
+        {
+          "venue": "coinbase",
+          "state": "unavailable",
+          "message": "Derivatives OI timestamp, gateway pool identity and risk rules not verified",
+          "asOf": null,
+          "accounts": 0,
+          "freshQuantity": 0,
+          "staleQuantity": 0,
+          "locatedQuantity": 0,
+          "oi": null,
+          "coverageProxy": null,
+          "unknownQuantity": 0,
+          "quote": "USDT",
+          "quarantinedQuantity": 0
+        }
+      ],
+      "scenarioCatalog": [
+        {
+          "venue": "binance",
+          "id": "a0-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "binance",
+          "id": "a0-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "binance",
+          "id": "a0-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "binance",
+          "id": "a0-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "binance",
+          "id": "a0-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "binance",
+          "id": "a0-L100",
+          "leverage": 100
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L100",
+          "leverage": 100
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L100",
+          "leverage": 100
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L100",
+          "leverage": 100
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L100",
+          "leverage": 100
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L100",
+          "leverage": 100
+        }
+      ],
+      "quality": [
+        "recorded-native-mark-streams/not-complete-intrastream-path",
+        "hyperliquid-mark-receipt-proxy",
+        "observed-subsets",
+        "uncalibrated-model-scenario-ranges",
+        "native-quote-price-basis",
+        "isolated-0.01BTC-position-approximation",
+        "funding-mark-proxy/conditional-fee-cases",
+        "cross-collateral-unresolved",
+        "conditional-mark-crossing-unlocated"
+      ]
+    },
+    {
+      "historyVersion": 2,
+      "at": 1800000150000,
+      "availableAt": 1800000150000,
+      "revision": 3,
+      "cells": [],
+      "sources": [
+        {
+          "venue": "hyperliquid",
+          "state": "warming-up",
+          "message": "Awaiting recorded inputs",
+          "asOf": null,
+          "accounts": 0,
+          "freshQuantity": 0,
+          "staleQuantity": 0,
+          "locatedQuantity": 0,
+          "oi": null,
+          "coverageProxy": null,
+          "unknownQuantity": 0,
+          "quote": "USD",
+          "quarantinedQuantity": 0
+        },
+        {
+          "venue": "lighter",
+          "state": "warming-up",
+          "message": "Awaiting recorded inputs",
+          "asOf": null,
+          "accounts": 0,
+          "freshQuantity": 0,
+          "staleQuantity": 0,
+          "locatedQuantity": 0,
+          "oi": null,
+          "coverageProxy": null,
+          "unknownQuantity": 0,
+          "quote": "USDC",
+          "quarantinedQuantity": 0
+        },
+        {
+          "venue": "binance",
+          "state": "warming-up",
+          "message": "Awaiting recorded inputs",
+          "asOf": null,
+          "accounts": 0,
+          "freshQuantity": 0,
+          "staleQuantity": 0,
+          "locatedQuantity": 0,
+          "oi": null,
+          "coverageProxy": null,
+          "unknownQuantity": 0,
+          "quote": "USDT",
+          "unknownBreakdown": {
+            "bootstrap": 0,
+            "unresolved": 0,
+            "collateral": 0,
+            "retention": 0,
+            "legacy": 0,
+            "retired": 0,
+            "mark-gap": 0
+          },
+          "quarantinedQuantity": 0
+        },
+        {
+          "venue": "bybit",
+          "state": "stale",
+          "message": "Awaiting recorded inputs · refresh older than 120s",
+          "asOf": 1800000000000,
+          "accounts": 0,
+          "freshQuantity": 0,
+          "staleQuantity": 2,
+          "locatedQuantity": 0,
+          "oi": 1,
+          "coverageProxy": null,
+          "unknownQuantity": 0.1111111111111111,
+          "quote": "USDT",
+          "unknownBreakdown": {
+            "bootstrap": 0.05555555555555555,
+            "unresolved": 0,
+            "collateral": 0,
+            "retention": 0,
+            "legacy": 0,
+            "retired": 0.05555555555555555,
+            "mark-gap": 0
+          },
+          "mark": {
+            "venue": "bybit",
+            "kind": "point",
+            "price": 101,
+            "sourceTime": 1800000150000,
+            "receivedAt": 1800000150000,
+            "sourceTimeQuality": "venue-reported",
+            "epoch": "fixture-only",
+            "sequence": 3,
+            "source": "explicit-fixture/native-mark-path"
+          },
+          "quarantinedQuantity": 0,
+          "locatedCoverageProxy": null,
+          "longCoverageProxy": null,
+          "shortCoverageProxy": null
+        },
+        {
+          "venue": "coinbase",
+          "state": "unavailable",
+          "message": "Derivatives OI timestamp, gateway pool identity and risk rules not verified",
+          "asOf": null,
+          "accounts": 0,
+          "freshQuantity": 0,
+          "staleQuantity": 0,
+          "locatedQuantity": 0,
+          "oi": null,
+          "coverageProxy": null,
+          "unknownQuantity": 0,
+          "quote": "USDT",
+          "quarantinedQuantity": 0
+        }
+      ],
+      "scenarioCatalog": [
+        {
+          "venue": "binance",
+          "id": "a0-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "binance",
+          "id": "a0-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "binance",
+          "id": "a0-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "binance",
+          "id": "a0-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "binance",
+          "id": "a0-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "binance",
+          "id": "a0-L100",
+          "leverage": 100
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "binance",
+          "id": "a1-L100",
+          "leverage": 100
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "binance",
+          "id": "a2-L100",
+          "leverage": 100
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "bybit",
+          "id": "a0-L100",
+          "leverage": 100
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "bybit",
+          "id": "a1-L100",
+          "leverage": 100
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L3",
+          "leverage": 3
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L5",
+          "leverage": 5
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L10",
+          "leverage": 10
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L25",
+          "leverage": 25
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L50",
+          "leverage": 50
+        },
+        {
+          "venue": "bybit",
+          "id": "a2-L100",
+          "leverage": 100
+        }
+      ],
+      "quality": [
+        "recorded-native-mark-streams/not-complete-intrastream-path",
+        "hyperliquid-mark-receipt-proxy",
+        "observed-subsets",
+        "uncalibrated-model-scenario-ranges",
+        "native-quote-price-basis",
+        "isolated-0.01BTC-position-approximation",
+        "funding-mark-proxy/conditional-fee-cases",
+        "cross-collateral-unresolved",
+        "conditional-mark-crossing-unlocated"
+      ]
+    }
+  ],
+  "reloadedCohorts": 0,
+  "conservedLong": 1,
+  "retiredLong": 1
+}

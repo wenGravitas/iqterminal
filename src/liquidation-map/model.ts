@@ -24,6 +24,14 @@ export interface MapSettings {
 const n = (v: unknown, f: number, min: number, max: number) => typeof v === 'number' && Number.isFinite(v) ? Math.max(min, Math.min(max, v)) : f;
 export function mapSettings(value: unknown): MapSettings { const r = value && typeof value === 'object' ? value as Partial<MapSettings> : {}; return { venues: MAP_VENUES.filter(v => (Array.isArray(r.venues) ? r.venues : ['hyperliquid', 'lighter', 'binance', 'bybit']).includes(v)), longs: r.longs !== false, shorts: r.shorts !== false, observed: r.observed !== false, estimated: r.estimated !== false, leverage: [3, 5, 10, 25, 50, 100].filter(l => (Array.isArray(r.leverage) ? r.leverage : [3, 5, 10, 25, 50, 100]).includes(l)), includeUnknownLeverage: r.includeUnknownLeverage !== false, priceWidth: n(r.priceWidth, 100, 1, 10000), resolution: Math.round(n(r.resolution, 60000, 10000, 3600000)), lookback: n(r.lookback, 4 * 3600000, 60000, 7 * 86400000), minimum: n(r.minimum, .01, 0, 1e9), opacity: n(r.opacity, .6, .05, 1), intensity: n(r.intensity, 1, .1, 10), fixedMaximum: n(r.fixedMaximum, 0, 0, 1e12), profile: r.profile !== false, profileCrosshair: r.profileCrosshair === true, units: r.units === 'native-quote' ? 'native-quote' : 'BTC', labels: r.labels === true }; }
 export interface MapCell {
+    exposureId?:string;
+    freshUntil?:number;
+    sourceTimeQuality?:string;
+    sourceTime?:number;
+    receivedAt?:number;
+    markSourceTime?:number;
+    markReceivedAt?:number;
+    retirementState?:string;
     instrumentId?: string;
     low: number;
     high: number;
@@ -40,6 +48,8 @@ export interface MapCell {
     riskVersion: string;
 }
 export interface MapColumn {
+    validUntil?:number;
+    historyVersion?:number;
     resolution?:number;
     at: number;
     availableAt: number;
@@ -64,6 +74,8 @@ export interface MapSourceStatus {
     locatedQuantity: number;
     oi: number | null;
     coverageProxy: number | null;
+    mark?:{kind:string;sourceTime:number;receivedAt:number;sourceTimeQuality:string;reason?:string};
+    quarantinedQuantity?:number;
     locatedCoverageProxy?: number | null;
     longCoverageProxy?: number | null;
     shortCoverageProxy?: number | null;
@@ -73,6 +85,8 @@ export interface MapSourceStatus {
     quote: string;
 }
 export interface MapPayload {
+    profile?:MapColumn;
+    historyVersion?:number;
     version: 1;
     generation?: number;
     modelVersion?: string;
@@ -119,5 +133,15 @@ export function mapColumnAt(columns: readonly MapColumn[], at: number): MapColum
 /** A stock snapshot remains the last available information until its successor
  * or freshness limit; requesting a finer bucket must not create artificial gaps. */
 export function mapColumnEnd(column:MapColumn,next:MapColumn|undefined,resolution:number){
-    return Math.min(column.availableAt+Math.max(column.resolution??resolution,120000),next?.availableAt??Infinity);
+    return Math.min(column.validUntil??Infinity,column.availableAt+Math.max(column.resolution??resolution,120000),next?.availableAt??Infinity);
+}
+
+/** Latest profile only: historical stock remains immutable as-observed. */
+const profileCache=new WeakMap<MapColumn,{from:number;until:number;value:MapColumn}>();
+export function freshProfile(column:MapColumn|undefined,now=Date.now()):MapColumn|undefined {
+    if(!column)return;
+    const cached=profileCache.get(column);if(cached&&now>=cached.from&&now<cached.until)return cached.value;
+    let until=Infinity;
+    const cells=column.cells.filter(c=>{const expiry=Math.min(c.freshUntil??column.availableAt+120000,c.markSourceTime===undefined?Infinity:Math.min(c.markSourceTime,c.markReceivedAt??c.markSourceTime)+15000);if(now>=expiry)return false;until=Math.min(until,expiry);return true;});
+    const value={...column,cells};profileCache.set(column,{from:now,until,value});return value;
 }

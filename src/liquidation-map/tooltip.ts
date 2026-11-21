@@ -30,12 +30,15 @@ export function renderMapTooltip(element:HTMLElement,data:{column:MapColumn;cell
   // Respect the same side filters as the map, including hidden sides.
   const detail=node('div','positioning-tooltip-quality',`${kinds.join(' + ')} · ${[...(settings.longs?['long '+amount(longs)]:[]),...(settings.shorts?['short '+amount(shorts)]:[])].join(' / ')} ${unit}`);rows.append(detail);
   if(source){const age=source.asOf?`${Math.max(0,Math.round((Date.now()-source.asOf)/1000))}s old`:'age unavailable';rows.append(node('div','positioning-tooltip-quality',`${source.state} · ${age} · ${source.accounts} accounts · coverage ${source.coverageProxy===null?'unverified':amount(source.coverageProxy*100)+'% proxy'}`));}
+  if(source?.mark){const m=source.mark;rows.append(node('div','positioning-tooltip-quality',`Native mark: ${m.kind} · ${Math.max(0,Math.round(((data.profile?Date.now():column.availableAt)-Math.min(m.sourceTime,m.receivedAt))/1000))}s · ${m.sourceTimeQuality}${m.reason?' · '+m.reason:''} · quarantined ${amount(source.quarantinedQuantity??0)} BTC`));}
+  rows.append(node('div','positioning-tooltip-quality',[...new Set(sourceCells.map(c=>c.retirementState??'Legacy retirement evidence unavailable'))].join(' · ')));
+  const timestampQuality=[...new Set(sourceCells.map(c=>c.sourceTimeQuality).filter(Boolean))];if(timestampQuality.length)rows.append(node('div','positioning-tooltip-quality',`Position timestamp: ${timestampQuality.join(' / ')}${timestampQuality.includes('receipt-proxy')?' (native state age not established)':''}`));
   if(sourceCells.some(c=>c.quoteVerified===false))rows.append(node('div','positioning-tooltip-quality','Native quote denomination unverified'));
  }
  const estimated=cells.some(c=>c.kind==='estimated');
  const range=node('div','positioning-tooltip-total');range.append(node('span','positioning-tooltip-muted',estimated?'Model-scenario range':'Observed exposure'),node('strong','',estimated?`${amount(summary.minimum)}–${amount(summary.maximum)} ${unit}`:`${amount(summary.mean)} ${unit}`));
  const versions=[...new Set(cells.map(c=>`${c.modelVersion} / ${c.riskVersion}`))];
- const footer=node('div','positioning-tooltip-muted positioning-tooltip-status',`Conditional exposure, not confirmed liquidations. ${estimated?'Uncalibrated model scenarios; shared scenario index.':'Observed account subset.'} Snapshot ${Math.max(0,Math.round((Date.now()-column.availableAt)/1000))}s old. Native prices; no FX/basis conversion.`);
+ const footer=node('div','positioning-tooltip-muted positioning-tooltip-status',`Conditional exposure, not confirmed liquidations. ${estimated?'Uncalibrated model scenarios; shared scenario index.':'Observed account subset.'} ${column.validUntil!==undefined?'Recorded interval ends '+new Date(column.validUntil).toISOString()+'. ':''}Snapshot ${Math.max(0,Math.round((Date.now()-column.availableAt)/1000))}s old. Native prices; no FX/basis conversion.`);
  const provenance=node('div','positioning-tooltip-quality',`Model / risk: ${versions.join('; ')} · ${column.quality.join(', ')}`);provenance.style.overflowWrap='anywhere';
  element.replaceChildren(header,heading,price,rows,range,footer,provenance);
 }

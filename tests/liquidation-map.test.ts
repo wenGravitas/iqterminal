@@ -6,7 +6,7 @@ test('map and profile average alternative scenario stock rather than summing it'
 test('native quote valuation excludes a different quote, base view retains explicit source price', () => { const c = { at: 1, availableAt: 1, revision: 1, quality: [], cells: [cell, { ...cell, kind: 'observed' as const, venue: 'hyperliquid' as const, quote: 'USD', leverage: null }] }; expect(selectedCells(c, mapSettings({ units: 'native-quote' }), 'USDT')).toHaveLength(1); expect(selectedCells(c, mapSettings(undefined), 'USDT')).toHaveLength(2); });
 test('empty source and leverage selections persist without reverting to defaults', () => { expect(mapSettings({ venues: [], leverage: [] })).toMatchObject({ venues: [], leverage: [] }); });
 import { vi } from 'vitest';
-import { LiquidationMapPrimitive } from '../src/liquidation-map/chart';
+import { LiquidationMapPrimitive,spectrum } from '../src/liquidation-map/chart';
 test('resident horizontal navigation reuses native geometry and zoom invalidates it', () => { class Path {
     rect = vi.fn();
 } vi.stubGlobal('Path2D', Path); try {
@@ -49,4 +49,32 @@ test('fine time grouping carries stock to the next snapshot without extending a 
  expect(mapColumnEnd(first,undefined,10000)).toBe(120000);
  expect(mapColumnEnd(first,undefined,600000)).toBe(600000);
  expect(mapColumnEnd({...first,resolution:600000},undefined,10000)).toBe(600000);
+});
+
+import {freshProfile} from '../src/liquidation-map/model';
+test('explicit first removal bounds a coarse band without a delivered successor',()=>{
+ const column={at:0,availableAt:0,validUntil:50000,revision:1,cells:[cell],quality:[]};
+ expect(mapColumnEnd(column,undefined,240000)).toBe(50000);
+ expect(mapColumnEnd(column,{...column,availableAt:150000},240000)).toBe(50000);
+});
+test('latest profile uses source and native mark age without aging immutable history',()=>{
+ const now=Date.now(),column={at:now-1000,availableAt:now-1000,revision:1,quality:[],cells:[{...cell,freshUntil:now+5000,markSourceTime:now-16000,markReceivedAt:now},{...cell,scenario:'b',freshUntil:now+5000,markSourceTime:now-1000}]};
+ expect(freshProfile(column,now)?.cells).toHaveLength(1);expect(column.cells).toHaveLength(2);
+ expect(freshProfile(column,now+6000)?.cells).toHaveLength(0);
+});
+test('latest profile and explicit validity travel in the same bounded worker buffer',()=>{
+ const now=Date.now(),column={at:now,availableAt:now,validUntil:now+50000,revision:1,quality:[],cells:[cell]};
+ const payload={version:1,columns:[column],profile:{...column,cells:[]},sources:[],head:1,next:null,from:0,to:now,resolution:240000,priceWidth:10,semantics:'conditional-exposure',asOf:now} as const;
+ const wire=packMap(payload as any),result=unpackMap({...payload,columns:[],profile:undefined} as any,wire);
+ expect(result.columns[0].validUntil).toBe(now+50000);expect(result.profile?.cells).toEqual([]);expect(result.columns).toHaveLength(1);
+});
+test('offscreen price outlier cannot flatten visible auto heatmap or profile',()=>{
+ const previous=globalThis.Path2D;globalThis.Path2D=class {rect(){}} as any;
+ try{
+ const p=new LiquidationMapPrimitive(),now=Date.now();p.settings=mapSettings({minimum:0});p.columns=[{at:now,availableAt:now,revision:1,quality:[],cells:[{...cell,quantity:10},{...cell,low:10000,high:10010,quantity:1e9}]}];p.profile=p.columns[0];
+ const colours:string[]=[];let colour='';const widths:number[]=[];
+ const ctx={save(){},restore(){},beginPath(){},rect(){},clip(){},translate(){},fill(){colours.push(colour);},fillText(){},fillRect(_x:number,_y:number,w:number){widths.push(w);},set fillStyle(v:string){colour=v;},get fillStyle(){return colour;}} as any;
+ const rc={dpr:1,plotWidth:500,plotHeight:500,theme:{axisText:'#aaa'},timeScale:{visibleRange:()=>({from:0,to:20}),barSpacing:10,indexToX:(i:number)=>i*10},dataLayer:{length:21,indexToTimeFloat:(i:number)=>now/1000+i*60,timeToIndexFloat:(t:number)=>(t-now/1000)/60},priceScale:{priceRange:()=>({min:0,max:1000}),priceToY:(price:number)=>(1000-price)/2}} as any;
+ p.draw(ctx,rc);expect(colours).toContain(spectrum(1));expect(widths[0]).toBe(100);
+ }finally{globalThis.Path2D=previous;}
 });
