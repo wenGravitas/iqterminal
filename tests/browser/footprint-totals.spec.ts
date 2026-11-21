@@ -120,12 +120,12 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
     const labelWidth = Math.min(view.presentation.labelWidth, chart.timeScale.width) * dpr;
     const slot = chart.timeScale.barSpacing * dpr;
     const visible = (window as any).__footprintTableTexts.filter((item: any) => item.font.startsWith('11px') && item.y < 100);
-    return ['-6', '+4', '+1'].every(text => visible.some((item: any) => item.text === text
+    return ['-6.0', '+4.0', '+1.0'].every(text => visible.some((item: any) => item.text === text
       && item.x - slot / 2 >= labelWidth && item.x + slot / 2 <= plotWidth
       && item.y > 15 * dpr && item.y < candlePanel.engine.chart.panes()[1].base.mediaHeight));
   })).toBe(true);
   const totalsTextDraws = await page.evaluate(() => (window as any).__footprintTableTexts.filter((item: any) => item.font.startsWith('11px') && item.y < 100));
-  expect(totalsTextDraws.map((item: any) => item.text)).toEqual(expect.arrayContaining(['11', '5', '6', '-6', '+4', '+1']));
+  expect(totalsTextDraws.map((item: any) => item.text)).toEqual(expect.arrayContaining(['11.0', '5.0', '6.0', '-6.0', '+4.0', '+1.0']));
   expect(totalsTextDraws.every((item: any) => item.align === 'center')).toBe(true);
   await panel.getByRole('button', { name: 'Footprint settings', exact: true }).click();
   await expect(panel.getByRole('combobox', { name: 'Totals position', exact: true })).toHaveCount(0);

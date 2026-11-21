@@ -42,9 +42,14 @@ describe('Footprint Totals pane', () => {
 
   it('formats the same Footprint stats values and retains unknown row values as unavailable', () => {
     expect(footprintStatText(stats, 'volume')).toBe('12.3');
-    expect(footprintStatText(stats, 'delta')).toBe('-3.65');
+    expect(footprintStatText(stats, 'delta')).toBe('-3.7');
     expect(footprintStatText(stats, 'deltaPct')).toBe('-29.6%');
     expect(footprintStatText(stats, 'trades')).toBe('—');
+    expect(footprintStatText({ ...stats, volume: 3.449 }, 'volume')).toBe('3.4');
+    expect(footprintStatText({ ...stats, volume: 1234 }, 'volume')).toBe('1.2K');
+    expect(footprintStatText({ ...stats, volume: 1e6 }, 'volume')).toBe('1.0M');
+    expect(footprintStatText({ ...stats, delta: 0 }, 'delta')).toBe('0.0');
+    expect(footprintStatText({ ...stats, trades: 1234 }, 'trades')).toBe('1,234');
   });
 
   it('matches the native footer row labels and per-row 10–50% color tint rules', () => {
@@ -90,7 +95,7 @@ describe('Footprint Totals pane', () => {
     expect(pane.hoverSummary(60, 202, 10)).toBeNull();
     expect(pane.hoverSummary(120, 202, 39)).toBeNull();
     expect(pane.tooltip(60)).toContain('Total Volume  12.3');
-    expect(pane.tooltip(60)).toContain('Delta  -3.65');
+    expect(pane.tooltip(60)).toContain('Delta  -3.7');
     expect(pane.tooltip(60)).toContain('Trades  —');
     expect(pane.tooltip(61)).toBeNull();
     expect(pane.diagnostics()).toMatchObject({ mounted: true, rows: ['volume', 'delta', 'trades'], units: 'btc', statsBars: 1 });

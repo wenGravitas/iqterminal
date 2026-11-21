@@ -30,7 +30,9 @@ export function footprintStatText(stats: FootprintBarStats, row: FootprintStatRo
   if (value === null || value === undefined || !Number.isFinite(value)) return '—';
   if (row === 'deltaPct') return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;
   if (row === 'trades') return Math.trunc(value).toLocaleString('en-US');
-  const text = compactVol(value);
+  const suffix = compactVol(value).match(/[KMB]$/)?.[0] ?? '';
+  const scale = suffix === 'B' ? 1e9 : suffix === 'M' ? 1e6 : suffix === 'K' ? 1e3 : 1;
+  const text = `${(value / scale).toFixed(1)}${suffix}`;
   return ['delta', 'minDelta', 'maxDelta', 'cvd'].includes(row) && value > 0 ? `+${text}` : text;
 }
 
