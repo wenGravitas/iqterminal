@@ -1,5 +1,5 @@
 import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
-import { mapSettings, type MapColumn, type MapSettings, type MapCell } from './model';
+import { mapSettings, mapColumnAt, type MapColumn, type MapSettings, type MapCell } from './model';
 export function selectedCells(column: MapColumn, settings: MapSettings, quote: string) { return column.cells.filter(c => settings.venues.includes(c.venue) && (c.side === 'long' ? settings.longs : settings.shorts) && (c.kind === 'observed' ? settings.observed : settings.estimated) && (c.leverage === null ? settings.includeUnknownLeverage : settings.leverage.includes(c.leverage)) && (settings.units === 'BTC' || c.quote === quote&&c.quoteVerified!==false&&(c.venue!=='lighter'||c.quoteVerified===true))); }
 /** Alternative scenarios are averaged, never added as independent stock.
  * Leverage choices carry an equal explicit prior; turnover cases are alternatives. */
@@ -96,7 +96,7 @@ export class LiquidationMapPrimitive implements IPrimitive {
                 for (const amount of bins(c).values())
                     maximum = Math.max(maximum, amount);
         maximum = Math.max(maximum, 1e-12);
-        const profileColumn = this.columns.filter(c => this.profileTime === null || c.availableAt <= this.profileTime).at(-1), profile = profileColumn ? bins(profileColumn) : new Map<number, number>();
+        const profileColumn = mapColumnAt(this.columns, this.profileTime ?? Infinity), profile = profileColumn ? bins(profileColumn) : new Map<number, number>();
         const profileMax = Math.max(1e-12, ...profile.values());
         const anchor = this.columns[0]?.availableAt ?? 0, anchorX = rc.timeScale.indexToX(rc.dataLayer.timeToIndexFloat(anchor / 1000));
         const geometryKey = JSON.stringify([key, s.priceWidth, s.resolution, s.minimum, s.intensity, maximum, s.labels, rc.timeScale.barSpacing, priceRange, rc.plotWidth, rc.plotHeight, d, rc.dataLayer.length, rc.dataLayer.indexToTimeFloat(0), rc.dataLayer.indexToTimeFloat(rc.dataLayer.length - 1)]);

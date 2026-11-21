@@ -32,3 +32,12 @@ finally {
 } });
 import { packMap, unpackMap } from '../src/liquidation-map/wire';
 test('transferable map buffers retain Float64 prices, scenarios and native quote identities', () => { const payload = { version: 1 as const, semantics: 'conditional-exposure' as const, columns: [{ at: 1800000000001, availableAt: 1800000000002, revision: 1, cells: [{ ...cell, nativePrice: 57942.123456789, quote: 'USDT' }], quality: ['subset'] }], sources: [], head: 1, next: null, from: 1, to: 2, resolution: 60000, priceWidth: 100, asOf: 1800000000003 }; const wire = packMap(payload); expect(wire.values.buffer).toBeInstanceOf(ArrayBuffer); expect(unpackMap({ ...payload, columns: [] }, wire)).toEqual(payload); });
+
+import {mapColumnAt} from '../src/liquidation-map/model';
+test('map and profile inspection use availability rather than a later event-time revision',()=>{
+ const first={at:1,availableAt:10,revision:1,cells:[cell],quality:[]},later={at:2,availableAt:30,revision:2,cells:[cell],quality:[]};
+ expect(mapColumnAt([first,later],9)).toBeUndefined();
+ expect(mapColumnAt([first,later],20)).toBe(first);
+ expect(mapColumnAt([first,later],30)).toBe(later);
+ expect(mapColumnAt([first,later],Infinity)).toBe(later);
+});

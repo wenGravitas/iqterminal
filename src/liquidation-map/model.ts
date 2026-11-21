@@ -99,3 +99,10 @@ export type MapBatch = {
     wire?: import('./wire').MapWire;
     error?: string;
 };
+
+/** Latest information available at the inspection timestamp; never event-time lookahead. */
+export function mapColumnAt(columns: readonly MapColumn[], at: number): MapColumn | undefined {
+    let low=0, high=columns.length;
+    while(low<high){const middle=(low+high)>>>1;if(columns[middle].availableAt<=at)low=middle+1;else high=middle;}
+    return low ? columns[low-1] : undefined;
+}
