@@ -72,13 +72,13 @@ root. The deployment guard rejects existing ownership on the requested port whil
 preserving unrelated Serve ports. This permits candidate verification without
 replacing the known-good staging release.
 
-Validation at integration: 21 focused frontend/model/worker tests and the native
+Validation at integration: 22 focused frontend/model/worker tests and the native
 browser settings/hide/remove test passed. Static proxy/port-ownership tests passed
 9/9. Full frontend runs had resource-sensitive 5-second timeouts in unchanged
 trading-vault/order-wall checkpoint tests; both files passed separately (8/8 and
 10/10). No test was disabled or its timeout increased. The full backend suite
 passed 488 tests before the final storage/API additions; the final feature suite
-passed 20 focused tests including restart/replay, compression/memory eviction,
+passed 22 focused tests including restart/replay, compression/memory eviction,
 idempotence, as-of pagination and quote valuation. Typechecks/builds passed.
 
 The Lighter account response has no verified position event timestamp: its recorded
@@ -91,3 +91,17 @@ routes remain unchanged. Retained coverage entirely resident in memory is served
 without rereading journal files even when the viewport begins before collection.
 The isolated release slot pool includes 4184/4185 so candidate upgrades can retain
 both the incumbent staging release and previous candidate without stopping them.
+
+The final backend stores a compact byte-offset index for retained stock snapshots,
+selecting time-bucket revisions before reading/decompressing cells. This avoids
+rescanning all normalized account/trade inputs when navigating older history.
+The index is rebuilt from the checksummed journal on restart; full-retention startup
+latency has not yet been verified. A recent aligned sample was approximately
+228 MB/day (1.60 GB/week); the feature quota is 2 GiB, resident payload cache 32 MiB,
+and free-disk floor 40 GiB. These are bounds, not a retention guarantee.
+
+In loaded-Pi compiled-client samples, the corrected resident-history/gzip path
+reduced worker acquisition on reload from 20.1 s to 1.3 s; body time fell from
+10.4 s to 27 ms. Warm remove/reopen issued zero network requests. Workload and
+collection state evolved between runs; this is not a controlled accuracy or
+quiet-machine claim. The 33 ms foreground frame target remains unverified.
