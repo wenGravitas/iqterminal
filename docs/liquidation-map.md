@@ -124,3 +124,9 @@ snapshots replace them; known empty/closed snapshots terminate older bands.
 Changing price grouping requests a new display grid while server model history
 continues unchanged. Benchmark screenshots can be redirected with
 `IQ_MAP_BENCH_SCREENSHOT` to keep a clean release checkout.
+
+Forming footprint totals use the current live execution bar, including executions
+whose native price is finer than the order-entry tick. These prices are preserved
+in OHLC and grouped into the selected price row without rounding onto another
+row. This was verified against Binance aggregate execution 3537588311 at
+57086.83; rejecting that execution had stalled the 5-minute current materializer.

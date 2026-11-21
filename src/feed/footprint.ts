@@ -213,13 +213,13 @@ export class FootprintAccumulator {
     if (![trade.timeMs, trade.price, trade.quantity].every(Number.isFinite)
       || trade.timeMs <= 0 || trade.price <= 0 || trade.quantity <= 0
       || trade.price > Number.MAX_SAFE_INTEGER || trade.quantity > Number.MAX_SAFE_INTEGER) return 'invalid-grid';
-    const tickIndex = Math.round(trade.price / this.tickSize);
-    const exactTickPrice = tickIndex * this.tickSize;
-    const tolerance = Math.max(1, Math.abs(trade.price)) * Number.EPSILON * 4;
-    if (!Number.isSafeInteger(tickIndex) || Math.abs(exactTickPrice - trade.price) > tolerance) return 'invalid-grid';
-
-    // Fixed lower-bound buckets: [N * rowSize, (N + 1) * rowSize).
-    const row = Math.floor(tickIndex / this.rowTicks);
+    // Executed prices may be finer than the order-entry tick (verified Binance
+    // aggTrade 3537588311: 57086.83 with a 0.1 order tick). Preserve native OHLC
+    // and bucket by row width; never round such executions onto a different row.
+    const location = trade.price / (this.tickSize * this.rowTicks);
+    const nearest = Math.round(location);
+    const row = Math.abs(location - nearest) <= Math.max(1, Math.abs(location)) * Number.EPSILON * 4
+      ? nearest : Math.floor(location);
     if (!Number.isSafeInteger(row)) return 'invalid-grid';
     const barTime = Math.floor(trade.timeMs / duration[this.interval]) * duration[this.interval] / 1000;
     const market = trade.market ?? 'perpetual';

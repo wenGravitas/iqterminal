@@ -28,6 +28,7 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
     terminal.profileUnsubscriptions = 0;
     terminal.feed.subscribeFootprint = (_id: string, series: any, rowSize: number, callback: any) => {
       terminal.profileSubscriptions++;
+      terminal.profileCallback = callback;
       setTimeout(() => {
         const candlePanel = [...terminal.panels.values()][0] as any;
         const time = candlePanel.candles.at(-1).t / 1000;
@@ -308,6 +309,21 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
     const p = [...t.panels.values()].find((item: any) => item.engine?.footprintTotalsDiagnostics().length) as any;
     return p.engine === baseline.engine && p.engine.chart === baseline.chart && t.profileSubscriptions === baseline.profileSubscriptions;
   })).toBe(true);
+  // Totals belong to the forming candle too, before any next candle exists.
+  const liveTime = await page.evaluate(() => {
+    const t = (window as any).__terminal, p = [...t.panels.values()][0] as any;
+    const bar = p.footprintBars.at(-1), next = { ...bar, revision: bar.revision + 1,
+      cells: [{ ...bar.cells[0], bidVol: 5, askVol: 15, bidNotional: 415000, askNotional: 1245000 }],
+      delta: 10, minDelta: 0, maxDelta: 10, quoteDelta: 830000, minQuoteDelta: 0, maxQuoteDelta: 830000 };
+    t.profileCallback({type:'footprint-patch',key:'fixture',ids:[],bars:[next],retentionStart:p.footprintBars[0].time,generation:1,batchId:2});
+    return next.time;
+  });
+  await expect.poll(() => page.evaluate(time => {
+    const p = [...(window as any).__terminal.panels.values()][0] as any;
+    const id = p.engine.footprintTotalsDiagnostics()[0].id;
+    return p.engine.footprintTotalsTooltip(id, time);
+  }, liveTime)).toContain('Delta  +10');
+
   await page.reload();
   await page.waitForFunction(() => (window as any).__terminal?.panels.size === 2);
   const persisted = await page.evaluate(() => {

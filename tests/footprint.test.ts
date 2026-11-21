@@ -106,7 +106,7 @@ describe('bounded footprint accumulator', () => {
     expect(bar.cells[1]!.bidNotional).toBeCloseTo(82824.9 * .001);
   });
 
-  it('aggregates classified observations on an integer tick grid and revises bars', () => {
+  it('buckets native execution prices without requiring the order-entry tick grid', () => {
     const book = new FootprintAccumulator('1m', 0.1, 1);
     expect(book.ingest(observation(1, base + 1_000, 83_000.1, 'sell'))).toBe('applied');
     expect(book.ingest(observation(2, base + 2_000, 83_000.2, 'buy'))).toBe('applied');
@@ -118,8 +118,10 @@ describe('bounded footprint accumulator', () => {
     expect(bar.cells[1]).toMatchObject({ bidVol: 0.001, askVol: 0 });
     expect(bar.cells[1]!.price).toBeCloseTo(83_000.1, 8);
     expect('tradeCount' in bar).toBe(false);
-    expect(book.ingest(observation(3, base + 3_000, 83_000.15))).toBe('invalid-grid');
-    expect(book.latest?.revision).toBe(2);
+    expect(book.ingest(observation(3, base + 3_000, 83_000.15))).toBe('applied');
+    expect(book.latest?.revision).toBe(3);
+    expect(book.latest?.close).toBe(83_000.15);
+    expect(book.snapshot()[0]!.cells.find(c => Math.abs(c.price - 83_000.1) < 1e-8)?.askVol).toBe(.001);
   });
 
   it('marks explicit outages and late records on affected bars without inventing empty bars', () => {
