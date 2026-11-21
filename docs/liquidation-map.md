@@ -78,5 +78,16 @@ browser settings/hide/remove test passed. Static proxy/port-ownership tests pass
 trading-vault/order-wall checkpoint tests; both files passed separately (8/8 and
 10/10). No test was disabled or its timeout increased. The full backend suite
 passed 488 tests before the final storage/API additions; the final feature suite
-passed 19 focused tests including restart/replay, compression/memory eviction,
+passed 20 focused tests including restart/replay, compression/memory eviction,
 idempotence, as-of pagination and quote valuation. Typechecks/builds passed.
+
+The Lighter account response has no verified position event timestamp: its recorded
+source time is explicitly a receipt-time proxy from the venue indexer, not settled
+chain time. Hyperliquid supplies a source-reported clearinghouse time. Neither
+observed subset is a verified exhaustive venue inventory.
+
+The API uses gzip for JSON delivery when accepted, while existing binary wall
+routes remain unchanged. Retained coverage entirely resident in memory is served
+without rereading journal files even when the viewport begins before collection.
+The isolated release slot pool includes 4184/4185 so candidate upgrades can retain
+both the incumbent staging release and previous candidate without stopping them.

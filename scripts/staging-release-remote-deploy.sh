@@ -57,11 +57,11 @@ curl --fail --silent --show-error --max-time 5 http://127.0.0.1:18780/v1/health 
 curl --fail --silent --show-error --max-time 5 http://127.0.0.1:18892/v2/history/health >/dev/null
 
 candidate_port=
-for candidate in 4180 4181 4182; do
+for candidate in 4180 4181 4182 4184 4185; do
   [[ "$candidate" == "$active_port" || "$candidate" == "$previous_port" ]] && continue
   if ! ss -ltn 2>/dev/null | grep -Eq "[:.]${candidate}[[:space:]]"; then candidate_port=$candidate; break; fi
 done
-[[ -n "$candidate_port" ]] || { echo 'No free release slot among 4180-4182; existing application processes were left unchanged.' >&2; exit 3; }
+[[ -n "$candidate_port" ]] || { echo 'No free release slot among 4180-4182/4184-4185; existing application processes were left unchanged.' >&2; exit 3; }
 
 short_id=${release_id:0:12}
 image="iqterminal-staging-web:$release_id"
