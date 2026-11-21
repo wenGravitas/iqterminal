@@ -41,3 +41,12 @@ test('map and profile inspection use availability rather than a later event-time
  expect(mapColumnAt([first,later],30)).toBe(later);
  expect(mapColumnAt([first,later],Infinity)).toBe(later);
 });
+
+import {mapColumnEnd} from '../src/liquidation-map/model';
+test('fine time grouping carries stock to the next snapshot without extending a known closure',()=>{
+ const first={at:0,availableAt:0,revision:1,cells:[cell],quality:[]},next={...first,availableAt:50000};
+ expect(mapColumnEnd(first,next,10000)).toBe(50000);
+ expect(mapColumnEnd(first,undefined,10000)).toBe(120000);
+ expect(mapColumnEnd(first,undefined,600000)).toBe(600000);
+ expect(mapColumnEnd({...first,resolution:600000},undefined,10000)).toBe(600000);
+});

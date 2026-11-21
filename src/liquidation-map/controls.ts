@@ -61,9 +61,11 @@ export class MapControls {
             fields.append(b);
         }
         const status = document.createElement('div');
-        for (const source of this.sources) {
+        const statusCaption=document.createElement('p');statusCaption.textContent='Source inventory snapshot at '+new Date().toISOString()+' (all scenarios; unfiltered).';status.append(statusCaption);
+        for (const sample of this.sources) {
+            const source=sample.asOf&&Date.now()-sample.asOf>120000?{...sample,state:sample.state+' (stale snapshot)',freshQuantity:0,staleQuantity:sample.staleQuantity+sample.freshQuantity,locatedQuantity:0,coverageProxy:null,locatedCoverageProxy:null}:sample;
             const row = document.createElement('p');
-            row.textContent = `${source.venue}: ${source.state} · ${source.asOf ? Math.max(0, Math.round((Date.now() - source.asOf) / 1000)) + 's old' : 'no sample'} · ${source.accounts} accounts · fresh ${source.freshQuantity.toPrecision(3)} BTC · located ${source.locatedQuantity.toPrecision(3)} BTC · stale ${source.staleQuantity.toPrecision(3)} BTC · unknown ${source.unknownQuantity.toPrecision(3)} BTC · coverage ${source.coverageProxy === null ? 'unverified' : (source.coverageProxy * 100).toPrecision(2) + '% captured-position proxy'} · threshold coverage ${source.locatedCoverageProxy == null ? 'unverified' : (source.locatedCoverageProxy * 100).toPrecision(2) + '% proxy'} · ${source.message}`;
+            row.textContent = `${source.venue}: ${source.state} · ${source.asOf ? Math.max(0, Math.round((Date.now() - source.asOf) / 1000)) + 's old' : 'no sample'} · ${source.accounts} accounts · fresh ${source.freshQuantity.toPrecision(3)} BTC · located ${source.locatedQuantity.toPrecision(3)} BTC · stale ${source.staleQuantity.toPrecision(3)} BTC · unknown ${source.unknownQuantity.toPrecision(3)} BTC · coverage ${source.coverageProxy === null ? 'unverified' : (source.coverageProxy * 100).toPrecision(2) + '% captured-position proxy'} · threshold coverage ${source.locatedCoverageProxy == null ? 'unverified' : (source.locatedCoverageProxy * 100).toPrecision(2) + '% proxy'} · ${source.message}${source.unknownBreakdown?' · unlocated reasons '+Object.entries(source.unknownBreakdown).map(([reason,q])=>reason+' '+q.toPrecision(3)+' BTC').join(', '):''}${source.unresolvedCollateralQuantity!==undefined?' · actual account collateral unobserved for '+source.unresolvedCollateralQuantity.toPrecision(3)+' BTC (overlaps scenario quantities)':''}`;
             status.append(row);
         }
         fields.append(status);

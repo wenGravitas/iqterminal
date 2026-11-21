@@ -21,3 +21,23 @@ test('Liquidation Map persists settings, hides the primitive, and disposes its v
     await expect(panel.locator('[data-definition-id="native.liquidation-map"]')).toHaveCount(0);
     expect(await page.evaluate(() => Boolean([...(window as any).__terminal.panels.values()][0].liquidationMapView))).toBe(false);
 });
+test('explicit fixture map hover and latest profile use matching stock timestamps', async({page})=>{
+ await page.goto('/?fixture=1');await page.waitForFunction(()=>[...(window as any).__terminal?.panels.values()??[]][0]?.diagnostics().bars>20);
+ const panel=page.locator('.candle-panel').first();await addIndicator(panel,'Liquidation Map');
+ const target=await page.evaluate(()=>{
+  const p=[...(window as any).__terminal.panels.values()][0] as any,v=p.liquidationMapView,c=p.engine.chart;
+  clearTimeout(v.timer);v.subscription?.dispose();v.subscription=undefined;
+  const plot=c.plotRect(c.primaryPaneIndex()),scale=c.panes()[c.primaryPaneIndex()].priceScale,range=scale.priceRange(),price=(range.min+range.max)/2;
+  const old=Math.floor(c.dataLayer.indexToTimeFloat(c.timeScale.xToIndex(plot.width*.5))*1000)-1000,latest=old+60000;
+  const cell={low:Math.floor(price/100)*100,high:Math.floor(price/100)*100+100,quantity:2,side:'long',venue:'hyperliquid',kind:'observed',scenario:'fixture',leverage:null,quote:'USD',nativePrice:price,modelVersion:'fixture-only',riskVersion:'fixture-only'};
+  v.settings={...v.settings,minimum:0,profile:true,profileCrosshair:false};v.primitive.settings=v.settings;
+  v.primitive.columns=[{at:old,availableAt:old,revision:1,cells:[cell],quality:['fixture-only']},{at:latest,availableAt:latest,revision:2,cells:[{...cell,quantity:4}],quality:['fixture-only']}];v.primitive.update();
+  return{profileX:plot.left+plot.width-10,mapX:plot.left+plot.width*.5,y:plot.top+scale.priceToY(price),latest:new Date(latest).toISOString()};
+ });
+ const box=(await panel.locator('.chart-stage').boundingBox())!;
+ await page.mouse.move(box.x+target.profileX,box.y+target.y);
+ const profile=panel.locator('.positioning-tooltip').filter({hasText:'Profile snapshot'});
+ await expect(profile).toBeVisible();await expect(profile).toContainText(target.latest);await expect(profile).toContainText('Mean 4.00');
+ await page.mouse.move(box.x+target.mapX,box.y+target.y);
+ await expect(panel.locator('.positioning-tooltip').filter({hasText:'Mean 2.00'})).toBeVisible();
+});

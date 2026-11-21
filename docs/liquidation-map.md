@@ -72,13 +72,13 @@ root. The deployment guard rejects existing ownership on the requested port whil
 preserving unrelated Serve ports. This permits candidate verification without
 replacing the known-good staging release.
 
-Validation at integration: 22 focused frontend/model/worker tests and the native
-browser settings/hide/remove test passed. Static proxy/port-ownership tests passed
+Validation at integration: 24 focused frontend/model/worker tests and the native
+browser lifecycle/profile inspection tests passed (2/2). Static proxy/port-ownership tests passed
 9/9. Full frontend runs had resource-sensitive 5-second timeouts in unchanged
 trading-vault/order-wall checkpoint tests; both files passed separately (8/8 and
 10/10). No test was disabled or its timeout increased. The full backend suite
 passed 488 tests before the final storage/API additions; the final feature suite
-passed 22 focused tests including restart/replay, compression/memory eviction,
+passed 28 focused tests including restart/replay, compression/memory eviction,
 idempotence, as-of pagination and quote valuation. Typechecks/builds passed.
 
 The Lighter account response has no verified position event timestamp: its recorded
@@ -105,3 +105,22 @@ reduced worker acquisition on reload from 20.1 s to 1.3 s; body time fell from
 10.4 s to 27 ms. Warm remove/reopen issued zero network requests. Workload and
 collection state evolved between runs; this is not a controlled accuracy or
 quiet-machine claim. The 33 ms foreground frame target remains unverified.
+
+The v3 model separately reports bootstrap, unresolved-input, conditional-crossing,
+bounded-retention and legacy unlocated mass. Actual CEX collateral remains unobserved
+for the entire estimated stock; this uncertainty overlaps scenario quantities and
+is not added to them. Snapshot source statistics cover all scenarios, independently
+of the currently filtered profile. Paid funding and indicated funding rates are
+recorded separately; own-mark crossings use sampled venue marks.
+
+Worker viewport updates retain one pending request per subscriber, freeze the
+request grid metadata and cap shared flights at eight. A confirmed server cursor
+reset advances a cache generation so obsolete worker and resident view data cannot
+be reused after recovery. Late completion cannot repopulate a disposed service.
+
+Fine time requests carry the preceding stock snapshot into a viewport boundary.
+Time-resolution changes retain previously loaded coarse columns until finer
+snapshots replace them; known empty/closed snapshots terminate older bands.
+Changing price grouping requests a new display grid while server model history
+continues unchanged. Benchmark screenshots can be redirected with
+`IQ_MAP_BENCH_SCREENSHOT` to keep a clean release checkout.

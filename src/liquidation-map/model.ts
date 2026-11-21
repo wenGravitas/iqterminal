@@ -24,6 +24,7 @@ export interface MapSettings {
 const n = (v: unknown, f: number, min: number, max: number) => typeof v === 'number' && Number.isFinite(v) ? Math.max(min, Math.min(max, v)) : f;
 export function mapSettings(value: unknown): MapSettings { const r = value && typeof value === 'object' ? value as Partial<MapSettings> : {}; return { venues: MAP_VENUES.filter(v => (Array.isArray(r.venues) ? r.venues : ['hyperliquid', 'lighter', 'binance', 'bybit']).includes(v)), longs: r.longs !== false, shorts: r.shorts !== false, observed: r.observed !== false, estimated: r.estimated !== false, leverage: [3, 5, 10, 25, 50, 100].filter(l => (Array.isArray(r.leverage) ? r.leverage : [3, 5, 10, 25, 50, 100]).includes(l)), includeUnknownLeverage: r.includeUnknownLeverage !== false, priceWidth: n(r.priceWidth, 100, 1, 10000), resolution: Math.round(n(r.resolution, 60000, 10000, 3600000)), lookback: n(r.lookback, 4 * 3600000, 60000, 7 * 86400000), minimum: n(r.minimum, .01, 0, 1e9), opacity: n(r.opacity, .6, .05, 1), intensity: n(r.intensity, 1, .1, 10), fixedMaximum: n(r.fixedMaximum, 0, 0, 1e12), profile: r.profile !== false, profileCrosshair: r.profileCrosshair === true, units: r.units === 'native-quote' ? 'native-quote' : 'BTC', labels: r.labels === true }; }
 export interface MapCell {
+    instrumentId?: string;
     low: number;
     high: number;
     quantity: number;
@@ -39,6 +40,7 @@ export interface MapCell {
     riskVersion: string;
 }
 export interface MapColumn {
+    resolution?:number;
     at: number;
     availableAt: number;
     revision: number;
@@ -66,10 +68,17 @@ export interface MapSourceStatus {
     longCoverageProxy?: number | null;
     shortCoverageProxy?: number | null;
     unknownQuantity: number;
+    unknownBreakdown?:Record<string,number>;
+    unresolvedCollateralQuantity?:number;
     quote: string;
 }
 export interface MapPayload {
     version: 1;
+    generation?: number;
+    modelVersion?: string;
+    quantityUnit?: 'BTC';
+    valuationBasis?: string;
+    timeAggregation?: 'as-of';
     columns: MapColumn[];
     sources: MapSourceStatus[];
     head: number;
@@ -105,4 +114,10 @@ export function mapColumnAt(columns: readonly MapColumn[], at: number): MapColum
     let low=0, high=columns.length;
     while(low<high){const middle=(low+high)>>>1;if(columns[middle].availableAt<=at)low=middle+1;else high=middle;}
     return low ? columns[low-1] : undefined;
+}
+
+/** A stock snapshot remains the last available information until its successor
+ * or freshness limit; requesting a finer bucket must not create artificial gaps. */
+export function mapColumnEnd(column:MapColumn,next:MapColumn|undefined,resolution:number){
+    return Math.min(column.availableAt+Math.max(column.resolution??resolution,120000),next?.availableAt??Infinity);
 }

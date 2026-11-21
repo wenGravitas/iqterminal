@@ -1,5 +1,5 @@
 import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
-import { mapSettings, mapColumnAt, type MapColumn, type MapSettings, type MapCell } from './model';
+import { mapSettings, mapColumnAt, mapColumnEnd, type MapColumn, type MapSettings, type MapCell } from './model';
 export function selectedCells(column: MapColumn, settings: MapSettings, quote: string) { return column.cells.filter(c => settings.venues.includes(c.venue) && (c.side === 'long' ? settings.longs : settings.shorts) && (c.kind === 'observed' ? settings.observed : settings.estimated) && (c.leverage === null ? settings.includeUnknownLeverage : settings.leverage.includes(c.leverage)) && (settings.units === 'BTC' || c.quote === quote&&c.quoteVerified!==false&&(c.venue!=='lighter'||c.quoteVerified===true))); }
 /** Alternative scenarios are averaged, never added as independent stock.
  * Leverage choices carry an equal explicit prior; turnover cases are alternatives. */
@@ -83,7 +83,7 @@ export class LiquidationMapPrimitive implements IPrimitive {
         const factor = Number.isFinite(rowPixels) && rowPixels > 0 ? Math.max(1, 2 ** Math.ceil(Math.log2(2 / rowPixels))) : 1;
         const displayWidth = s.priceWidth * factor;
         this.displayPriceWidth = displayWidth;
-        const visible = this.columns.filter(c => c.availableAt < to && c.availableAt + s.resolution >= from);
+        const visible = this.columns.filter(c => c.availableAt < to && mapColumnEnd(c,undefined,s.resolution) >= from);
         const key = JSON.stringify([s.venues, s.longs, s.shorts, s.observed, s.estimated, s.leverage, s.includeUnknownLeverage, s.units, this.quote, displayWidth]);
         const bins = (column: MapColumn) => { const cached = this.rowsCache.get(column); if (cached?.key === key)
             return cached.rows; const raw = exposureRows(column, s, this.quote), rows = new Map<number, number>(); for (const [price, amount] of raw) {
@@ -116,7 +116,7 @@ export class LiquidationMapPrimitive implements IPrimitive {
         if (!cached)
             for (let index = 0; index < this.columns.length; index++) {
                 const c = this.columns[index];
-                const end = Math.min(c.availableAt + s.resolution, this.columns[index + 1]?.availableAt ?? Infinity);
+                const end = mapColumnEnd(c,this.columns[index+1],s.resolution);
                 const x = rc.timeScale.indexToX(rc.dataLayer.timeToIndexFloat(c.availableAt / 1000)), right = rc.timeScale.indexToX(rc.dataLayer.timeToIndexFloat(end / 1000));
                 for (const [price, amount] of bins(c)) {
                     if (amount < s.minimum)
