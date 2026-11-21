@@ -90,7 +90,7 @@ export class LiquidationMapView {
                     const old = retained.get(c.availableAt);
                     if (!old || c.revision >= old.revision)
                         retained.set(c.availableAt, {...c,resolution:batch.payload.resolution});
-                } this.primitive.columns = [...retained.values()].sort((a, b) => a.availableAt - b.availableAt).slice(-2048); this.controls.sources = batch.payload.sources; this.status.textContent = `${batch.payload.resolution / 1000}s as-of cells · Visible-price auto / fixed scale in settings · Native USD/USDT/USDC prices; no FX/basis conversion · ` + batch.payload.sources.filter(s => this.settings.venues.includes(s.venue)).map(s => `${s.venue}: ${s.state}${s.asOf ? ' ' + Math.max(0, Math.round((Date.now() - s.asOf) / 1000)) + 's' : ''}`).join(' · '); this.status.title = batch.payload.sources.map(s => `${s.venue}: ${s.message}`).join('\n'); this.primitive.update(); });
+                } this.primitive.columns = [...retained.values()].sort((a, b) => a.availableAt - b.availableAt).slice(-2048); this.controls.sources = batch.payload.sources; this.status.textContent = `${batch.payload.resolution / 1000}s as-of cells · ${batch.payload.priceWidth} native-price grid · Visible-price auto / fixed scale in settings · Native USD/USDT/USDC prices; no FX/basis conversion · ` + batch.payload.sources.filter(s => this.settings.venues.includes(s.venue)).map(s => `${s.venue}: ${s.state}${s.asOf ? ' ' + Math.max(0, Math.round((Date.now() - s.asOf) / 1000)) + 's' : ''}`).join(' · '); this.status.title = batch.payload.sources.map(s => `${s.venue}: ${s.message}`).join('\n'); this.primitive.update(); });
             } else
                 this.subscription.update(start, end, this.settings);
         }, 150);

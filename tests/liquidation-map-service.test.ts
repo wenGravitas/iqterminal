@@ -57,3 +57,15 @@ test('dense real-shaped history switches to bounded as-of time LOD and reuses it
   expect((service as any).cacheBytes).toBeLessThanOrEqual(32*1024*1024);
  }finally{service.dispose();}
 });
+
+test('mandatory retirement boundaries use stable bounded price LOD rather than disappearing at coarse time resolution',async()=>{
+ const {service,client}=setup(),settings=mapSettings({resolution:60000,lookback:4*3600000}),widths:number[]=[];
+ const cell={low:50000,high:50100,quantity:1,side:'long',venue:'bybit',kind:'estimated',scenario:'test',leverage:10,quote:'USDT',nativePrice:50050,modelVersion:'v4',riskVersion:'test'};
+ vi.stubGlobal('fetch',vi.fn(async(input:string)=>{const u=new URL(input,'http://localhost'),width=Number(u.searchParams.get('priceWidth')),from=Number(u.searchParams.get('from')),to=Number(u.searchParams.get('to')),resolution=Number(u.searchParams.get('resolution'));widths.push(width);
+ const columns=[{...column(from+1),validUntil:from+50001,cells:Array.from({length:35000},(_,i)=>{const low=50000+Math.floor(i/36)*100;return{...cell,scenario:'s'+i%36,low,high:low+100,nativePrice:low+50};})},{...column(from+50001),cells:[]},{...column(from+150001),cells:[]}];
+ return new Response(JSON.stringify({version:1,historyVersion:2,semantics:'conditional-exposure',from,to,resolution,priceWidth:width,columns,sources:[],head:10,next:null,asOf:Date.now()}));
+ }));
+ try{const request={...client(at-3*3600000,at+3600000),settings},payload=await(service as any).read(request);expect(payload.priceWidth).toBe(200);expect(payload.columns).toHaveLength(3);expect(payload.columns[0].validUntil).toBe(payload.from+50001);expect(widths).toEqual([100]);expect(payload.columns[0].cells.reduce((n:number,c:any)=>n+c.quantity,0)).toBe(35000);
+ const count=widths.length;const warm=await(service as any).read({...request,settings:{...settings,opacity:.2}});expect(warm.priceWidth).toBe(200);expect(widths).toHaveLength(count);expect((service as any).cacheBytes).toBeLessThanOrEqual(32*1024*1024);
+ }finally{service.dispose();}
+});

@@ -106,11 +106,12 @@ export function createStagingStaticServer({ staticRoot, releaseFile, routes, ups
   const agents = {
     current: new http.Agent({ keepAlive: true, maxSockets: 4, maxFreeSockets: 4, timeout: 15_000 }),
     history: new http.Agent({ keepAlive: true, maxSockets: 2, maxFreeSockets: 2, timeout: 60_000 }),
+    map: new http.Agent({keepAlive:true,maxSockets:1,maxTotalSockets:1,maxFreeSockets:1,timeout:15000}),
     native: new http.Agent({ keepAlive: true, maxSockets: 2, maxFreeSockets: 2, timeout: 60_000 }),
   };
   const checkedRoutes = routes.map(route => {
     if (!route.path.startsWith('/market-data') || !Object.hasOwn(upstreams, route.upstream)
-        || !['current', 'history', 'native', 'none'].includes(route.pool) || !Number.isInteger(route.timeoutMs)) {
+        || !['current', 'history', 'native', 'map', 'none'].includes(route.pool) || !Number.isInteger(route.timeoutMs)) {
       throw new Error(`Invalid staging proxy route: ${JSON.stringify(route)}`);
     }
     return route;

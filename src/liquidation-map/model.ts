@@ -103,7 +103,7 @@ export interface MapPayload {
     priceWidth: number;
     semantics: 'conditional-exposure';
     asOf: number;
-    acquisition?: {workerElapsedMs:number;requests:number;headersMs:number;bodyMs:number;decodeMs:number;bytes:number;cache:'warm'|'network';serverTimings?:string[]};
+    acquisition?: {lodAttempts?:number;attemptWorkerElapsedMs?:number;workerElapsedMs:number;requests:number;headersMs:number;bodyMs:number;decodeMs:number;bytes:number;cache:'warm'|'network';serverTimings?:string[]};
 }
 export type MapCommand = {
     type: 'liquidation-map-subscribe' | 'liquidation-map-update';

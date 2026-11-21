@@ -36,5 +36,27 @@ acceptance measurements.
 Old periods without native mark evidence cannot be retrospectively repaired.
 The server reports each venue's retained `markHistoryFrom`; v3 historical
 snapshots retain their original provenance. Dense changes exceeding the existing
-IPC/cache budgets produce an explicit capacity error and retain loaded coverage;
-reduce lookback rather than silently discarding retirement boundaries.
+IPC/cache budgets first coarsen the absolute price grid, with the effective grid
+shown in the status line. The learned grid remains stable through navigation and
+warm reopening. This preserves stock totals and every known removal boundary.
+At the maximum grouping, capacity errors retain loaded coverage; reduce lookback
+rather than silently discarding retirement boundaries.
+
+The local development and static proxies give Liquidation Map its own single-
+socket `map` pool. It bypasses bulk wall admission and idle sockets from other
+upstreams; the backend retains its two-request admission limit. The independent
+proxy fixture tests keep both bulk lanes occupied while map requests complete.
+
+For v2 history, the 8MiB payload budget estimates resident cell objects plus
+full per-column metadata. Repeated immutable cell strings, scenario catalogs
+and quality arrays are shared explicitly. The 32MiB cache, 100k IPC-cell and
+8MiB response-page bounds remain. Nested price coarsening happens inside the
+worker on already downloaded columns; remaining pages use the coarser grid. It
+never sums stock through time or drops the first removal. The effective price
+grid is shown in the status line.
+
+An explicit real-source acquisition check is available with
+`IQ_MAP_LIVE_SMOKE=1 pnpm exec vitest run tests/liquidation-map-live.test.ts`. It
+uses the existing private staging route and writes `/tmp/iq-map-live-acquisition.json`.
+Ordinary tests skip it. It measures total cold elapsed time, warm cache reuse,
+transport size and resident budget; it does not certify Pi frame intervals.
