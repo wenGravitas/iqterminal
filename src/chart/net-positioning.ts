@@ -334,7 +334,7 @@ export class NetPositioningPane implements IPrimitive {
         this.geometry.push({side:band.side,sourceId:this.venues[0]??'binance',timeMs:time,left:Math.max(0,left), right:Math.min(width,right),top:barTop,bottom:Math.max(barTop+1,barBottom),value:row.total,quality:row.partial?'partial':'complete',zero:row.total===0});this.barsDrawn++;
         const hovered=this.hovered?.side===band.side&&this.hovered.timeMs===time;
         if(this.labels==='off'||this.labels==='hover'&&!hovered||row.total===0)continue;
-        const text=`${compactVol(Math.abs(row.total))}${row.partial?'*':''}`,metrics=ctx.measureText(text);
+        const text=compactVol(Math.abs(row.total)),metrics=ctx.measureText(text);
         const half=metrics.width/2,x=centre*d;
         if(x-half<Math.max(0,(centre-rc.timeScale.barSpacing/2)*d)+d||x+half>Math.min(width*d,(centre+rc.timeScale.barSpacing/2)*d)-d)continue;
         const ascent=Math.max(8*d,metrics.actualBoundingBoxAscent||0),descent=Math.max(2*d,metrics.actualBoundingBoxDescent||0);
