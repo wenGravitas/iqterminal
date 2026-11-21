@@ -130,3 +130,21 @@ whose native price is finer than the order-entry tick. These prices are preserve
 in OHLC and grouped into the selected price row without rounding onto another
 row. This was verified against Binance aggregate execution 3537588311 at
 57086.83; rejecting that execution had stalled the 5-minute current materializer.
+
+Dense history uses adaptive time LOD. The worker initially targets roughly 64
+as-of columns and retries at a coarser time interval if the retained payload or
+transfer-cell budget would be exceeded. Learned resolution is reused on warm
+reads. This preserves the requested time coverage, price grid, source/scenario
+identities and stock-snapshot semantics; it never sums stock across time or
+raises the 8 MiB per-payload, 32 MiB cache or 100,000-cell IPC limits. Loaded
+coverage remains visible while replacement detail is acquired. The chart shows
+an explicit loading message before the first response and distinguishes failures
+with no loaded data from failures that retain an existing map.
+
+Cell/profile hover uses the same native popup card styles as Net Longs/Shorts.
+It groups source contributions using the map's scenario means (never the sum of
+alternative scenarios), distinguishes observed subsets from model estimates, and
+shows the snapshot, price interval, age, coverage and model/risk provenance. The
+card stays inside the primary price plot, even when lower indicator panes are
+present or reordered, and dismisses when the pointer leaves that plot. Repeated
+pointer moves within one cell reuse its card content until data or age changes.

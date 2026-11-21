@@ -35,3 +35,25 @@ test('rapid viewport updates keep one pending request and its original grid meta
  service.dispose();resolve(new Response(JSON.stringify({version:1,semantics:'conditional-exposure',from:at,to:at+60000,resolution:10000,priceWidth:100,columns:[],sources:[],head:1,next:null,asOf:Date.now()})));
  expect((await task).priceWidth).toBe(100);expect((service as any).cache.size).toBe(0);
 });
+
+test('dense real-shaped history switches to bounded as-of time LOD and reuses it on warm reopen',async()=>{
+ const {service,client}=setup(),settings=mapSettings({resolution:60000,lookback:4*3600000});
+ const cell={low:50000,high:50100,quantity:1,side:'long',venue:'bybit',kind:'estimated',scenario:'scenario-test',leverage:10,quote:'USDT',nativePrice:50050,modelVersion:'test',riskVersion:'test'};
+ const cells=Array.from({length:6000},()=>cell),resolutions:number[]=[];
+ vi.stubGlobal('fetch',vi.fn(async(input:string)=>{const u=new URL(input,'http://localhost'),resolution=Number(u.searchParams.get('resolution')),from=Number(u.searchParams.get('from')),to=Number(u.searchParams.get('to'));resolutions.push(resolution);
+  const after=Number(u.searchParams.get('after')),dense=resolution<480000;
+  const columns=Array.from({length:dense?2:1},(_,i)=>({...column(from+(i+(after?2:0))*resolution+1),cells}));
+  return new Response(JSON.stringify({version:1,semantics:'conditional-exposure',from,to,resolution,priceWidth:100,columns,sources:[],head:10,next:dense&&after===0?5:null,asOf:Date.now()}));
+ }));
+ try{
+  const request={...client(at-3*3600000,at+3600000),settings};
+  const payload=await (service as any).read(request);
+  expect(payload.resolution).toBeGreaterThanOrEqual(480000);
+  expect(resolutions.length).toBeGreaterThan(1);
+  expect(payload.columns).toHaveLength(1);expect(payload.columns[0].cells).toHaveLength(6000);
+  expect(JSON.stringify(payload).length*2).toBeLessThanOrEqual(8*1024*1024);
+  const before=resolutions.length;const warm=await (service as any).read({...request,settings:{...settings,opacity:.2}});
+  expect(warm.resolution).toBe(payload.resolution);expect(resolutions).toHaveLength(before);
+  expect((service as any).cacheBytes).toBeLessThanOrEqual(32*1024*1024);
+ }finally{service.dispose();}
+});

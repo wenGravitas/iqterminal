@@ -23,11 +23,11 @@ test('Liquidation Map persists settings, hides the primitive, and disposes its v
 });
 test('explicit fixture map hover and latest profile use matching stock timestamps', async({page})=>{
  await page.goto('/?fixture=1');await page.waitForFunction(()=>[...(window as any).__terminal?.panels.values()??[]][0]?.diagnostics().bars>20);
- const panel=page.locator('.candle-panel').first();await addIndicator(panel,'Liquidation Map');
+ const panel=page.locator('.candle-panel').first();await addIndicator(panel,'Footprint Totals');await addIndicator(panel,'Liquidation Map');
  const target=await page.evaluate(()=>{
   const p=[...(window as any).__terminal.panels.values()][0] as any,v=p.liquidationMapView,c=p.engine.chart;
   clearTimeout(v.timer);v.subscription?.dispose();v.subscription=undefined;
-  const plot=c.plotRect(c.primaryPaneIndex()),scale=c.panes()[c.primaryPaneIndex()].priceScale,range=scale.priceRange(),price=(range.min+range.max)/2;
+  const plot=c.plotRect(c.primaryPaneIndex()),scale=c.panes()[c.primaryPaneIndex()].priceScale,range=scale.priceRange(),price=range.min+(range.max-range.min)*.04;
   const old=Math.floor(c.dataLayer.indexToTimeFloat(c.timeScale.xToIndex(plot.width*.5))*1000)-1000,latest=old+60000;
   const cell={low:Math.floor(price/100)*100,high:Math.floor(price/100)*100+100,quantity:2,side:'long',venue:'hyperliquid',kind:'observed',scenario:'fixture',leverage:null,quote:'USD',nativePrice:price,modelVersion:'fixture-only',riskVersion:'fixture-only'};
   v.settings={...v.settings,minimum:0,profile:true,profileCrosshair:false};v.primitive.settings=v.settings;
@@ -37,7 +37,25 @@ test('explicit fixture map hover and latest profile use matching stock timestamp
  const box=(await panel.locator('.chart-stage').boundingBox())!;
  await page.mouse.move(box.x+target.profileX,box.y+target.y);
  const profile=panel.locator('.positioning-tooltip').filter({hasText:'Profile snapshot'});
- await expect(profile).toBeVisible();await expect(profile).toContainText(target.latest);await expect(profile).toContainText('Mean 4.00');
+ await expect(profile).toBeVisible();await expect(profile.locator('time')).toHaveAttribute('datetime',target.latest);await expect(profile).toContainText('Mean 4.00');
+ await expect(profile).toHaveClass(/net-positioning-tooltip/);
+ const bounds=await profile.boundingBox();const plot=await page.evaluate(()=>{const p=[...(window as any).__terminal.panels.values()][0] as any;return p.engine.chart.plotRect(p.engine.chart.primaryPaneIndex());});
+ expect(bounds!.y).toBeGreaterThanOrEqual(box.y+plot.top);expect(bounds!.y+bounds!.height).toBeLessThanOrEqual(box.y+plot.top+plot.height);expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(box.x+plot.left+plot.width);
+ await page.screenshot({path:'/tmp/iq-liquidation-map-tooltip.png'});
  await page.mouse.move(box.x+target.mapX,box.y+target.y);
  await expect(panel.locator('.positioning-tooltip').filter({hasText:'Mean 2.00'})).toBeVisible();
+});
+
+test('explicit fixture shows a loading message until the first shared-worker response arrives',async({page})=>{
+ let release!:()=>void;const gate=new Promise<void>(resolve=>{release=resolve;});
+ await page.route('**/market-data/v1/liquidation-map/tiles?**',async route=>{
+  await gate;const u=new URL(route.request().url());
+  await route.fulfill({json:{version:1,semantics:'conditional-exposure',columns:[],sources:[],head:1,next:null,from:Number(u.searchParams.get('from')),to:Number(u.searchParams.get('to')),resolution:Number(u.searchParams.get('resolution')),priceWidth:100,asOf:Date.now()}});
+ });
+ try{
+  await page.goto('/?fixture=1');await page.waitForFunction(()=>(window as any).__terminal?.panels.size>0);
+  const panel=page.locator('.candle-panel').first();await addIndicator(panel,'Liquidation Map');
+  const status=panel.locator('.liquidation-map-status');await expect(status).toContainText('Loading Liquidation Map');await expect(status).toBeVisible();await page.screenshot({path:'/tmp/iq-map-loading-message.png'});
+  release();await expect(status).toContainText('as-of cells');
+ }finally{release();}
 });
