@@ -28,6 +28,8 @@ The staging host is `sd-fn-01`; the Raspberry Pi is the build, browser, and perf
 
 WebSocket routes preserve the upgrade handshake and stream frames in both directions. REST responses retain upstream status and retry headers. Proxy failures use retryable 502 responses or 504 on inactivity timeout. Requests have an 8 KiB URI limit and 16 MiB body limit. The static server logs route, elapsed time, status, byte count, and completion without logging queries or bodies.
 
+The private frontend proxy checks that any browser `Origin` matches its incoming `Host` before forwarding REST or WebSocket requests. It then supplies the loopback upstream origin required by collectors and level watches. Cross-site and opaque origins receive 403 before reaching a collector; clients without an Origin header retain the backend's existing non-browser policy. Validate received WebSocket frames as well as status 101: the collector can upgrade and subsequently close an unacceptable origin with code 1008.
+
 The manifest intentionally keeps current-book requests and historical walls on different gateways. Do not route wall history through the live pool. Raw open interest is not an accepted route: the endpoint remains in draft backend PR #1 and was not deployed as part of this release.
 
 ## Build

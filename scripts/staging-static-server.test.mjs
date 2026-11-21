@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { once } from 'node:events';
 import { createHash } from 'node:crypto';
 import { brotliCompressSync } from 'node:zlib';
-import { createServer as createHttpServer } from 'node:http';
+import { createServer as createHttpServer, request as httpRequest } from 'node:http';
 import net from 'node:net';
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -37,9 +37,10 @@ async function fixture(maxProxyBodyBytes) {
   writeFileSync(join(dist, 'assets/app-AbCdEf0123.js.br'), brotliCompressSync(asset));
   const releaseFile = join(root, 'release.json'); writeFileSync(releaseFile, JSON.stringify({ releaseId: 'front-back' }));
 
-  const upgrades = [], upgradedSockets = []; let liveRequests = 0;
+  const upgrades = [], upgradedSockets = [], origins = []; let liveRequests = 0;
   const live = createHttpServer((request, response) => {
     liveRequests++;
+    origins.push(request.headers.origin);
     const url = new URL(request.url ?? '/', 'http://upstream');
     if (url.pathname === '/v1/health') {
       response.writeHead(429, { 'content-type': 'application/json', 'retry-after': '3', 'cache-control': 'no-store', 'server-timing': 'gateway;dur=4' });
@@ -48,6 +49,7 @@ async function fixture(maxProxyBodyBytes) {
     response.writeHead(404); response.end('not found');
   });
   live.on('upgrade', (request, socket) => {
+    origins.push(request.headers.origin);
     upgradedSockets.push(socket);
     const key = request.headers['sec-websocket-key'];
     const accept = createHash('sha1').update(`${key}258EAFA5-E914-47DA-95CA-C5AB0DC85B11`).digest('base64');
@@ -68,7 +70,7 @@ async function fixture(maxProxyBodyBytes) {
     upstreams: { current: `http://127.0.0.1:${liveAddress.port}`, history: `http://127.0.0.1:${wallAddress.port}`,
       wallHistory: `http://127.0.0.1:${wallAddress.port}`, liquidationStream: `http://127.0.0.1:${liveAddress.port}` }, port: 0, maxProxyBodyBytes });
   const address = await listening(server);
-  return { root, dist, server, live, wall, upgrades, upgradedSockets, get liveRequests() { return liveRequests; }, base: `http://127.0.0.1:${address.port}` };
+  return { root, dist, server, live, wall, upgrades, upgradedSockets, origins, get liveRequests() { return liveRequests; }, base: `http://127.0.0.1:${address.port}` };
 }
 
 test('static output serves SPA routes, immutable compressed assets, revalidation, and release metadata', async t => {
@@ -127,6 +129,33 @@ test('WebSocket upgrade is proxied to its specific live route', async t => {
   assert.deepEqual(f.upgrades, ['/v1/stream?channel=book']);
   socket.destroy();
   await Promise.race([once(socket, 'close'), new Promise(resolve => setTimeout(resolve, 1000))]);
+});
+
+test('private HTTPS origin is checked before REST and WebSocket loopback forwarding', async t => {
+  const f = await fixture(); t.after(async () => { f.upgradedSockets.forEach(socket => socket.destroy()); await close(f.server); await close(f.live); await close(f.wall); rmSync(f.root, { recursive: true, force: true }); });
+  const targetOrigin = `http://127.0.0.1:${f.live.address().port}`;
+  const api = origin => new Promise((resolve, reject) => {
+    const request = httpRequest(`${f.base}/market-data/v1/health`, { headers: { host: 'terminal.tail.test:8443', origin } }, response => { response.resume(); response.on('end', () => resolve(response.statusCode)); });
+    request.on('error', reject); request.end();
+  });
+  assert.equal(await api('https://terminal.tail.test:8443'), 429);
+  assert.equal(f.origins.at(-1), targetOrigin);
+  const before = f.liveRequests;
+  for (const origin of ['https://evil.example', 'null', 'https://terminal.tail.test:8444']) {
+    assert.equal(await api(origin), 403);
+  }
+  assert.equal(f.liveRequests, before);
+  const handshake = async origin => {
+    const socket = net.connect(f.server.address().port, '127.0.0.1');
+    t.after(() => socket.destroy()); await once(socket, 'connect');
+    const reply = new Promise((resolve, reject) => { const timeout = setTimeout(() => reject(Error('handshake timeout')), 2000); socket.once('data', value => { clearTimeout(timeout); resolve(value.toString()); }); });
+    socket.write(['GET /market-data/v1/stream HTTP/1.1', 'Host: terminal.tail.test:8443', `Origin: ${origin}`, 'Connection: Upgrade', 'Upgrade: websocket', 'Sec-WebSocket-Version: 13', 'Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==', '', ''].join('\r\n'));
+    const value = await reply; socket.destroy(); return value;
+  };
+  assert.match(await handshake('https://evil.example'), /^HTTP\/1.1 403/);
+  assert.equal(f.upgrades.length, 0);
+  assert.match(await handshake('https://terminal.tail.test:8443'), /^HTTP\/1.1 101/);
+  assert.equal(f.origins.at(-1), targetOrigin);
 });
 
 test('server and Pi route presets stay loopback-only and retain separate live/history targets', () => {

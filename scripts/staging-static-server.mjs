@@ -49,6 +49,22 @@ function safeHeaders(headers) {
   return Object.fromEntries(Object.entries(headers).filter(([name, value]) => !blocked.has(name.toLowerCase()) && value !== undefined));
 }
 
+function sameOriginRequest(request) {
+  if (request.headers.origin === undefined) return true;
+  try {
+    const origin = new URL(request.headers.origin);
+    return ['http:', 'https:'].includes(origin.protocol) && origin.origin === `${origin.protocol}//${request.headers.host}`;
+  } catch { return false; }
+}
+
+function upstreamHeaders(request, target) {
+  const headers = { ...safeHeaders(request.headers), host: target.host };
+  // The private proxy is the browser origin boundary. Collectors retain their
+  // loopback-only origin policy after the incoming origin has been checked.
+  if (request.headers.origin !== undefined) headers.origin = target.origin;
+  return headers;
+}
+
 function acceptsEncoding(header = '', name) {
   return header.split(',').some(part => {
     const [encoding, ...params] = part.trim().split(';');
@@ -101,6 +117,7 @@ export function createStagingStaticServer({ staticRoot, releaseFile, routes, ups
   });
 
   function handleApi(request, response, route, url) {
+    if (!sameOriginRequest(request)) return sendJson(response, 403, { error: 'Same-origin request required' });
     if (!route) return sendJson(response, 404, { error: 'Unknown market-data route' });
     const declaredLength = Number(request.headers['content-length'] ?? 0);
     if (Number.isFinite(declaredLength) && declaredLength > maxProxyBodyBytes) {
@@ -109,9 +126,7 @@ export function createStagingStaticServer({ staticRoot, releaseFile, routes, ups
     const started = performance.now(), target = new URL(upstreams[route.upstream]);
     const upstreamPath = url.pathname.replace(/^\/market-data/, '') || '/';
     const proxyPath = new URL(`${upstreamPath}${url.search}`, target);
-    const incoming = safeHeaders(request.headers);
-    delete incoming.host;
-    incoming.host = request.headers.host ?? target.host;
+    const incoming = upstreamHeaders(request, target);
     const origin = request.headers.origin;
     incoming['x-forwarded-proto'] = request.headers['x-forwarded-proto'] ?? (origin?.startsWith('https://') ? 'https' : 'http');
     const agent = route.pool === 'none' ? false : agents[route.pool];
@@ -213,13 +228,14 @@ export function createStagingStaticServer({ staticRoot, releaseFile, routes, ups
   });
 
   server.on('upgrade', (request, socket, head) => {
+    if (!sameOriginRequest(request)) { socket.end('HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n'); return; }
     const url = new URL(request.url ?? '/', 'http://iqterminal.local');
     const route = matchStagingRoute(url.pathname, checkedRoutes);
     if (!route?.websocket) { socket.end('HTTP/1.1 404 Not Found\r\nConnection: close\r\n\r\n'); return; }
     const target = new URL(upstreams[route.upstream]);
     const path = url.pathname.replace(/^\/market-data/, '') || '/';
     const proxyUrl = new URL(`${path}${url.search}`, target), started = performance.now();
-    const headers = { ...safeHeaders(request.headers), host: request.headers.host ?? target.host, connection: 'Upgrade', upgrade: 'websocket' };
+    const headers = { ...upstreamHeaders(request, target), connection: 'Upgrade', upgrade: 'websocket' };
     const upstreamRequest = http.request(proxyUrl, { method: request.method, headers, agent: false });
     let settled = false;
     const endWithStatus = (status, phrase) => {
