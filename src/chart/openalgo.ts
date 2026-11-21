@@ -102,7 +102,7 @@ export class OpenAlgoCandleChart {
   private tpoProfile: TpoProfilePrimitive | null = null;
   private dailyVwap: DailyVwapPrimitive | null = null;
   private dailyVwapInterval = 60;
-  private netPositioningPanes = new Map<string, { series: SeriesApi; primitive: NetPositioningPane; paneIndex: number }>();
+  private netPositioningPanes = new Map<string, { series: SeriesApi; primitive: NetPositioningPane; paneIndex: number; cumulativeLayout?: boolean }>();
   onNetPositioningVenueToggle?: (id: string, venue: NetPositioningVenue) => void;
   private netPositioningLegends = new Map<string, { element: HTMLElement; abort: AbortController; venuesKey: string }>();
   private footprintTotalsPanes = new Map<string, { series: SeriesApi; primitive: FootprintTotalsPane; paneIndex: number; autoHeight: number; autoWeight: number | null; manuallyResized: boolean }>();
@@ -390,7 +390,7 @@ export class OpenAlgoCandleChart {
 
   addNetPositioningPane(id: string, method: NetPositioningMethod, venues: readonly NetPositioningVenue[], intervalMs: number,
     display: import('./net-positioning-layout').NetPositioningDisplay = 'stacked', labels: NetPositioningLabels = 'auto',
-    colors?: Partial<Record<NetPositioningVenue, string>>, showLongs = true, showShorts = true, reverseOrder = false) {
+    colors?: Partial<Record<NetPositioningVenue, string>>, showLongs = true, showShorts = true, reverseOrder = false, cumulative = true) {
     let view = this.netPositioningPanes.get(id);
     if (!view) {
       if (!this.netPositioningViewportSubscriptions.length) {
@@ -418,8 +418,14 @@ export class OpenAlgoCandleChart {
     view.primitive.setCurrency(currency);
     view.primitive.setThemeColors(netPositioningSourceColors(currentTheme(), 'longs'), 'longs');
     view.primitive.setThemeColors(netPositioningSourceColors(currentTheme(), 'shorts'), 'shorts');
-    view.primitive.setSettings(method, venues, intervalMs, display, labels, showLongs, showShorts, reverseOrder);
+    view.primitive.setSettings(method, venues, intervalMs, display, labels, showLongs, showShorts, reverseOrder, cumulative);
     view.primitive.setColorOverrides(colors);
+    if(cumulative&&!view.cumulativeLayout){
+      view.cumulativeLayout=true;
+      const panes=this.chart.panes(),height=panes.reduce((sum,p)=>sum+p.base.mediaHeight,0),target=Math.min(260,height*.5);
+      const other=panes.reduce((sum,_p,i)=>i===view!.paneIndex?sum:sum+this.chart.paneWeight(i),0);
+      if(height>target&&other>0)this.chart.setPaneWeight(view.paneIndex,target*other/(height-target));
+    }
     if (currencyChanged) {
       view.series.priceScale().setAutoScale(true);
       this.chart.invalidate(mask => mask.invalidatePane(view!.paneIndex, { level: InvalidationLevel.Full, autoScale: true }));

@@ -3,7 +3,7 @@ import {drawVenueCaption,venueBadge,amountCaption,labelCurrency} from './venue-l
 import type { IPrimitive,PrimitiveHost,PrimitiveRenderContext } from 'openalgo-charts';
 import type { FootprintBar } from '../feed/protocol';
 import type { NetPositioningSide,NetPositioningVenue } from '../feed/net-positioning';
-export interface PositioningRange {timeMs:number;endMs:number;low:number;high:number;side:NetPositioningSide;venue:NetPositioningVenue;reference:string;partial:boolean;method?:import('../feed/net-positioning').NetPositioningMethod;baseAmount?:number|null;quoteAmount?:number|null}
+export interface PositioningRange {aggregate?:boolean;timeMs:number;endMs:number;low:number;high:number;side:NetPositioningSide;venue:NetPositioningVenue;reference:string;partial:boolean;method?:import('../feed/net-positioning').NetPositioningMethod;baseAmount?:number|null;quoteAmount?:number|null}
 /** Contiguous 70% executed-volume area, growing out from the POC. Prices are row edges. */
 export function candleValueArea(bar:FootprintBar|undefined):{low:number;high:number;partial:boolean}|null{
  if(!bar||!Number.isFinite(bar.rowSize)||bar.rowSize<=0||bar.coverage==='capacity-limited')return null;
@@ -18,7 +18,7 @@ export function candleValueArea(bar:FootprintBar|undefined):{low:number;high:num
  }
  return {low:cells[lo]!.price,high:cells[hi]!.price+bar.rowSize,partial:bar.coverage!=='observed'||bar.gapBefore};
 }
-export function positioningRangeLabel(r:PositioningRange){return `${venueBadge(r.venue)} · Net ${r.side==='longs'?'Longs':'Shorts'} · ${r.partial?'partial ':''}candle VA 70% (proxy)`;}
+export function positioningRangeLabel(r:PositioningRange){return `${r.aggregate?'TOTAL':venueBadge(r.venue)} · Net ${r.side==='longs'?'Longs':'Shorts'} · ${r.partial?'partial ':''}candle VA 70% (proxy)`;}
 /** Display-only preview; native drawings own committed zones. */
 export class PositioningRangePreview implements IPrimitive {
  private host?:PrimitiveHost;private range:PositioningRange|null=null;
@@ -34,7 +34,7 @@ export class PositioningRangePreview implements IPrimitive {
   ctx.save();ctx.beginPath();ctx.rect(0,0,rc.plotWidth*d,rc.plotHeight*d);ctx.clip();
   ctx.fillStyle=color;ctx.globalAlpha=.12;ctx.fillRect(left,top*d,width,(bottom-top)*d);
   ctx.strokeStyle=color;ctx.lineWidth=d;ctx.globalAlpha=.85;ctx.setLineDash([4*d,3*d]);ctx.strokeRect(left,top*d,width,(bottom-top)*d);ctx.setLineDash([]);
-  ctx.font=`${10*d}px ui-monospace,monospace`;ctx.fillStyle=color;ctx.globalAlpha=1;drawVenueCaption(ctx,r.venue,amountCaption(r,labelCurrency(rc.dataLayer,'btc')),rc.plotWidth*d-4*d,Math.max(12*d,top*d-4*d),d,Math.max(0,width-8*d));ctx.restore();
+  ctx.font=`${10*d}px ui-monospace,monospace`;ctx.fillStyle=color;ctx.globalAlpha=1;if(r.aggregate){ctx.textAlign='right';ctx.fillText(amountCaption(r,labelCurrency(rc.dataLayer,'btc')),rc.plotWidth*d-4*d,Math.max(12*d,top*d-4*d),Math.max(0,width-8*d));}else drawVenueCaption(ctx,r.venue,amountCaption(r,labelCurrency(rc.dataLayer,'btc')),rc.plotWidth*d-4*d,Math.max(12*d,top*d-4*d),d,Math.max(0,width-8*d));ctx.restore();
   drawAxisPriceRange(ctx,rc,r.low,r.high,color);
  }
 }

@@ -85,6 +85,7 @@ test('one Net Longs & Shorts pane shares sources and settings, keeps independent
 
   await row.getByRole('button', { name: 'Net Longs & Shorts settings', exact: true }).click();
   const settings = panel.locator('.net-positioning-settings');
+  await expect(settings.getByLabel('Cumulative bars')).toBeChecked();
   await expect(settings.getByLabel('Show Longs')).toBeChecked();
   await expect(settings.getByLabel('Show Shorts')).toBeChecked();
   await expect(settings.getByLabel('Reverse order')).not.toBeChecked();
@@ -113,6 +114,7 @@ test('one Net Longs & Shorts pane shares sources and settings, keeps independent
   await restoredRow.getByRole('button', { name: 'Net Longs & Shorts settings', exact: true }).click();
   const restoredSettings = restoredPanel.locator('.net-positioning-settings');
   await expect(restoredSettings.getByLabel('Estimation inputs')).toHaveValue('aggressor-flow-oi');
+  await expect(restoredSettings.getByLabel('Cumulative bars')).toBeChecked();
   await expect(restoredSettings.getByLabel('Show Longs')).toBeChecked();
   await expect(restoredSettings.getByLabel('Show Shorts')).toBeChecked();
   await expect(restoredSettings.getByLabel('Reverse order')).toBeChecked();

@@ -65,7 +65,7 @@ export interface NetPositioningBaseSettings {
 }
 export interface LegacyNetPositioningSnapshot extends NetPositioningBaseSettings { visible: boolean }
 export interface NetPositioningSettings extends NetPositioningBaseSettings, Record<string, unknown> {
-  showLongs: boolean; showShorts: boolean; reverseOrder: boolean;
+  showLongs: boolean; showShorts: boolean; reverseOrder: boolean; cumulative?: boolean;
   /** Original per-side settings kept when a saved pair had conflicting shared options. */
   legacyPreserved?: Partial<Record<NetPositioningSide, LegacyNetPositioningSnapshot>>;
 }
@@ -93,7 +93,7 @@ export function netPositioningSettings(value: unknown): NetPositioningSettings {
     const saved = item as Record<string, unknown>;
     return [[side, { ...netPositioningBaseSettings(saved), visible: saved.visible !== false }]];
   })) as NetPositioningSettings['legacyPreserved'];
-  return { ...base, showLongs: raw.showLongs !== false, showShorts: raw.showShorts !== false, reverseOrder: raw.reverseOrder === true,
+  return { ...base, ...(typeof raw.cumulative === 'boolean' ? {cumulative:raw.cumulative} : {}), showLongs: raw.showLongs !== false, showShorts: raw.showShorts !== false, reverseOrder: raw.reverseOrder === true,
     ...(legacyPreserved && Object.keys(legacyPreserved).length ? { legacyPreserved } : {}) };
 }
 export type Placement = 'price-presentation' | 'overlay' | 'pane' | 'attachment';
@@ -197,6 +197,7 @@ export const NATIVE_DEFINITIONS: readonly IndicatorDefinition[] = [
       { key: 'method', label: 'Estimation inputs', kind: 'select', defaultValue: 'price-oi' },
       { key: 'display', label: 'Display', kind: 'select', defaultValue: 'stacked' },
       { key: 'labels', label: 'Value labels', kind: 'select', defaultValue: 'auto' },
+      { key: 'cumulative', label: 'Cumulative bars', kind: 'boolean', defaultValue: true },
       { key: 'showLongs', label: 'Show Longs', kind: 'boolean', defaultValue: true },
       { key: 'showShorts', label: 'Show Shorts', kind: 'boolean', defaultValue: true },
       { key: 'reverseOrder', label: 'Reverse order', kind: 'boolean', defaultValue: false }],

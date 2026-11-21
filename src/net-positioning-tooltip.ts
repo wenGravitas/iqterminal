@@ -43,5 +43,7 @@ export function renderPositioningTooltip(element: HTMLElement, data: Summary) {
   const otherTotal = otherValues.some(value => value === null) ? null : otherValues.reduce<number>((sum, value) => sum + (value ?? 0), 0);
   footer.lastElementChild?.append(node('small', 'positioning-tooltip-secondary', otherTotal === null ? 'Other currency unavailable' : `${quantity(otherTotal)} ${data.currency === 'btc' ? 'USD quote' : 'BTC'}`));
   const status = node('div', 'positioning-tooltip-muted positioning-tooltip-status', `${data.method === 'price-oi' ? 'Price + OI' : 'Aggressor Flow + OI'}${data.provisional ? ' · Forming bar' : ''} · Quote estimated at source interval ending prices`);
-  element.replaceChildren(header, title, rows, footer, status);
+  const cumulative=data.cumulative;
+  if(cumulative){const basis=node('div','positioning-tooltip-muted',`Cumulative recorded change: ${quantity(cumulative.end)} ${unit}${cumulative.partial?' · partial history':''} · since ${new Date(data.cumulativeFrom??data.timeMs).toISOString().replace('T',' ').slice(0,19)} UTC · not position inventory`);element.replaceChildren(header,title,rows,footer,basis,status);}
+  else element.replaceChildren(header, title, rows, footer, status);
 }

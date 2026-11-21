@@ -165,9 +165,9 @@ function drawIQLabel(context: DrawContext, toolId: typeof rendererTools[number])
   const rangeAmount=drawing.props?.positioningRange as LabelAmount|undefined;
   let executionAmount=drawing.props?.executionAmount as LabelAmount|undefined;
   if(!executionAmount&&executionLabel){const match=/\n([\d,.]+) BTC @ .*? · ([\d,.]+) (USDT|USD) ·/.exec(rawValue);if(match)executionAmount={venue:/^BINANCE /.test(rawValue)?'binance':/^BYBIT /.test(rawValue)?'bybit':'hyperliquid',market:/ SPOT /.test(rawValue)?'spot':'perpetual',baseAmount:Number(match[1]!.replaceAll(',','')),quoteAmount:Number(match[2]!.replaceAll(',',''))};}
-  const automaticRange=rangeAmount&&(/^(BN|HL|BY)\[P\] · Net (Longs|Shorts) · (partial )?candle VA 70% \(proxy\)$/.test(rawValue)||/^Net (Longs|Shorts) · (binance|bybit|hyperliquid) · /.test(rawValue));
+  const automaticRange=rangeAmount&&(/^(?:(BN|HL|BY)\[P\]|TOTAL) · Net (Longs|Shorts) · (partial )?candle VA 70% \(proxy\)$/.test(rawValue)||/^Net (Longs|Shorts) · (binance|bybit|hyperliquid) · /.test(rawValue));
   const value=automaticRange?amountCaption(rangeAmount,labelCurrency(rc.dataLayer,'btc')):executionLabel&&executionAmount?amountCaption(executionAmount,labelCurrency(rc.dataLayer)):executionLabel?compactVenueText(rawValue):rawValue;
-  const venue=(drawing.props?.positioningRange as {venue?:LabelVenue}|undefined)?.venue??(executionLabel?(/^BINANCE /.test(rawValue)?'binance':/^BYBIT /.test(rawValue)?'bybit':'hyperliquid'):null);
+  const venue=rangeAmount?.aggregate?null:(drawing.props?.positioningRange as {venue?:LabelVenue}|undefined)?.venue??(executionLabel?(/^BINANCE /.test(rawValue)?'binance':/^BYBIT /.test(rawValue)?'bybit':'hyperliquid'):null);
   const icon=venue?venueLabelIcon(venue):undefined;
   if (!value.trim()) return;
   const anchor = pts[0];

@@ -17,3 +17,12 @@ it('the hover preview has no autoscale contribution and releases its transient s
  expect(p.diagnostics().active).toBe(true);p.set(p.diagnostics().range);expect(updates).toBe(1);p.set(null);expect(p.diagnostics().active).toBe(false);
  p.detached();expect(p.diagnostics().range).toBeNull();
 });
+
+import {positioningRangeLabel} from '../src/chart/positioning-range';
+import {amountCaption} from '../src/chart/venue-label';
+it('labels combined hover/drawing quantities as TOTAL without attributing them to the first venue',()=>{
+ const range={aggregate:true,timeMs:0,endMs:60000,low:100,high:110,side:'longs' as const,venue:'binance' as const,reference:'BTC chart',partial:false,baseAmount:670,quoteAmount:40200000};
+ expect(positioningRangeLabel(range)).toBe('TOTAL · Net Longs · candle VA 70% (proxy)');
+ expect(amountCaption(range,'btc')).toBe('TOTAL 670 BTC');
+ expect(amountCaption(range,'usdt')).toContain('USD quote');
+});

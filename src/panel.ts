@@ -4055,7 +4055,7 @@ export class CandlePanel implements IContentRenderer {
     for (const instance of active) {
       const settings = netPositioningSettings(instance.settings);
       engine.addNetPositioningPane(instance.instanceId, settings.method, settings.venues, intervalMs, settings.display, settings.labels,
-        settings.colors, settings.showLongs, settings.showShorts, settings.reverseOrder);
+        settings.colors, settings.showLongs, settings.showShorts, settings.reverseOrder, settings.cumulative !== false);
       const history = this.netPositioningHistories.get(settings.method)!;
       const payload = history.metadata();
       engine.setNetPositioningSnapshot(instance.instanceId, history.snapshot(), payload?.feeds ?? {}, payload?.unitVerification ?? {}, payload?.pendingIntervals ?? 0, this.netPositioningErrors.get(settings.method) ?? '');
@@ -5748,11 +5748,13 @@ export class CandlePanel implements IContentRenderer {
     if(!hint){hint=document.createElement('div');hint.dataset.positioningRangeHint='true';hint.className='positioning-tooltip-muted positioning-tooltip-status';this.positioningTooltip.append(hint);}
     hint.textContent=range?`${positioningRangeLabel(range)} · VAL ${range.low.toLocaleString('en-US')} / VAH ${range.high.toLocaleString('en-US')} · Double-click bar to save zone`
       :this.footprintStatus.state==='loading'&&supportsDepth(this.selection)?'Loading candle VAH/VAL…':'Candle VAH/VAL unavailable · no entry-price range inferred';
-    if(range){const icon=document.createElement('img');icon.src=venueIconPath(range.venue);icon.alt='';icon.width=12;icon.height=12;icon.style.verticalAlign='middle';hint.prepend(icon,document.createTextNode(' '));const ref=document.createElement('img');ref.src=venueIconPath(this.selection.venue);ref.alt='';ref.width=12;ref.height=12;ref.style.verticalAlign='middle';hint.append(document.createTextNode(' · Chart candle '),ref,document.createTextNode(` ${venueBadge(this.selection.venue,marketOf(this.selection))}`));}
+    if(range){if(!range.aggregate){const icon=document.createElement('img');icon.src=venueIconPath(range.venue);icon.alt='';icon.width=12;icon.height=12;icon.style.verticalAlign='middle';hint.prepend(icon,document.createTextNode(' '));}const ref=document.createElement('img');ref.src=venueIconPath(this.selection.venue);ref.alt='';ref.width=12;ref.height=12;ref.style.verticalAlign='middle';hint.append(document.createTextNode(' · Chart candle '),ref,document.createTextNode(` ${venueBadge(this.selection.venue,marketOf(this.selection))}`));}
   }
-  private rangeForPositioningHit(hit:{timeMs:number;intervalMs:number;side:'longs'|'shorts';method:import('./feed/net-positioning').NetPositioningMethod;hoveredVenue:import('./feed/net-positioning').NetPositioningVenue;sources:{sourceId:string;baseValue:number|null;quoteValue:number|null}[]}):PositioningRange|null {
+  private rangeForPositioningHit(hit:{timeMs:number;intervalMs:number;side:'longs'|'shorts';method:import('./feed/net-positioning').NetPositioningMethod;hoveredVenue:import('./feed/net-positioning').NetPositioningVenue|null;sources:{sourceId:string;baseValue:number|null;quoteValue:number|null}[]}):PositioningRange|null {
     const area=candleValueArea(this.barAt(hit.timeMs/1000)),source=hit.sources.find(s=>s.sourceId===hit.hoveredVenue);
-    return area?{...area,baseAmount:source?.baseValue??null,quoteAmount:source?.quoteValue??null,timeMs:hit.timeMs,endMs:hit.timeMs+hit.intervalMs,side:hit.side,method:hit.method,venue:hit.hoveredVenue,reference:instrumentLabel(this.selection)}:null;
+    const aggregate=hit.hoveredVenue===null;
+    const sum=(key:'baseValue'|'quoteValue')=>hit.sources.some(s=>s[key]===null)?null:hit.sources.reduce((n,s)=>n+(s[key]??0),0);
+    return area?{...area,aggregate,baseAmount:aggregate?sum('baseValue'):source?.baseValue??null,quoteAmount:aggregate?sum('quoteValue'):source?.quoteValue??null,timeMs:hit.timeMs,endMs:hit.timeMs+hit.intervalMs,side:hit.side,method:hit.method,venue:hit.hoveredVenue??(hit.sources[0]?.sourceId as import('./feed/net-positioning').NetPositioningVenue)??'binance',reference:instrumentLabel(this.selection)}:null;
   }
   private positioningRangeAt(x:number,y:number){
     for(const instance of this.selection.indicators){

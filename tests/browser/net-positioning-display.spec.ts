@@ -96,7 +96,7 @@ test('combined positioning keeps independent signed bands, shared settings, hit 
     const state = window as any, original = CanvasRenderingContext2D.prototype.fillText;
     state.__netPositioningLabelPaints = [];
     CanvasRenderingContext2D.prototype.fillText = function(text: string, x: number, y: number, ...args: any[]) {
-      if (/^\d{3,}$/.test(String(text))) {
+      if (/^\d+$/.test(String(text))) {
         const paints = (window as any).__netPositioningLabelPaints; paints.push({ text: String(text), x, y, color: this.fillStyle });
         if (paints.length > 2000) paints.splice(0, paints.length - 2000);
       }
@@ -153,6 +153,9 @@ test('combined positioning keeps independent signed bands, shared settings, hit 
   await expect.poll(() => page.evaluate(id => [...(window as any).__terminal.panels.values()][0].engine.netPositioningPanes.get(id)
     .primitive.diagnostics().venues, POSITIONING_ID)).toEqual(['binance', 'hyperliquid']);
 
+  const legacySettings=await openSettings(panel);
+  await legacySettings.getByLabel('Cumulative bars').uncheck();
+  await legacySettings.getByRole('button',{name:'Apply',exact:true}).click();
   const initial = await page.evaluate(id => {
     const p = [...(window as any).__terminal.panels.values()][0], view = p.engine.netPositioningPanes.get(id), diag = view.primitive.diagnostics();
     const state = window as any;
@@ -199,7 +202,7 @@ test('combined positioning keeps independent signed bands, shared settings, hit 
     const p = [...(window as any).__terminal.panels.values()][0], i = p.engine.times.indexOf(time / 1000);
     p.engine.setRange({ from: Math.max(0, i - 3), to: i + 1 });
   }, hostOpen);
-  await expect.poll(() => page.evaluate(() => (window as any).__netPositioningLabelPaints.some((item: any) => item.text === '155'))).toBe(true);
+  await expect.poll(() => page.evaluate(() => (window as any).__netPositioningLabelPaints.some((item: any) => item.text === '57'))).toBe(true);
   const hit = await page.evaluate(({ id, time }) => {
     const p = [...(window as any).__terminal.panels.values()][0], view = p.engine.netPositioningPanes.get(id), primitive = view.primitive;
     const plot = p.engine.chart.plotRect(view.paneIndex);

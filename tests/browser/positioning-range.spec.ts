@@ -3,7 +3,7 @@ import {openGlobalSettings,savedPanelRecord} from './footer-actions';
 import {addIndicator} from './indicator-actions';
 test('positioning hover previews candle VA only, double-click commits a native undoable persisted zone',async({page})=>{
  test.setTimeout(120000);
- await page.addInitScript(()=>{const original=CanvasRenderingContext2D.prototype.fillText;(window as any).__rangeLabels=[];CanvasRenderingContext2D.prototype.fillText=function(text:string,x:number,y:number,...args:any[]){if(/79,990|80,000|BN\[P\]/.test(String(text))){const a=(window as any).__rangeLabels;a.push({text,x,y});if(a.length>2000)a.splice(0,a.length-2000);}return (original as any).call(this,text,x,y,...args);};});const now=Math.floor(Date.now()/60000)*60000;let profiles=0;
+ await page.addInitScript(()=>{const original=CanvasRenderingContext2D.prototype.fillText;(window as any).__rangeLabels=[];CanvasRenderingContext2D.prototype.fillText=function(text:string,x:number,y:number,...args:any[]){if(/79,990|80,000|BN\[P\]|TOTAL/.test(String(text))){const a=(window as any).__rangeLabels;a.push({text,x,y});if(a.length>2000)a.splice(0,a.length-2000);}return (original as any).call(this,text,x,y,...args);};});const now=Math.floor(Date.now()/60000)*60000;let profiles=0;
  await page.route('**/market-data/**',async route=>{
   const u=new URL(route.request().url());
   if(u.pathname.endsWith('/native-candles'))return route.fulfill({json:{source:'binance-native-kline',candles:Array.from({length:500},(_,i)=>({t:now-(499-i)*60000,o:80000,h:80100,l:79900,c:80001,v:10,revision:1,closed:i<499}))}});
@@ -51,9 +51,9 @@ test('positioning hover previews candle VA only, double-click commits a native u
  let xy=await point();expect(xy).not.toBeNull();const card=panel.locator('.net-positioning-tooltip');await page.mouse.move(0,0);await page.mouse.move(xy!.x,xy!.y);await expect(card).toBeHidden();await page.waitForTimeout(100);await expect(card).toBeHidden();await page.mouse.move(0,0);await page.waitForTimeout(550);await expect(card).toBeHidden();await page.mouse.move(xy!.x,xy!.y);await expect(card).toContainText('VAH/VAL unavailable');
  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].positioningRange.active)).toBe(false);
  await page.evaluate(time=>{const p=[...(window as any).__terminal.panels.values()][0];p.footprintBars=[{time:time/1000,rowSize:10,coverage:'observed',gapBefore:false,cells:[{price:79980,bidVol:1,askVol:1},{price:79990,bidVol:40,askVol:40},{price:80000,bidVol:9,askVol:9}]}];},hit.time);
- await page.mouse.move(xy!.x+1,xy!.y);await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].positioningRange.range)).toMatchObject({low:79990,high:80000,side:'shorts',venue:'binance'});
+ await page.mouse.move(xy!.x+1,xy!.y);await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].positioningRange.range)).toMatchObject({low:79990,high:80000,side:'shorts',venue:'binance',aggregate:true});
  await expect(panel.locator('.net-positioning-tooltip')).toContainText('candle VA 70% (proxy)');
- await expect.poll(()=>page.evaluate(()=>(window as any).__rangeLabels.some((r:any)=>r.text==='BN[P] 1 BTC'))).toBe(true);
+ await expect.poll(()=>page.evaluate(()=>(window as any).__rangeLabels.some((r:any)=>r.text==='TOTAL 1 BTC'))).toBe(true);
  await expect.poll(()=>page.evaluate(()=>{const p=[...(window as any).__terminal.panels.values()][0],plot=p.engine.chart.plotRect(p.engine.chart.primaryPaneIndex());return (window as any).__rangeLabels.filter((r:any)=>r.x>plot.width).length;})).toBeGreaterThan(1);
  expect(await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.drawings.drawings().length)).toBe(hit.drawings);
  await page.mouse.dblclick(xy!.x,xy!.y);await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.drawings.drawings().length)).toBe(hit.drawings+1);
@@ -63,27 +63,27 @@ test('positioning hover previews candle VA only, double-click commits a native u
  await openGlobalSettings(page);
  const global=page.getByRole('dialog',{name:'Global settings'});await global.getByLabel('Override indicator currencies').check();await global.getByLabel('Default display currency').selectOption('quote');
  await page.evaluate(()=>(window as any).__rangeLabels=[]);await global.getByRole('button',{name:'Apply',exact:true}).click();
- await expect.poll(()=>page.evaluate(()=>(window as any).__rangeLabels.some((r:any)=>r.text==='BN[P] 80K USDT'))).toBe(true);
+ await expect.poll(()=>page.evaluate(()=>(window as any).__rangeLabels.some((r:any)=>r.text==='TOTAL 80K USD quote'))).toBe(true);
  await openGlobalSettings(page);await global.getByLabel('Default display currency').selectOption('base');await page.evaluate(()=>(window as any).__rangeLabels=[]);await global.getByRole('button',{name:'Apply',exact:true}).click();
- await expect.poll(()=>page.evaluate(()=>(window as any).__rangeLabels.some((r:any)=>r.text==='BN[P] 1 BTC'))).toBe(true);
+ await expect.poll(()=>page.evaluate(()=>(window as any).__rangeLabels.some((r:any)=>r.text==='TOTAL 1 BTC'))).toBe(true);
  await page.screenshot({path:'/tmp/positioning-range-zone.png'});
  await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.drawings.undo());await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.drawings.drawings().length)).toBe(hit.drawings);
  await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.drawings.redo());
  const drawingKey=await page.evaluate(()=>{const p=[...(window as any).__terminal.panels.values()][0];return `iqterminal:drawings:${encodeURIComponent(p.diagnostics().id)}:binance%3Aperpetual:BTCUSDT`;});
  await expect.poll(()=>page.evaluate(savedPanelRecord,drawingKey)).toContain('positioningRange');
- await page.reload();await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0]?.engine?.drawings.drawings().some((d:any)=>d.props.positioningRange?.low===79990))).toBe(true);
+ await page.reload();await page.waitForFunction(()=>(window as any).__terminal?.panels?.size>0);await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0]?.engine?.drawings.drawings().some((d:any)=>d.props.positioningRange?.low===79990))).toBe(true);
  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].netPositioning.panes[0]?.visibleBarsDrawn)).toBeGreaterThan(0);
  await page.evaluate(()=>{const p=[...(window as any).__terminal.panels.values()][0],e=p.engine;
   const bars=e.series.getData().map((b:any)=>({time:b.time,revision:1,rowSize:10,cells:[{price:79990,bidVol:10,askVol:10}],delta:0,minDelta:0,maxDelta:0,open:b.open,close:b.close,high:b.high,low:b.low,coverage:'observed',gapBefore:false,aggregateRecordCount:1,source:'binance-usdm-aggtrade',granularity:'aggregate-trade'}));
   e.setDisplayMode('footprint',true);e.setFootprintBars(bars,true);
  });
  for(const spacing of [80,160,240]){
-  await page.evaluate(spacing=>{const e=[...(window as any).__terminal.panels.values()][0].engine;e.chart.timeScale.setBarSpacing(spacing);},spacing);
-  await expect.poll(()=>page.evaluate(()=>{const e=[...(window as any).__terminal.panels.values()][0].engine,v=e.netPositioningPanes.values().next().value,g=v.primitive.geometry.find((g:any)=>g.left>0&&g.right<e.chart.plotRect(v.paneIndex).width);if(!g)return 999;const column=e.footprint.renderWidth+e.footprint.gap;return Math.abs(g.right-g.left-column);})).toBeLessThanOrEqual(1);
+  await page.evaluate(spacing=>{const e=[...(window as any).__terminal.panels.values()][0].engine;e.chart.timeScale.setBarSpacing(spacing);e.chart.timeScale.setRightOffset(1);},spacing);
+  await expect.poll(()=>page.evaluate(()=>{const e=[...(window as any).__terminal.panels.values()][0].engine,v=e.netPositioningPanes.values().next().value,g=v.primitive.geometry.find((g:any)=>g.left>0&&g.right<e.chart.plotRect(v.paneIndex).width-80);if(!g)return 999;const column=e.footprint.renderWidth+e.footprint.gap;return Math.abs(g.right-g.left-column);})).toBeLessThanOrEqual(1);
  }
  await page.evaluate(()=>{(window as any).__rangeLabels=[];const e=[...(window as any).__terminal.panels.values()][0].engine,r=e.visibleRange();e.setRange({from:r.from+.1,to:r.to+.1});});
  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
- expect(await page.evaluate(()=>(window as any).__rangeLabels.some((r:any)=>r.text==='BN[P] 1 BTC'))).toBe(false);
+ expect(await page.evaluate(()=>(window as any).__rangeLabels.some((r:any)=>r.text==='TOTAL 1 BTC'))).toBe(false);
  await page.screenshot({path:'/tmp/positioning-footprint-aligned.png'});
 
 });

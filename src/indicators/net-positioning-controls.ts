@@ -9,6 +9,7 @@ export class NetPositioningControls {
   private readonly labels = document.createElement('select');
   private readonly showLongs = document.createElement('input');
   private readonly showShorts = document.createElement('input');
+  private readonly cumulative = document.createElement('input');
   private readonly reverseOrder = document.createElement('input');
   private venues: NetPositioningVenue[] = ['binance'];
   private readonly status = document.createElement('p');
@@ -56,15 +57,17 @@ export class NetPositioningControls {
     this.reverseOrder.type = 'checkbox'; this.reverseOrder.setAttribute('aria-label', 'Reverse order');
     reverseOrderLabel.append(reverseOrderName, this.reverseOrder);
     const hint = document.createElement('p'); hint.className = 'dialog-status';
-    hint.textContent = 'The venue buttons control both sides. Longs and Shorts use separate signed scales in one pane; by default Longs are above Shorts. BTC quantities use recorded 30-second source intervals and belong to the candle containing each interval end. Missing, incomplete, and pre-collection intervals remain unknown. This estimate cannot distinguish opened from closed positions.';
+    hint.textContent = 'Cumulative bars combine selected venues. The side scales show recorded estimated net change since the earliest retained sample, not actual position inventory. Gaps make subsequent sums partial (*). Labels show each candle’s combined change; venue details are in the tooltip. The venue buttons control both sides. Longs and Shorts use separate signed scales in one pane; by default Longs are above Shorts. BTC quantities use recorded 30-second source intervals and belong to the candle containing each interval end. Missing, incomplete, and pre-collection intervals remain unknown. This estimate cannot distinguish opened from closed positions.';
     this.status.className = 'dialog-status'; this.status.setAttribute('role', 'status');
     const footer = document.createElement('footer');
     const cancel = document.createElement('button'); cancel.type = 'button'; cancel.textContent = 'Cancel';
     const save = document.createElement('button'); save.type = 'submit'; save.textContent = 'Apply'; save.className = 'primary';
     footer.append(cancel, save);
-    this.form.append(header, methodLabel, displayLabel, labelMode, showLongsLabel, showShortsLabel, reverseOrderLabel, hint, this.status, footer);
+    const cumulativeLabel=document.createElement('label');cumulativeLabel.className='indicator-setting-field';const cumulativeName=document.createElement('span');cumulativeName.textContent='Cumulative bars';this.cumulative.type='checkbox';this.cumulative.setAttribute('aria-label','Cumulative bars');cumulativeLabel.append(cumulativeName,this.cumulative);
+    this.form.append(header, cumulativeLabel, methodLabel, displayLabel, labelMode, showLongsLabel, showShortsLabel, reverseOrderLabel, hint, this.status, footer);
     this.dialog.append(this.form);
     const options = { signal };
+    this.cumulative.addEventListener('change',()=>{this.display.disabled=this.cumulative.checked;},options);
     close.addEventListener('click', () => this.dialog.close(), options);
     cancel.addEventListener('click', () => this.dialog.close(), options);
     this.dialog.addEventListener('click', event => { if (event.target === this.dialog) this.dialog.close(); }, options);
@@ -76,7 +79,7 @@ export class NetPositioningControls {
         labels: this.labels.value === 'hover' || this.labels.value === 'off' ? this.labels.value : 'auto',
         showLongs: this.showLongs.checked,
         showShorts: this.showShorts.checked,
-        reverseOrder: this.reverseOrder.checked,
+        reverseOrder: this.reverseOrder.checked, cumulative: this.cumulative.checked,
         ...(this.colors ? { colors: { ...this.colors } } : {}),
         ...(this.legacyPreserved ? { legacyPreserved: structuredClone(this.legacyPreserved) } : {}),
       });
@@ -91,7 +94,7 @@ export class NetPositioningControls {
     this.labels.value = settings.labels;
     this.showLongs.checked = settings.showLongs;
     this.showShorts.checked = settings.showShorts;
-    this.reverseOrder.checked = settings.reverseOrder;
+    this.reverseOrder.checked = settings.reverseOrder;this.cumulative.checked=settings.cumulative!==false;this.display.disabled=this.cumulative.checked;
     this.colors = settings.colors ? { ...settings.colors } : undefined;
     this.legacyPreserved = settings.legacyPreserved ? structuredClone(settings.legacyPreserved) : undefined;
     this.venues = [...settings.venues];

@@ -114,3 +114,17 @@ export function roundDprBoundary(cssCoordinate: number, dpr: number) {
   const safeDpr = Number.isFinite(dpr) && dpr > 0 ? dpr : 1;
   return Math.round(cssCoordinate * safeDpr);
 }
+
+/** Running sum of recorded changes, anchored to retained history, never the viewport.
+ * Missing inputs remain gaps; partial sums are explicitly marked rather than filled. */
+export function cumulativePositioning(rows: readonly {timeMs:number;sources:readonly NetPositioningSourceValue[]}[], intervalMs:number) {
+ let value=0, uncertain=false, previous:number|undefined;
+ return [...rows].sort((a,b)=>a.timeMs-b.timeMs).map(row=>{
+  const available=row.sources.filter(s=>s.value!==null&&Number.isFinite(s.value));
+  uncertain ||= available.length!==row.sources.length || row.sources.some(s=>s.quality&&s.quality!=='complete') || previous!==undefined&&row.timeMs-previous>intervalMs;
+  const total=available.reduce((n,s)=>n+s.value!,0),start=value;
+  if(available.length)value+=total;
+  previous=row.timeMs;
+  return {timeMs:row.timeMs,start,end:value,total,available:available.length>0,partial:uncertain};
+ });
+}

@@ -18,9 +18,9 @@ export type LabelCurrency='btc'|'usdt';
 const currencies=new WeakMap<object,(local?:LabelCurrency)=>LabelCurrency>();
 export function setLabelCurrencySource(layer:object,source:((local?:LabelCurrency)=>LabelCurrency)|null){if(source)currencies.set(layer,source);else currencies.delete(layer);}
 export function labelCurrency(layer:object,local?:LabelCurrency):LabelCurrency{return currencies.get(layer)?.(local)??local??'btc';}
-export interface LabelAmount {venue:LabelVenue;market?:'spot'|'perpetual';baseAmount?:number|null;quoteAmount?:number|null}
+export interface LabelAmount {aggregate?:boolean;venue:LabelVenue;market?:'spot'|'perpetual';baseAmount?:number|null;quoteAmount?:number|null}
 export function amountCaption(amount:LabelAmount,currency:LabelCurrency){
- const value=currency==='btc'?amount.baseAmount:amount.quoteAmount,unit=currency==='btc'?'BTC':amount.venue==='hyperliquid'?'USD':'USDT';
+ const value=currency==='btc'?amount.baseAmount:amount.quoteAmount,unit=currency==='btc'?'BTC':amount.aggregate?'USD quote':amount.venue==='hyperliquid'?'USD':'USDT';
  const text=value==null||!Number.isFinite(value)?'N/A':Math.abs(value)>=1000?value.toLocaleString('en-US',{notation:'compact',maximumFractionDigits:2}):value.toLocaleString('en-US',{maximumFractionDigits:currency==='btc'&&value!==0&&Math.abs(value)<.001?8:3});
- return `${venueBadge(amount.venue,amount.market)} ${text} ${unit}`;
+ return `${amount.aggregate?'TOTAL':venueBadge(amount.venue,amount.market)} ${text} ${unit}`;
 }

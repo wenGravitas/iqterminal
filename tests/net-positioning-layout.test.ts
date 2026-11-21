@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { PriceScale } from 'openalgo-charts';
-import { groupedSourceSlot, layoutNetPositioningSources, netPositioningBands, roundDprBoundary } from '../src/chart/net-positioning-layout';
+import { groupedSourceSlot, layoutNetPositioningSources, netPositioningBands, roundDprBoundary, cumulativePositioning } from '../src/chart/net-positioning-layout';
 import { NetPositioningPane, netPositioningSourceColors, netPositioningTextColor } from '../src/chart/net-positioning';
 import type { NetPositioningCandle, NetVenueCandle } from '../src/feed/net-positioning';
 
@@ -229,13 +229,12 @@ it.each([1, 2])('places signed amount glyphs outside complete stacks at DPR %s',
     pane.draw(ctx, { dpr, plotWidth: 300, plotHeight: 300, timeScale: { visibleRange: () => ({ from: 0, to: 2 }), barSpacing: 80, indexToX: (i: number) => 80 + i * 130 },
       priceScale: { priceToY: (value: number) => (500 - value) * .3 }, theme: { axisText: '#aaa', background: '#090909' } } as any);
     const positive = amounts.filter(p => p.x < 150 * dpr), negative = amounts.filter(p => p.x > 150 * dpr);
-    expect(positive).toHaveLength(2); expect(negative).toHaveLength(2);
+    expect(positive).toHaveLength(1); expect(negative).toHaveLength(1);
     // The assigned native scale maps the positive and negative stack ends to y=60 and y=240.
     const baseline = pane.diagnostics().renderedBands[0]!.baseline * dpr;
     for (const p of positive) expect(p.y).toBeLessThan(baseline);
     for (const p of negative) expect(p.y).toBeGreaterThan(baseline);
-    expect(Math.abs(positive[0].y - positive[1].y)).toBeGreaterThanOrEqual(11 * dpr);
-    expect(Math.abs(negative[0].y - negative[1].y)).toBeGreaterThanOrEqual(11 * dpr);
+
   }
 });
 
@@ -318,7 +317,7 @@ it('keeps amounts, hover identity and visible scales on their timestamps as the 
   }
 });
 
-it.each([1,2])('never replaces a hidden 238 contribution with a visible 17 in the same stack at DPR %s',dpr=>{
+it.each([1,2])('shows only the combined 255 total for a 238 + 17 stack at DPR %s',dpr=>{
  const pane=new NetPositioningPane('mixed-digits',(x,spacing)=>({left:x-spacing/2,width:spacing}));
  pane.setSettings('price-oi',['binance','hyperliquid'],60000,'stacked','auto',true,true);
  pane.setHostSnapshot([{t:0,closed:true}]);
@@ -328,9 +327,35 @@ it.each([1,2])('never replaces a hidden 238 contribution with a visible 17 in th
   const ctx:any={save(){},restore(){},beginPath(){},rect(){},clip(){},moveTo(){},lineTo(){},stroke(){},fillRect(){},strokeRect(){},
    measureText:(text:string)=>({width:text.length*8*dpr,actualBoundingBoxAscent:9*dpr,actualBoundingBoxDescent:3*dpr}),fillText:(text:string)=>{if(/^\d/.test(text))labels.push(text);}};
   pane.draw(ctx,{dpr,plotWidth:300,plotHeight:400,timeScale:{visibleRange:()=>({from:0,to:1}),barSpacing:spacing,indexToX:()=>150},theme:{axisText:'#aaa',background:'#090909'}} as any);
-  expect(labels).toEqual(spacing===40?['238','17','238','17']:[]);
+  expect(labels).toEqual(spacing===40?['255','255']:[]);
   expect(pane.diagnostics().visibleBarsDrawn).toBe(4);
   const source=(pane as any).geometry.find((g:any)=>g.sourceId==='binance'&&g.side==='longs');
   expect(pane.hoverSummary((source.left+source.right)/2,(source.top+source.bottom)/2)?.sources.map(s=>s.value)).toEqual([238,17]);
  }
+});
+
+it('combines 1 Binance and 669 Hyperliquid into a 670 running change and revises rather than double-adds',()=>{
+ const pane=new NetPositioningPane('cumulative');
+ pane.setSettings('price-oi',['binance','hyperliquid'],60000,'stacked','auto',true,false,false,true);
+ pane.setHostSnapshot([{t:0,closed:true},{t:60000,closed:false}]);
+ const first={timeMs:0,venues:{binance:venueValue('binance',1),hyperliquid:venueValue('hyperliquid',669)}};
+ pane.setSnapshot([first,{timeMs:60000,venues:{binance:venueValue('binance',-10),hyperliquid:venueValue('hyperliquid',-10)}}]);
+ pane.setVisibleRange(0,2);
+ const texts:Array<{text:string;font:string;y:number}>=[],rects:Array<{x:number;y:number;w:number;h:number}>=[];
+ const ctx:any={font:'',save(){},restore(){},beginPath(){},rect(){},clip(){},moveTo(){},lineTo(){},stroke(){},measureText:(text:string)=>({width:text.length*6,actualBoundingBoxAscent:8,actualBoundingBoxDescent:2}),fillRect(x:number,y:number,w:number,h:number){rects.push({x,y,w,h});},fillText(text:string,_x:number,y:number){texts.push({text,font:this.font,y});}};
+ const rc:any={dpr:1,plotWidth:400,plotHeight:230,timeScale:{visibleRange:()=>({from:0,to:2}),barSpacing:70,indexToX:(i:number)=>60+i*80},theme:{axisText:'#aaa',background:'#090909'}};
+ pane.draw(ctx,rc);
+ expect(texts.some(t=>t.text==='670'&&t.font.startsWith('11px'))).toBe(true);
+ expect(texts.some(t=>t.text==='669'||t.text==='1')).toBe(false);
+ expect(texts.find(t=>t.text==='670')!.y).toBeLessThan(rects[0].y);
+ const geometry=(pane as any).geometry;
+ expect(pane.hoverSummary((geometry[1].left+geometry[1].right)/2,geometry[1].top)?.cumulative?.end).toBe(650);
+ pane.setVisibleRange(1,2);expect((pane as any).cumulativeRows().longs.get(60000).end).toBe(650);
+ pane.patch([{timeMs:60000,venues:{binance:venueValue('binance',-5),hyperliquid:venueValue('hyperliquid',-10)}}]);
+ expect((pane as any).cumulativeRows().longs.get(60000).end).toBe(655);
+});
+
+it('keeps missing cumulative inputs unknown and flags the known running subtotal after gaps',()=>{
+ const rows=cumulativePositioning([{timeMs:0,sources:[{sourceId:'a',value:10}]},{timeMs:60000,sources:[{sourceId:'a',value:null}]},{timeMs:120000,sources:[{sourceId:'a',value:-3}]}],60000);
+ expect(rows.map(r=>r.end)).toEqual([10,10,7]);expect(rows[1].available).toBe(false);expect(rows[2].partial).toBe(true);
 });
