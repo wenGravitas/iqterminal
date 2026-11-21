@@ -78,3 +78,10 @@ test('offscreen price outlier cannot flatten visible auto heatmap or profile',()
  p.draw(ctx,rc);expect(colours).toContain(spectrum(1));expect(widths[0]).toBe(100);
  }finally{globalThis.Path2D=previous;}
 });
+
+import {compactMapColumns} from '../src/liquidation-map/lod';
+test('metadata compaction preserves first retirement, partial changes and new exposure at the same price',()=>{
+ const base={at:0,availableAt:0,revision:1,quality:[],cells:[cell]},columns=[{...base,validUntil:5000},{...base,at:5000,availableAt:5000,validUntil:10000,cells:[{...cell,nativePrice:105.1}]},{...base,at:10000,availableAt:10000,validUntil:45000,cells:[{...cell,nativePrice:105.2}]},{...base,at:45000,availableAt:45000,validUntil:50000,cells:[{...cell,nativePrice:105.3}]},{...base,at:50000,availableAt:50000,cells:[]},{...base,at:150000,availableAt:150000,cells:[]},{...base,at:200000,availableAt:200000,cells:[cell]}];
+ const result=compactMapColumns(columns,240000);expect(result.map(c=>c.availableAt)).toEqual([0,45000,50000,150000,200000]);expect(result[0].validUntil).toBe(45000);expect(mapColumnEnd(result[1],result[2],240000)).toBe(50000);expect(result[0].cells[0].nativePrice).toBe(105);
+ const changed=compactMapColumns([{...base,validUntil:5000},{...base,at:5000,availableAt:5000,validUntil:10000,cells:[{...cell,quantity:5}]},{...base,at:10000,availableAt:10000,cells:[{...cell,venue:'binance'}]}],240000);expect(changed).toHaveLength(3);
+});

@@ -1,12 +1,13 @@
-import {coarsenMapCells} from '../liquidation-map/lod';
+import {coarsenMapCells,compactMapColumns} from '../liquidation-map/lod';
 import { mapSettings, type MapSettings, type MapPayload, type MapBatch } from '../liquidation-map/model';
 class MapCapacity extends Error {}
 const MAX_PAYLOAD_BYTES=8*1024*1024;
+const MAX_RESIDENT_BYTES=16*1024*1024; // one v2 window; total cache stays 32MiB
 const MAX_CELLS=100000;
 // V2 keeps mandatory boundaries. Estimate resident objects, not repeated JSON
 // property names; cell strings are explicitly interned below. Conservative V8
 // object/number/array allowance, with column metadata counted in full.
-const columnBytes=(column:MapPayload['columns'][number],profile=false)=>JSON.stringify({...column,cells:[],scenarioCatalog:undefined,quality:undefined}).length*2+column.cells.length*(profile?392:264);
+const columnBytes=(column:MapPayload['columns'][number],profile=false)=>JSON.stringify({...column,cells:[],scenarioCatalog:undefined,quality:undefined}).length*2+column.cells.length*8;
 interface Client {
     from: number;
     to: number;
@@ -103,18 +104,22 @@ export class LiquidationMapService {
             const timings={workerElapsedMs:0,requests:0,headersMs:0,bodyMs:0,decodeMs:0,bytes:0,cache:'network' as const,serverTimings:[] as string[]};
             const columns = new Map<number,MapPayload['columns'][number]>();
             let activeWidth=cached?.payload.priceWidth??settings.priceWidth;
-            const sizesByColumn=new Map<number,number>(),strings=new Map<string,string>(),metadata=new Map<string,unknown>();let stringBytes=0,retainedBytes=0,cellCount=0;
-            const intern=(column:MapPayload['columns'][number])=>{for(const key of ['scenarioCatalog','quality'] as const){const value=column[key];if(!value)continue;const id=JSON.stringify(value);let shared=metadata.get(id);if(shared===undefined){shared=value;metadata.set(id,value);stringBytes+=128+id.length*2;}(column as unknown as Record<string,unknown>)[key]=shared;}for(const cell of column.cells)for(const [key,value] of Object.entries(cell))if(typeof value==='string'){let shared=strings.get(value);if(shared===undefined){strings.set(value,value);shared=value;stringBytes+=40+value.length*2;}(cell as unknown as Record<string,unknown>)[key]=shared;}};
+            const sizesByColumn=new Map<number,number>(),strings=new Map<string,string>(),metadata=new Map<string,unknown>(),cellPool=new Map<string,MapPayload['columns'][number]['cells'][number]>();let cellBytes=0,stringBytes=0,retainedBytes=0,cellCount=0;
+            const intern=(column:MapPayload['columns'][number])=>{for(const key of ['scenarioCatalog','quality'] as const){const value=column[key];if(!value)continue;const id=JSON.stringify(value);let shared=metadata.get(id);if(shared===undefined){shared=value;metadata.set(id,value);stringBytes+=128+id.length*2;}(column as unknown as Record<string,unknown>)[key]=shared;}for(const cell of column.cells)for(const [key,value] of Object.entries(cell))if(typeof value==='string'){let shared=strings.get(value);if(shared===undefined){strings.set(value,value);shared=value;stringBytes+=40+value.length*2;}(cell as unknown as Record<string,unknown>)[key]=shared;}column.cells=column.cells.map(cell=>{const id=JSON.stringify(cell),shared=cellPool.get(id);if(shared)return shared;cellPool.set(id,cell);cellBytes+=392;return cell;});};
             const append=(items:MapPayload['columns'])=>{for(let column of items){
                 const old=columns.get(column.availableAt);if(old&&old.revision>column.revision)continue;
                 if(this.boundaryHistory){if(activeWidth>settings.priceWidth)column={...column,cells:coarsenMapCells(column.cells,activeWidth)};intern(column);}
                 const bytes=this.boundaryHistory?columnBytes(column):JSON.stringify(column).length*2;
                 retainedBytes+=bytes-(sizesByColumn.get(column.availableAt)??0);cellCount+=column.cells.length-(old?.cells.length??0);
                 columns.set(column.availableAt,column);sizesByColumn.set(column.availableAt,bytes);
-                while(retainedBytes+stringBytes>MAX_PAYLOAD_BYTES-65536||cellCount>MAX_CELLS){
+                while(retainedBytes+stringBytes+cellBytes>(this.boundaryHistory?MAX_RESIDENT_BYTES:MAX_PAYLOAD_BYTES)-65536||cellCount>MAX_CELLS){
+                    if(this.boundaryHistory){
+                        const compact=compactMapColumns([...columns.values()],resolution);
+                        if(compact.length<columns.size){columns.clear();sizesByColumn.clear();cellPool.clear();cellBytes=0;retainedBytes=0;cellCount=0;for(const row of compact){intern(row);const size=columnBytes(row);columns.set(row.availableAt,row);sizesByColumn.set(row.availableAt,size);retainedBytes+=size;cellCount+=row.cells.length;}if(retainedBytes+stringBytes+cellBytes<MAX_RESIDENT_BYTES-65536&&cellCount<=MAX_CELLS)break;}
+                    }
                     if(!this.boundaryHistory||activeWidth*2>10000)throw new MapCapacity('Liquidation Map retained tile budget');
-                    activeWidth*=2;retainedBytes=0;cellCount=0;sizesByColumn.clear();
-                    for(const [at,previous] of columns){const grouped={...previous,cells:coarsenMapCells(previous.cells,activeWidth)};const size=columnBytes(grouped);columns.set(at,grouped);sizesByColumn.set(at,size);retainedBytes+=size;cellCount+=grouped.cells.length;}
+                    activeWidth*=2;retainedBytes=0;cellCount=0;sizesByColumn.clear();cellPool.clear();cellBytes=0;
+                    for(const [at,previous] of columns){const grouped={...previous,cells:coarsenMapCells(previous.cells,activeWidth)};intern(grouped);const size=columnBytes(grouped);columns.set(at,grouped);sizesByColumn.set(at,size);retainedBytes+=size;cellCount+=grouped.cells.length;}
                 }
                 if(columns.size>2048)throw new MapCapacity('Liquidation Map retained column budget');
             }};
@@ -139,7 +144,7 @@ export class LiquidationMapService {
                     const serverTiming=response.headers.get('server-timing');if(serverTiming)timings.serverTimings.push(serverTiming);
                     timings.requests++;timings.headersMs+=performance.now()-requestStarted;
                     if (response.status===409 && !reset) {
-                        columns.clear();sizesByColumn.clear();strings.clear();metadata.clear();stringBytes=0;retainedBytes=0;cellCount=0; head=undefined;reset=true;
+                        columns.clear();sizesByColumn.clear();strings.clear();metadata.clear();cellPool.clear();cellBytes=0;stringBytes=0;retainedBytes=0;cellCount=0; head=undefined;reset=true;
                         generation=++this.generation;this.cache.clear();this.sizes.clear();this.cacheBytes=0;
                         segments=[{from,to,after:0}];segmentIndex=-1;break;
                     }
@@ -164,8 +169,8 @@ export class LiquidationMapService {
             if(instrument){timings.workerElapsedMs=performance.now()-started;payload.acquisition=timings;}
             if(this.disposed)return payload;
             if(this.boundaryHistory&&payload.profile)intern(payload.profile);
-            const bytes=this.boundaryHistory?payload.columns.reduce((n,c)=>n+columnBytes(c),0)+(payload.profile?columnBytes(payload.profile,true):0)+stringBytes+JSON.stringify({...payload,columns:[],profile:undefined}).length*2:JSON.stringify(payload).length*2;
-            if(bytes>MAX_PAYLOAD_BYTES)throw new MapCapacity('Liquidation Map worker payload capacity');
+            const bytes=this.boundaryHistory?payload.columns.reduce((n,c)=>n+columnBytes(c),0)+(payload.profile?columnBytes(payload.profile,true):0)+stringBytes+cellBytes+JSON.stringify({...payload,columns:[],profile:undefined}).length*2:JSON.stringify(payload).length*2;
+            if(bytes>(this.boundaryHistory?MAX_RESIDENT_BYTES:MAX_PAYLOAD_BYTES))throw new MapCapacity('Liquidation Map worker payload capacity');
             this.cacheBytes-=this.sizes.get(key)??0;this.cache.set(key,{at:Date.now(),payload});this.sizes.set(key,bytes);this.cacheBytes+=bytes;
             while(this.cache.size>12||this.cacheBytes>32*1024*1024){const oldest=this.cache.keys().next().value!;this.cacheBytes-=this.sizes.get(oldest)??0;this.sizes.delete(oldest);this.cache.delete(oldest);}
             return payload;

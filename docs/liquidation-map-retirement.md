@@ -47,8 +47,8 @@ socket `map` pool. It bypasses bulk wall admission and idle sockets from other
 upstreams; the backend retains its two-request admission limit. The independent
 proxy fixture tests keep both bulk lanes occupied while map requests complete.
 
-For v2 history, the 8MiB payload budget estimates resident cell objects plus
-full per-column metadata. Repeated immutable cell strings, scenario catalogs
+For v2 history, the per-window budget is now 16MiB of estimated resident data (formerly 8MiB), inside the unchanged 32MiB shared cache. It counts resident cell objects plus
+full per-column metadata. This reallocation accommodates the measured four-hour window with mandatory boundaries; network response pages remain limited to 8MiB. Repeated immutable cell strings, scenario catalogs
 and quality arrays are shared explicitly. The 32MiB cache, 100k IPC-cell and
 8MiB response-page bounds remain. Nested price coarsening happens inside the
 worker on already downloaded columns; remaining pages use the coarser grid. It
@@ -60,3 +60,31 @@ An explicit real-source acquisition check is available with
 uses the existing private staging route and writes `/tmp/iq-map-live-acquisition.json`.
 Ordinary tests skip it. It measures total cold elapsed time, warm cache reuse,
 transport size and resident budget; it does not certify Pi frame intervals.
+
+Repeated identical stock within the same absolute price bins is compacted to
+its first and last metadata snapshots per requested time bucket. Every quantity,
+source, scenario or occupied-bin change remains a boundary. Native-price
+valuation metadata is kept at its original first/last availability times and
+is never copied backward. The full native threshold path remains in the server
+journal. This prevents tiny within-bin threshold updates from exhausting the
+window budget without extending a known removal.
+
+Release checkpoint, 21 November 2026: the staging retirement service remains on
+backend `621239f` (model v4/history v2). Backend main `7e09296` also contains
+32-column archive pages and suppression of unchanged full stock publications.
+That later rollout exceeded the existing 120-attempt startup gate while loading
+the retained archive; automatic rollback restored `621239f`, subsequently
+verified healthy. The later build is preserved and pushed, not claimed deployed.
+
+Unattended retention acceptance remains open. During this session the journal
+and checkpoint footprint grew from about 61.8 MB to 322.9 MB. The 2GiB quota and
+disk guard remain active; the observed full-snapshot write rate does not certify
+seven days of retention. Sparse derived-history storage/startup indexing needs a
+separate verified improvement before calling this production-ready.
+
+A real four-hour acquisition checkpoint completed in 89.3s, with a 0.31ms
+same-worker warm read and zero warm network requests (778 columns, 42,079 cells,
+6,400 native-price grouping). This preceded the final cell-sharing optimization;
+it is a diagnostic checkpoint, not a final-release performance comparison. The
+slow cold path included archive selection/decompression, proxy/network wait and
+body transfer. It does not establish browser paint latency or foreground Pi p95.
