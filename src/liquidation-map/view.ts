@@ -55,7 +55,7 @@ export class LiquidationMapView {
         this.subscription = undefined;
         this.primitive.columns = [];this.primitive.profile=undefined;
         this.payload = undefined;
-        this.status.textContent = 'Liquidation Map requires BTC perpetuals';
+        this.status.textContent = 'Liquidation Map requires BTC perpetuals'; this.status.hidden = !this.shown;
         this.primitive.update();
         return;
     } this.settings = mapSettings(value); if (!this.settings.profileCrosshair)
@@ -74,29 +74,29 @@ export class LiquidationMapView {
                 return;
             const info = instrumentOf(this.series);
             if (info.base !== 'BTC' || this.series.market === 'spot') {
-                this.status.textContent = 'Liquidation Map requires BTC perpetuals';
+                this.status.textContent = 'Liquidation Map requires BTC perpetuals'; this.status.hidden = !this.shown;
                 return;
             }
             const range = this.chart.getVisibleLogicalRange(), now = Date.now(), from = range ? this.chart.dataLayer.indexToTimeFloat(range.from) * 1000 : now - this.settings.lookback, to = range ? this.chart.dataLayer.indexToTimeFloat(range.to) * 1000 : now;
             const end = Number.isFinite(to) ? Math.min(now + this.settings.resolution, to) : now, start = Number.isFinite(from) ? Math.max(0, from) : end - this.settings.lookback;
             if (!this.subscription){
-                this.status.textContent='Loading Liquidation Map history…';
+                this.status.textContent='Loading Liquidation Map history…'; this.status.hidden = !this.shown;
                 this.subscription = this.feed.subscribeLiquidationMap(this.owner, start, end, this.settings, batch => { if (this.dead)
                     return; if (batch.error) {
-                    this.status.textContent = batch.error + (this.primitive.columns.length?' · keeping loaded map':' · no map loaded; retrying');
+                    this.status.hidden = !this.shown; this.status.textContent = batch.error + (this.primitive.columns.length?' · keeping loaded map':' · no map loaded; retrying');
                     return;
                 } if (!batch.payload)
                     return; const generationChanged = this.payload && (this.payload.generation??0)!==(batch.payload.generation??0); const gridChanged = this.payload && (this.payload.priceWidth !== batch.payload.priceWidth); this.payload = batch.payload;this.primitive.profile=batch.payload.profile; this.primitive.settings = { ...this.settings, priceWidth: batch.payload.priceWidth, resolution: batch.payload.resolution }; const retained = new Map((gridChanged || generationChanged ? [] : this.primitive.columns).map(c => [c.availableAt, c])); for (const c of batch.payload.columns) {
                     const old = retained.get(c.availableAt);
                     if (!old || c.revision >= old.revision)
                         retained.set(c.availableAt, {...c,resolution:batch.payload.resolution});
-                } this.primitive.columns = [...retained.values()].sort((a, b) => a.availableAt - b.availableAt).slice(-2048); this.controls.sources = batch.payload.sources; this.status.textContent = `${batch.payload.resolution / 1000}s as-of cells · ${batch.payload.priceWidth} native-price grid · Visible-price auto / fixed scale in settings · Native USD/USDT/USDC prices; no FX/basis conversion · ` + batch.payload.sources.filter(s => this.settings.venues.includes(s.venue)).map(s => `${s.venue}: ${s.state}${s.asOf ? ' ' + Math.max(0, Math.round((Date.now() - s.asOf) / 1000)) + 's' : ''}`).join(' · '); this.status.title = batch.payload.sources.map(s => `${s.venue}: ${s.message}`).join('\n'); this.primitive.update(); });
+                } this.primitive.columns = [...retained.values()].sort((a, b) => a.availableAt - b.availableAt).slice(-2048); this.controls.sources = batch.payload.sources; this.status.textContent = ''; this.status.hidden = true; this.primitive.update(); });
             } else
                 this.subscription.update(start, end, this.settings);
         }, 150);
     }
     setVisible(value: boolean) { if (this.shown === value)
-        return; this.shown = value; this.primitive.visible = value; this.status.hidden = !value; if (!value) {
+        return; this.shown = value; this.primitive.visible = value; this.status.hidden = !value || !this.status.textContent; if (!value) {
         this.tooltip.hidden = true;
     }
     else

@@ -56,7 +56,7 @@ test('explicit fixture shows a loading message until the first shared-worker res
   await page.goto('/?fixture=1');await page.waitForFunction(()=>(window as any).__terminal?.panels.size>0);
   const panel=page.locator('.candle-panel').first();await addIndicator(panel,'Liquidation Map');
   const status=panel.locator('.liquidation-map-status');await expect(status).toContainText('Loading Liquidation Map');await expect(status).toBeVisible();await page.screenshot({path:'/tmp/iq-map-loading-message.png'});
-  release();await expect(status).toContainText('as-of cells');
+  release();await expect(status).toBeEmpty();await expect(status).toBeHidden();
  }finally{release();}
 });
 
