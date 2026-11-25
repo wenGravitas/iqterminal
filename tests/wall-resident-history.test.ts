@@ -38,3 +38,5 @@ describe('resident wall interval ownership',()=>{
   expect(wallResidentOverscan({from:0,to:1000},100)).toEqual({from:0,to:1200});
  });
 });
+
+it('expands an identical native ownership scope atomically and refuses changed proofs or financial maps',()=>{const store=new WallResidentHistory(),a={...chunk(100,200),sourceToken:'native-source'};a.status={...a.status,from:1,to:300,eligibleTo:300,loadedThrough:299};expect(store.admit(a,{from:100,to:200}).ok).toBe(true);expect(store.expand({...a,from:50,to:250},{from:50,to:250}).ok).toBe(true);const before=store.chunks[0];for(const changed of [{...a,from:40,to:260,revision:'different'},{...a,from:40,to:260,sourceToken:'other'},{...a,from:40,to:260,segments:new Map(a.segments)},{...a,from:40,to:260,status:{...a.status}}]){expect(store.expand(changed,{from:40,to:260}).ok).toBe(false);expect(store.chunks[0]).toBe(before);}});

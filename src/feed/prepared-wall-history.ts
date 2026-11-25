@@ -90,7 +90,7 @@ export function rebasePreparedWallPage(raw:any,manifest:Manifest,part:Part,targe
 export class PreparedWallSourceChangedError extends Error {constructor(readonly confirmedChange=false){super('Prepared wall source changed or cannot be revalidated; restart revision with displayed history retained');this.name='PreparedWallSourceChangedError';}}
 export type PreparedWallReuseLookup=(revision:string,segments:number)=>Promise<ReadonlyMap<string,OrderWallSegment>|undefined>|undefined;
 interface ReusedProjection {projector?:undefined;presentation:ReadonlyMap<string,OrderWallSegment>;presentationRevision:string;coverage:OrderWallsArchiveCoverage;profile:OrderWallsArchiveProfile;head:Head;confirmedAt:number;midpoint:string|null;parts:0;bytes:0}
-export interface PreparedWallReader {sourceToken:string;read:(after:number)=>Promise<PreparedWallFetched>;dispose:()=>void;
+export interface PreparedWallReader {sourceToken:string;identity:{canonicalKey:string;projectionKey?:string;sourceToken:string};read:(after:number)=>Promise<PreparedWallFetched>;dispose:()=>void;
  reuseProjection:(settings:OrderWallsProjectionSettings,lookup:PreparedWallReuseLookup,validateProfile:(profile:OrderWallsArchiveProfile)=>void)=>Promise<ReusedProjection|null>;
  readProjection:(settings:OrderWallsProjectionSettings,onProgress:(value:ProjectionProgress)=>void,validateProfile?:(profile:OrderWallsArchiveProfile)=>void,partCache?:PreparedWallPartCache)=>Promise<(NonNullable<Awaited<ReturnType<typeof readPreparedWallProjection>>>&{head:Head})|null>}
 function waitCached<T>(value:Promise<T>,signal:AbortSignal):Promise<T>{
@@ -105,11 +105,13 @@ function waitCached<T>(value:Promise<T>,signal:AbortSignal):Promise<T>{
 export async function discoverPreparedWallHistory(request:PreparedWallRequest,fetcher:typeof fetch,signal:AbortSignal,settings?:OrderWallsProjectionSettings,options:Omit<Parameters<typeof discoverPreparedWallAdmission>[0],'request'|'url'|'projection'|'fetcher'|'signal'|'decode'>={}){
  return discoverPreparedWallAdmission({request,url:sourceUrl('discover',request),projection:Boolean(settings&&settings.topLevels===8&&!settings.minimumNotionalEnabled&&settings.minDurationMs===0),fetcher,signal,...options,decode:async(response,max)=>(await readBody(response,max)).body});
 }
-export async function preparedWallReader(request:PreparedWallRequest,fetcher:typeof fetch,signal:AbortSignal,resumeSourceToken?:string,settings?:OrderWallsProjectionSettings,options:{discovery?:unknown;onPreparation?:(value:WallPreparationProgress)=>void;retry?:{token:string;newRevision?:boolean}}={}):Promise<PreparedWallReader|null>{
+export async function preparedWallReader(request:PreparedWallRequest,fetcher:typeof fetch,signal:AbortSignal,resumeSourceToken?:string,settings?:OrderWallsProjectionSettings,options:{discovery?:unknown;onPreparation?:(value:WallPreparationProgress)=>void;retry?:{token:string;newRevision?:boolean};archiveOnly?:boolean}={}):Promise<PreparedWallReader|null>{
  const projection=Boolean(settings&&settings.topLevels===8&&!settings.minimumNotionalEnabled&&settings.minDurationMs===0);
+ if(options.archiveOnly){const original=fetcher;fetcher=(input,init)=>{const headers=new Headers(init?.headers);headers.set('X-IQ-Wall-Archive-Only','1');return original(input,{...init,headers});};}
  const found:any=options.discovery??await discoverPreparedWallHistory(request,fetcher,signal,settings,options);
  const acquired=found?.readerAcquired;let adopted=false;try{
  if(!found||found.state!=='ready'){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
+ if(options.archiveOnly&&found.representation!=='projection-v1')throw Error('Selected archived projection is unavailable');
  if(!validSource(found.source,request))throw Error('Invalid prepared wall source validation');
  const source:Source=found.source;if(resumeSourceToken&&source.token!==resumeSourceToken)throw new PreparedWallSourceChangedError(true);
  if(found.representation!==undefined&&found.representation!=='projection-v1')throw Error('Invalid prepared wall representation');
@@ -159,7 +161,7 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
   },priority);
   pending.set(index,promise);void promise.catch(()=>{});
  }
- return {sourceToken:source.token,dispose:()=>{abort.abort();lease?.release();pending.clear();currentBatch?.handle.release();currentBatch=undefined;},reuseProjection:async(settings,lookup,validateProfile)=>{
+ return {sourceToken:source.token,identity:{canonicalKey:manifest.key,projectionKey:found.projection?.manifest?.key,sourceToken:source.token},dispose:()=>{abort.abort();lease?.release();pending.clear();currentBatch?.handle.release();currentBatch=undefined;},reuseProjection:async(settings,lookup,validateProfile)=>{
   assertActive();const m=found.projection?.manifest;
   const normalized={topLevels:settings.topLevels,minimumNotionalEnabled:settings.minimumNotionalEnabled,minimumNotionalUsd:settings.minimumNotionalEnabled?settings.minimumNotionalUsd:0,minDurationMs:settings.minDurationMs};
   if(!m||m.core!==WALL_PROJECTION_CORE_SHA256||JSON.stringify(m.settings)!==JSON.stringify(normalized))return null;

@@ -48,14 +48,19 @@ export class WallResidentHistory {
  /** Invalidation is explicit and whole-owned-chunk. A source correction cannot
   * leave a partially authenticated old fragment advertised as current. */
  invalidate(range:WallInterval){const removed:ResidentWallChunk[]=[];for(const [key,entry]of this.entries)if(intersects(entry.chunk,range)){removed.push(entry.chunk);this.entries.delete(key);}return removed;}
- admit(chunk:ResidentWallChunk,visible:WallInterval):{ok:true;removed:ResidentWallChunk[]}|{ok:false;reason:'invalid'|'overlap'|'capacity'}{
+ admit(chunk:ResidentWallChunk,visible:WallInterval){return this.admitOwned(chunk,visible,false);}
+ /** Extend only an identical validated native presentation into newly selected
+  * adjacent ownership. Failed admission leaves the prior scope intact. */
+ expand(chunk:ResidentWallChunk,visible:WallInterval){return this.admitOwned(chunk,visible,true);}
+ private admitOwned(chunk:ResidentWallChunk,visible:WallInterval,expand:boolean):{ok:true;removed:ResidentWallChunk[]}|{ok:false;reason:'invalid'|'overlap'|'capacity'}{
   const a=chunk.status;
   if(!valid(chunk)||!valid(visible)||!chunk.key||!chunk.revision||!a.exact||!a.requestComplete||a.from>chunk.from
     ||Math.min(a.to,a.eligibleTo??a.to)<chunk.to||a.state==='loading'||a.state==='building'||a.state==='unavailable')return {ok:false,reason:'invalid'};
   const old=this.entries.get(chunk.key);
   // Same-range replacement is an explicit revision operation. General overlap
   // requires invalidation/repartitioning; silently unioning it is forbidden.
-  if(old&&(old.chunk.from!==chunk.from||old.chunk.to!==chunk.to))return {ok:false,reason:'overlap'};
+  if(expand&&(!old||chunk.from>old.chunk.from||chunk.to<old.chunk.to||!chunk.sourceToken||chunk.revision!==old.chunk.revision||chunk.sourceToken!==old.chunk.sourceToken||chunk.segments!==old.chunk.segments||chunk.status!==old.chunk.status))return {ok:false,reason:'overlap'};
+  if(old&&(old.chunk.from!==chunk.from||old.chunk.to!==chunk.to)&&!expand)return {ok:false,reason:'overlap'};
   for(const entry of this.entries.values())if(entry!==old&&intersects(entry.chunk,chunk))return {ok:false,reason:'overlap'};
   let runs=0;for(const segment of chunk.segments.values())runs+=segment.valueRuns.length;
   if(chunk.segments.size>this.limits.segments||runs>this.limits.runs||runs*256+chunk.segments.size*512>this.limits.bytes)return {ok:false,reason:'capacity'};

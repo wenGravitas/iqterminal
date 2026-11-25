@@ -232,6 +232,7 @@ export interface OrderWallsArchiveUpdate {
   /** Every prepared segment was already published and the final proof passed. */
   preparedPresentationComplete?:true;
   preparedSourceToken?:string;
+  preparedIdentity?:{canonicalKey:string;projectionKey?:string;sourceToken:string};
   /** SHA256 of the entire validated selected manifest, including part hashes. */
   preparedPresentationRevision?:string;
   /** Worker-local elapsed stages include cooperative waits; source I/O overlaps. */
@@ -277,6 +278,8 @@ export interface OrderWallsArchiveLoadOptions {
   eligibleHistory?:boolean;
   /** Pre-fetched descriptor still passes all normal source/manifest validation. */
   preparedDiscovery?:unknown;
+  /** Selected archive shards must never fall through to raw replay. */
+  requirePreparedProjection?:boolean;
   reusePreparedPresentation?:import('./prepared-wall-history').PreparedWallReuseLookup;
   /** Job-bound metadata survives a failed build before any projector exists. */
   eligibleRange?:{to:number;horizonAt:number};
@@ -387,7 +390,7 @@ export function orderWallsArchiveCurrentRequest(request: OrderWallsArchiveReques
 /** Fetches fixed-watermark pages and projects each selected-profile timeline into native chart segments. */
 export async function loadOrderWallsArchive(options:OrderWallsArchiveLoadOptions):Promise<OrderWallsArchiveResult>{
  const original=options.request;
- if(!options.eligibleHistory||!preparedWallHistoryEnabled(original)||options.initialProjector||options.resume&&options.resume.eligibleTo===undefined)return loadBoundedOrderWallsArchive(options);
+ if(options.requirePreparedProjection||!options.eligibleHistory||!preparedWallHistoryEnabled(original)||options.initialProjector||options.resume&&options.resume.eligibleTo===undefined)return loadBoundedOrderWallsArchive(options);
  const settings=orderWallsSettings(original.settings),availability=orderWallsArchiveAvailability(original.market,settings,original.profileId);
  if(availability.admissionRequired||!availability.market||!availability.profileId||!Number.isSafeInteger(original.from)||!Number.isSafeInteger(original.to)||original.from>=original.to)return loadBoundedOrderWallsArchive(options);
  const viewId=historyViewId(),fetcher=options.fetcher??fetch;
@@ -458,8 +461,8 @@ async function loadBoundedOrderWallsArchive(options: OrderWallsArchiveLoadOption
   let profileStatus: OrderWallsArchivePage['profileStatus'] = prior?.profileStatus;
   let sentInitial = pages > 0;
   let lastStatus: OrderWallStatus | undefined;
-  const prepared=preparedWallHistoryEnabled(request)&&(!after||prior?.preparedSourceToken)?await preparedWallReader({market:profile.market,profile:profile.id,from:queryFrom,to:request.to,
-    watermark,head:watermarkHead},correlatedFetcher,consumerSignal,prior?.preparedSourceToken,settings,{discovery:options.preparedDiscovery,retry:options.preparationRetry,onPreparation:preparation=>{
+  const prepared=(options.requirePreparedProjection||preparedWallHistoryEnabled(request))&&(!after||prior?.preparedSourceToken)?await preparedWallReader({market:profile.market,profile:profile.id,from:queryFrom,to:request.to,
+    watermark,head:watermarkHead},correlatedFetcher,consumerSignal,prior?.preparedSourceToken,settings,{archiveOnly:options.requirePreparedProjection,discovery:options.preparedDiscovery,retry:options.preparationRetry,onPreparation:preparation=>{
       const reason=wallPreparationReason(preparation);
       const archive:OrderWallArchiveStatus={...archiveStatus(request,availability,'building'),requestComplete:false,rangeComplete:false,
         loadedThrough:Math.min(request.to,Math.max(request.from,prior?.projector.confirmedAt??request.from)),preparation,reason};
@@ -500,11 +503,12 @@ async function loadBoundedOrderWallsArchive(options: OrderWallsArchiveLoadOption
       const presentationBase=reused?undefined:options.preparedPresentationBase??await options.resolvePreparedPresentationBase?.();
       const delta=presentationBase&&projected.presentation?await preparedWallDelta(presentationBase,projected.presentation,consumerSignal):undefined;consumerSignal.throwIfAborted();
       const result:OrderWallsArchiveResult={kind:'snapshot',segments,projector:projected.projector,presentation:projected.presentation,preparedPresentationComplete:true,...(delta?{preparedDelta:delta}:{}),
-        ...(reused?{preparedRevisionReused:true as const}:{}),...('finalization' in projected?{preparedFinalization:projected.finalization}:{}),preparedSourceToken:prepared.sourceToken,preparedPresentationRevision:projected.presentationRevision,status,
+        ...(reused?{preparedRevisionReused:true as const}:{}),...('finalization' in projected?{preparedFinalization:projected.finalization}:{}),preparedSourceToken:prepared.sourceToken,preparedIdentity:prepared.identity,preparedPresentationRevision:projected.presentationRevision,status,
         watermark:head.cursor,head,cursor:head.cursor,pages:projected.parts,bytes:projected.bytes};
       options.onUpdate?.(result);return result;
     }
   }
+  if(options.requirePreparedProjection)throw Error('Selected archived wall projection is unavailable; raw replay is not permitted');
   for (;;) {
     if (signal?.aborted) throw abortError();
     if (pages >= ORDER_WALL_ARCHIVE_MAX_PAGES || patchCount > ORDER_WALL_ARCHIVE_MAX_PATCHES) {

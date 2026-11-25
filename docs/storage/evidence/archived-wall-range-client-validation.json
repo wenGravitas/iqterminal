@@ -1,0 +1,168 @@
+{
+  "kind": "archived-wall-range-client-validation-v1",
+  "date": "2026-11-25",
+  "candidateDeployed": false,
+  "enabledByDefault": false,
+  "paidProvisioning": false,
+  "livePolicyChanged": false,
+  "historyDeleted": false,
+  "financialAcceptance": false,
+  "fullGoalComplete": false,
+  "hardware": {
+    "machine": "aarch64",
+    "nodeArchitecture": "arm64",
+    "model": "Raspberry Pi 5 Model B Rev 1.0",
+    "chromiumVersion": "Chromium 156.0.8078.79 built on Debian GNU/Linux 12 (bookworm)"
+  },
+  "sourceCohort": {
+    "command": "NODE_OPTIONS=--max-old-space-size=512 node_modules/.bin/vitest run --maxWorkers=1 tests/archived-wall-ranges.test.ts tests/wall-resident-history.test.ts tests/prepared-wall-history.test.ts tests/prepared-wall-projection.test.ts tests/order-walls-archive.test.ts tests/prepared-wall-part-cache.test.ts",
+    "passed": 206,
+    "failed": 0,
+    "logSha256": "29f58b911a7f49808b1819c38a3c9830f5bfcdd79c0f6a6362a4c008757c5954",
+    "scope": "Before final 64-owner model and forced-hot-eligibility guard; final modified paths rechecked separately below."
+  },
+  "finalSelectionChecks": {
+    "command": "NODE_OPTIONS=--max-old-space-size=512 node_modules/.bin/vitest run --maxWorkers=1 tests/archived-wall-ranges.test.ts tests/wall-resident-history.test.ts",
+    "passed": 17,
+    "failed": 0,
+    "logSha256": "a3edb421dc7cdeacde792459ed8ac6b3d315fb460fd811580ea70049556a20d9"
+  },
+  "browser": {
+    "kind": "archived-wall-range-browser-fixture",
+    "scope": "explicit headless Pi Chromium native-reader/Canvas fixture; not live or foreground acceptance",
+    "blankFrames": 0,
+    "removedDuringLoad": 0,
+    "panAddedRequests": 0,
+    "initialDownloads": 2,
+    "finalDownloads": 2,
+    "cachedReopenMs": [
+      19.09999999962747,
+      16.399999999441206,
+      14,
+      13,
+      14.700000000186265
+    ],
+    "exactSourceBefore": "[[\"resident:[\\\"a00bfaf750f932de939ed0c5ed728da7ebef3c1d562da9476de62883285b9b58:1800000000100\\\",\\\"B:view-8:off:0:q4\\\"]\",{\"id\":\"resident:[\\\"a00bfaf750f932de939ed0c5ed728da7ebef3c1d562da9476de62883285b9b58:1800000000100\\\",\\\"B:view-8:off:0:q4\\\"]\",\"archiveEntryId\":\"B\",\"epoch\":2,\"side\":\"bid\",\"price\":100.00000001,\"priceExact\":\"100.00000001\",\"start\":1800000004000,\"end\":null,\"peakUsd\":200.0000000001,\"meanUsd\":200.00000000010002,\"durationMs\":86396000,\"percentile\":null,\"scopePartial\":true,\"startKnown\":true,\"detectionMode\":\"top-levels\",\"rank\":1,\"valueRuns\":[{\"at\":1800000004000,\"usd\":200.0000000001,\"percentile\":null,\"rank\":1,\"quantity\":2.000000000001,\"quantityExact\":\"2.000000000001\",\"notionalExact\":\"200.0000000001\"}],\"valueRunsTruncated\":false,\"endReason\":null,\"endKnown\":false,\"currentSelection\":false}],[\"resident:[\\\"a00bfaf750f932de939ed0c5ed728da7ebef3c1d562da9476de62883285b9b58:1800000000100\\\",\\\"A:view-8:off:0:q1\\\"]\",{\"id\":\"resident:[\\\"a00bfaf750f932de939ed0c5ed728da7ebef3c1d562da9476de62883285b9b58:1800000000100\\\",\\\"A:view-8:off:0:q1\\\"]\",\"archiveEntryId\":\"A\",\"epoch\":1,\"side\":\"bid\",\"price\":100.00000001,\"priceExact\":\"100.00000001\",\"start\":1799999999000,\"end\":1800000001000,\"peakUsd\":300.0000000003,\"meanUsd\":200.0000000001,\"durationMs\":2000,\"percentile\":null,\"scopePartial\":true,\"startKnown\":true,\"detectionMode\":\"top-levels\",\"rank\":1,\"valueRuns\":[{\"at\":1799999999000,\"usd\":200.0000000001,\"percentile\":null,\"rank\":1,\"quantity\":2.000000000001,\"quantityExact\":\"2.000000000001\",\"notionalExact\":\"200.0000000001\"},{\"at\":1800000001000,\"usd\":300.0000000003,\"percentile\":null,\"rank\":1,\"quantity\":3.000000000003,\"quantityExact\":\"3.000000000003\",\"notionalExact\":\"300.0000000003\"}],\"valueRunsTruncated\":false,\"endReason\":\"censored\",\"endKnown\":false,\"censoredReason\":\"Observed disconnect\",\"currentSelection\":false}]]",
+    "exactQuantities": [
+      "2.000000000001",
+      "2.000000000001",
+      "3.000000000003",
+      "2.000000000001",
+      "2.000000000001",
+      "3.000000000003"
+    ],
+    "coverage": {
+      "profileId": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+      "state": "partial",
+      "requestComplete": true,
+      "rangeComplete": false,
+      "from": 1800000000580,
+      "to": 1800172799420,
+      "market": "spot",
+      "aggregation": "native",
+      "gaps": [
+        {
+          "from": 1800000003000,
+          "to": 1800000003000,
+          "reason": "Observed disconnect"
+        },
+        {
+          "from": 1800086403000,
+          "to": 1800086403000,
+          "reason": "Observed disconnect"
+        }
+      ],
+      "requestedBandPercent": 10,
+      "profileBandPercent": 10,
+      "requestedTopN": 8,
+      "exact": true,
+      "loadedFrom": 1800000000580,
+      "loadedThrough": 1800172799419,
+      "residentRanges": [
+        {
+          "from": 1800000000580,
+          "to": 1800086400000
+        },
+        {
+          "from": 1800086400000,
+          "to": 1800172799420
+        }
+      ],
+      "unloadedRanges": [],
+      "gapsTruncated": false,
+      "reason": "Loaded history includes source gaps"
+    },
+    "diagnostics": [
+      {
+        "id": "chart",
+        "running": false,
+        "pending": false,
+        "nativeShards": 2,
+        "chunks": 2,
+        "segments": 4,
+        "runs": 6,
+        "bytes": 3584,
+        "limits": {
+          "chunks": 64,
+          "segments": 100000,
+          "runs": 1000000,
+          "bytes": 307200000
+        },
+        "view": {
+          "from": 1800000000580,
+          "to": 1800172799420
+        }
+      }
+    ],
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "cachedReopenSummary": {
+      "n": 5,
+      "method": "nearest-rank",
+      "p50Ms": 14.700000000186265,
+      "p95Ms": 19.09999999962747
+    }
+  },
+  "browserCommand": "PLAYWRIGHT_BASE_URL=http://127.0.0.1:5197 NODE_OPTIONS=--max-old-space-size=512 node_modules/.bin/playwright test tests/browser/wall-archive-ranges.spec.ts --workers=1 --reporter=line",
+  "browserLogSha256": "341ffebf62c3d61194a9f5bf4bf57f5068f8c07780a48581a5acfc43988e9d18",
+  "build": {
+    "defaultCommand": "NODE_OPTIONS=--max-old-space-size=768 npm run build",
+    "defaultResult": "passed (includes strict repository typecheck)",
+    "defaultLogSha256": "a53815ca4bf68ef8ab582afc0246157f1a091c4046523ba435f16a899dc96fbb",
+    "selectedCommand": "NODE_OPTIONS=--max-old-space-size=768 VITE_DATA_MODE=staging VITE_WALL_ARCHIVE_RANGES=1 VITE_WALL_NEWEST_FIRST=1 VITE_HISTORY_TILES=1 node_modules/.bin/vite build --mode staging --outDir logs/storage-wall-range-client/selected-build",
+    "selectedResult": "passed",
+    "selectedLogSha256": "e469bd292b17ca91093469fa64b39a8111038c6ae4d658003b8010c58e215e0f",
+    "artifacts": {
+      "dist/assets/worker-Ba8JbR-5.js": "c9d30486d2d010732e2b40b220bae8b808d85c5ffb019adc8440cdbe652ddeb5",
+      "logs/storage-wall-range-client/selected-build/assets/worker-BMM97MLG.js": "995160db370bbcdaf6508df578785e4e3a03d11edf1f8305c57c82efee6a7fed"
+    }
+  },
+  "sourceSha256": {
+    "src/feed/archived-wall-ranges.ts": "b2386e7ab9b4fc31cb4e7974f5bb03da67948133e11b94871fb1aae2e14616e4",
+    "src/feed/order-walls-archive-service.ts": "bbdba4825a9b252c9ddb71d4536c6d79486ff7f31830e2ad2cd564078403f35b",
+    "src/feed/order-walls-archive.ts": "318dad90f680c04da1b7b2a33dcf499c8e234751de0c90756c6a1578bf0d64b2",
+    "src/feed/prepared-wall-history.ts": "5d65f1da04b1df29ec668680c568297aa2f9e0585a7f6a8d266eb8f67c0d21ca",
+    "src/feed/wall-resident-history.ts": "212fdbf7151c83ad97ca7137c77ab5b9e785b99ce7fc740c61f195ba1ba06958",
+    "tests/archived-wall-ranges.test.ts": "f0c6f57155996f9127ef52637179b6814a25927b7ddfc3f3834ddaf7366f7608",
+    "tests/wall-resident-history.test.ts": "bd5fc1af83b44f7c74bc524879baeae01ff1e1de085e39a99b7aa7a92dc5aa5e",
+    "tests/browser/fixtures/wall-archive-ranges.html": "407c76963362db8b98bc34330bbc2cc2184fb526ac7cd353c014a90d2db3c661",
+    "tests/browser/wall-archive-ranges.spec.ts": "a37bdf7ccd382d78e4a03f01c221cad4bfe1c8a54e864ac701bb40ad0b43b8f9"
+  },
+  "initialFixtureCorrection": {
+    "reason": "The first expansion test supplied a status covering only the old ownership interval. It was correctly refused. The fixture now supplies the original wider validated native status; scope/source guards were not relaxed.",
+    "logSha256": "596d30594227054d0720063fc0741918bb75fcac91b2a4cfc4a1517bf7e58254"
+  },
+  "cleanup": {
+    "ownedLoopbackViteStopped": true,
+    "port5197Absent": true,
+    "testBrowsersExited": true,
+    "userBaselineArtifactUntouched": true
+  },
+  "limits": [
+    "Explicit native projection/protocol fixture with two 24-hour shards and generated financial records, not real venue/cold-provider data.",
+    "Browser service runs in the fixture main thread with Canvas, not the production feed-worker/GPU pipeline or foreground UX.",
+    "Five cached reopen samples on an uncontrolled shared Pi host, with other bounded typechecking during observation; not real server/network latency, normal p95, FPS or a before/after comparison.",
+    "Thirty-day selection is only a small-descriptor/native-result model. Large native records and full worker RSS/mixed live load remain unqualified.",
+    "The existing headed-browser isolation guard remains enforced.",
+    "Native financial correction/supersession authority, aligned shard production, complete dataset routing, live/provider/foreground acceptance and global resource qualification remain open."
+  ]
+}

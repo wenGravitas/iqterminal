@@ -1,3 +1,4 @@
+import {ArchivedWallRangeSession,type ArchivedWallRequest} from './archived-wall-ranges';
 import {WallResidentHistory,wallResidentOverscan,type WallInterval} from './wall-resident-history';
 import type {PreparedWallBase} from './prepared-wall-delta';
 import {PreparedWallPartCache} from './prepared-wall-part-cache';
@@ -61,6 +62,8 @@ interface Subscription {
   historyRevision?:string;
   cachedHistory?: boolean;
   replacingHistory?: {status:OrderWallStatus};
+  archiveRanges?:ArchivedWallRangeSession;
+  rangeUnsupported?:boolean;
   resident?:WallResidentHistory;
   residentAttempts?:Set<string>;
   residentTimer?:ReturnType<typeof setTimeout>;
@@ -139,7 +142,9 @@ export class OrderWallsArchiveService {
   private readonly historyPageMetrics: OrderWallsArchivePageMetrics[] = [];
   private historyPageMetricCount = 0;
 
-  constructor(private readonly emit: (event: Event) => void, private readonly request: typeof fetch = (...args) => fetch(...args), private readonly now = Date.now,private readonly compactPreparedAboveBytes=16*1024*1024) {if(!Number.isSafeInteger(compactPreparedAboveBytes)||compactPreparedAboveBytes<0||compactPreparedAboveBytes>16*1024*1024)throw Error('Invalid compact wall threshold');}
+  constructor(private readonly emit: (event: Event) => void, private readonly request: typeof fetch = (...args) => fetch(...args), private readonly now = Date.now,private readonly compactPreparedAboveBytes=16*1024*1024,private readonly archiveRangeQueries=import.meta.env.VITE_WALL_ARCHIVE_RANGES==='1') {if(!Number.isSafeInteger(compactPreparedAboveBytes)||compactPreparedAboveBytes<0||compactPreparedAboveBytes>16*1024*1024)throw Error('Invalid compact wall threshold');}
+
+  private rangeIdentity(request:OrderWallsArchiveSubscriptionRequest):Pick<ArchivedWallRequest,'market'|'profile'>|undefined {const s=orderWallsSettings(request.settings),a=orderWallsArchiveAvailability(request.market,s,request.profileId);return this.archiveRangeQueries&&!request.currentOnly&&Number.isSafeInteger(request.from)&&Number.isSafeInteger(request.to)&&request.from>0&&request.to>request.from&&request.to-request.from<=366*86400000&&s.mode==='top-levels'&&s.topLevels===8&&!s.minimumNotionalEnabled&&s.minDurationMs===0&&s.aggregation==='native'&&s.searchRangePercent===10&&a.exact&&!a.admissionRequired&&a.market&&a.profileId?{market:a.market,profile:a.profileId}:undefined;}
 
   command(command: WallCommand) {
     if (command.type === 'order-wall-subscribe') this.subscribe(command.id, command.request);
@@ -164,7 +169,7 @@ export class OrderWallsArchiveService {
       sub.currentState = 'unavailable'; sub.currentMessage = 'Threshold Walls use the existing raw depth service.';
       this.publish(sub, 'snapshot', [], this.status(sub)); return;
     }
-    if(!request.currentOnly)this.showWarmHistory(sub);
+    if(!request.currentOnly&&!this.rangeIdentity(request))this.showWarmHistory(sub);
     if (request.followLive) {this.attachCurrentGroup(sub);this.startHistory(sub);}
     else void this.loadHistory(sub);
   }
@@ -186,6 +191,7 @@ export class OrderWallsArchiveService {
     const sub=this.subscriptions.get(id);if(!sub||!Number.isFinite(from)||!Number.isFinite(to)||from>=to)return;
     if(sub.navigationTimer){clearTimeout(sub.navigationTimer);sub.navigationTimer=undefined;}
     const next={from,to,followLive:followLive??to>=this.now()-60_000};
+    if(sub.archiveRanges){sub.viewport=next;sub.request={...sub.request,from,to,followLive:sub.request.followLive||next.followLive};if(sub.request.followLive&&!sub.group)this.attachCurrentGroup(sub);sub.archiveRanges.navigate(next);return;}
     const inside=from>=sub.request.from&&to<=sub.request.to;
     const narrowUnloaded=inside&&(sub.historyStatus?.archive?.loadedThrough??sub.request.from)<from
       &&to-from<(sub.request.to-sub.request.from)*.75;
@@ -270,6 +276,7 @@ export class OrderWallsArchiveService {
 
   retry(id: string) {
     const sub = this.subscriptions.get(id); if (!sub) return;
+    if(sub.archiveRanges){sub.archiveRanges.retry();return;}
     const job = sub.historyJob;
     if(sub.resident&&sub.residentCapacity&&job?.settled&&!job.failure&&job.latest){
       sub.residentCapacity=undefined;this.publishResidentUpdate(sub,job,job.latest);
@@ -303,6 +310,7 @@ export class OrderWallsArchiveService {
 
   unsubscribe(id: string) {
     const sub = this.subscriptions.get(id); if (!sub) return;
+    sub.archiveRanges?.dispose();
     if(sub.residentTimer)clearTimeout(sub.residentTimer);if(sub.navigationTimer)clearTimeout(sub.navigationTimer);sub.resident?.clear();
     this.subscriptions.delete(id);this.releaseWarmInterests(sub.request.currentOnly?undefined:sub.request,sub.historyJob?.request);this.releaseWarmReplay(sub);
     const historyJob = sub.historyJob; sub.historyJob = undefined;
@@ -334,7 +342,7 @@ export class OrderWallsArchiveService {
     for(const sub of this.subscriptions.values())for(const p of [sub.historyProjector,sub.tailProjector])if(p)projectors.add(p);
     for(const group of this.groups.values())if(group.projector)projectors.add(group.projector);
     for(const job of this.historyJobs.values())for(const p of [job.latest?.projector,job.resume?.projector])if(p)projectors.add(p);
-    return { ...this.stats,resident:[...this.subscriptions.values()].filter(sub=>sub.resident).map(sub=>({id:sub.id,...sub.resident!.diagnostics(),viewport:sub.viewport,missing:sub.resident!.missing(sub.viewport),capacity:sub.residentCapacity})), preparedPartCache:this.preparedPartCache.diagnostics(),projections:[...projectors].map(projector=>projector.diagnostics()), subscriptions: this.subscriptions.size, groups: this.groups.size,
+    return { ...this.stats,archivedRanges:[...this.subscriptions.values()].filter(sub=>sub.archiveRanges).map(sub=>({id:sub.id,...sub.archiveRanges!.diagnostics()})),resident:[...this.subscriptions.values()].filter(sub=>sub.resident).map(sub=>({id:sub.id,...sub.resident!.diagnostics(),viewport:sub.viewport,missing:sub.resident!.missing(sub.viewport),capacity:sub.residentCapacity})), preparedPartCache:this.preparedPartCache.diagnostics(),projections:[...projectors].map(projector=>projector.diagnostics()), subscriptions: this.subscriptions.size, groups: this.groups.size,
       historyJobs: this.historyJobs.size,historyActiveJobs:[...this.historyJobs.values()].filter(job=>!job.settled).length,
       historyJobStates:[...this.historyJobs.values()].map(job=>({request:{market:job.request.market,from:job.request.from,to:job.request.to,profileId:job.request.profileId},settled:job.settled,failed:Boolean(job.failure),hasProjector:Boolean(job.latest?.projector),preparedRevisionReused:Boolean(job.latest?.preparedRevisionReused),preparedFinalization:job.latest?.preparedFinalization,preparedDelta:job.latest?.preparedDelta?{...job.latest.preparedDelta,patches:job.latest.preparedDelta.patches.length}:undefined,eligibleRange:job.eligibleRange})),readerControl:wallReadControlScheduler.diagnostics(),
       warmTimings:this.warmTimings.map(timing=>({...timing})),warmEntries:this.warmHistory.size,warmBuilds:this.warmBuilds.size,warmReplayJobs:this.warmReplays.size,warmReplaySegments:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.presentation.size??0),0),warmReplayRuns:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.runs??0),0),warmCompactEntries:[...this.warmHistory.values()].filter(entry=>entry.compact).length,warmReplayConsumers:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.subscribers.size??0),0),warmSegments:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.segments,0),warmRuns:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.runs,0),warmBytes:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.bytes,0),
@@ -514,8 +522,19 @@ export class OrderWallsArchiveService {
     }
   }
 
-  private startHistory(sub: Subscription, requestOverride?: OrderWallsArchiveRequest) {
+  private startHistory(sub: Subscription, requestOverride?: OrderWallsArchiveRequest,bypassRanges=false) {
     if (this.disposed || this.subscriptions.get(sub.id) !== sub || sub.archiveStarted) return;
+    const rangeIdentity=!bypassRanges&&!sub.rangeUnsupported&&!requestOverride?this.rangeIdentity(sub.request):undefined;
+    if(rangeIdentity){
+      sub.archiveStarted=true;
+      const session=new ArchivedWallRangeSession(rangeIdentity,sub.viewport,emptyArchiveStatus(sub.request,'loading'),this.request,async(shard,signal)=>{
+        this.stats.historyRequests++;
+        return loadOrderWallsArchive({request:{market:sub.request.market,settings:sub.settings,profileId:rangeIdentity.profile,from:shard.request.from,to:shard.request.to},signal,fetcher:this.request,preparedPartCache:this.preparedPartCache,requirePreparedProjection:true});
+      },()=>{if(this.subscriptions.get(sub.id)===sub&&!this.disposed)this.publish(sub,'patch',this.diff(sub,this.visibleSegments(sub)),this.status(sub));},()=>{
+        if(this.subscriptions.get(sub.id)!==sub||this.disposed)return;session.dispose();sub.archiveRanges=undefined;sub.resident=undefined;sub.rangeUnsupported=true;sub.archiveStarted=false;this.showWarmHistory(sub);this.startHistory(sub,undefined,true);
+      });
+      sub.archiveRanges=session;sub.resident=session.resident;session.navigate(sub.viewport);return;
+    }
     sub.archiveStarted = true;
     if(sub.request.currentOnly)return;
     const request:OrderWallsArchiveRequest=requestOverride??{market:sub.request.market,from:sub.request.from,to:sub.request.to,
@@ -576,6 +595,7 @@ export class OrderWallsArchiveService {
   }
 
   private startResidentMissing(sub:Subscription){
+    if(sub.archiveRanges){sub.archiveRanges.navigate(sub.viewport);return;}
     if(this.disposed||this.subscriptions.get(sub.id)!==sub||!sub.resident||sub.residentCapacity||sub.historyJob&&!sub.historyJob.settled)return;
     const view=sub.viewport;
     // Overscan is bounded to one hour per edge and shares the same record
@@ -1043,7 +1063,7 @@ export class OrderWallsArchiveService {
 
   private status(sub: Subscription): OrderWallStatus {
     const settings = sub.settings, availability = orderWallsArchiveProfileId(sub.request.market, settings);
-    const status = (sub.resident?this.residentStatus(sub):sub.historyStatus) ?? { state: 'loading' as const, message: 'Waiting for the current selected-profile archive.',
+    const status = (sub.archiveRanges?sub.archiveRanges.status():sub.resident?this.residentStatus(sub):sub.historyStatus) ?? { state: 'loading' as const, message: 'Waiting for the current selected-profile archive.',
       archive: emptyArchiveStatus(sub.request, 'loading') };
     const baseArchive = status.archive ?? emptyArchiveStatus(sub.request, 'loading');
     const priorArchive = baseArchive;

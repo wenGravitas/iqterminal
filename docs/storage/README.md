@@ -9,7 +9,7 @@ The storage audit, sizing model, architecture decision, backend candidate and mi
 - [Migration/recovery](https://github.com/wenGravitas/iqterminal-server/blob/feature/tiered-history-storage/docs/storage/migration.md)
 - [Explicit implementation status and remaining engineering](https://github.com/wenGravitas/iqterminal-server/blob/feature/tiered-history-storage/docs/storage/status.md)
 
-No archive feature is enabled on staging. No frontend rendering/cache architecture was replaced. The backend candidate reuses the existing native wall importer and source-fence contract for matching sealed historical views. It does not yet supply arbitrary cross-partition archived navigation or all dataset adapters.
+No archive feature is enabled on staging. No frontend rendering/cache architecture was replaced. The backend candidate reuses the existing native wall importer and source-fence contract for matching sealed historical views. A separately gated browser consumer now loads independently authenticated shards across requested ranges through existing resident presentations. It remains undeployed and does not establish production-scale arbitrary navigation, financial correction authority or complete dataset adapters. See [archived wall navigation and validation](archived-wall-ranges.md).
 
 ## Pi evidence
 

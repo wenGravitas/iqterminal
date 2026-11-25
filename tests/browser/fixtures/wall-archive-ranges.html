@@ -1,0 +1,39 @@
+<!doctype html><meta charset="utf-8"><title>Explicit archived wall range fixture</title><canvas width="900" height="400"></canvas>
+<script type="module">
+import {OrderWallsArchiveService} from '/src/feed/order-walls-archive-service.ts';
+import {OrderWallsPrimitive} from '/src/chart/order-walls.ts';
+window.runArchivedWallRanges=async(fixtures,settings)=>{
+ const base=fixtures[0].request.from,end=fixtures.at(-1).request.to,canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d',{willReadFrequently:true});
+ const hash=async text=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text)))].map(n=>n.toString(16).padStart(2,'0')).join('');
+ const shards=await Promise.all(fixtures.map(async f=>({key:await hash('key:'+f.request.from),partition:await hash('partition:'+f.request.from),request:f.request,canonicalKey:f.discovery.sourceSnapshot.key,projectionKey:f.manifest.key,sourceToken:f.source.token,catalogueState:'partial'})));
+ let view={from:base+100,to:fixtures[0].request.to-100},held=false,offlineBodies=false,release;
+ const gate=new Promise(r=>release=r),calls=[],events=[],source=new Map();let status={state:'loading'};
+ const primitive=new OrderWallsPrimitive(settings,1000,true,0,()=>true,false,false);primitive.attached({requestUpdate(){}});
+ const fetcher=async(input,init)=>{const u=new URL(String(input),location.origin);calls.push(u.pathname);
+  if(u.pathname.endsWith('/archive-ranges')){const request={market:u.searchParams.get('market'),profile:u.searchParams.get('profile'),from:Number(u.searchParams.get('from')),to:Number(u.searchParams.get('to'))},selected=shards.filter(s=>s.request.from<request.to&&s.request.to>request.from),spans=selected.map(s=>({from:Math.max(request.from,s.request.from),to:Math.min(request.to,s.request.to),state:'archived',shard:s.key})),body={request,shards:selected,spans};return Response.json({version:1,kind:'iq-archived-wall-range-plan-v1',delivery:{version:1,archiveOnlyReads:true},...body,revision:await hash(JSON.stringify(body)),coverage:{scope:'catalogue-only',nativeVerified:false,requestComplete:false,state:'archived'},financialAcceptance:false,retirementAuthorized:false});}
+  if(new Headers(init?.headers).get('X-IQ-Wall-Archive-Only')!=='1')throw Error('Archive-only selection lost');
+  const f=fixtures.find(f=>u.pathname.endsWith('/projection-batch')?f.manifest.key===u.searchParams.get('key'):f.request.from===Number(u.searchParams.get('from')));if(!f)throw Error('Unexpected hot request '+u.pathname);
+  if(u.pathname.endsWith('/discover'))return Response.json(f.discovery);
+  if(u.pathname.endsWith('/source'))return Response.json(f.source);
+  if(u.pathname.endsWith('/projection-batch')){if(offlineBodies)throw Error('Body origin intentionally offline');if(held&&f===fixtures[1])await gate;return new Response(f.texts.join('\n')+'\n',{headers:{'x-iq-wall-start':'0','x-iq-wall-next':String(f.texts.length),'x-iq-wall-parts':String(f.texts.length),'x-iq-chunk-key':f.manifest.key,'x-iq-source-revision':f.manifest.sourceToken}});}
+  throw Error('Canonical replay forbidden '+u.pathname);
+ };
+ const service=new OrderWallsArchiveService(event=>{events.push(event);status=event.status;if(event.kind==='snapshot'){source.clear();for(const s of event.segments??[])source.set(s.id,s);primitive.setSnapshot(event.segments??[],status);}else{for(const p of event.patches??[]){if(p.segment)source.set(p.id,p.segment);else source.delete(p.id);}primitive.patch(event.patches??[],status);}},fetcher,()=>end+86400000,16*1024*1024,true);
+ const wait=async(check)=>{const stop=performance.now()+10000;while(!check()){if(performance.now()>stop)throw Error('Fixture deadline '+JSON.stringify(service.diagnostics().archivedRanges));await new Promise(r=>setTimeout(r,5));}};
+ const subscribe=()=>service.subscribe('chart',{market:'binance-spot',...view,settings,followLive:false});
+ const draw=()=>{const span=(view.to-view.from)/1000,left=(view.from-base)/1000,rc={timeScale:{visibleRange:()=>({from:left,to:left+span}),indexToX:i=>(i-left)*900/span,xToIndex:x=>x*span/900+left},priceScale:{priceRange:()=>({min:99.9,max:100.1}),options:{mode:'linear'},priceToY:p=>(100.1-p)*400/.2,yToPrice:y=>100.1-y*.2/400},dataLayer:{indexToTimeFloat:i=>base/1000+i,timeToIndexFloat:t=>t-base/1000},plotWidth:900,plotHeight:400,dpr:1,theme:{background:'#000',axisText:'#aaa'}};ctx.clearRect(0,0,900,400);primitive.draw(ctx,rc);return ctx.getImageData(0,0,900,400).data.some((v,i)=>i%4===3&&v);};
+ try{
+  subscribe();await wait(()=>service.diagnostics().archivedRanges[0]?.nativeShards===1&&!service.diagnostics().archivedRanges[0]?.running);draw();
+  const financial=s=>{const {residentRange,...record}=s;return record;};const prior=new Map(source),before=JSON.stringify([...prior].map(([id,s])=>[id,financial(s)])),eventStart=events.length;held=true;view={from:base+100,to:end-100};service.updateViewport('chart',view.from,view.to,false);
+  await wait(()=>calls.filter(p=>p.endsWith('/projection-batch')).length===2);
+  let blankFrames=0;for(let i=0;i<30;i++){if(!draw())blankFrames++;await new Promise(r=>requestAnimationFrame(r));}
+  const removedDuringLoad=events.slice(eventStart).flatMap(e=>e.patches??[]).filter(p=>!p.segment&&prior.has(p.id)).length;
+  for(const [id,s]of prior)if(JSON.stringify(financial(source.get(id)))!==JSON.stringify(financial(s)))throw Error('Retained source changed while loading');
+  release();await wait(()=>service.diagnostics().archivedRanges[0]?.nativeShards===2&&!service.diagnostics().archivedRanges[0]?.running);
+  const loadedCalls=calls.length,downloads=calls.filter(p=>p.endsWith('/projection-batch')).length;offlineBodies=true;
+  for(let i=0;i<20;i++){const inset=200+i*20;view={from:base+inset,to:end-inset};service.updateViewport('chart',view.from,view.to,false);draw();await new Promise(r=>requestAnimationFrame(r));}
+  const panAddedRequests=calls.length-loadedCalls,cachedReopenMs=[];for(let i=0;i<5;i++){service.unsubscribe('chart');const began=performance.now();subscribe();await wait(()=>service.diagnostics().archivedRanges[0]?.nativeShards===2&&!service.diagnostics().archivedRanges[0]?.running);cachedReopenMs.push(performance.now()-began);}
+  return {scope:'explicit headless Pi Chromium native-reader/Canvas fixture; not live or foreground acceptance',blankFrames,removedDuringLoad,panAddedRequests,initialDownloads:downloads,finalDownloads:calls.filter(p=>p.endsWith('/projection-batch')).length,cachedReopenMs,exactSourceBefore:before,exactQuantities:[...source.values()].flatMap(s=>s.valueRuns.map(p=>p.quantityExact)),coverage:status.archive,diagnostics:service.diagnostics().archivedRanges,userAgent:navigator.userAgent};
+ }finally{release();service.dispose();primitive.detached();}
+};
+</script>
