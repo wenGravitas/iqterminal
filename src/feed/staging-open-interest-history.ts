@@ -1,4 +1,5 @@
 /** Dedicated-worker history owner. It never owns the live polling lifecycle. */
+import {HistoryResponseFailure as ReadFailure,readHistoryJson} from './history-json';
 import {OI_HISTORY_CLIENT_LIMITS as LIMIT,oiHistoryRange,oiHistoryKey,planOiHistory,validateOiHistoryPayload,type OiHistoryPayload,type OiHistoryRange} from './raw-open-interest-history';
 export type OiHistoryEvent=
  |{type:'raw-open-interest-history';ids:string[];key:string;payload:OiHistoryPayload}
@@ -6,21 +7,8 @@ export type OiHistoryEvent=
 interface Demand {range:OiHistoryRange;windows:OiHistoryRange[];sent:Map<string,number>;known:Set<string>;blocked:Set<string>}
 interface Cached {payload:OiHistoryPayload;bytes:number;serial:number}
 interface Attempt {count:number;retryAt:number;retryable:boolean}
-class ReadFailure extends Error {constructor(readonly reason:'network'|'invalid'|'disabled',readonly retryable:boolean){super('Historical OI unavailable');}}
-/** Response limits apply to decoded bytes, including chunked/gzipped fetch bodies. */
-export async function readOiHistoryResponse(response:Response,request:OiHistoryRange,signal:AbortSignal){
- if(!response.ok){await response.body?.cancel();throw new ReadFailure(response.status===404?'disabled':'network',[429,500,502,503,504].includes(response.status));}
- if(Number(response.headers.get('content-length')??0)>LIMIT.responseBytes){await response.body?.cancel();throw new ReadFailure('invalid',false);}
- if(!response.body)throw new ReadFailure('invalid',false);
- const reader=response.body.getReader(),chunks:Uint8Array[]=[];let size=0,done=false;
- let cancelling:Promise<void>|undefined;const cancel=()=>cancelling??=reader.cancel().catch(()=>{}),abort=()=>{void cancel();};
- signal.addEventListener('abort',abort,{once:true});if(signal.aborted)abort();
- try{
-  for(;;){signal.throwIfAborted();const part=await reader.read();signal.throwIfAborted();if(part.done){done=true;break;}size+=part.value.byteLength;if(size>LIMIT.responseBytes)throw new ReadFailure('invalid',false);chunks.push(part.value);}
-  const bytes=new Uint8Array(size);let at=0;for(const chunk of chunks){bytes.set(chunk,at);at+=chunk.byteLength;}
-  try{return {payload:validateOiHistoryPayload(JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes)),request),bytes:size};}catch{throw new ReadFailure('invalid',false);}
- }finally{signal.removeEventListener('abort',abort);try{if(cancelling)await cancelling;else if(!done)await cancel();}finally{reader.releaseLock();}}
-}
+/** Limits apply to decoded bytes, including chunked/gzipped fetch bodies. */
+export function readOiHistoryResponse(response:Response,request:OiHistoryRange,signal:AbortSignal){return readHistoryJson(response,signal,LIMIT.responseBytes,value=>validateOiHistoryPayload(value,request));}
 export class StagingOpenInterestHistory {
  private enabled:boolean;private dead=false;private disabledByServer=false;private demands=new Map<string,Demand>();private cache=new Map<string,Cached>();private attempts=new Map<string,Attempt>();
  private active?:{controller:AbortController;work:Promise<void>};private timer?:ReturnType<typeof setTimeout>;private serial=0;private cursor=0;private cacheBytes=0;

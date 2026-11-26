@@ -1,4 +1,5 @@
 /** Read-only publication-as-of wire contract. No unit/financial authority is inferred. */
+import {historyCatalogueHead as head,historyGaps as gaps} from './history-archive-metadata';
 import {RAW_OPEN_INTEREST_MAX_RANGE_MS,RAW_OPEN_INTEREST_MAX_OBSERVATIONS,RAW_OPEN_INTEREST_VENUES,compatibleRawOpenInterestVenues,validateRawOpenInterestObservations,validateRawOpenInterestConflicts,observationKey,type RawOpenInterestObservation,type RawOpenInterestConflict,type RawOpenInterestVenue} from './raw-open-interest';
 export interface OiHistoryRange {from:number;to:number;venues:RawOpenInterestVenue[]}
 export interface OiCatalogueHead {version:1;origin:string;authority:string;sequence:number;hash:string;partitions:number;rawBytes:number;proofs:number;proofBytes:number}
@@ -27,14 +28,6 @@ export function oiHistoryRange(value:OiHistoryRange,maxRange=RAW_OPEN_INTEREST_M
  return {from:value.from,to:value.to,venues:compatibleRawOpenInterestVenues(value.venues)};
 }
 export function oiHistoryKey(range:OiHistoryRange){return `${range.from}:${range.to}:${compatibleRawOpenInterestVenues(range.venues).join(',')}`;}
-function head(value:unknown):OiCatalogueHead {
- if(!record(value)||value.version!==1||!hash(value.origin)||!hash(value.authority)||!hash(value.hash)||!['sequence','partitions','rawBytes','proofs','proofBytes'].every(k=>integer(value[k])))fail();
- return {version:1,origin:value.origin,authority:value.authority,sequence:value.sequence,hash:value.hash,partitions:value.partitions,rawBytes:value.rawBytes,proofs:value.proofs,proofBytes:value.proofBytes};
-}
-function gaps(value:unknown,from:number,to:number,reason:boolean,budget:{gaps:number}):OiHistoryGap[]{
- if(!Array.isArray(value)||value.length>4096||budget.gaps+value.length>4096)fail();budget.gaps+=value.length;
- return value.map(g=>{if(!record(g)||!integer(g.from,1)||!integer(g.to,1)||g.from<from||g.to>to||g.from>=g.to||reason&&(typeof g.reason!=='string'||g.reason.length>500))fail();return {from:g.from,to:g.to,...(reason?{reason:g.reason}:{})};});
-}
 export function validateOiHistoryPayload(value:unknown,range:OiHistoryRange):OiHistoryPayload {
  const request=oiHistoryRange(range);if(!record(value)||value.version!==1||value.market!=='perpetual'||value.nativeSymbol!=='BTC'||value.units!=='BTC'||value.timeBasis!=='sourceTimeMs'||value.semantics!=='observed-open-interest-publication-asof'||value.from!==request.from||value.to!==request.to||!bool(value.partial)||!bool(value.truncated)||!Array.isArray(value.venues)||value.venues.length!==request.venues.length||new Set(value.venues).size!==request.venues.length||value.venues.some(v=>!request.venues.includes(v))||!['sourceAuthorityVerified','currentReconciled','financialAccepted','recoveryQualified','retirementAuthorized'].every(k=>value[k]===false)||!Array.isArray(value.observations)||value.observations.length>RAW_OPEN_INTEREST_MAX_OBSERVATIONS)fail();
  const observations=validateRawOpenInterestObservations(value.observations,request.venues,request.from,request.to);
