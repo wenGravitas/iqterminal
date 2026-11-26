@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "baseCommit": "7865e8352b34ee8a5fed1d73fc5ebe89ae7ed76d",
+  "scope": "Local correctness and controlled real-worker browser integration; no live/provider/foreground performance acceptance",
+  "runtime": {
+    "node": "v22.19.0",
+    "arch": "arm64",
+    "platform": "linux"
+  },
+  "unit": {
+    "command": "pnpm exec vitest run tests/raw-open-interest.test.ts tests/raw-open-interest-resident.test.ts tests/raw-open-interest-history-reader.test.ts",
+    "files": 3,
+    "passed": 43,
+    "failed": 0,
+    "logSha256": "17f0992a491c9b13df03e78d43d2e8fda39209018856d6d0c5797ccb061e6a4f"
+  },
+  "featureBuild": {
+    "command": "VITE_DIAGNOSTICS=1 VITE_DATA_MODE=staging VITE_OI_HISTORY=1 pnpm build",
+    "exitCode": 0,
+    "typecheckStage": "tsc --noEmit"
+  },
+  "finalDisabledBuild": {
+    "command": "VITE_OI_HISTORY=0 VITE_DIAGNOSTICS=1 pnpm build",
+    "exitCode": 0,
+    "typecheckStage": "tsc --noEmit"
+  },
+  "browser": {
+    "mode": "headless Chromium, inherited SwiftShader flags, isolated preview 127.0.0.1:4187",
+    "source": "explicit HTTP/WebSocket transport fixtures, no fixture connectivity fallback in product code",
+    "navigation": "programmatic chart range plus normal panel viewport method; real Timeframe select control",
+    "checks": {
+      "historicalWorkerAndTimeframe": {
+        "command": "IQ_TEST_OI_HISTORY=1 pnpm exec playwright test --config=/tmp/iq-oi-history-client-playwright.config.mjs open-interest-history.spec.ts",
+        "passed": 1,
+        "failed": 0,
+        "logSha256": "d6af7503e6d07afe30313378c5767e1e3540b9160e3ca31da0a74c2c4db0164c"
+      },
+      "existingSmaLifecycle": {
+        "command": "IQ_TEST_OI_HISTORY=1 pnpm exec playwright test --config=/tmp/iq-oi-history-client-playwright.config.mjs open-interest-sma.spec.ts",
+        "passed": 1,
+        "failed": 0,
+        "logSha256": "13c2b94fe51d182e59542616ee9afcad3cc7759fa1e73508e4f0acdb858d48cb"
+      }
+    }
+  },
+  "coverage": [
+    "exact decimals, epoch zero and original gap/source markers",
+    "separate native clock and shared pinned publication metadata",
+    "missing/partial coverage consistency and false-authority refusal",
+    "decoded body byte and metadata cardinality bounds",
+    "single transfer, bounded centre-first raw windows and retry bookkeeping",
+    "shared demands, resident-known suppression and fresh-result broadcast",
+    "cached reopen for new consumers after endpoint disable",
+    "obsolete response cache admission without stale delivery",
+    "finite retries, caller cancellation, body cancellation and close drain",
+    "resident controller retains live/old rows while history fails",
+    "1m-to-5m navigation retains identical exact observation tuples without another target-window request",
+    "explicit fixture/recorder context separation"
+  ],
+  "priorAttempts": [
+    {
+      "check": "standalone typecheck",
+      "result": "test mutation callbacks needed explicit parameter types; corrected before final builds"
+    },
+    {
+      "check": "expanded browser timeframe case",
+      "result": "wrong .chart-panel selector timed out; corrected to .candle-panel, affected case then passed"
+    }
+  ],
+  "limitations": [
+    "No genuine venue or configured S3 warm gateway queried by browser fixtures",
+    "No deployment, source TTL/retention change, paid provisioning or main merge",
+    "No native SQL ownership/cancellation, concurrent live ingestion or p50/p95 acceptance",
+    "Wide raw overview remains capacity-limited pending aggregate/LOD support",
+    "Archive-only first-load unit proof and source-time correction resealing remain open",
+    "Explicit retry API wired; normal user retry affordance remains a rollout task",
+    "Foreground Raspberry Pi GPU/navigation acceptance remains open"
+  ],
+  "sourceSha256": {
+    "src/feed/client.ts": "0747c253f840b0bda2195ca81d31d0b82c8b8ef318a29e94bb5fc302189ffb4e",
+    "src/feed/protocol.ts": "b3f0b3a8a68252409e3df021e4204a570edf3cf3d822ab1f0cb7d09a8294312b",
+    "src/feed/raw-open-interest.ts": "339ab0611cfa3e1b39748ac0621ec592be92862debb46c4e99da315cc6f42131",
+    "src/feed/staging-raw-open-interest.ts": "7d34d1ef85975b0b0a2ddb224358c4dbf32371e76a4ac41f5ecf630e1bf23c9f",
+    "src/feed/worker.ts": "c2e36c5d5a6d096b64167eabe77d33dbd21d9654157a08ca30005999d8940c5a",
+    "src/feed/raw-open-interest-history.ts": "08718874720bb684466ecbc32fccd59b3d60d0bd3b1c997e6087f61b93999053",
+    "src/feed/staging-open-interest-history.ts": "39151300fa31d308be919ce88c2f59c7e35b49dc23385b3606fd09d4fc129bb8",
+    "src/indicators/open-interest-data.ts": "20d68de58b80872c7144cfa4cff54ee60766a173b971f5e3db64c0259d46ecec",
+    "src/panel.ts": "780afae70a780bbe847c8ff2724443adb3722e97339459f6bc4478146b57917c",
+    "tests/raw-open-interest-history-reader.test.ts": "dba4a6ac88eb6af1cf87e239995868d1a799c969ef42166d1f4aa909b23b2b31",
+    "tests/helpers/oi-history-wire.ts": "836d62b4602b689596233d6b2fe3a1538cbe279d5a4e3163884e58af2c54700e",
+    "tests/browser/open-interest-history.spec.ts": "e3588330f0a8115c15b778709aece2a98da5a74713d8ae0a13f45bbbd641a1f7",
+    "tests/raw-open-interest-resident.test.ts": "15b04bffe9c560831c040ccae62b10ad3e432f12a0a93e19be78ab26015bedcb"
+  }
+}

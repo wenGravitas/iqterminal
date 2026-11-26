@@ -1,5 +1,6 @@
 import { duration, instrumentOf, marketOf, type Candle, type Series } from '../feed/protocol';
 import type { FeedClient } from '../feed/client';
+import {OI_HISTORY_CLIENT_LIMITS,oiHistoryKey,type OiHistoryRange} from '../feed/raw-open-interest-history';
 import {
   RAW_OPEN_INTEREST_MAX_AGE_MS,
   RAW_OPEN_INTEREST_VENUES,
@@ -52,7 +53,7 @@ export function openInterestSettings(value: unknown): OpenInterestSettings {
 
 /** Project as-of source states onto the host candle timeline without interpolation or synthetic bars. */
 export function projectOpenInterest(history: RawOpenInterestHistory, payload: RawOpenInterestPayload | undefined,
-  venues: readonly RawOpenInterestVenue[], times: readonly number[], intervalMs: number, now: number) {
+  venues: readonly RawOpenInterestVenue[], times: readonly number[], intervalMs: number, now: number, coverage:readonly {from:number;to:number;partial:boolean}[] = []) {
   const lines = new Map<string, OpenInterestLine>(), selected = compatibleRawOpenInterestVenues(venues);
   const payloadFrom = Math.max(1, (times[0] ?? now) - RAW_OPEN_INTEREST_MAX_AGE_MS);
   const payloadTo = Math.min(now, (times.at(-1) ?? now) + intervalMs);
@@ -69,8 +70,10 @@ export function projectOpenInterest(history: RawOpenInterestHistory, payload: Ra
     let sampleIndex = 0, previousKey = '', previousSample: RawOpenInterestObservation | undefined;
     let lastConsumedSample: RawOpenInterestObservation | undefined, sawUsableSample = false;
     let barrierIndex = 0, barrierTime = -1;
+    let previousPartialHistory = false;
     for (let index = 0; index < times.length; index++) {
       const time = times[index]!, intervalEnd = time + intervalMs;
+      const partialHistory = coverage.length > 0 && coverage.some(c => c.partial && time < c.to && intervalEnd > c.from);
       const asOf = Math.min(now, intervalEnd - 1);
       let sourceReset = false;
       while (sampleIndex < samples.length && samples[sampleIndex]!.sourceTimeMs <= asOf) {
@@ -91,10 +94,10 @@ export function projectOpenInterest(history: RawOpenInterestHistory, payload: Ra
       const usable = Boolean(sample && !blocked && sample.units === 'BTC' && verified && sample.quality === 'valid'
         && ageMs !== null && ageMs <= RAW_OPEN_INTEREST_MAX_AGE_MS && sample.sourceTimeMs <= now);
       const historyReset = Boolean(usable && !sawUsableSample && (payload?.truncated || (payload?.invalidRows ?? 0) > 0));
-      const reset = Boolean(sourceReset || historyReset || sample && changedSample && (sample.gapBefore || previousSample && (previousSample.epoch !== sample.epoch
+      const reset = Boolean(sourceReset || historyReset || partialHistory && !previousPartialHistory || sample && changedSample && (sample.gapBefore || previousSample && (previousSample.epoch !== sample.epoch
         || sample.sourceTimeMs - previousSample.sourceTimeMs > RAW_OPEN_INTEREST_MAX_AGE_MS)));
       const stale = Boolean(sample && ageMs !== null && ageMs > RAW_OPEN_INTEREST_MAX_AGE_MS);
-      const quality: OpenInterestPoint['quality'] = usable ? (reset || payload?.truncated ? 'partial' : 'complete')
+      const quality: OpenInterestPoint['quality'] = usable ? (reset || payload?.truncated || partialHistory ? 'partial' : 'complete')
         : blocked ? 'partial' : stale ? 'stale' : sample && (!verified || sample.units !== 'BTC' || sample.quality !== 'valid') ? 'partial' : 'unavailable';
       points.push({ time, value: usable ? sample!.value : null, sourceTimeMs: sample?.sourceTimeMs ?? null,
         observedAtMs: sample?.observedAtMs ?? null, ageMs, epoch: sample?.epoch ?? null, unit: sample?.units ?? null,
@@ -102,6 +105,7 @@ export function projectOpenInterest(history: RawOpenInterestHistory, payload: Ra
       if (usable) { anyAvailable = true; anyPartial ||= reset || Boolean(payload?.truncated || payload?.invalidRows); sawUsableSample = true; }
       else { anyPartial = true; if (stale) anyStale = true; }
       if (changedSample && sample) { previousKey = currentKey; previousSample = sample; }
+      previousPartialHistory = partialHistory;
     }
     perVenue.set(venue, points);
     lines.set(venue, { id: venue, name: venueLabel(venue), points });
@@ -154,6 +158,11 @@ export class OpenInterestDataController {
   private generation = 0;
   private subscribed = false;
   private payload?: RawOpenInterestPayload;
+  private rawContext?: 'fixture' | 'recorder';
+  private historyCoverage = new Map<string,{from:number;to:number;partial:boolean;retryable:boolean;publication?:{checkpoint:string;generation:number};hotAsOfMs?:number}>();
+  private historyStatuses = new Map<string,{range:OiHistoryRange;state:string;reason?:string}>();
+  private viewport?: {from:number;to:number};
+  private viewportRequestKey = '';
   private feedError = '';
   private publishedIds = new Set<string>();
   private dataRevision = 0;
@@ -165,8 +174,8 @@ export class OpenInterestDataController {
   private readonly visibilityListener = () => this.syncSubscription();
 
   constructor(private readonly chartId: string, private readonly instanceId: string, private readonly feed: FeedClient,
-    private readonly registry: ChartNumericOutputRegistry, settings: unknown, series: Series, private readonly now = Date.now, historyOptions: RawOpenInterestHistoryOptions = {}) {
-    this.history = new RawOpenInterestHistory(historyOptions);
+    private readonly registry: ChartNumericOutputRegistry, settings: unknown, series: Series, private readonly now = Date.now, historyOptions: RawOpenInterestHistoryOptions = {}, private readonly historyEnabled = import.meta.env.VITE_OI_HISTORY === '1') {
+    this.history = new RawOpenInterestHistory({...(historyEnabled?{maxObservations:32_000,maxWindows:OI_HISTORY_CLIENT_LIMITS.windows}:{}),...historyOptions});
     this.settings = openInterestSettings(settings); this.series = series; this.contextId = numericOutputContextId(series);
     document.addEventListener('visibilitychange', this.visibilityListener);
     this.publishOutputs(true);
@@ -187,7 +196,7 @@ export class OpenInterestDataController {
       this.contextId = nextContext; this.contextRevision++;
       const canRetainPerpetualHistory = marketOf(previousSeries) === 'perpetual' && marketOf(series) === 'perpetual'
         && instrumentOf(previousSeries).base === 'BTC' && instrumentOf(series).base === 'BTC';
-      if (!canRetainPerpetualHistory) { this.history.clear(); this.payload = undefined; }
+      if (!canRetainPerpetualHistory) { this.history.clear(); this.payload = undefined; this.historyCoverage.clear(); this.historyStatuses.clear(); this.viewport = undefined; this.viewportRequestKey = ''; }
       this.frameCache = undefined; this.hostKey = '';
     } else if (venuesChanged || intervalChanged) { this.contextRevision++; this.frameCache = undefined; }
     if (intervalChanged) { this.hostKey = ''; this.hostTimes = []; }
@@ -220,7 +229,18 @@ export class OpenInterestDataController {
     this.publishOutputs(previousLength !== candles.length || !previousLength || timesChanged || closedChanged);
   }
 
+  get historicalEnabled(){return this.historyEnabled;}
   setDataDemand(demanded: boolean) { if (this.dead || this.dataDemand === demanded) return; this.dataDemand = demanded; this.syncSubscription(); }
+  setViewport(from:number,to:number) {
+    if(!this.historyEnabled||this.dead||!Number.isFinite(from)||!Number.isFinite(to)||from>=to)return;
+    from=Math.max(1,Math.floor(from));to=Math.ceil(to);if(!Number.isSafeInteger(from)||!Number.isSafeInteger(to))return;
+    if(this.viewport?.from!==from||this.viewport.to!==to)this.historyStatuses.clear();this.viewport={from,to};
+    if(!this.subscribed)return;
+    const resident=new Set(this.history.retainedWindows().filter(w=>w.resident).map(w=>w.key));
+    const known=[...this.historyCoverage].filter(([key,c])=>resident.has(key)&&!c.retryable).map(([key])=>key).sort().slice(0,OI_HISTORY_CLIENT_LIMITS.windows);
+    const key=JSON.stringify([from,to,known]);if(key===this.viewportRequestKey)return;this.viewportRequestKey=key;
+    this.feed.updateRawOpenInterestViewport(`raw-open-interest:${this.chartId}:${this.instanceId}`,Math.max(1,from-RAW_OPEN_INTEREST_MAX_AGE_MS),to,known);
+  }
   setHostVisible(visible: boolean) { if (this.dead || this.hostVisible === visible) return; this.hostVisible = visible; this.syncSubscription(); }
   subscribe(listener: (event: RawOpenInterestEvent) => void) { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; }
   settingsSnapshot() { return { ...this.settings, venues: [...this.settings.venues], hidden: [...this.settings.hidden] }; }
@@ -239,12 +259,13 @@ export class OpenInterestDataController {
     return { demanded: this.dataDemand, hostVisible: this.hostVisible, subscribed: this.subscribed, feedError: this.feedError,
       retainedObservations: this.history.diagnostics().retained, contextRevision: this.contextRevision, dataRevision: this.dataRevision,
       outputPublications: this.outputPublications, subscriptionStarts: this.subscriptionStarts, subscriptionStops: this.subscriptionStops,
+      historyEnabled:this.historyEnabled,history:this.history.diagnostics(),historyCoverage:[...this.historyCoverage].map(([key,value])=>({key,...value})),historyStatuses:[...this.historyStatuses.values()],
       outputRevisions: Object.fromEntries([...this.publishedIds].map(id => [id, this.registry.get(id)?.revision ?? 0])) };
   }
 
   dispose() {
     if (this.dead) return; this.dead = true; document.removeEventListener('visibilitychange', this.visibilityListener);
-    this.release?.(); this.release = undefined; this.listeners.clear(); this.registry.releaseOwner(this.instanceId, 'Open Interest was removed.'); this.history.clear(); this.frameCache = undefined;
+    this.release?.(); this.release = undefined; this.listeners.clear(); this.registry.releaseOwner(this.instanceId, 'Open Interest was removed.'); this.history.clear();this.historyCoverage.clear();this.historyStatuses.clear(); this.frameCache = undefined;
   }
 
   private syncSubscription() {
@@ -259,12 +280,29 @@ export class OpenInterestDataController {
       if (this.dead || generation !== this.generation) return;
       this.receive(event);
     });
+    this.viewportRequestKey='';if(this.viewport)this.setViewport(this.viewport.from,this.viewport.to);
   }
 
   private receive(event: RawOpenInterestEvent) {
+    if(event.type==='raw-open-interest-history-status') {
+      if(!this.historyEnabled)return;this.historyStatuses.set(oiHistoryKey(event.range),{range:event.range,state:event.state,reason:event.reason});
+      while(this.historyStatuses.size>16)this.historyStatuses.delete(this.historyStatuses.keys().next().value!);
+      this.frameCache=undefined;this.notify(event);return;
+    }
+    if(event.type==='raw-open-interest-history') {
+      if(!this.historyEnabled)return;const p=event.payload;
+      this.history.merge({to:p.to,observations:p.observations,conflicts:p.conflicts},{window:{key:event.key,from:p.from,to:p.to}});
+      const retryable=p.hot.state==='unavailable'||p.warm.state==='unavailable'||p.warm.state==='publication-asof'&&p.warm.venues.some(v=>v.failures.some(f=>f.reason==='origin'));
+      this.historyCoverage.delete(event.key);this.historyCoverage.set(event.key,{from:p.from,to:p.to,partial:p.partial,retryable,...p.hot.state==='read'?{hotAsOfMs:p.hot.asOfMs}:{},...p.warm.state==='publication-asof'?{publication:{checkpoint:p.warm.venues[0]!.publication.checkpoint,generation:p.warm.venues[0]!.publication.generation}}:{}});
+      const retained=new Set(this.history.retainedWindows().map(w=>w.key));for(const key of this.historyCoverage.keys())if(!retained.has(key))this.historyCoverage.delete(key);
+      this.historyStatuses.delete(event.key);this.frameCache=undefined;this.dataRevision++;this.publishOutputs(true);if(this.viewport)this.setViewport(this.viewport.from,this.viewport.to);this.notify(event);return;
+    }
     if (event.type === 'raw-open-interest-error') { this.feedError = event.message; this.dataRevision++; this.registry.markUnavailable(this.instanceId, event.message, 'stale'); this.frameCache = undefined; this.notify(event); return; }
     this.feedError = '';
-    if (event.type === 'raw-open-interest-snapshot' && event.reset) this.history.clear();
+    if (event.type === 'raw-open-interest-snapshot') {
+      if (event.reset || event.context && this.rawContext && event.context !== this.rawContext) { this.history.clear();this.historyCoverage.clear();this.historyStatuses.clear();this.viewportRequestKey=''; }
+      if (event.context) this.rawContext = event.context;
+    }
     this.history.merge({ ...event.payload, observations: event.payload.observations });
     this.payload = { ...event.payload, observations: this.history.observations(RAW_OPEN_INTEREST_VENUES, event.payload.from, event.payload.to) };
     this.frameCache = undefined; this.dataRevision++;
@@ -274,7 +312,10 @@ export class OpenInterestDataController {
   private notify(event: RawOpenInterestEvent) { for (const listener of [...this.listeners]) listener(event); }
 
   private buildFrame(): OpenInterestFrame {
-    const frame = projectOpenInterest(this.history, this.payload, this.settings.venues, this.hostTimes, duration[this.series.interval], this.now());
+    const frame = projectOpenInterest(this.history, this.payload, this.settings.venues, this.hostTimes, duration[this.series.interval], this.now(),[...this.historyCoverage.values()]);
+    const range=this.viewport,concerns=[...this.historyStatuses.values()].filter(s=>range&&s.range.from<range.to&&s.range.to>range.from&&s.state!=='ready');
+    if(concerns.length){if(frame.quality==='complete')frame.quality='partial';frame.history=concerns.some(s=>s.state==='loading')?'Historical observations are loading.':'Historical observations are unavailable for part of this view.';}
+    else if(range&&[...this.historyCoverage.values()].some(c=>c.partial&&c.from<range.to&&c.to>range.from))frame.history='Historical observations are partial.';
     if (this.feedError) frame.quality = 'stale';
     this.frameCache = frame; return frame;
   }

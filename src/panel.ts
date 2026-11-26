@@ -457,7 +457,7 @@ export class CandlePanel implements IContentRenderer {
   private compositionWork = { indicatorReconciles: 0, activeIndicatorRenders: 0, objectRefreshes: 0, scriptObjectProviderSyncs: 0, dataCallbacks: 0, visibleRangeScaleUpdates: 0, autoscaleValuesScanned: 0 };
   private readonly compositionScaleRangeOwner = {};
   private ownedCompositionScales = new Map<string, { scale: PriceScale; originalMarginTop: number; originalMarginBottom: number; marginTop: number; marginBottom: number }>();
-  private readonly syncCompositionScalesOnFrame = () => this.syncVolumeCompositionBands();
+  private readonly syncCompositionScalesOnFrame = () => {this.syncVolumeCompositionBands();this.updateOpenInterestHistoryViewport();};
   private internalCompositionRemovals = new Set<string>();
   private compositionControls!: CompositionControls;
   private placementControls!: CompositionPlacementControls;
@@ -3652,6 +3652,7 @@ export class CandlePanel implements IContentRenderer {
     this.openInterestData.setHostCandles(this.candles);
     this.openInterestData.setDataDemand(instance.visible || this.demandedOpenInterestProviders.has(instance.instanceId));
     this.openInterestData.setHostVisible(this.visible);
+    this.updateOpenInterestHistoryViewport();
     if (!instance.visible) {
       const pane = this.openInterestView?.paneElement(); if (this.openInterestView) this.unbindIndicatorHintRoot(this.openInterestView.controls.dialog); this.openInterestView?.dispose(); this.openInterestView = undefined;
       if (pane) this.compositionPlacement?.cleanupPaneIfUnshared(pane);
@@ -3667,6 +3668,11 @@ export class CandlePanel implements IContentRenderer {
       this.bindIndicatorHintRoot(this.openInterestView.controls.dialog, true);
     }
     this.openInterestView.configure(instance.settings, this.selection); this.openInterestView.setHostCandles(this.candles); this.openInterestView.setVisible(this.visible);
+  }
+
+  private updateOpenInterestHistoryViewport(){
+    if(!this.openInterestData?.historicalEnabled||!this.engine||!this.visible||!this.candles.length)return;
+    const range=this.engine.visibleTimeRange();if(range)this.openInterestData.setViewport(range.from*1000,range.to*1000);
   }
 
   private queueCompositionSmaRepair(output: ChartNumericOutput) {

@@ -192,6 +192,8 @@ export class FeedClient {
     this.send({type:'raw-open-interest-subscribe',id:token,request});
     return ()=>{this.rawOpenInterestListeners.delete(token);if(this.currentRawOpenInterest.get(id)===token)this.currentRawOpenInterest.delete(id);this.send({type:'raw-open-interest-unsubscribe',id:token});};
   }
+  updateRawOpenInterestViewport(id:string,from:number,to:number,known:string[]=[]){const token=this.currentRawOpenInterest.get(id);if(token&&Number.isSafeInteger(from)&&from>0&&Number.isSafeInteger(to)&&from<to&&known.length<=15)this.send({type:'raw-open-interest-history-viewport',id:token,from,to,known});}
+  retryRawOpenInterestHistory(id:string){const token=this.currentRawOpenInterest.get(id);if(token)this.send({type:'raw-open-interest-history-retry',id:token});}
   subscribeDepthMatrix(id:string,settings:DepthMatrixSettings,callback:(event:Extract<Event,{type:'depth-matrix-batch'}>)=>void){
     const previous=this.currentDepthMatrix.get(id);if(previous){this.depthMatrixListeners.delete(previous);this.send({type:'depth-matrix-unsubscribe',id:previous});}
     const token=`depth-matrix:${id}:${++this.sequence}`;this.currentDepthMatrix.set(id,token);this.depthMatrixListeners.set(token,callback);

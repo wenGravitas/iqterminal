@@ -60,8 +60,8 @@ export type RawOpenInterestConflict = Pick<RawOpenInterestObservation, 'venue' |
 export const RAW_OPEN_INTEREST_RESIDENT_LIMITS = Object.freeze({ observations: 32_000, windows: 16 });
 
 export type RawOpenInterestRequest = { venues: RawOpenInterestVenue[] };
-export type RawOpenInterestEvent =
-  | { type: 'raw-open-interest-snapshot'; ids: string[]; payload: RawOpenInterestPayload; reset?: true }
+export type RawOpenInterestEvent = import('./staging-open-interest-history').OiHistoryEvent
+  | { type: 'raw-open-interest-snapshot'; ids: string[]; payload: RawOpenInterestPayload; reset?: true; context?: 'fixture' | 'recorder' }
   | { type: 'raw-open-interest-patch'; ids: string[]; payload: Omit<RawOpenInterestPayload, 'observations'> & { observations: RawOpenInterestObservation[]; removeBefore: number } }
   | { type: 'raw-open-interest-error'; ids: string[]; message: string; at: number };
 
@@ -86,9 +86,21 @@ export function validateRawOpenInterestPayload(value: unknown, requested: readon
   }
   const venues = compatibleRawOpenInterestVenues(value.venues);
   if (venues.length !== requested.length || venues.some(venue => !requested.includes(venue))) throw new Error('Raw open-interest response changed the requested venue set.');
+  const observations = validateRawOpenInterestObservations(value.observations, requested, from, to);
+  return {
+    version: 1, market: 'perpetual', nativeSymbol: 'BTC', semantics: 'observed-open-interest-level', units: 'BTC', from, to,
+    asOfMs: value.asOfMs as number, venues, unitVerification: sanitizeVerification(value.unitVerification), observations,
+    truncated: value.truncated === true, invalidRows: value.invalidRows as number, expectedIntervalMs: value.expectedIntervalMs as number,
+    retentionDays: value.retentionDays as number, feeds: sanitizeFeeds(value.feeds), history: value.history,
+    ...(value.conflicts === undefined ? {} : { conflicts: validateRawOpenInterestConflicts(value.conflicts, requested, from, to) }),
+  };
+}
+
+export function validateRawOpenInterestObservations(value: unknown, requested: readonly RawOpenInterestVenue[], from: number, to: number): RawOpenInterestObservation[] {
+  if (!Array.isArray(value) || value.length > RAW_OPEN_INTEREST_MAX_OBSERVATIONS + 1) throw new Error('Raw open-interest observation capacity.');
   const seen = new Set<string>();
   const observations: RawOpenInterestObservation[] = [];
-  for (const raw of value.observations) {
+  for (const raw of value) {
     if (!isRecord(raw) || !isVenue(raw.venue) || !requested.includes(raw.venue) || raw.market !== 'perpetual'
       || raw.nativeSymbol !== (raw.venue === 'hyperliquid' ? 'BTC' : 'BTCUSDT')
       || !integer(raw.sourceTimeMs) || raw.sourceTimeMs < from || raw.sourceTimeMs >= to
@@ -105,13 +117,7 @@ export function validateRawOpenInterestPayload(value: unknown, requested: readon
     if (seen.has(key)) throw new Error('Raw open-interest response contains a duplicate observation.');
     seen.add(key); observations.push(observation);
   }
-  return {
-    version: 1, market: 'perpetual', nativeSymbol: 'BTC', semantics: 'observed-open-interest-level', units: 'BTC', from, to,
-    asOfMs: value.asOfMs as number, venues, unitVerification: sanitizeVerification(value.unitVerification), observations,
-    truncated: value.truncated === true, invalidRows: value.invalidRows as number, expectedIntervalMs: value.expectedIntervalMs as number,
-    retentionDays: value.retentionDays as number, feeds: sanitizeFeeds(value.feeds), history: value.history,
-    ...(value.conflicts === undefined ? {} : { conflicts: validateRawOpenInterestConflicts(value.conflicts, requested, from, to) }),
-  };
+  return observations;
 }
 
 export function validateRawOpenInterestConflicts(value: unknown, requested: readonly RawOpenInterestVenue[], from: number, to: number): RawOpenInterestConflict[] {

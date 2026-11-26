@@ -21,6 +21,8 @@ import { StagingOrderWallsService } from './staging-order-walls';
 import { OrderWallsArchiveService } from './order-walls-archive-service';
 import { StagingNetPositioningService } from './staging-net-positioning';
 import { StagingRawOpenInterestService } from './staging-raw-open-interest';
+import {StagingOpenInterestHistory} from './staging-open-interest-history';
+import {compatibleRawOpenInterestVenues} from './raw-open-interest';
 import { TickerService } from './ticker-service';
 import { TradeBubbleService } from './trade-bubbles-service';
 import { BinanceFootprintService } from './footprint-service';
@@ -95,6 +97,8 @@ const stagingDepthMatrix = stagingHeatmap ? new StagingDepthMatrixService(stagin
 const depthMatrixFixtures = new DepthMatrixFixtureService(e=>scope.postMessage(e));
 const stagingNetPositioning = new StagingNetPositioningService(e => scope.postMessage(e), stagingMode);
 const stagingRawOpenInterest = new StagingRawOpenInterestService(e => scope.postMessage(e), stagingMode);
+const historicalRawOpenInterest = new StagingOpenInterestHistory(e=>scope.postMessage(e),stagingMode&&import.meta.env.VITE_OI_HISTORY==='1');
+const rawOiSubscribers=new Map<string,import('./raw-open-interest').RawOpenInterestVenue[]>();
 
 function archiveOrderWallsEnabled(request: OrderWallRequest) {
   return stagingMode && !fixture && request.settings.mode === 'top-levels';
@@ -152,7 +156,7 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
     fixture=true; cvd.setFixture(true); liquidations.setFixture(true);
     tradeBubbles.setFixture(true);
     stagingNetPositioning.setEnabled(false);
-    stagingRawOpenInterest.setFixtureSelected(true);
+    stagingRawOpenInterest.setFixtureSelected(true); historicalRawOpenInterest.setEnabled(false);
     directOrderWalls.setFixture(true);
     alignFixtureToNow=Boolean((event.data as unknown as {alignToNow?:boolean}).alignToNow);
     comparison.dispose();
@@ -198,8 +202,10 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
   if(c.type==='tpo-retry'){tpoService.retry(c.id);return;}
   if(c.type==='net-positioning-subscribe'){stagingNetPositioning.subscribe(c.id,c.request);return;}
   if(c.type==='net-positioning-unsubscribe'){stagingNetPositioning.unsubscribe(c.id);return;}
-  if(c.type==='raw-open-interest-subscribe'){stagingRawOpenInterest.subscribe(c.id,c.request);return;}
-  if(c.type==='raw-open-interest-unsubscribe'){stagingRawOpenInterest.unsubscribe(c.id);return;}
+  if(c.type==='raw-open-interest-subscribe'){stagingRawOpenInterest.subscribe(c.id,c.request);if(import.meta.env.VITE_OI_HISTORY==='1'&&rawOiSubscribers.size<32)rawOiSubscribers.set(c.id,compatibleRawOpenInterestVenues(c.request.venues));return;}
+  if(c.type==='raw-open-interest-unsubscribe'){stagingRawOpenInterest.unsubscribe(c.id);rawOiSubscribers.delete(c.id);historicalRawOpenInterest.unsubscribe(c.id);return;}
+  if(c.type==='raw-open-interest-history-viewport'){const venues=rawOiSubscribers.get(c.id);if(venues&&!fixture)try{historicalRawOpenInterest.setViewport(c.id,{from:c.from,to:c.to,venues},c.known);}catch{}return;}
+  if(c.type==='raw-open-interest-history-retry'){if(rawOiSubscribers.has(c.id)&&!fixture)historicalRawOpenInterest.retry(c.id);return;}
   if(c.type==='raw-open-interest-fixture'){if(fixture)stagingRawOpenInterest.setFixture(c.payload);return;}
   if(c.type.startsWith('depth-matrix-')){
     if(fixture){depthMatrixFixtures.command(c as Extract<Command,{type:'depth-matrix-subscribe'|'depth-matrix-settings'|'depth-matrix-viewport'|'depth-matrix-unsubscribe'|'depth-matrix-retry'}>);return;}
@@ -252,6 +258,6 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
   if(c.type==='footprint-retry'){footprint.command(c);spotFootprint.command(c);return;}
   if(c.type==='footprint-ack'){footprint.command(c);spotFootprint.command(c);return;}
   if(c.type==='online'){depth.setOnline(c.online);footprint.setOnline(c.online);spotFootprint.setOnline(c.online);}
-  if(c.type==='diagnostics'){scope.postMessage({type:'diagnostics',data:{...service.diagnostics(),comparison:comparison.diagnostics(),cvd:cvd.diagnostics(),liquidations:liquidations.diagnostics(),tpo:tpoService.diagnostics(),staging:staging?.diagnostics(),depth:depth.diagnostics(),heatmap:stagingMode&&!fixture?stagingHeatmap?.diagnostics():heatmap.diagnostics(),orderWalls:stagingMode&&!fixture?stagingOrderWalls?.diagnostics():directOrderWalls.diagnostics(),orderWallsArchive:archivedOrderWalls.diagnostics(),depthMatrix:fixture?depthMatrixFixtures.diagnostics():stagingDepthMatrix?.diagnostics(),netPositioning:stagingNetPositioning.diagnostics(),rawOpenInterest:stagingRawOpenInterest.diagnostics(),footprint:footprint.diagnostics(),spotFootprint:spotFootprint.diagnostics(),tickers:tickers.diagnostics(),tradeBubbles:tradeBubbles.diagnostics(),effortResult:efforts.diagnostics(),fixture,networkSockets:fixture?0:service.diagnostics().sockets,syntheticMessages:received}});return;}
+  if(c.type==='diagnostics'){scope.postMessage({type:'diagnostics',data:{...service.diagnostics(),comparison:comparison.diagnostics(),cvd:cvd.diagnostics(),liquidations:liquidations.diagnostics(),tpo:tpoService.diagnostics(),staging:staging?.diagnostics(),depth:depth.diagnostics(),heatmap:stagingMode&&!fixture?stagingHeatmap?.diagnostics():heatmap.diagnostics(),orderWalls:stagingMode&&!fixture?stagingOrderWalls?.diagnostics():directOrderWalls.diagnostics(),orderWallsArchive:archivedOrderWalls.diagnostics(),depthMatrix:fixture?depthMatrixFixtures.diagnostics():stagingDepthMatrix?.diagnostics(),netPositioning:stagingNetPositioning.diagnostics(),rawOpenInterest:stagingRawOpenInterest.diagnostics(),rawOpenInterestHistory:historicalRawOpenInterest.diagnostics(),footprint:footprint.diagnostics(),spotFootprint:spotFootprint.diagnostics(),tickers:tickers.diagnostics(),tradeBubbles:tradeBubbles.diagnostics(),effortResult:efforts.diagnostics(),fixture,networkSockets:fixture?0:service.diagnostics().sockets,syntheticMessages:received}});return;}
   service.command(c);
 };

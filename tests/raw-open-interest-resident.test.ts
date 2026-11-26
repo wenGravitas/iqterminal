@@ -98,11 +98,13 @@ describe('resident OI projection and lifecycle',()=>{
    receive({type:'raw-open-interest-snapshot',ids:['oi'],payload:payload()});expect(controller.viewFrame().lines.get('binance')!.points[0]!.value).toBe(a.value);
    controller.setHostVisible(false);controller.setHostVisible(true);receive({type:'raw-open-interest-snapshot',ids:['oi'],payload:payload()});expect(controller.history.observations(['binance'],old,now)).toEqual([a]);
    receive({type:'raw-open-interest-snapshot',ids:['oi'],payload:payload(),reset:true});expect(controller.history.observations(['binance'],old,now)).toEqual([]);expect(controller.history.retainedWindows()).toEqual([]);
+   receive({type:'raw-open-interest-snapshot',ids:['oi'],payload:payload([observation()]),context:'fixture',reset:true});expect(controller.history.diagnostics().retained).toBe(1);
+   receive({type:'raw-open-interest-snapshot',ids:['oi'],payload:payload(),context:'recorder'});expect(controller.history.diagnostics().retained).toBe(0);
   }finally{controller.dispose();registry.dispose();vi.unstubAllGlobals();}
  });
  it('propagates a worker conflict patch to a replica cache and permits a strictly newer correction',async()=>{
   vi.useFakeTimers();let count=0;const row=observation(),events:RawOpenInterestEvent[]=[],replica=new RawOpenInterestHistory();
-  const service=new StagingRawOpenInterestService(event=>{events.push(event);if(event.type!=='raw-open-interest-error')replica.merge(event.payload);},true,async()=>{
+  const service=new StagingRawOpenInterestService(event=>{events.push(event);if(event.type==='raw-open-interest-snapshot'||event.type==='raw-open-interest-patch')replica.merge(event.payload);},true,async()=>{
    count++;return new Response(JSON.stringify(payload([count===1?row:{...row,value:200,valueDecimal:'200',observedAtMs:row.observedAtMs+(count===2?0:1)}])),{status:200});
   },()=>now);
   try{

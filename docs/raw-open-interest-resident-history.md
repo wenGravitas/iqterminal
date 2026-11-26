@@ -1,10 +1,10 @@
 # Raw OI resident history foundation
 
-The client now separates explicitly retained historical observation windows from its rolling live horizon. This is data ownership and correction handling, not enabled archive navigation. The historical gateway added in `iqterminal-server` remains disabled and undeployed; the client does not request that route in this increment.
+The client now separates explicitly retained historical observation windows from its rolling live horizon. This foundation is reused by [optional historical reads](raw-open-interest-history-client.md). Ordinary builds do not request the historical route. The backend gateway remains disabled and undeployed.
 
 ## Cache ownership and bounds
 
-`RawOpenInterestHistory` still defaults to four hours and 2,000 tracked native keys. Historical admission requires explicit constructor options; no active application caller currently enables it. The hard optional limits are 32,000 tracked keys and 16 windows, each at most four hours. Conflicting-version notices count toward the same key limit. Constructor and window validation refuse larger or contradictory bounds.
+`RawOpenInterestHistory` still defaults to four hours and 2,000 tracked native keys. Historical admission requires explicit constructor options; the optional `VITE_OI_HISTORY=1` integration selects 15 windows, while ordinary application callers retain the live-only defaults. The hard optional limits are 32,000 tracked keys and 16 windows, each at most four hours. Conflicting-version notices count toward the same key limit. Constructor and window validation refuse larger or contradictory bounds.
 
 ```ts
 const history = new RawOpenInterestHistory({maxObservations: 32_000, maxWindows: 16});
@@ -33,4 +33,4 @@ Ordinary live snapshots merge. An explicit development fixture snapshot carries 
 - Typecheck runs as the `tsc --noEmit` stage of `VITE_DIAGNOSTICS=1 pnpm build`; the build passes.
 - The existing `open-interest-sma.spec.ts` headless Chromium fixture passes against an isolated preview of this checkout. It covers chart-scoped OI/SMA ownership and lifecycle, not real historical archive retrieval or foreground Pi performance.
 
-The next integration must add a validated observed/publication-as-of gateway payload, bounded viewport demand in the dedicated worker, request coalescing and retry budgets, per-range publication/partial metadata, resident-aware rendering and appropriate original unit verification. No historical fetch, automatic source-time correction resealing, provider qualification or production deployment is enabled here. The broader storage goal still requires live ingestion/archive coexistence and foreground Raspberry Pi p50/p95 acceptance.
+The [optional integration](raw-open-interest-history-client.md) now adds validated observed/publication-as-of payloads, bounded worker demand, shared requests, retry budgets and per-range coverage. It remains unselected by default. Original archive-only unit proof, automatic source-time correction resealing, provider qualification and production deployment remain open. The broader storage goal still requires live ingestion/archive coexistence and foreground Raspberry Pi p50/p95 acceptance.

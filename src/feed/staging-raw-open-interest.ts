@@ -165,7 +165,7 @@ export class StagingRawOpenInterestService {
     if (!sub || !metadata || this.sentSnapshots.has(id)) return;
     const from = Math.max(1, metadata.to - RAW_OPEN_INTEREST_MAX_RANGE_MS);
     const observations = this.history.snapshot(sub.request.venues, from, metadata.to);
-    this.emit({ type: 'raw-open-interest-snapshot', ids: [id], payload: this.payloadFor(sub.request.venues, from, metadata.to, observations), ...(this.fixtureSelected ? { reset: true as const } : {}) });
+    this.emit({ type: 'raw-open-interest-snapshot', ids: [id], payload: this.payloadFor(sub.request.venues, from, metadata.to, observations), context: this.fixtureSelected ? 'fixture' : 'recorder', ...(this.fixtureSelected ? { reset: true as const } : {}) });
     this.sentSnapshots.add(id); this.stats.snapshots++;
   }
 
