@@ -52,11 +52,16 @@ export interface RawOpenInterestPayload {
   retentionDays: number;
   feeds: Partial<Record<RawOpenInterestVenue, RawOpenInterestFeedStatus>>;
   history: string;
+  /** Visible conflicting native versions; absence is not deletion. */
+  conflicts?: RawOpenInterestConflict[];
 }
+
+export type RawOpenInterestConflict = Pick<RawOpenInterestObservation, 'venue' | 'market' | 'nativeSymbol' | 'epoch' | 'sourceTimeMs' | 'observedAtMs'>;
+export const RAW_OPEN_INTEREST_RESIDENT_LIMITS = Object.freeze({ observations: 32_000, windows: 16 });
 
 export type RawOpenInterestRequest = { venues: RawOpenInterestVenue[] };
 export type RawOpenInterestEvent =
-  | { type: 'raw-open-interest-snapshot'; ids: string[]; payload: RawOpenInterestPayload }
+  | { type: 'raw-open-interest-snapshot'; ids: string[]; payload: RawOpenInterestPayload; reset?: true }
   | { type: 'raw-open-interest-patch'; ids: string[]; payload: Omit<RawOpenInterestPayload, 'observations'> & { observations: RawOpenInterestObservation[]; removeBefore: number } }
   | { type: 'raw-open-interest-error'; ids: string[]; message: string; at: number };
 
@@ -87,8 +92,8 @@ export function validateRawOpenInterestPayload(value: unknown, requested: readon
     if (!isRecord(raw) || !isVenue(raw.venue) || !requested.includes(raw.venue) || raw.market !== 'perpetual'
       || raw.nativeSymbol !== (raw.venue === 'hyperliquid' ? 'BTC' : 'BTCUSDT')
       || !integer(raw.sourceTimeMs) || raw.sourceTimeMs < from || raw.sourceTimeMs >= to
-      || !integer(raw.observedAtMs) || !integer(raw.epoch) || (raw.epoch as number) < 0
-      || typeof raw.valueDecimal !== 'string' || !/^(?:0|[1-9]\d*)(?:\.\d{1,8})?$/.test(raw.valueDecimal)
+      || !integer(raw.observedAtMs) || !Number.isSafeInteger(raw.epoch) || (raw.epoch as number) < 0
+      || typeof raw.valueDecimal !== 'string' || raw.valueDecimal.length > 160 || !/^(?:0|[1-9]\d*)(?:\.\d{1,8})?$/.test(raw.valueDecimal) || !Number.isFinite(Number(raw.valueDecimal)) || Number(raw.valueDecimal) <= 0
       || !Number.isFinite(raw.value) || (raw.value as number) <= 0 || Math.abs((raw.value as number) - Number(raw.valueDecimal)) > Math.max(1e-12, Number.EPSILON * Number(raw.valueDecimal) * 8)
       || typeof raw.units !== 'string' || !raw.units || raw.units.length > 24 || typeof raw.source !== 'string' || !raw.source || raw.source.length > 160
       || typeof raw.sourceTimeQuality !== 'string' || !raw.sourceTimeQuality || raw.sourceTimeQuality.length > 40
@@ -105,41 +110,106 @@ export function validateRawOpenInterestPayload(value: unknown, requested: readon
     asOfMs: value.asOfMs as number, venues, unitVerification: sanitizeVerification(value.unitVerification), observations,
     truncated: value.truncated === true, invalidRows: value.invalidRows as number, expectedIntervalMs: value.expectedIntervalMs as number,
     retentionDays: value.retentionDays as number, feeds: sanitizeFeeds(value.feeds), history: value.history,
+    ...(value.conflicts === undefined ? {} : { conflicts: validateRawOpenInterestConflicts(value.conflicts, requested, from, to) }),
   };
 }
 
-/** Bounded deduplicated raw history. It stores observations, never interpolated values. */
+export function validateRawOpenInterestConflicts(value: unknown, requested: readonly RawOpenInterestVenue[], from: number, to: number): RawOpenInterestConflict[] {
+  if (!Array.isArray(value) || value.length > RAW_OPEN_INTEREST_MAX_OBSERVATIONS) throw new Error('Raw open-interest conflict capacity.');
+  const seen = new Set<string>();
+  return value.map(raw => {
+    if (!isRecord(raw) || !isVenue(raw.venue) || !requested.includes(raw.venue) || raw.market !== 'perpetual'
+      || raw.nativeSymbol !== (raw.venue === 'hyperliquid' ? 'BTC' : 'BTCUSDT') || !integer(raw.sourceTimeMs)
+      || raw.sourceTimeMs < from || raw.sourceTimeMs >= to || !integer(raw.observedAtMs)
+      || !Number.isSafeInteger(raw.epoch) || (raw.epoch as number) < 0) throw new Error('Raw open-interest conflict identity.');
+    const notice: RawOpenInterestConflict = { venue: raw.venue, market: 'perpetual', nativeSymbol: raw.nativeSymbol as 'BTC' | 'BTCUSDT',
+      sourceTimeMs: raw.sourceTimeMs, observedAtMs: raw.observedAtMs, epoch: raw.epoch as number };
+    const key = observationKey(notice); if (seen.has(key)) throw new Error('Duplicate raw open-interest conflict.');
+    seen.add(key); return notice;
+  });
+}
+
+interface RetainedWindow { key: string; from: number; to: number; resident: boolean }
+interface RetainedObservation { identity: RawOpenInterestConflict; row?: RawOpenInterestObservation; signature?: string; conflict: boolean }
+export interface RawOpenInterestHistoryOptions { maxObservations?: number; maxWindows?: number }
+/** Loaded windows belong to the cache, independently of request/subscription life.
+ * Historical admission is explicit; the ordinary live cache keeps its 4h/2k bound. */
 export class RawOpenInterestHistory {
-  private rows = new Map<string, RawOpenInterestObservation>();
-  private signatures = new Map<string, string>();
-  readonly stats = { received: 0, changed: 0, snapshots: 0, patches: 0, duplicateRows: 0, retained: 0 };
-  merge(payload: RawOpenInterestPayload) {
+  private rows = new Map<string, RetainedObservation>();
+  private windows = new Map<string, RetainedWindow>();
+  private liveTo = 0;
+  private readonly maxObservations: number;
+  private readonly maxWindows: number;
+  readonly stats = { received: 0, changed: 0, snapshots: 0, patches: 0, duplicateRows: 0, retained: 0, conflictEvents: 0, evictions: 0 };
+  constructor(options: RawOpenInterestHistoryOptions = {}) {
+    this.maxObservations = options.maxObservations ?? RAW_OPEN_INTEREST_MAX_OBSERVATIONS;
+    this.maxWindows = options.maxWindows ?? 0;
+    if (!Number.isSafeInteger(this.maxObservations) || this.maxObservations < 1 || this.maxObservations > RAW_OPEN_INTEREST_RESIDENT_LIMITS.observations
+      || !Number.isSafeInteger(this.maxWindows) || this.maxWindows < 0 || this.maxWindows > RAW_OPEN_INTEREST_RESIDENT_LIMITS.windows) throw new Error('Invalid raw open-interest resident bounds.');
+  }
+  merge(payload: Pick<RawOpenInterestPayload, 'to' | 'observations' | 'conflicts'>, options: { window?: { key: string; from: number; to: number } } = {}) {
+    if (!Number.isSafeInteger(payload.to) || payload.to < 1 || payload.observations.length > RAW_OPEN_INTEREST_MAX_OBSERVATIONS + 1
+      || (payload.conflicts?.length ?? 0) > RAW_OPEN_INTEREST_MAX_OBSERVATIONS) throw new Error('Invalid raw open-interest cache input.');
+    if (options.window) {
+      const { key, from, to } = options.window;
+      if (!this.maxWindows || typeof key !== 'string' || !key || key.length > 160 || !Number.isSafeInteger(from) || from < 1 || !Number.isSafeInteger(to)
+        || from >= to || to - from > RAW_OPEN_INTEREST_MAX_RANGE_MS || payload.to !== to
+        || [...payload.observations, ...(payload.conflicts ?? [])].some(row => row.sourceTimeMs < from || row.sourceTimeMs >= to)) throw new Error('Invalid raw open-interest retained window.');
+      const previous = this.windows.get(key);
+      if (previous && (previous.from !== from || previous.to !== to)) throw new Error('Raw open-interest window identity changed.');
+      this.windows.delete(key); this.windows.set(key, { key, from, to, resident: previous?.resident ?? true });
+      while (this.windows.size > this.maxWindows) this.windows.delete(this.windows.keys().next().value!);
+    } else this.liveTo = Math.max(this.liveTo, payload.to);
     this.stats.received += payload.observations.length;
     const changed: RawOpenInterestObservation[] = [];
     for (const row of payload.observations) {
       const key = observationKey(row), previous = this.rows.get(key), signature = rowSignature(row);
-      if (previous && row.observedAtMs < previous.observedAtMs) { this.stats.duplicateRows++; continue; }
-      if (this.signatures.get(key) === signature) { this.stats.duplicateRows++; continue; }
-      this.rows.set(key, row); this.signatures.set(key, signature); changed.push(row);
+      if (previous && row.observedAtMs < previous.identity.observedAtMs) { this.stats.duplicateRows++; continue; }
+      if (previous && row.observedAtMs === previous.identity.observedAtMs) {
+        if (previous.signature === signature) this.stats.duplicateRows++;
+        else if (!previous.conflict) { previous.conflict = true; this.stats.conflictEvents++; }
+        continue;
+      }
+      const stored = Object.freeze({ ...row });
+      this.rows.set(key, { identity: conflictIdentity(row), row: stored, signature, conflict: false }); changed.push(stored);
     }
-    const cutoff = payload.to - RAW_OPEN_INTEREST_MAX_RANGE_MS;
-    for (const [key, row] of this.rows) if (row.sourceTimeMs < cutoff) { this.rows.delete(key); this.signatures.delete(key); }
-    while (this.rows.size > RAW_OPEN_INTEREST_MAX_OBSERVATIONS) {
-      const first = this.rows.keys().next().value as string | undefined;
-      if (!first) break;
-      this.rows.delete(first); this.signatures.delete(first);
+    for (const notice of payload.conflicts ?? []) {
+      const key = observationKey(notice), previous = this.rows.get(key);
+      if (previous && previous.identity.observedAtMs > notice.observedAtMs) continue;
+      if (!previous?.conflict || previous.identity.observedAtMs !== notice.observedAtMs) this.stats.conflictEvents++;
+      this.rows.set(key, { identity: { ...notice }, conflict: true });
     }
-    this.stats.changed += changed.length; this.stats.retained = this.rows.size;
-    return changed;
+    this.prune();
+    const retained = changed.filter(row => { const entry = this.rows.get(observationKey(row)); return entry?.row === row && !entry.conflict; });
+    this.stats.changed += retained.length;
+    return retained;
+  }
+  private isLive(time: number) { return this.liveTo > 0 && time >= this.liveTo - RAW_OPEN_INTEREST_MAX_RANGE_MS && time < this.liveTo; }
+  private prune() {
+    const windows = [...this.windows.values()];
+    for (const [key, entry] of this.rows) if (!this.isLive(entry.identity.sourceTimeMs)
+      && !windows.some(w => entry.identity.sourceTimeMs >= w.from && entry.identity.sourceTimeMs < w.to)) this.rows.delete(key);
+    for (const allowLive of [false, true]) {
+      for (const [key, entry] of this.rows) {
+        if (this.rows.size <= this.maxObservations) break;
+        if (!allowLive && this.isLive(entry.identity.sourceTimeMs)) continue;
+        for (const window of windows) if (entry.identity.sourceTimeMs >= window.from && entry.identity.sourceTimeMs < window.to) window.resident = false;
+        this.rows.delete(key); this.stats.evictions++;
+      }
+    }
+    this.stats.retained = [...this.rows.values()].filter(entry => entry.row && !entry.conflict).length;
   }
   observations(venues: readonly RawOpenInterestVenue[], from: number, to: number) {
     const selected = new Set(venues);
-    return [...this.rows.values()].filter(row => selected.has(row.venue) && row.sourceTimeMs >= from && row.sourceTimeMs < to)
-      .sort((a, b) => a.sourceTimeMs - b.sourceTimeMs || venueOrder(a.venue) - venueOrder(b.venue));
+    return [...this.rows.values()].filter(entry => entry.row && !entry.conflict).map(entry => entry.row!)
+      .filter(row => selected.has(row.venue) && row.sourceTimeMs >= from && row.sourceTimeMs < to)
+      .sort((a, b) => a.sourceTimeMs - b.sourceTimeMs || venueOrder(a.venue) - venueOrder(b.venue) || a.epoch - b.epoch);
   }
+  conflicts(venues: readonly RawOpenInterestVenue[], from: number, to: number) { return [...this.rows.values()].filter(entry => entry.conflict && venues.includes(entry.identity.venue) && entry.identity.sourceTimeMs >= from && entry.identity.sourceTimeMs < to).map(entry => ({ ...entry.identity })); }
+  retainedWindows() { return [...this.windows.values()].map(window => ({ ...window })); }
   snapshot(venues: readonly RawOpenInterestVenue[], from: number, to: number) { this.stats.snapshots++; return this.observations(venues, from, to); }
-  diagnostics() { return { ...this.stats }; }
-  clear() { this.rows.clear(); this.signatures.clear(); this.stats.retained = 0; }
+  diagnostics() { return { ...this.stats, tracked: this.rows.size, conflicts: [...this.rows.values()].filter(entry => entry.conflict).length, windows: this.windows.size, maxObservations: this.maxObservations, maxWindows: this.maxWindows }; }
+  clear() { this.rows.clear(); this.windows.clear(); this.liveTo = 0; this.stats.retained = 0; }
 }
 
 export function observationKey(row: Pick<RawOpenInterestObservation, 'venue' | 'market' | 'nativeSymbol' | 'epoch' | 'sourceTimeMs'>) {
@@ -147,8 +217,9 @@ export function observationKey(row: Pick<RawOpenInterestObservation, 'venue' | '
 }
 
 function rowSignature(row: RawOpenInterestObservation) {
-  return [row.observedAtMs, row.valueDecimal, row.units, row.source, row.sourceTimeQuality, row.quality, Number(row.gapBefore)].join('|');
+  return JSON.stringify([row.observedAtMs, row.valueDecimal, row.units, row.source, row.sourceTimeQuality, row.quality, row.gapBefore]);
 }
+function conflictIdentity(row: RawOpenInterestConflict): RawOpenInterestConflict { return { venue: row.venue, market: row.market, nativeSymbol: row.nativeSymbol, epoch: row.epoch, sourceTimeMs: row.sourceTimeMs, observedAtMs: row.observedAtMs }; }
 function venueOrder(venue: RawOpenInterestVenue) { return venue === 'binance' ? 0 : venue === 'hyperliquid' ? 1 : 2; }
 function isRecord(value: unknown): value is Record<string, unknown> { return Boolean(value && typeof value === 'object' && !Array.isArray(value)); }
 function integer(value: unknown): value is number { return Number.isSafeInteger(value) && (value as number) > 0; }

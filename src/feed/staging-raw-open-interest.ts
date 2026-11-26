@@ -155,6 +155,7 @@ export class StagingRawOpenInterestService {
     if (!metadata) throw new Error('Raw open-interest metadata is unavailable.');
     const selected = new Set(venues);
     return { ...metadata, from, to, venues: [...venues], observations,
+      conflicts: this.history.conflicts(venues, from, to),
       unitVerification: Object.fromEntries(Object.entries(metadata.unitVerification).filter(([venue]) => selected.has(venue as RawOpenInterestVenue))),
       feeds: Object.fromEntries(Object.entries(metadata.feeds).filter(([venue]) => selected.has(venue as RawOpenInterestVenue))) };
   }
@@ -164,7 +165,7 @@ export class StagingRawOpenInterestService {
     if (!sub || !metadata || this.sentSnapshots.has(id)) return;
     const from = Math.max(1, metadata.to - RAW_OPEN_INTEREST_MAX_RANGE_MS);
     const observations = this.history.snapshot(sub.request.venues, from, metadata.to);
-    this.emit({ type: 'raw-open-interest-snapshot', ids: [id], payload: this.payloadFor(sub.request.venues, from, metadata.to, observations) });
+    this.emit({ type: 'raw-open-interest-snapshot', ids: [id], payload: this.payloadFor(sub.request.venues, from, metadata.to, observations), ...(this.fixtureSelected ? { reset: true as const } : {}) });
     this.sentSnapshots.add(id); this.stats.snapshots++;
   }
 

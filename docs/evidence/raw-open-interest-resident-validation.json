@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "scope": "Local client cache, worker replica and projection correctness; archive fetching is not enabled",
+  "runtime": {
+    "node": "v22.19.0",
+    "arch": "arm64",
+    "platform": "linux"
+  },
+  "unit": {
+    "command": "pnpm exec vitest run tests/raw-open-interest.test.ts tests/raw-open-interest-resident.test.ts",
+    "files": 2,
+    "passed": 27,
+    "failed": 0,
+    "logSha256": "274b938fcdd707f31f30e12dff84dc3edf6f5c5c8bf161d10bcb5ac6ed54303c"
+  },
+  "build": {
+    "command": "VITE_DIAGNOSTICS=1 pnpm build",
+    "typecheckStage": "tsc --noEmit",
+    "exitCode": 0
+  },
+  "browser": {
+    "command": "pnpm exec playwright test --config=/tmp/iq-oi-resident-playwright.config.mjs open-interest-sma.spec.ts",
+    "headless": true,
+    "preview": "isolated pnpm preview on 127.0.0.1:4187, cwd this dev checkout",
+    "config": "incumbent config with absolute test/guard paths, explicit headless Ozone, separate preview and temporary output paths",
+    "case": "explicit raw BTC Open Interest fixture feeds a chart-scoped SMA and survives an independent move and hidden source",
+    "passed": 1,
+    "failed": 0,
+    "reportSha256": "0ed50d978288af52dba0b19b4c5aac239b3da9813fdc6bd60cf4657c3fdc31cf"
+  },
+  "priorAttempts": [
+    {
+      "check": "standalone typecheck",
+      "result": "conflict symbol narrowing and missing Candle test revision corrected; final build typecheck stage passes"
+    }
+  ],
+  "defaultOff": "Historical window admission requires explicit constructor options; live application callers retain the original four-hour/2000-key default. No historical endpoint request added.",
+  "limits": {
+    "maxTrackedKeys": 32000,
+    "maxRetainedWindows": 16,
+    "maxWindowMs": 14400000,
+    "conflictNoticesCountTowardKeyLimit": true
+  },
+  "limitations": [
+    "Fixture browser regression is not live venue/archive, foreground rendering or platform performance acceptance",
+    "No bounded viewport archive loader, request coalescing or historical publication coverage adapter yet",
+    "Historical unit verification, per-range partial rendering and source-time correction resealing still require integration",
+    "No deployment, live retention change, paid provisioning or main merge"
+  ],
+  "sourceSha256": {
+    "src/feed/raw-open-interest.ts": "9fe2d601340892bfc68bca3e8afc6a3c5de6e42add40d972672bc5f4782f5f51",
+    "src/feed/staging-raw-open-interest.ts": "4840d05e731d190e424febe32ede74b0476d4561e221a7582b29e31943e879a5",
+    "src/indicators/open-interest-data.ts": "700ddb9c1abf5a727e8c0f633442913a3eba0569dc6edf419ba67e84a2e70d10",
+    "tests/raw-open-interest-resident.test.ts": "d61bb881a13b096098ce92e8dc9f1b118e4949395f851ead2d7665c287329afd"
+  }
+}
