@@ -15,6 +15,13 @@ export class FeedClient {
   private cvdHistoryDisposed=false;
   /** Explicit opt-in acquisition; cancelling a caller never deletes worker history. */
   readCvdHistory(request:import('./cvd-history-owner').CvdHistoryRead,signal:AbortSignal):Promise<import('./cvd-history-owner').CvdHistoryReceipt>{
+    return this.cvdHistoryCall(id=>({type:'cvd-history-read',id,request}),event=>event.receipt,signal);
+  }
+  /** Exact worker-resident inputs; never initiates a network request. */
+  projectCvdHistory(request:import('./cvd-projection-cache').CvdProjectionRequest,signal:AbortSignal):Promise<import('./cvd-projection-cache').CvdExactProjection>{
+    return this.cvdHistoryCall(id=>({type:'cvd-history-project',id,request}),event=>event.projection,signal);
+  }
+  private cvdHistoryCall<T>(command:(id:string)=>Command,decode:(event:import('./cvd-history-owner').CvdHistoryEvent)=>T|undefined,signal:AbortSignal):Promise<T>{
     if(signal.aborted||this.cvdHistoryDisposed)return Promise.reject(new Error('CVD history cancelled'));
     if(this.cvdHistoryReads.size>=24)return Promise.reject(new Error('CVD history capacity'));
     const id=`cvd-history:${++this.sequence}`;
@@ -22,8 +29,8 @@ export class FeedClient {
       const clean=()=>{clearTimeout(timer);signal.removeEventListener('abort',cancel);this.cvdHistoryReads.delete(id);};
       const cancel=()=>{clean();this.send({type:'cvd-history-cancel',id});reject(new Error('CVD history cancelled'));};
       const timer=setTimeout(cancel,20000);
-      this.cvdHistoryReads.set(id,{cancel,finish:event=>{clean();if(event.receipt)resolve(event.receipt);else reject(Object.assign(new Error('CVD history unavailable'),{reason:event.reason}));}});
-      signal.addEventListener('abort',cancel,{once:true});this.send({type:'cvd-history-read',id,request});
+      this.cvdHistoryReads.set(id,{cancel,finish:event=>{clean();const value=decode(event);if(value!==undefined)resolve(value);else reject(Object.assign(new Error('CVD history unavailable'),{reason:event.reason}));}});
+      signal.addEventListener('abort',cancel,{once:true});this.send(command(id));
     });
   }
   private effortClaims=new Map<string,{resolve:(value:boolean)=>void;timer:ReturnType<typeof setTimeout>}>();

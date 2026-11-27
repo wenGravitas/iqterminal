@@ -44,7 +44,8 @@ renewal. Tokens remain in headers, never events, URLs or diagnostics.
 Accepted observations survive request completion, cancellation, client release,
 archive outage and failed admission. Complete accepted archive windows return
 their exact retained totals without another HTTP request or lease acquisition.
-Cache-only `sum`/`series` and explicit `evict` are available to worker consumers.
+Cache-only `sum`/`series`, [resident exact projections](cvd-projection-cache.md)
+and explicit `evict` are available to worker consumers.
 Eviction preserves exact block totals; a missing partial-block projection reports
 the ledger's restore requirement rather than inventing detail. The contribution
 ledger's finite day/cell/provenance limits remain enforced. This increment has
@@ -83,8 +84,8 @@ HTTP data and no real exchange/provider. It does not establish live latency,
 foreground rendering performance, 24-hour/seven-day/30-day loading, sustained
 growth or provider recovery. No p50/p95 improvement is claimed.
 
-Next integration gates are bounded viewport acquisition/restore planning, exact
-projection caching independent of network requests, the chart adapter and
+Next integration gates are bounded viewport acquisition/restore planning,
+period-aware chart adaptation and
 correction/continuity qualification. Existing production charts continue to use
 their incumbent CVD service. Rollback is removal of the opt-in client flag and a
 client reload; there are no server migrations, source deletions or live policy

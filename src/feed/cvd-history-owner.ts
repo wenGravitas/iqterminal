@@ -6,13 +6,14 @@ import {HistoryResponseFailure} from './history-json';
 import {historyScheduler,type HistoryScheduler} from './history-scheduler';
 import {RecordedMinuteSessionClient} from './recorded-minute-session';
 import {minuteHistoryRequest,type MinuteHistoryRequest} from './recorded-minute-history';
+import {CvdProjectionCache,type CvdProjectionRequest,type CvdExactProjection} from './cvd-projection-cache';
 
 export interface CvdHistoryRead {source:CvdSource;kind:'native'|'archive'|'restore';from:number;to:number}
 export type CvdHistoryReason='disabled'|'capacity'|'invalid'|'basis'|'conflict'|'restore'|'mutable'|'unavailable'|'cancelled'|'rejoin-unavailable';
 export class CvdHistoryFailure extends Error {constructor(readonly reason:CvdHistoryReason){super('CVD historical observation unavailable');}}
 export interface CvdHistoryReceipt {source:CvdSource;from:number;to:number;version:number;changed:boolean;sum:ReturnType<CvdContributionLedger['sum']>;financialAccepted:false;currentReconciled:false}
-export type CvdHistoryCommand={type:'cvd-history-read';id:string;request:CvdHistoryRead}|{type:'cvd-history-cancel';id:string};
-export type CvdHistoryEvent={type:'cvd-history-result';ids:string[];receipt?:CvdHistoryReceipt;reason?:CvdHistoryReason};
+export type CvdHistoryCommand={type:'cvd-history-read';id:string;request:CvdHistoryRead}|{type:'cvd-history-project';id:string;request:CvdProjectionRequest}|{type:'cvd-history-cancel';id:string};
+export type CvdHistoryEvent={type:'cvd-history-result';ids:string[];receipt?:CvdHistoryReceipt;projection?:CvdExactProjection;reason?:CvdHistoryReason};
 interface Waiter {resolve:(v:CvdHistoryReceipt)=>void;reject:(e:unknown)=>void;signal:AbortSignal;cancel:()=>void}
 interface Job {key:string;request:CvdHistoryRead;waiters:Set<Waiter>;abort:AbortController}
 const SOURCES=['binance:spot','binance:perpetual','bybit:perpetual'],DAY=86400000;
@@ -32,6 +33,7 @@ function reason(error:unknown):CvdHistoryReason {
 export class CvdHistoryOwner {
  private readonly identity=++ownerSequence;
  private readonly ledgers=new Map<CvdSource,CvdContributionLedger>();
+ private readonly projections=new CvdProjectionCache(source=>this.ledgers.get(source));
  private readonly states=new Map<CvdSource,CvdHistoryReason|'ready'>();
  private readonly jobs=new Map<string,Job>();private active?:Job;private consumers=0;private dead=false;
  private readonly commands=new Map<string,AbortController>();
@@ -90,7 +92,8 @@ export class CvdHistoryOwner {
    if(payload.from!==r.from||payload.to!==r.to)throw new CvdHistoryFailure('invalid');
    if(ledger?.diagnostics().incarnation&&ledger.diagnostics().incarnation!==payload.incarnation)throw new CvdHistoryFailure('rejoin-unavailable');
    const candidate=ledger??new CvdContributionLedger(r.source,`worker-cvd:${this.identity}:${r.source}`);
-   result=candidate.applyNative(payload);ledger=candidate;this.ledgers.set(r.source,ledger);
+   const captured=this.projections.capture(r.source,r.from,r.to);
+   result=candidate.applyNative(payload);ledger=candidate;this.ledgers.set(r.source,ledger);this.projections.commit(captured);
   }else{
    if(!ledger)throw new CvdHistoryFailure('basis');
    if(r.kind==='archive'){
@@ -109,21 +112,26 @@ export class CvdHistoryOwner {
     await this.session.open({...page,from:r.to<=to?from:r.from,to:r.to<=to?to:r.to},signal);
    }
    const payload=await this.session.read(page,signal);signal.throwIfAborted();
-   result=r.kind==='restore'?ledger.restoreArchive(payload):ledger.applyArchive(payload);
+   const captured=r.kind==='restore'?[]:this.projections.capture(r.source,r.from,r.to);
+   result=r.kind==='restore'?ledger.restoreArchive(payload):ledger.applyArchive(payload);this.projections.commit(captured);
   }
   this.states.set(r.source,'ready');return {source:r.source,from:r.from,to:r.to,...result,sum:ledger.sum(r.from,r.to),financialAccepted:false,currentReconciled:false};
  }
  /** Cache-only access never acquires a lease or changes accepted observations. */
  sum(source:CvdSource,from:number,to:number){return this.ledgers.get(source)?.sum(from,to);}
  series(source:CvdSource,anchor:number,from:number,to:number,stepMs=60000){return this.ledgers.get(source)?.series(anchor,from,to,stepMs);}
+ project(request:CvdProjectionRequest){if(!this.enabled||this.dead)throw new CvdHistoryFailure('disabled');return this.projections.project(request);}
  evict(source:CvdSource,day:number){return this.ledgers.get(source)?.evict(day);}
  command(command:CvdHistoryCommand,emit:(event:CvdHistoryEvent)=>void){
   if(command.type==='cvd-history-cancel'){this.commands.get(command.id)?.abort();this.commands.delete(command.id);return;}
   if(typeof command.id!=='string'||!command.id||command.id.length>160)return;
   if(this.commands.has(command.id)||this.commands.size>=CVD_HISTORY_OWNER_LIMITS.consumers){emit({type:'cvd-history-result',ids:[command.id],reason:'capacity'});return;}
+  if(command.type==='cvd-history-project'){
+   try{emit({type:'cvd-history-result',ids:[command.id],projection:this.project(command.request)});}catch(error){emit({type:'cvd-history-result',ids:[command.id],reason:reason(error)});}return;
+  }
   const controller=new AbortController();this.commands.set(command.id,controller);
   void this.read(command.request,controller.signal).then(receipt=>{if(!controller.signal.aborted)emit({type:'cvd-history-result',ids:[command.id],receipt});},error=>{if(!controller.signal.aborted)emit({type:'cvd-history-result',ids:[command.id],reason:reason(error)});}).finally(()=>{if(this.commands.get(command.id)===controller)this.commands.delete(command.id);});
  }
- diagnostics(){return {enabled:this.enabled,disposed:this.dead,active:!!this.active,queued:this.jobs.size-(this.active?1:0),consumers:this.consumers,states:Object.fromEntries(this.states),sources:[...this.ledgers].map(([source,ledger])=>ledger.diagnostics()),session:this.session.diagnostics(),...this.metrics};}
+ diagnostics(){return {enabled:this.enabled,disposed:this.dead,active:!!this.active,queued:this.jobs.size-(this.active?1:0),consumers:this.consumers,states:Object.fromEntries(this.states),sources:[...this.ledgers].map(([source,ledger])=>ledger.diagnostics()),projections:this.projections.diagnostics(),session:this.session.diagnostics(),...this.metrics};}
  async dispose(){this.dead=true;for(const c of this.commands.values())c.abort();this.commands.clear();for(const j of this.jobs.values())j.abort.abort();for(const j of this.jobs.values())if(j!==this.active){for(const w of j.waiters){w.signal.removeEventListener('abort',w.cancel);w.reject(new CvdHistoryFailure('cancelled'));this.consumers--;}this.jobs.delete(j.key);}await this.draining;await this.session.dispose();}
 }

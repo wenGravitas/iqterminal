@@ -27,6 +27,12 @@ function fixture(enabled=true){
  return {owner,fetch,calls,time:(n:number)=>now=n};
 }
 describe('worker-lifetime CVD history admission',()=>{
+ it('exposes cached exact worker projections and adjusts their prefix as warm history arrives',async()=>{
+  const f=fixture();await f.owner.read(request,signal());const q={source:request.source,anchor:day,from:cut,to:request.to,stepMs:M};
+  const before=f.owner.project(q);expect(before.points[0]).toMatchObject({base:'9007199254740993.00000001',partial:true});await f.owner.read(warm,signal());const calls=f.fetch.mock.calls.length;
+  const after=f.owner.project(q);expect(after.points).toEqual(f.owner.series(request.source,day,cut,request.to));expect(after.points[0]).toMatchObject({base:'9007199254740968.99999999',partial:false});
+  const emit=vi.fn();f.owner.command({type:'cvd-history-project',id:'projection',request:q},emit);expect(emit).toHaveBeenCalledWith({type:'cvd-history-result',ids:['projection'],projection:after});expect(f.fetch).toHaveBeenCalledTimes(calls);expect(f.owner.diagnostics().projections.updates).toBe(1);await f.owner.dispose();
+ });
  it('keeps exact contributions across separate callers and uses no network for cached projections',async()=>{
   const f=fixture();const first=await f.owner.read(request,signal());expect(first.sum.base).toBe('9007199254740993.00000001');
   await f.owner.read(warm,signal());const calls=f.fetch.mock.calls.length;
@@ -78,5 +84,6 @@ describe('worker-lifetime CVD history admission',()=>{
  });
  it('disabled and disposed owners do not inspect request payloads or start network operations',async()=>{
   const f=fixture(false),poison=new Proxy({},{get(){throw Error('disabled input read');}});await expect(f.owner.read(poison as any,poison as any)).rejects.toMatchObject({reason:'disabled'});await f.owner.dispose();expect(f.fetch).not.toHaveBeenCalled();
+  expect(()=>f.owner.project(poison as any)).toThrowError(expect.objectContaining({reason:'disabled'}));
  });
 });

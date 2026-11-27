@@ -182,7 +182,7 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
   if(c.type==='liquidation-ack'){liquidations.ack(c.id,c.generation,c.batchId);return;}
   if(c.type==='liquidation-fixture'){if(fixture)liquidations.ingest(c.events,c.live===true);return;}
   if(c.type==='online')liquidations.setOnline(c.online);
-  if(c.type==='cvd-history-read'||c.type==='cvd-history-cancel'){cvdHistory.command(c,e=>scope.postMessage(e));return;}
+  if(c.type==='cvd-history-read'||c.type==='cvd-history-cancel'||c.type==='cvd-history-project'){cvdHistory.command(c,e=>scope.postMessage(e));return;}
   if(c.type==='cvd-subscribe'){cvd.subscribe(c.id,c.request);return;}
   if(c.type==='cvd-unsubscribe'){cvd.unsubscribe(c.id);return;}
   if(c.type==='cvd-ack'){cvd.ack(c.id,c.generation,c.batchId);return;}

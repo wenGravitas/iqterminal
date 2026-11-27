@@ -37,3 +37,5 @@ artifacts/persistent-wall-navigation/foreground-client/manual-*/
 # Python diagnostic bytecode and raw browser runner output
 __pycache__/
 /artifacts/order-book/browser-results.json
+/artifacts/cvd-history-browser/
+/artifacts/cvd-history-browser-results.json

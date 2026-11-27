@@ -4,6 +4,13 @@ import type {CvdHistoryRead} from '../src/feed/cvd-history-owner';
 class WorkerMock {static instance:WorkerMock;onmessage:((event:any)=>void)|null=null;messages:any[]=[];constructor(){WorkerMock.instance=this;}postMessage(command:unknown){this.messages.push(command);}terminate(){} }
 const request:CvdHistoryRead={source:'binance:perpetual',kind:'native',from:60000,to:120000};
 afterEach(()=>{vi.useRealTimers();vi.unstubAllGlobals();});
+it('routes cache-only projections through the same bounded request lifecycle',async()=>{
+ vi.stubGlobal('Worker',WorkerMock);const client=new FeedClient(),worker=WorkerMock.instance;
+ const r={source:request.source,anchor:0,from:60000,to:120000,stepMs:60000};
+ const projection=client.projectCvdHistory(r,new AbortController().signal);const command=worker.messages.at(-1);expect(command).toMatchObject({type:'cvd-history-project',request:r});
+ worker.onmessage?.({data:{type:'cvd-history-result',ids:[command.id],projection:{version:1,points:[]}}});expect(await projection).toEqual({version:1,points:[]});
+ const failed=client.projectCvdHistory(r,new AbortController().signal);worker.onmessage?.({data:{type:'cvd-history-result',ids:[worker.messages.at(-1).id],reason:'restore'}});await expect(failed).rejects.toMatchObject({reason:'restore'});client.dispose();
+});
 it('routes a receipt to its caller and ignores late replies after cancellation',async()=>{
  vi.stubGlobal('Worker',WorkerMock);const client=new FeedClient(),worker=WorkerMock.instance,first=new AbortController();
  const a=client.readCvdHistory(request,first.signal).catch(error=>error),old=worker.messages.at(-1).id;

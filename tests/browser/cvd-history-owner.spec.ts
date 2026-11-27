@@ -28,14 +28,19 @@ test('opt-in production worker retains CVD observations across request lifetimes
   const worker=new Worker('/src/feed/worker.ts',{type:'module'});let sequence=0;
   const pending=new Map<string,(value:any)=>void>();let diagnostic:((value:any)=>void)|undefined;
   worker.onmessage=({data})=>{if(data.type==='diagnostics'){diagnostic?.(data.data.cvdHistory);diagnostic=undefined;}else if(data.type==='cvd-history-result'){const id=data.ids[0];pending.get(id)?.(data);pending.delete(id);}};
-  return {worker,read:(request:any)=>new Promise(resolve=>{const id=String(++sequence);pending.set(id,resolve);worker.postMessage({type:'cvd-history-read',id,request});}),diagnostics:()=>new Promise(resolve=>{diagnostic=resolve;worker.postMessage({type:'diagnostics'});})};
+  const send=(type:string,request:any)=>new Promise(resolve=>{const id=String(++sequence);pending.set(id,resolve);worker.postMessage({type,id,request});});
+  return {worker,read:(request:any)=>send('cvd-history-read',request),project:(request:any)=>send('cvd-history-project',request),diagnostics:()=>new Promise(resolve=>{diagnostic=resolve;worker.postMessage({type:'diagnostics'});})};
  });
  try{
   const first:any=await handle.evaluate((h,request)=>h.read(request),{source,kind:'native',from:cut,to:cut+60000});expect(first.reason).toBeUndefined();expect(first.receipt.sum.base).toBe('9007199254740993.00000001');
+  const query={source,anchor:day,from:cut,to:cut+60000,stepMs:60000};
+  const provisional:any=await handle.evaluate((h,q)=>h.project(q),query);expect(provisional.projection.points[0].partial).toBe(true);
   const warm={source,kind:'archive',from:day,to:cut};
   const second:any=await handle.evaluate((h,r)=>h.read(r),warm);expect(second.receipt.sum.base).toBe('-24.00000002');
+  const projected:any=await handle.evaluate((h,q)=>h.project(q),query);expect(projected.projection.points[0]).toMatchObject({base:'9007199254740968.99999999',partial:false});
   const again:any=await handle.evaluate((h,r)=>h.read(r),warm);expect(again.receipt).toMatchObject({changed:false,version:2});
   fail=true;const unavailable:any=await handle.evaluate((h,r)=>h.read(r),{...warm,from:day-60000,to:day});expect(unavailable.reason).toBe('unavailable');
+  const cached:any=await handle.evaluate((h,q)=>h.project(q),query);expect(cached).toEqual({...projected,ids:cached.ids});
   const diagnostics:any=await handle.evaluate(h=>h.diagnostics());expect(diagnostics).toMatchObject({enabled:true,active:false,consumers:0});expect(diagnostics.sources[0]).toMatchObject({version:2,days:1,residentCells:4});expect(JSON.stringify(diagnostics)).not.toContain(token);
   expect(methods).toEqual(['GET','POST','GET','GET']);
   await handle.evaluate(h=>h.worker.postMessage({type:'initFixture'}));
