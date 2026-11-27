@@ -34,9 +34,10 @@ pruning, navigation or cancellation to change an accumulated historical prefix.
 The next integration needs a worker-owned contribution ledger and an explicit
 stable basis, separate from request generations and archive publication IDs.
 
-Before multi-page archive composition, the backend needs a separately typed,
-bounded historical-observation lease acquired from an independently latest,
-fully inspected publication. Holding an existing cohort entry does not provide
+The backend now implements separately typed, bounded historical-observation
+leases acquired from an independently latest, fully inspected publication, with
+opt-in HTTP admission in `498095d`. The client transport and certificate checks
+are documented in [recorded-minute sessions](recorded-minute-sessions.md). Holding an existing cohort entry does not provide
 this behavior: its reads still require the independently latest witness and
 refuse after publication rollover. An expected-checkpoint parameter can reject
 mixed pages but cannot make the original page sequence finish. Existing
@@ -48,7 +49,8 @@ contract and a stable native/archive ownership boundary. Earlier accepted
 contributions may legitimately update the suffix once; eviction, cancelled
 requests and native window pruning must not undo accepted contributions. Gaps
 must remain explicit and an incomplete anchor must not be labelled complete.
-These requirements remain unimplemented; this decoder does not confer them.
+The native exact/incarnation contract and contribution ledger remain
+unimplemented; neither this decoder nor the session transport confers them.
 
 ## Verification
 
