@@ -508,6 +508,23 @@ export class NetPositioningPane implements IPrimitive {
       provisional: this.hostClosed.get(hit.timeMs) !== true, method: this.method,
       left: (hit.left + hit.right) / 2, top: hit.top, bottom: hit.bottom };
   }
+  /** Sum candle changes, including both endpoints; cumulative display levels are never summed. */
+  rangeSummary(firstMs:number,lastMs:number,side:NetPositioningSide) {
+    const from=Math.min(firstMs,lastMs),last=Math.max(firstMs,lastMs),barCount=Math.round((last-from)/this.intervalMs)+1;
+    if(![from,last].every(Number.isSafeInteger)||from<0||barCount<1||barCount>MAX_HOST_BARS||!this.venues.length)return null;
+    const candles=[...this.candles.values()].filter(c=>c.timeMs>=from&&c.timeMs<=last).sort((a,b)=>a.timeMs-b.timeMs);
+    const rows=candles.map(c=>this.sourceValues(c,side));
+    const sources=this.venues.map(sourceId=>{
+      const values=rows.map(row=>row.find(v=>v.sourceId===sourceId)!);
+      const sum=(key:'value'|'baseValue'|'quoteValue')=>{const known=values.filter(v=>v[key]!==null);return known.length?known.reduce((n,v)=>n+v[key]!,0):null;};
+      const count=values.filter(v=>v.value!==null).length;
+      return {sourceId,value:sum('value'),baseValue:sum('baseValue'),quoteValue:sum('quoteValue'),quality:!count?'unavailable' as const:count!==barCount||values.some(v=>v.quality!=='complete')?'partial' as const:'complete' as const,
+        color:this.colors[side][sourceId],label:sourceId==='binance'?'Binance Perp':sourceId==='bybit'?'Bybit Perp':'Hyperliquid Perp'};
+    });
+    return {timeMs:from,endMs:last+this.intervalMs,barCount,intervalMs:this.intervalMs,side,currency:this.currency,sources,total:sources.reduce((n,v)=>n+(v.value??0),0),
+      hoveredVenue:null,provisional:candles.some(c=>this.hostClosed.get(c.timeMs)!==true),method:this.method,left:0,top:0,bottom:0};
+  }
+  measureBand(side:NetPositioningSide){const band=this.renderedBands.find(b=>b.side===side);return band?{...band}:null;}
   tooltip(timeMs: number) {
     const candle = this.candles.get(timeMs);
     if (!candle) return null;

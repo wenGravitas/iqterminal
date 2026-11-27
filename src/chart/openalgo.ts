@@ -694,6 +694,20 @@ export class OpenAlgoCandleChart {
   netPositioningPaneIndex(id: string) { return this.netPositioningPanes.get(id)?.paneIndex ?? -1; }
   netPositioningTooltip(id: string, timeMs: number) { return this.netPositioningPanes.get(id)?.primitive.tooltip(timeMs) ?? null; }
   netPositioningHover(id: string, x: number, y: number) { return this.netPositioningPanes.get(id)?.primitive.hoverSummary(x, y) ?? null; }
+  netPositioningRangeSummary(id:string,from:number,to:number,side:'longs'|'shorts'){return this.netPositioningPanes.get(id)?.primitive.rangeSummary(from,to,side)??null;}
+  netPositioningMeasureTime(id:string,x:number){
+    const view=this.netPositioningPanes.get(id);if(!view)return null;
+    const plot=this.chart.plotRect(view.paneIndex);if(!plot)return null;const index=Math.max(0,Math.min(this.chart.dataLayer.baseIndex,Math.round(this.chart.timeScale.xToIndex(x-plot.left))));
+    const time=this.chart.dataLayer.indexToTime(index);return time===undefined?null:time*1000;
+  }
+  netPositioningMeasureFrame(id:string,from:number,to:number,side:'longs'|'shorts'){
+    const view=this.netPositioningPanes.get(id),band=view?.primitive.measureBand(side);if(!view||!band)return null;
+    const plot=this.chart.plotRect(view.paneIndex);if(!plot)return null;const summary=view.primitive.rangeSummary(from,to,side);if(!summary)return null;
+    const x=(time:number)=>this.chart.timeScale.indexToX(this.chart.dataLayer.timeToIndexFloat(time/1000));
+    const half=this.chart.timeScale.barSpacing/2,left=Math.max(0,Math.min(plot.width,x(Math.min(from,to))-half)),right=Math.max(0,Math.min(plot.width,x(Math.max(from,to))+half));
+    if(!Number.isFinite(left)||!Number.isFinite(right))return null;
+    return {summary,left:plot.left+left,top:plot.top+band.top,width:Math.max(0,right-left),height:band.bottom-band.top};
+  }
   netPositioningDiagnostics() { return [...this.netPositioningPanes.entries()].map(([id, view]) => ({ id, paneIndex: view.paneIndex, ...view.primitive.diagnostics() })); }
 
   setOrderWalls(settings: OrderWallsSettings, intervalMs: number) {

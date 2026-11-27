@@ -1077,3 +1077,12 @@ dialog.hl-confirm{width:min(380px,calc(100vw - 20px));max-height:80vh;overflow:a
 .order-book-panel[data-mode=compact] .depth-matrix-hover-line{left:0}
 .order-book-panel .depth-matrix-tooltip{max-width:min(580px,95%);font-size:11px;line-height:1.45;padding:8px;max-height:80%;overflow:auto;pointer-events:none}
 .order-book-panel[data-pending=true] .depth-matrix-status{color:var(--muted)}
+
+.net-positioning-measure-box { position:absolute; z-index:6; box-sizing:border-box; border:1px solid var(--accent); background:color-mix(in srgb,var(--accent) 9%,transparent); pointer-events:none; }
+.net-positioning-measure-box[hidden] { display:none; }
+.net-positioning-measure-tooltip { z-index:9; max-height:calc(100% - 8px); overflow:auto; }
+.net-positioning-measure-tooltip[data-pinned=true] { pointer-events:auto; }
+.net-positioning-measure-tooltip[data-pinned=true] .positioning-tooltip-header { padding-right:18px; }
+.positioning-measure-close { position:absolute; top:4px; right:4px; width:18px; height:18px; padding:0; border:1px solid transparent; background:transparent; color:var(--muted); font:14px/16px ui-monospace,monospace; cursor:pointer; }
+.positioning-measure-close:hover { color:var(--text); background:var(--control); }
+.positioning-measure-close:focus-visible { outline:1px solid var(--accent); }

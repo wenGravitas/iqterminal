@@ -359,3 +359,19 @@ it('keeps missing cumulative inputs unknown and flags the known running subtotal
  const rows=cumulativePositioning([{timeMs:0,sources:[{sourceId:'a',value:10}]},{timeMs:60000,sources:[{sourceId:'a',value:null}]},{timeMs:120000,sources:[{sourceId:'a',value:-3}]}],60000);
  expect(rows.map(r=>r.end)).toEqual([10,10,7]);expect(rows[1].available).toBe(false);expect(rows[2].partial).toBe(true);
 });
+
+it('measures inclusive signed candle changes in either direction without summing cumulative levels',()=>{
+ const pane=new NetPositioningPane('measure');pane.setSettings('price-oi',['binance','hyperliquid'],60000,'stacked','auto',true,true,false,true);
+ pane.setHostSnapshot([0,60000,120000].map(t=>({t,closed:true})));
+ pane.setSnapshot([0,60000,120000].map((timeMs,i)=>({timeMs,venues:{binance:venueValue('binance',[10,-4,3][i]!),hyperliquid:venueValue('hyperliquid',[2,5,-1][i]!)}})));
+ const forward=pane.rangeSummary(0,120000,'longs'),reverse=pane.rangeSummary(120000,0,'longs');
+ expect(forward).toEqual(reverse);expect(forward).toMatchObject({timeMs:0,endMs:180000,barCount:3,total:15,provisional:false});
+ expect(forward?.sources.map(v=>[v.sourceId,v.value,v.quality])).toEqual([['binance',9,'complete'],['hyperliquid',6,'complete']]);
+ expect(pane.rangeSummary(60000,60000,'shorts')).toMatchObject({barCount:1,total:1});
+});
+it('range measurement keeps missing venues, gaps and partial inputs visible as subtotals',()=>{
+ const pane=new NetPositioningPane('measure');pane.setSettings('price-oi',['binance','hyperliquid'],60000);
+ pane.setSnapshot([{timeMs:0,venues:{binance:venueValue('binance',10)}},{timeMs:120000,venues:{binance:{...venueValue('binance',-4),unavailableIntervals:1}}}]);
+ const summary=pane.rangeSummary(0,120000,'longs');expect(summary).toMatchObject({barCount:3,total:6});expect(summary?.sources[0]).toMatchObject({value:6,quality:'partial'});expect(summary?.sources[1]).toMatchObject({value:null,quality:'unavailable'});
+ expect(pane.rangeSummary(60000,60000,'longs')?.sources.every(v=>v.value===null)).toBe(true);expect(pane.rangeSummary(0,5000*60000,'longs')).toBeNull();
+});

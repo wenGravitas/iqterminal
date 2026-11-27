@@ -1,3 +1,4 @@
+import {NetPositioningMeasure} from './net-positioning-measure';
 import {LIQUIDATION_MAP_ID,mapSettings} from './liquidation-map/model';
 import {LiquidationMapView} from './liquidation-map/view';
 import { workspacePanelVisible, onWorkspaceVisibilityChange } from './workspaces/visibility';
@@ -368,6 +369,7 @@ export class CandlePanel implements IContentRenderer {
   private paneLoaders = new Map<string, PaneLoading>();
   private applyingPaneOrder = false;
   private positioningRangeHit:NonNullable<ReturnType<OpenAlgoCandleChart['netPositioningHover']>>|null=null;
+  private positioningMeasure?:NetPositioningMeasure;
   private positioningTooltip = document.createElement('div');
   private footprintCellTooltipIdentity = '';
   private footprintCellTooltipPoint: { x: number; y: number } | null = null;
@@ -999,7 +1001,7 @@ export class CandlePanel implements IContentRenderer {
     this.drawingDialog.addEventListener('cancel', () => {}, options);
     this.templatesDialog.addEventListener('cancel', () => {}, options);
     this.chart.addEventListener('dblclick', event => { if (!(event.target as HTMLElement).closest('.active-indicators')) this.returnToPresent(); }, options);
-    this.chart.addEventListener('dblclick',event=>{const rect=this.chart.getBoundingClientRect(),hit=this.positioningRangeAt(event.clientX-rect.left,event.clientY-rect.top);if(!hit)return;event.preventDefault();event.stopImmediatePropagation();if(hit.range)this.addPositioningRange(hit.range);},{...options,capture:true});
+    this.chart.addEventListener('dblclick',event=>{if(this.positioningMeasure?.active){event.preventDefault();event.stopImmediatePropagation();return;}const rect=this.chart.getBoundingClientRect(),hit=this.positioningRangeAt(event.clientX-rect.left,event.clientY-rect.top);if(!hit)return;event.preventDefault();event.stopImmediatePropagation();if(hit.range)this.addPositioningRange(hit.range);},{...options,capture:true});
     this.chart.addEventListener('pointermove',event=>{this.indicatorHoverPointerType=event.pointerType;if(!this.indicatorPointerDown)this.indicatorTooltipBlockedUntilMove=false;},options);
     this.chart.addEventListener('pointerdown',()=>{this.takeNativeHistoryViewControl();this.indicatorPointerDown=true;this.indicatorTooltipBlockedUntilMove=true;this.cancelIndicatorTooltip();},options);
     this.chart.addEventListener('pointerup',()=>{this.indicatorPointerDown=false;},options);
@@ -1044,6 +1046,14 @@ export class CandlePanel implements IContentRenderer {
     }, options);
     if(import.meta.env.VITE_DATA_MODE==='staging'){const watch=this.watchButton=document.createElement('button');watch.textContent='Watch level';watch.title='Select two zone boundaries for Binance BTCUSDT USD-M perpetual';watch.addEventListener('click',()=>this.beginWatchZone(bounds=>window.dispatchEvent(new CustomEvent('iqterminal-watch-zone',{detail:bounds}))),options);this.toolbar.append(watch);this.toolbarResizeObserver?.observe(watch);}
     this.engine = new OpenAlgoCandleChart(this.chart, this.scheduler, 'canvas2d', params.api.id, this.selection);
+    this.positioningMeasure=new NetPositioningMeasure(this.chart,this.scheduler,{
+      enabled:()=>!this.chart.hasAttribute('data-drawing-placement')&&!this.engine!.drawings.erasing(),
+      begin:()=>this.cancelIndicatorTooltip(),
+      hit:(x,y)=>{const value=this.positioningRangeAt(x,y);return value?{id:value.instanceId,timeMs:value.hit.timeMs,side:value.hit.side}:null;},
+      time:(id,x)=>this.engine?.netPositioningMeasureTime(id,x)??null,
+      frame:s=>this.selection.indicators.some(i=>i.instanceId===s.id&&i.visible)?this.engine?.netPositioningMeasureFrame(s.id,s.timeMs,s.endMs,s.side)??null:null,
+    });
+    for(const event of ['pan','zoom','resize','paneResized','paneMoved','paneMaximized','paneCollapsed','data:update'] as const)this.subscriptions.push({dispose:this.engine.chart.on(event,()=>this.positioningMeasure?.invalidate())});
     if (this.tradingController) this.tradingChartOverlay = new HyperliquidTradingChartOverlay(this.engine.chart, this.chart, this.tradingController);
     this.syncTradingOverlay();
     this.engine.drawings.setOptions({ magnet: this.selection.drawingMagnet });
@@ -4033,6 +4043,7 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private syncNetPositioning() {
+    this.positioningMeasure?.invalidate();
     const engine = this.engine;
     if (!engine || this.dead) return;
     this.positioningRangeHit=null;engine.setPositioningRange(null);
@@ -4112,6 +4123,7 @@ export class CandlePanel implements IContentRenderer {
       if (snapshot) this.engine.setNetPositioningSnapshot(instance.instanceId, changed, feeds, units, pending, error);
       else this.engine.patchNetPositioning(instance.instanceId, changed, feeds, units, pending, error);
     }
+    this.positioningMeasure?.invalidate();
     this.syncPaneLoadingStates();
   }
 
@@ -5264,6 +5276,7 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private subscribe() {
+    this.positioningMeasure?.clear();
     this.release?.();
     const epoch = ++this.selectionEpoch;
     this.nativeCandleVersions.clear();this.nativeCandleDataEpoch=0;this.nativeCandleDemand=undefined;this.nativeCandleViewKey='';
@@ -5605,6 +5618,7 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private crosshair(event: CrosshairMoveEvent) {
+    if(this.positioningMeasure?.active)return;
     const positioning = event.paneIndex == null ? undefined : this.selection.indicators.find(instance => instance.visible
       && instance.settingsVersion === 1 && instance.source.kind === 'chart'
       && NET_POSITIONING_IDS.includes(instance.definitionId as typeof NET_POSITIONING_IDS[number])
@@ -5768,7 +5782,7 @@ export class CandlePanel implements IContentRenderer {
       const index=this.engine?.netPositioningPaneIndex(instance.instanceId),plot=index==null?null:this.engine?.chart.plotRect(index);
       if(!plot||x<plot.left||x>plot.left+plot.width||y<plot.top||y>plot.top+plot.height)continue;
       const hit=this.engine?.netPositioningHover(instance.instanceId,x-plot.left,y-plot.top);
-      if(hit)return {hit,range:this.rangeForPositioningHit(hit)};
+      if(hit)return {instanceId:instance.instanceId,hit,range:this.rangeForPositioningHit(hit)};
     }
     return null;
   }
@@ -5798,6 +5812,7 @@ export class CandlePanel implements IContentRenderer {
     this.visible = nextVisible;
     this.journalBridge?.configure();
     if (!this.visible) { this.cancelIndicatorTooltip(); this.indicatorTitleHints.clear(); }
+    this.positioningMeasure?.setVisible(this.visible);
     this.studyHost?.setVisible(this.visible);
     this.orderFlowPaneView?.setVisible(this.visible);
     this.cvdData?.setHostVisible(this.visible);
@@ -6103,6 +6118,7 @@ export class CandlePanel implements IContentRenderer {
     this.cancelIndicatorTooltip();
     this.cancelWatchPick?.();
     for (const release of this.indicatorHintRootReleases.values()) release(); this.indicatorHintRootReleases.clear();
+    this.positioningMeasure?.dispose();
     this.indicatorTitleHints.dispose(); this.indicatorTooltipDwell.dispose();
     this.dead = true;
     this.journalBridge?.dispose();
