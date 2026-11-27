@@ -3,6 +3,7 @@ import {LiquidationMapService} from './liquidation-map-service';
 import { LiquidationService } from './liquidation-service';
 import { BybitExecutionService } from './bybit-service';
 import { CvdService } from './cvd-service';
+import {CvdHistoryOwner} from './cvd-history-owner';
 import { RemoteEffortService } from '../effort-result/remote';
 /// <reference lib="webworker" />
 import { LevelWatchTransport } from './level-watch';
@@ -84,6 +85,7 @@ const bybitExecutions = new BybitExecutionService();
 const tickers = new TickerService({perpetual:footprint,spot:spotFootprint,'bybit:perpetual':bybitExecutions}, e => scope.postMessage(e));
 const tradeBubbles = new TradeBubbleService({perpetual:footprint,spot:spotFootprint}, e => scope.postMessage(e));
 const liquidations = new LiquidationService(e=>scope.postMessage(e),stagingMode);
+const cvdHistory = new CvdHistoryOwner(stagingMode && import.meta.env.VITE_CVD_TIERED_HISTORY === '1');
 const cvd = new CvdService({perpetual:footprint,spot:spotFootprint,'bybit:perpetual':bybitExecutions}, e=>scope.postMessage(e), stagingMode);
 let comparison = new ComparisonService(e=>scope.postMessage(e));
 const staging = stagingMode ? new StagingFeedService(e => scope.postMessage(e)) : undefined;
@@ -153,7 +155,7 @@ const watchTransport=new LevelWatchTransport(message=>scope.postMessage(message)
 let burst:ReturnType<typeof setInterval>|undefined;let revision=1;let received=0;
 scope.onmessage=(event:MessageEvent<Command>)=>{
   if((import.meta.env.DEV||import.meta.env.VITE_DIAGNOSTICS==='1')&&(event.data as unknown as {type:string}).type==='initFixture'){
-    fixture=true; cvd.setFixture(true); liquidations.setFixture(true);
+    fixture=true; void cvdHistory.dispose(); cvd.setFixture(true); liquidations.setFixture(true);
     tradeBubbles.setFixture(true);
     stagingNetPositioning.setEnabled(false);
     stagingRawOpenInterest.setFixtureSelected(true); historicalRawOpenInterest.setEnabled(false);
@@ -180,6 +182,7 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
   if(c.type==='liquidation-ack'){liquidations.ack(c.id,c.generation,c.batchId);return;}
   if(c.type==='liquidation-fixture'){if(fixture)liquidations.ingest(c.events,c.live===true);return;}
   if(c.type==='online')liquidations.setOnline(c.online);
+  if(c.type==='cvd-history-read'||c.type==='cvd-history-cancel'){cvdHistory.command(c,e=>scope.postMessage(e));return;}
   if(c.type==='cvd-subscribe'){cvd.subscribe(c.id,c.request);return;}
   if(c.type==='cvd-unsubscribe'){cvd.unsubscribe(c.id);return;}
   if(c.type==='cvd-ack'){cvd.ack(c.id,c.generation,c.batchId);return;}
@@ -258,6 +261,6 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
   if(c.type==='footprint-retry'){footprint.command(c);spotFootprint.command(c);return;}
   if(c.type==='footprint-ack'){footprint.command(c);spotFootprint.command(c);return;}
   if(c.type==='online'){depth.setOnline(c.online);footprint.setOnline(c.online);spotFootprint.setOnline(c.online);}
-  if(c.type==='diagnostics'){scope.postMessage({type:'diagnostics',data:{...service.diagnostics(),comparison:comparison.diagnostics(),cvd:cvd.diagnostics(),liquidations:liquidations.diagnostics(),tpo:tpoService.diagnostics(),staging:staging?.diagnostics(),depth:depth.diagnostics(),heatmap:stagingMode&&!fixture?stagingHeatmap?.diagnostics():heatmap.diagnostics(),orderWalls:stagingMode&&!fixture?stagingOrderWalls?.diagnostics():directOrderWalls.diagnostics(),orderWallsArchive:archivedOrderWalls.diagnostics(),depthMatrix:fixture?depthMatrixFixtures.diagnostics():stagingDepthMatrix?.diagnostics(),netPositioning:stagingNetPositioning.diagnostics(),rawOpenInterest:stagingRawOpenInterest.diagnostics(),rawOpenInterestHistory:historicalRawOpenInterest.diagnostics(),footprint:footprint.diagnostics(),spotFootprint:spotFootprint.diagnostics(),tickers:tickers.diagnostics(),tradeBubbles:tradeBubbles.diagnostics(),effortResult:efforts.diagnostics(),fixture,networkSockets:fixture?0:service.diagnostics().sockets,syntheticMessages:received}});return;}
+  if(c.type==='diagnostics'){scope.postMessage({type:'diagnostics',data:{...service.diagnostics(),comparison:comparison.diagnostics(),cvd:cvd.diagnostics(),cvdHistory:cvdHistory.diagnostics(),liquidations:liquidations.diagnostics(),tpo:tpoService.diagnostics(),staging:staging?.diagnostics(),depth:depth.diagnostics(),heatmap:stagingMode&&!fixture?stagingHeatmap?.diagnostics():heatmap.diagnostics(),orderWalls:stagingMode&&!fixture?stagingOrderWalls?.diagnostics():directOrderWalls.diagnostics(),orderWallsArchive:archivedOrderWalls.diagnostics(),depthMatrix:fixture?depthMatrixFixtures.diagnostics():stagingDepthMatrix?.diagnostics(),netPositioning:stagingNetPositioning.diagnostics(),rawOpenInterest:stagingRawOpenInterest.diagnostics(),rawOpenInterestHistory:historicalRawOpenInterest.diagnostics(),footprint:footprint.diagnostics(),spotFootprint:spotFootprint.diagnostics(),tickers:tickers.diagnostics(),tradeBubbles:tradeBubbles.diagnostics(),effortResult:efforts.diagnostics(),fixture,networkSockets:fixture?0:service.diagnostics().sockets,syntheticMessages:received}});return;}
   service.command(c);
 };

@@ -54,6 +54,6 @@ export class RecordedMinuteSessionClient {
    catch{this.stats.failures++;return {released:false};}
   })();this.closing=work;return work.finally(()=>{if(this.closing===work)this.closing=undefined;});
  }
- diagnostics(){return {enabled:this.enabled,disposed:this.dead,active:!!this.active,opening:this.opening,closing:!!this.closing,session:this.session?{certificate:structuredClone(this.session.certificate),pages:this.session.pages,bytes:this.session.bytes,invalid:this.session.invalid}:undefined,...this.stats};}
+ diagnostics(){return {enabled:this.enabled,disposed:this.dead,active:!!this.active,opening:this.opening,closing:!!this.closing,session:this.session?{certificate:structuredClone(this.session.certificate),pages:this.session.pages,bytes:this.session.bytes,invalid:this.session.invalid,expired:this.clock()>=this.session.deadline}:undefined,...this.stats};}
  dispose(){this.dead=true;return this.close();}
 }

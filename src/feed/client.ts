@@ -11,6 +11,21 @@ import type { MonitoredFeedMode, MonitoredFeedStatus } from './observed-status';
 const feedDiagnosticsEnabled = import.meta.env.DEV || import.meta.env.VITE_DIAGNOSTICS === '1';
 type FeedStatusMeta = Pick<MonitoredFeedStatus, 'key' | 'kind' | 'source' | 'label' | 'mode'>;
 export class FeedClient {
+  private cvdHistoryReads=new Map<string,{finish:(event:import('./cvd-history-owner').CvdHistoryEvent)=>void;cancel:()=>void}>();
+  private cvdHistoryDisposed=false;
+  /** Explicit opt-in acquisition; cancelling a caller never deletes worker history. */
+  readCvdHistory(request:import('./cvd-history-owner').CvdHistoryRead,signal:AbortSignal):Promise<import('./cvd-history-owner').CvdHistoryReceipt>{
+    if(signal.aborted||this.cvdHistoryDisposed)return Promise.reject(new Error('CVD history cancelled'));
+    if(this.cvdHistoryReads.size>=24)return Promise.reject(new Error('CVD history capacity'));
+    const id=`cvd-history:${++this.sequence}`;
+    return new Promise((resolve,reject)=>{
+      const clean=()=>{clearTimeout(timer);signal.removeEventListener('abort',cancel);this.cvdHistoryReads.delete(id);};
+      const cancel=()=>{clean();this.send({type:'cvd-history-cancel',id});reject(new Error('CVD history cancelled'));};
+      const timer=setTimeout(cancel,20000);
+      this.cvdHistoryReads.set(id,{cancel,finish:event=>{clean();if(event.receipt)resolve(event.receipt);else reject(Object.assign(new Error('CVD history unavailable'),{reason:event.reason}));}});
+      signal.addEventListener('abort',cancel,{once:true});this.send({type:'cvd-history-read',id,request});
+    });
+  }
   private effortClaims=new Map<string,{resolve:(value:boolean)=>void;timer:ReturnType<typeof setTimeout>}>();
   claimEffort(key:string,eventId:string,state:import('../effort-result/engine').EventState){if(this.effortClaims.size>=8)return Promise.resolve(false);const id=`effort-claim:${++this.sequence}`;return new Promise<boolean>(resolve=>{const timer=setTimeout(()=>{this.effortClaims.delete(id);resolve(false);},8000);this.effortClaims.set(id,{resolve,timer});this.send({type:'effort-claim',id,key,eventId,state});});}
   private effortExports=new Map<string,{resolve:(value:import('../effort-result/engine').SavedEffort)=>void;reject:(error:Error)=>void;timer:ReturnType<typeof setTimeout>}>();
@@ -67,6 +82,7 @@ export class FeedClient {
       if(wm.type==='watch-result'){const request=this.watchRequests.get(wm.id);if(request){clearTimeout(request.timer);this.watchRequests.delete(wm.id);if(wm.error)request.reject(new Error(wm.error));else request.resolve(wm.value);}return;}
       if(wm.type==='watch-state'){if(wm.snapshot)this.watchSnapshot=wm.snapshot;this.watchError=wm.error;try{for(const listener of this.watchListeners){try{listener(this.watchSnapshot,this.watchError);}catch(error){console.error('Watch subscriber failed',error);}}}finally{if(wm.snapshot&&wm.delivery)this.worker.postMessage({type:'watch-ack',...wm.delivery});}return;}
       const e=message.data;
+      if(e.type==='cvd-history-result'){this.cvdHistoryReads.get(e.ids[0]!)?.finish(e);return;}
       if(e.type==='liquidation-map-batch'&&e.payload&&e.wire){try{e.payload=unpackMap(e.payload,e.wire);delete e.wire;}catch{e.payload=undefined;e.error='Invalid Liquidation Map worker payload';}}
       if(feedDiagnosticsEnabled){this.protocolStats.events++;this.protocolStats.eventTypes[e.type]=(this.protocolStats.eventTypes[e.type]??0)+1;}
       if(e.type==='effort-claim'){const pending=this.effortClaims.get(e.ids[0]);if(pending){clearTimeout(pending.timer);this.effortClaims.delete(e.ids[0]);pending.resolve(e.accepted);}return;}
@@ -263,7 +279,7 @@ export class FeedClient {
   updateTradeBubbles(id:string,request:import('./trade-bubbles-service').TradeBubbleRequest){const token=this.currentTradeBubbles.get(id),listener=token&&this.tradeBubbleListeners.get(token);if(token&&listener){listener.revision++;this.send({type:'trade-bubbles-update',id:token,configRevision:listener.revision,request});}}
   retryTradeBubbles(){this.send({type:'trade-bubbles-retry',id:'trade-bubbles-retry'});}
   retryFootprint(id?:string){const token=id?this.currentFootprint.get(id):undefined;if(id&&!token)return;this.send({type:'footprint-retry',...(token?{id:token}:{})});}
-  dispose(){for(const r of this.effortClaims.values()){clearTimeout(r.timer);r.resolve(false);}this.effortClaims.clear();for(const r of this.effortExports.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.effortExports.clear();this.effortListeners.clear();for(const r of this.watchRequests.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.watchRequests.clear();this.watchListeners.clear();this.worker.onmessage=null;this.mapListeners.clear();this.liquidationListeners.clear();this.liquidationTokens.clear();this.tickerListeners.clear();this.currentTicker.clear();this.tickerStatusMeta.clear();this.tradeBubbleListeners.clear();this.currentTradeBubbles.clear();this.comparisonListeners.clear();this.currentComparison.clear();this.comparisonStatusMeta.clear();this.listeners.clear();this.current.clear();this.observedFeedStatuses.clear();this.observedFeedNotifiedAt.clear();this.observedFeedStatusListeners.clear();this.depthListeners.clear();this.currentDepth.clear();this.footprintListeners.clear();this.currentFootprint.clear();this.heatmapListeners.clear();this.currentHeatmap.clear();this.orderWallListeners.clear();this.currentOrderWalls.clear();this.netPositioningListeners.clear();this.currentNetPositioning.clear();this.depthMatrixListeners.clear();this.currentDepthMatrix.clear();this.cvdListeners.clear();this.currentCvd.clear();this.cvdStatusMeta.clear();this.tpoListeners.clear();this.currentTpo.clear();this.worker.terminate();}
+  dispose(){this.cvdHistoryDisposed=true;for(const r of this.cvdHistoryReads.values())r.cancel();this.cvdHistoryReads.clear();for(const r of this.effortClaims.values()){clearTimeout(r.timer);r.resolve(false);}this.effortClaims.clear();for(const r of this.effortExports.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.effortExports.clear();this.effortListeners.clear();for(const r of this.watchRequests.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.watchRequests.clear();this.watchListeners.clear();this.worker.onmessage=null;this.mapListeners.clear();this.liquidationListeners.clear();this.liquidationTokens.clear();this.tickerListeners.clear();this.currentTicker.clear();this.tickerStatusMeta.clear();this.tradeBubbleListeners.clear();this.currentTradeBubbles.clear();this.comparisonListeners.clear();this.currentComparison.clear();this.comparisonStatusMeta.clear();this.listeners.clear();this.current.clear();this.observedFeedStatuses.clear();this.observedFeedNotifiedAt.clear();this.observedFeedStatusListeners.clear();this.depthListeners.clear();this.currentDepth.clear();this.footprintListeners.clear();this.currentFootprint.clear();this.heatmapListeners.clear();this.currentHeatmap.clear();this.orderWallListeners.clear();this.currentOrderWalls.clear();this.netPositioningListeners.clear();this.currentNetPositioning.clear();this.depthMatrixListeners.clear();this.currentDepthMatrix.clear();this.cvdListeners.clear();this.currentCvd.clear();this.cvdStatusMeta.clear();this.tpoListeners.clear();this.currentTpo.clear();this.worker.terminate();}
 }
 
 function isFootprintBatch(event:Event):event is Extract<Event,{type:'footprint-status'|'footprint-snapshot'|'footprint-patch'}> {
