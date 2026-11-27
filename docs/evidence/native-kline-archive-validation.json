@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "selection": "default-off VITE_NATIVE_CANDLE_ARCHIVE=1, staging history viewport only",
+  "sourceTests": {
+    "files": [
+      "native-kline-archive.test.ts",
+      "native-candle-history.test.ts",
+      "native-candle-presentation-cache.test.ts",
+      "staging-service.test.ts",
+      "native-candle-projection.test.ts",
+      "native-candle-startup-view.test.ts"
+    ],
+    "pass": 123,
+    "fail": 0,
+    "durationSeconds": 3.54
+  },
+  "browser": {
+    "configuration": "tests/browser/native-kline-archive.playwright.config.ts",
+    "engine": "Chromium 156.0.8078.79 on Debian ARM64",
+    "headless": true,
+    "fixture": "actual feed worker, deterministic WebSocket substitute and controlled HTTP responses",
+    "pass": 1,
+    "scope": "archive provisional version zero then native correction; no real exchange/provider"
+  },
+  "build": "passed, includes typecheck",
+  "knownWarning": "existing frontend large bundle warning",
+  "initialRegression": "extra disabled-path await disturbed existing request handoff; corrected and combined suite passed",
+  "limitations": [
+    "no provider qualification",
+    "no foreground chart performance acceptance",
+    "no latency improvement claim",
+    "native REST revalidation still required",
+    "no deployment or retention change"
+  ]
+}

@@ -1,7 +1,7 @@
 import {NativeCandlePresentationCache} from '../src/feed/native-candle-presentation-cache';
 import capturedSpot from './fixtures/native-candles-spot-canonical.json';
 import {expect,test,vi} from 'vitest';
-import {NativeCandleHistory} from '../src/feed/native-candle-history';
+import {NativeCandleHistory,type NativeCandleVersion} from '../src/feed/native-candle-history';
 import {NativeCandleVersions,retainNativeViewport,NATIVE_CHART_BAR_BUDGET,NATIVE_VISIBLE_BAR_BUDGET} from '../src/feed/native-candle-state';
 import {HistoryScheduler} from '../src/feed/history-scheduler';
 import type {Candle,Series} from '../src/feed/protocol';
@@ -183,4 +183,45 @@ test('a long-open view remains warm after release and pan/dispose release bounde
   h.history.viewport('b',from-step,from+4*step,[]);expect(cache.diagnostics()).toMatchObject({activeLeases:1,retainedKeys:1});
  }finally{h.history.dispose();}
  expect(cache.diagnostics()).toMatchObject({activeLeases:0,retainedKeys:0});clock+=60000;expect(cache.diagnostics()).toMatchObject({entries:0,rows:0});
+});
+
+function archiveHarness(nativeRequest:typeof fetch,enabled=true,s:Series=series,now=from+40*86400000){
+ const applied:Array<{bars:Candle[];version:NativeCandleVersion}>=[],queries:Array<{from:number;to:number}>=[];
+ const archiveRead:typeof import('../src/feed/native-kline-archive').readNativeArchive=async r=>{queries.push({from:r.from,to:r.to});return {bars:[{timeMs:r.from,open:'80000',high:'80010',low:'79990',close:'80001',baseVolume:'2'}]} as import('../src/feed/native-kline-archive').NativeArchivePayload;};
+ const history=new NativeCandleHistory(s,{request:nativeRequest,archiveEnabled:enabled,archiveRead,scheduler:new HistoryScheduler(2),now:()=>now,version:()=>({stream:1,request:1}),apply:(_id,bars,version)=>{applied.push({bars,version});return bars.map(b=>b.t);},changed:()=>{}});
+ return {history,applied,queries};
+}
+test('archive is disabled by default and cannot replace the native history request',async()=>{
+ const h=archiveHarness((async()=>reply(rows(from,3))) as typeof fetch,false);try{h.history.viewport('a',from,from+3*step,[]);await vi.waitFor(()=>expect(h.history.progress('a')?.state).toBe('ready'));expect(h.queries).toEqual([]);expect(h.applied).toHaveLength(1);expect(h.applied[0]?.version.request).toBe(1);}finally{h.history.dispose();}
+});
+test('selected archive presents provisionally then native revalidation supersedes every observed slot',async()=>{
+ let finish!:(r:Response)=>void;const h=archiveHarness((()=>new Promise<Response>(resolve=>finish=resolve)) as typeof fetch);
+ try{h.history.viewport('a',from,from+3*step,[]);await vi.waitFor(()=>expect(h.applied).toHaveLength(1));expect(h.applied[0]?.version).toEqual({stream:0,request:0});expect(h.history.progress('a')).toMatchObject({state:'loading',loadedSlots:0,cachedSlots:1,archive:{state:'observed',loadedSlots:1}});
+  const corrected=rows(from,3).map(b=>({...b,c:80002}));finish(reply(corrected));await vi.waitFor(()=>expect(h.history.progress('a')?.state).toBe('ready'));expect(h.applied[1]?.bars).toEqual(corrected);expect(h.applied[1]?.version.request).toBe(1);
+ }finally{h.history.dispose();}
+});
+test('failed native revalidation leaves provisional archive prices visible with explicit failed progress',async()=>{
+ const h=archiveHarness((async()=>new Response('',{status:503})) as typeof fetch);try{h.history.viewport('a',from,from+3*step,[]);await vi.waitFor(()=>expect(h.history.progress('a')?.state).toBe('failed'));expect(h.applied).toHaveLength(1);expect(h.applied[0]?.bars).toHaveLength(1);expect(h.history.progress('a')?.cachedSlots).toBe(1);expect(h.history.progress('a')?.loadedSlots).toBe(0);}finally{h.history.dispose();}
+});
+test('archive is not consulted for the unarchived current UTC day',async()=>{
+ const now=from+3600000,h=archiveHarness((async()=>reply(rows(from,3))) as typeof fetch,true,series,now);try{h.history.viewport('a',from,from+3*step,[]);await vi.waitFor(()=>expect(h.history.progress('a')?.state).toBe('ready'));expect(h.queries).toEqual([]);}finally{h.history.dispose();}
+});
+test('4h archive reads are independently bounded to31days while native retains one1000bar request',async()=>{
+ const interval=14400000,start=Date.UTC(2026,0,1),count=1000;let calls=0;
+ const h=archiveHarness((async()=>{calls++;return reply(rows(start,count,interval));}) as typeof fetch,true,{...series,interval:'4h'},start+count*interval+86400000);
+ try{h.history.viewport('a',start,start+count*interval,[]);await vi.waitFor(()=>expect(h.history.progress('a')?.state).toBe('ready'));expect(calls).toBe(1);expect(h.queries).toHaveLength(6);expect(h.queries.every(q=>q.to-q.from<=31*86400000&&q.from%interval===0&&q.to%interval===0)).toBe(true);expect(h.queries.at(-1)?.from).toBe(start);}finally{h.history.dispose();}
+});
+test('archive origin failure preserves the incumbent native request',async()=>{
+ let native=0;const history=new NativeCandleHistory(series,{archiveEnabled:true,archiveRead:async()=>{throw Error('offline');},request:(async()=>{native++;return reply(rows(from,3));}) as typeof fetch,now:()=>from+40*86400000,version:()=>({stream:1,request:1}),apply:(_id,bars)=>bars.map(c=>c.t),changed:()=>{}});
+ try{history.viewport('a',from,from+3*step,[]);await vi.waitFor(()=>expect(history.progress('a')?.state).toBe('ready'));expect(native).toBe(1);expect(history.progress('a')?.archive?.state).toBe('unavailable');}finally{history.dispose();}
+});
+test('release during archive retrieval prevents stale presentation and native work',async()=>{
+ let finish!:(v:any)=>void,native=0;const apply=vi.fn((_id:string,bars:Candle[])=>bars.map(c=>c.t));
+ const history=new NativeCandleHistory(series,{archiveEnabled:true,archiveRead:()=>new Promise(resolve=>finish=resolve),request:(async()=>{native++;return reply([]);}) as typeof fetch,now:()=>from+40*86400000,version:()=>({stream:1,request:1}),apply,changed:()=>{}});
+ try{history.viewport('a',from,from+3*step,[]);await vi.waitFor(()=>expect(finish).toBeTypeOf('function'));history.release('a');finish({bars:[]});await new Promise(resolve=>setTimeout(resolve,0));expect(apply).not.toHaveBeenCalled();expect(native).toBe(0);expect(history.progress('a')).toBeUndefined();}finally{history.dispose();}
+});
+test('resident provisional page reopens without another archive download while native still revalidates',async()=>{
+ const presentation=new NativeCandlePresentationCache();let archives=0,native=0;
+ const history=new NativeCandleHistory(series,{presentation,archiveEnabled:true,archiveRead:async()=>{archives++;return {bars:rows(from,3).map(c=>({timeMs:c.t,open:String(c.o),high:String(c.h),low:String(c.l),close:String(c.c),baseVolume:String(c.v)}))} as import('../src/feed/native-kline-archive').NativeArchivePayload;},request:(async()=>{native++;return new Response('',{status:503});}) as typeof fetch,now:()=>from+40*86400000,version:()=>({stream:1,request:1}),apply:(_id,bars)=>bars.map(c=>c.t),changed:()=>{}});
+ try{history.viewport('a',from,from+3*step,[]);await vi.waitFor(()=>expect(history.progress('a')?.state).toBe('failed'));history.release('a');history.viewport('b',from,from+3*step,[]);await vi.waitFor(()=>expect(history.progress('b')?.state).toBe('failed'));expect(archives).toBe(1);expect(native).toBe(2);expect(history.progress('b')?.cachedSlots).toBe(3);}finally{history.dispose();}
 });

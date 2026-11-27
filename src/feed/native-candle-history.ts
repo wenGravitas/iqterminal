@@ -1,3 +1,4 @@
+import {nativeArchiveRequest,nativeArchiveCandles,readNativeArchive,NATIVE_ARCHIVE_LIMITS,type NativeArchivePayload} from './native-kline-archive';
 import {pastCandleViewport} from './candle-viewport';
 import type {NativeCandlePresentationCache} from './native-candle-presentation-cache';
 import {duration,instrumentKey,instrumentOf,marketOf,validCandle,type Candle,type Series} from './protocol';
@@ -10,9 +11,10 @@ export interface NativeCandleViewProgress {
  state:'loading'|'ready'|'partial'|'failed'|'capacity-limited';
  capacityLimited:boolean;retryable:boolean;error?:string;
  cachedSlots?:number;
+ archive?:{state:'observed'|'unavailable';loadedSlots:number};
  unloaded:Array<{from:number;to:number;reason:'not-returned'|'capacity'}>;unloadedTruncated:boolean;
 }
-interface View {leases:Array<()=>void>;trace:string;cached?:NativeCandleViewProgress;from:number;to:number;loadFrom:number;key:string;known:Set<number>;received:Set<number>;presented:Set<number>;abort:AbortController;busy:boolean;error?:string;attempted:boolean}
+interface View {archive?:{state:'observed'|'unavailable';loadedSlots:number};leases:Array<()=>void>;trace:string;cached?:NativeCandleViewProgress;from:number;to:number;loadFrom:number;key:string;known:Set<number>;received:Set<number>;presented:Set<number>;abort:AbortController;busy:boolean;error?:string;attempted:boolean}
 interface Page {candles:Candle[];version:NativeCandleVersion;at:number}
 /** Exact native OHLC only, via the existing collector API. An optional bounded
  * presentation cache is independently revalidated; chart retention stays5000.
@@ -21,7 +23,7 @@ export class NativeCandleHistory {
  private views=new Map<string,View>();private dead=false;private online=true;
  readonly metrics={requests:0,receivedBars:0,presentedBars:0,applyMs:0};
  constructor(private series:Series,private options:{request:typeof fetch;version:()=>NativeCandleVersion;now:()=>number;
-  apply:(id:string,bars:Candle[],version:NativeCandleVersion,at:number)=>number[];changed:()=>void;scheduler?:HistoryScheduler;presentation?:NativeCandlePresentationCache;nativeBars?:()=>readonly Candle[]}){}
+  apply:(id:string,bars:Candle[],version:NativeCandleVersion,at:number)=>number[];changed:()=>void;scheduler?:HistoryScheduler;presentation?:NativeCandlePresentationCache;nativeBars?:()=>readonly Candle[];archiveEnabled?:boolean;archiveRead?:typeof readNativeArchive}){}
  viewport(id:string,rawFrom:number,rawTo:number,knownTimes:number[]){
   if(this.dead||!Number.isFinite(rawFrom)||!Number.isFinite(rawTo)||rawFrom<0||rawFrom>=rawTo||rawTo>8.64e15
    ||!Array.isArray(knownTimes)||knownTimes.length>NATIVE_CHART_BAR_BUDGET||!knownTimes.every(Number.isSafeInteger))return;
@@ -67,7 +69,7 @@ export class NativeCandleHistory {
   const unloaded:NativeCandleViewProgress['unloaded']=[...(capacityLimited?[{from:v.from,to:v.loadFrom,reason:'capacity' as const}]:[]),...missing.map(r=>({...r,reason:'not-returned' as const}))];
   return v.cached={from:v.from,to:v.to,requestedSlots:(v.to-v.from)/step,loadedSlots:(v.to-v.loadFrom)/step-missing.reduce((n,r)=>n+(r.to-r.from)/step,0),
    state:v.error?'failed':v.busy?'loading':capacityLimited?'capacity-limited':missing.length?'partial':'ready',capacityLimited,retryable:!!v.error||!v.busy&&missing.length>0,
-   ...(v.error?{error:v.error}:{}),...(v.presented.size?{cachedSlots:v.presented.size}:{}),unloaded:unloaded.slice(0,64),unloadedTruncated:unloaded.length>64};
+   ...(v.error?{error:v.error}:{}),...(v.archive?{archive:{...v.archive}}:{}),...(v.presented.size?{cachedSlots:v.presented.size}:{}),unloaded:unloaded.slice(0,64),unloadedTruncated:unloaded.length>64};
  }
  /** Only the authoritative native bootstrap/stream may acknowledge cache slots.
   * Viewport known-times can echo presentation and cannot do so on their own. */
@@ -82,6 +84,27 @@ export class NativeCandleHistory {
   if(changed)this.options.changed();
  }
  retry(id:string){const v=this.views.get(id);if(!v||v.busy)return false;v.error=undefined;v.attempted=false;void this.load(id,v);return true;}
+ /** Archive observations use request zero: they never acknowledge current slots.
+  * The incumbent native read still revalidates them and wins any correction. */
+ private async presentArchive(id:string,v:View,from:number,to:number){
+  if(!this.options.archiveEnabled||this.series.venue!=='binance'||['30m','1d'].includes(this.series.interval))return;
+  const step=duration[this.series.interval],end=Math.min(to,Math.floor(this.options.now()/86400000)*86400000),slots=Math.min(1000,Math.floor(NATIVE_ARCHIVE_LIMITS.rangeMs/step));
+  for(let hi=end;hi>from;){const lo=Math.max(from,hi-slots*step);let wanted=false;
+   for(let t=lo;t<hi;t+=step)if(!v.known.has(t)&&!v.presented.has(t)&&!v.received.has(t)){wanted=true;break;}
+   if(wanted){try{
+    const payload:NativeArchivePayload=await (this.options.archiveRead??readNativeArchive)(nativeArchiveRequest(this.series,lo,hi),v.abort.signal,this.options.request,this.options.scheduler??historyScheduler);
+    if(this.dead||this.views.get(id)!==v||v.abort.signal.aborted)return;
+    const bars=nativeArchiveCandles(payload).filter(c=>!v.known.has(c.t)&&!v.received.has(c.t)&&!v.presented.has(c.t));
+    const key=this.presentationKey(from,to),cached=this.options.presentation?.read(key)??[];
+    // Retain provisional bytes independently of the request. Existing cache
+    // slots win; archive observations cannot replace a newer native seed.
+    this.options.presentation?.put(key,[...new Map([...bars,...cached].map(c=>[c.t,c])).values()].sort((a,b)=>a.t-b.t));
+    const covered=this.options.apply(id,bars,{stream:0,request:0},this.options.now());for(const t of covered)if(t>=lo&&t<hi)v.presented.add(t);
+    this.metrics.presentedBars+=covered.length;v.archive={state:'observed',loadedSlots:v.presented.size};v.cached=undefined;this.options.changed();
+   }catch{if(v.abort.signal.aborted)return;v.archive={state:'unavailable',loadedSlots:v.presented.size};v.cached=undefined;this.options.changed();return;}}
+   hi=lo;
+  }
+ }
  private async load(id:string,v:View){
   if(v.busy||!this.online||this.dead||this.views.get(id)!==v||v.abort.signal.aborted)return;
   v.busy=true;v.error=undefined;v.cached=undefined;this.options.changed();
@@ -93,6 +116,8 @@ export class NativeCandleHistory {
     const from=Math.max(v.loadFrom,to-1000*step);
     let missing=false;for(let t=from;t<to;t+=step)if(!v.known.has(t)&&!v.received.has(t)){missing=true;break;}
     if(!missing){to=from;continue;}
+    if(this.options.archiveEnabled)await this.presentArchive(id,v,from,to);
+    if(this.dead||this.views.get(id)!==v||v.abort.signal.aborted)return;
     const params=new URLSearchParams({interval:this.series.interval,from:String(from)});
     if(marketOf(this.series)==='spot')params.set('market','spot');
     const url='/market-data/v1/native-candles?'+params;

@@ -79,7 +79,7 @@ export class StagingFeedService {
       }
       if(group.native&&!group.native.history){
         const g=group;
-        group.native.history=new NativeCandleHistory(group.series,{request:this.request,now:this.now,presentation:this.nativePresentation,nativeBars:()=>g.candles,
+        group.native.history=new NativeCandleHistory(group.series,{archiveEnabled:import.meta.env.VITE_NATIVE_CANDLE_ARCHIVE==='1',request:this.request,now:this.now,presentation:this.nativePresentation,nativeBars:()=>g.candles,
           version:()=>({stream:g.native!.sequence,request:++g.native!.readOrder}),
           apply:(id,bars,version,at)=>this.applyNativeHistory(g,id,bars,version,at),
           changed:()=>{if(!this.dead&&this.groups.get(g.key)===g)this.nativeStatus(g);}});

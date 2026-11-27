@@ -128,3 +128,7 @@ release, retaining the current staging gateway, current/history tunnels and raw
 source. The sharing map is ephemeral and adds no persistent state or migration.
 A client reload disposes it. Do not roll the backend back to pre-R2main or restart
 collectors for this frontend rollback.
+
+## Optional archive presentation
+
+The [witnessed native archive candidate](native-candle-archive.md) now feeds this same provisional presentation path under a separate default-off flag. Existing native revalidation/version ownership and chart budgets remain authoritative. Provider, foreground Pi and live performance acceptance remain open.

@@ -1,0 +1,25 @@
+# Optional witnessed native candle presentation
+
+Candidate only, disabled by default and not deployed. `VITE_NATIVE_CANDLE_ARCHIVE=1` selects the existing staging feed worker's native history integration. It also requires the incumbent staging/history viewport path (`VITE_DATA_MODE=staging`, `VITE_HISTORY_TILES=1`) and the separately reviewed backend `IQ_STORAGE_NATIVE_KLINE_HISTORY=1` route. No ordinary live behavior or production configuration is changed.
+
+The worker requests `/market-data/v2/history/native-candles` through the existing shared history scheduler. Only Binance BTCUSDT spot/perpetual 1m/5m/15m/1h/4h requests are admitted. Each response is bounded to 1,000 bars, 31 days and 4 MiB decoded JSON, with an eight-second deadline. Coalesced consumers cancel independently. Long-timeframe viewport pages use serial bounded archive requests and keep the incumbent single native REST request. Only fully closed UTC days are queried from archives; current-day bootstrap/stream behavior is unchanged.
+
+Client validation checks exact native source identity, scope, grid/order, native OHLC and volume relationships, UInt64 trade counts, publication IDs, complete/partial/unavailable coverage and exact missing spans, independent publication metadata and false authority flags. Exact values remain strings in the validated payload. Chart conversion is explicitly a Float64 display projection and never mutates that payload; it is not an exact financial arithmetic representation. Recorded-execution candles cannot satisfy this contract.
+
+Archive bars are provisional presentation (`stream:0,request:0`), using the incumbent native-cache version rules. They do not acknowledge current/native slots or suppress normal native revalidation. Existing native group slots and later REST/stream corrections win. Archive coverage is observation coverage, not source succession, financial acceptance or current reconciliation. Viewport progress includes archive observation/unavailability and provisional slot counts; a native revalidation failure remains explicit rather than claiming archive data is current.
+
+Provisional prices reuse the existing bounded presentation cache (two entries, 1,000 total bars, 1 MiB, 60-second idle expiry). Existing cached slots win an archive merge. Loaded chart data is not cleared when a request fails, aborts or a viewport releases. A fully resident page avoids another archive download while the native revalidation still runs. Sparse cached pages can need another archive request for their missing slots. The underlying chart retains its existing 5,000-bar budget.
+
+The optional archive attempt precedes native viewport revalidation, so a slow archive can add latency when selected. An archive failure leaves the incumbent native request available. Real-provider latency/concurrency qualification is required before enabling this path; no improvement is claimed. The native presentation/revalidation model is deliberately retained while exchange correction/re-observation and hot-overlay authority remain unfinished.
+
+## Validation and rollout
+
+- 123 tests passed across exact archive parsing/transport, native history lifecycle/presentation cache, staging service, projection and startup view, including disabled selection, native replacement, archive/native outage, independent cancellation, resident reopen and long-timeframe request limits.
+- Full frontend build passed with default selection; the existing bundle-size warning remains.
+- A separately launched, non-reused loopback Vite server and headless Chromium 156 on ARM64 passed an actual production feed-worker check with the archive flag selected. A deterministic WebSocket substitute prevented real exchange connections; controlled HTTP archive observations painted before native revalidation, which then superseded them. This is worker correctness, not a rendered chart, live feed or p50/p95 acceptance benchmark.
+
+Reproduce the focused browser check with `pnpm exec playwright test --config tests/browser/native-kline-archive.playwright.config.ts`. It binds only its isolated loopback port 5186 and refuses to reuse a running server. It does not replace the user's client or tunnel. Raw reports go under `artifacts/native-kline-archive-browser*`.
+
+Before rollout, independently qualify the backend v3 snapshot/provider/recovery configuration, verify response identities and outage behavior, measure concurrent live ingestion, and test foreground Pi charts across panning/zooming and reopen. Do not enable retention/deletion policies from these tests. Build-time rollback omits `VITE_NATIVE_CANDLE_ARCHIVE` or sets it to `0`; retain all archive/native history. Backend v3 root compatibility remains a separate forward-migration constraint, not solved by a frontend flag.
+
+The initial broader run caught a disabled-path request-handoff timing regression from an unconditional async helper call. Disabled selection now avoids that extra await; the final combined 123-test run passed. [Validation record](evidence/native-kline-archive-validation.json).
