@@ -19,7 +19,8 @@ test('measures cached exact projections after minute eviction in a dedicated Pi 
     return json({...recordedMinuteWire(request),observationLease:lease});
    });
    const request={source,anchor:day,from:day,to:cut,stepMs:5*M};let ready=false;
-   self.onmessage=async()=>{try{
+   self.onmessage=async({data})=>{try{
+    if(data?.type==='detail'){const version=owner.diagnostics().sources[0].version,result=await owner.window({projection:{...request,from:day+M,to:day+3*M,stepMs:M}},new AbortController().signal);self.postMessage({state:result.state,operations:result.operations,points:result.projection?.points,versionBefore:version,versionAfter:owner.diagnostics().sources[0].version});return;}
     if(!ready){const signal=new AbortController().signal;await owner.read({source,kind:'native',from:cut,to:cut+M},signal);for(let n=0;n<20;n++)await owner.read({source,kind:'archive',from:day+n*D,to:day+(n+1)*D},signal);
      const start=performance.now(),projection=owner.project(request),buildMs=performance.now()-start;
      for(let n=0;n<20;n++)owner.evict(source,day+n*D);
@@ -32,15 +33,16 @@ test('measures cached exact projections after minute eviction in a dedicated Pi 
  await page.goto('/__cvd-projection-fixture',{waitUntil:'domcontentloaded'});
  const result=await page.evaluate(async()=>{
   const worker=new Worker('/__cvd-projection-worker.js',{type:'module'});
-  const ask=()=>new Promise<any>((resolve,reject)=>{worker.onmessage=e=>e.data.error?reject(Error(e.data.error)):resolve(e.data);worker.onerror=e=>reject(Error(e.message));worker.postMessage({});});
+  const ask=(data={})=>new Promise<any>((resolve,reject)=>{worker.onmessage=e=>e.data.error?reject(Error(e.data.error)):resolve(e.data);worker.onerror=e=>reject(Error(e.message));worker.postMessage(data);});
   try{const initial=await ask(),roundtripMs:number[]=[],queryMs:number[]=[];let last;
    for(let n=0;n<25;n++){const start=performance.now(),value=await ask();roundtripMs.push(performance.now()-start);queryMs.push(value.queryMs);last=value.projection.points.at(-1);}
    const quantile=(values:number[],q:number)=>[...values].sort((a,b)=>a-b)[Math.ceil(values.length*q)-1];
-   return {initial,last,samples:25,queryMs:{p50:quantile(queryMs,.5),p95:quantile(queryMs,.95)},roundtripMs:{p50:quantile(roundtripMs,.5),p95:quantile(roundtripMs,.95)}};
+   const detail=await ask({type:'detail'});return {initial,last,detail,samples:25,queryMs:{p50:quantile(queryMs,.5),p95:quantile(queryMs,.95)},roundtripMs:{p50:quantile(roundtripMs,.5),p95:quantile(roundtripMs,.95)}};
   }finally{worker.terminate();}
  });
  expect(result.initial).toMatchObject({ready:true,points:5760,complete:true,panPoints:2880,zoomPoints:480});expect(result.last).toEqual(result.initial.last);
  expect(result.initial.diagnostics.sources[0]).toMatchObject({sealedDays:20,residentCells:1});
+ expect(result.detail).toMatchObject({state:'available',operations:2});expect(result.detail.versionAfter).toBe(result.detail.versionBefore);expect(result.detail.points.every((p:any)=>!p.partial)).toBe(true);
  const report={qualification:'controlled sparse in-memory transport fixture; dedicated headless Chromium worker; no live/provider/chart acceptance',shape:{days:20,stepMs:300000,points:5760,recordedRows:40,sealedDays:20},...result};
  await info.attach('cvd-projection-cache-benchmark.json',{body:JSON.stringify(report,null,2),contentType:'application/json'});
  console.log('CVD_PROJECTION_BENCHMARK '+JSON.stringify({samples:result.samples,buildMs:result.initial.buildMs,queryMs:result.queryMs,roundtripMs:result.roundtripMs}));

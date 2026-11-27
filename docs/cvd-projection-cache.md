@@ -96,8 +96,9 @@ remain required.
 
 ## Remaining integration and rollback
 
-Viewport acquisition, archive fragmentation handling, multi-page restoration,
-period-aware chart output and foreground performance remain open. New queries
+[Finite viewport acquisition and staged day restoration](cvd-history-window.md)
+now use these cached inputs. Archive fragmentation beyond existing backend
+limits, period-aware chart output and foreground performance remain open. New queries
 do not silently fill those gaps with fixtures or legacy numeric data. Remove
 the client opt-in flag and reload to disable the feature. No backend runtime,
 source retention, server deployment or history deletion changes are required.

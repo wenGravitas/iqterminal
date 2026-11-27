@@ -4,6 +4,11 @@ import type {CvdHistoryRead} from '../src/feed/cvd-history-owner';
 class WorkerMock {static instance:WorkerMock;onmessage:((event:any)=>void)|null=null;messages:any[]=[];constructor(){WorkerMock.instance=this;}postMessage(command:unknown){this.messages.push(command);}terminate(){} }
 const request:CvdHistoryRead={source:'binance:perpetual',kind:'native',from:60000,to:120000};
 afterEach(()=>{vi.useRealTimers();vi.unstubAllGlobals();});
+it('routes finite viewport and staged restore receipts through cancellable worker requests',async()=>{
+ vi.stubGlobal('Worker',WorkerMock);const client=new FeedClient(),worker=WorkerMock.instance,s=new AbortController().signal;
+ const viewport=client.acquireCvdHistoryWindow({projection:{source:request.source,anchor:0,from:60000,to:120000,stepMs:60000}},s),command=worker.messages.at(-1);expect(command.type).toBe('cvd-history-window');worker.onmessage?.({data:{type:'cvd-history-result',ids:[command.id],window:{state:'loading',nextBefore:60000}}});expect(await viewport).toEqual({state:'loading',nextBefore:60000});
+ const restore=client.restoreCvdHistoryPage({source:request.source,day:0,from:0,to:3600000},s),r=worker.messages.at(-1);expect(r.type).toBe('cvd-history-restore');worker.onmessage?.({data:{type:'cvd-history-result',ids:[r.id],restoration:{complete:false,missingRecords:2}}});expect(await restore).toEqual({complete:false,missingRecords:2});client.dispose();
+});
 it('routes cache-only projections through the same bounded request lifecycle',async()=>{
  vi.stubGlobal('Worker',WorkerMock);const client=new FeedClient(),worker=WorkerMock.instance;
  const r={source:request.source,anchor:0,from:60000,to:120000,stepMs:60000};

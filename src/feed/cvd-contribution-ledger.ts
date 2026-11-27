@@ -74,7 +74,7 @@ export class CvdContributionLedger {
   if(r.dataset!=='cvd'||r.venue+':'+r.market!==this.source)throw new CvdLedgerFailure('basis');
   const pin=JSON.stringify([certificate.checkpoint,certificate.generation,certificate.catalogueHead,certificate.source]),candidates:Candidate=new Map(),byTime=new Map(p.bars.map(b=>[b.timeMs,b]));
   for(let t=r.from;t<Math.min(r.to,ownedOnly?this.cutover:r.to);t+=M){const row=byTime.get(t);if(row&&BigInt(row.records)>BigInt(row.lastId)-BigInt(row.firstId)+1n)throw new CvdLedgerFailure('conflict',dayAt(t));const complete=p.coverage.partitions.some(part=>part.from<=t&&part.to>=t+M&&(part.coverage.state==='complete'||part.coverage.gaps.length>0&&!part.coverage.gaps.some(g=>g.from<t+M&&g.to>t)));if(row||complete)put(candidates,t,{base:row?cvdDecimal(row.base):'0',quote:row?cvdDecimal(row.quote):'0',...(row?{record:[row.firstId,row.lastId,row.records] as [string,string,string]}:{}),complete,revision:0,watermark:'0'});}
-  return {candidates,pin};
+  return {candidates,pin,p};
  }
  applyArchive(value:unknown){
   const {candidates,pin}=this.archiveCandidates(value,true);
@@ -91,6 +91,30 @@ export class CvdContributionLedger {
   for(const [day,cells]of candidates){const old=this.blocks.get(day);if(old?.seal)staged.set(day,this.restore(old,cells));}
   return this.commit(staged,false);
  }
+ /** Disposable reconstruction of one already accepted day. Original seal masks
+  * and hash remain authoritative; pages never add observations or provenance. */
+ beginArchiveRestore(day:number){
+  if(!Number.isSafeInteger(day)||day<0||day%DAY)throw new CvdLedgerFailure('capacity');
+  const original=this.blocks.get(day);if(!original?.seal)throw new CvdLedgerFailure('basis',day);
+  const seal=original.seal;let cells=new Map<number,Cell>(),pages=0,bytes=0,done=false;
+  const current=()=>{if(done||this.blocks.get(day)!==original)throw new CvdLedgerFailure('basis',day);};
+  const missing=()=>{let count=0,last:number|undefined;for(let i=0;i<SLOTS;i++)if(bit(seal.recorded,i)&&!cells.get(day+i*M)?.record){count++;last=day+i*M;}return {count,last};};
+  return {
+   append:(value:unknown)=>{
+    current();if(pages>=32)throw new CvdLedgerFailure('capacity',day);
+    const {candidates,p}=this.archiveCandidates(value,false);
+    if(p.request.from<day||p.request.to>day+DAY)throw new CvdLedgerFailure('basis',day);
+    const received=new TextEncoder().encode(JSON.stringify(p)).byteLength;
+    if(received>4*1024**2||bytes+received>32*1024**2)throw new CvdLedgerFailure('capacity',day);
+    const next=new Map(cells);
+    for(const [time,cell]of candidates.get(day)??[]){const old=next.get(time);if(old&&(old.base!==cell.base||old.quote!==cell.quote||JSON.stringify(old.record??null)!==JSON.stringify(cell.record??null)))throw new CvdLedgerFailure('conflict',day);next.set(time,cell);}
+    cells=next;pages++;bytes+=received;return {pages,bytes,missingRecords:missing().count};
+   },
+   next:()=>{current();const time=missing().last;if(time===undefined)return undefined;const from=Math.floor(time/3600000)*3600000;return {from,to:from+3600000};},
+   finish:()=>{current();if(missing().count)throw new CvdLedgerFailure('restore',day);const block=this.restore(original,cells),result=this.commit(new Map([[day,block]]),false);done=true;cells.clear();return result;},
+   diagnostics:()=>({day,pages,bytes,missingRecords:missing().count,done}),
+  };
+ }
  evict(day:number){if(!Number.isSafeInteger(day)||day<0||day%DAY)throw new CvdLedgerFailure('capacity');const old=this.blocks.get(day);if(!old)return undefined;if(old.seal)return old.seal.hash;if(day+DAY>this.cutover!&&day+DAY>this.nativeAsOf)throw new CvdLedgerFailure('mutable',day);
   const seal:Seal={hash:this.hash(old),present:new Uint8Array(180),recorded:new Uint8Array(180),complete:new Uint8Array(180)};
   for(const [time,c]of old.cells!){const i=(time-day)/M;setBit(seal.present,i);if(c.record)setBit(seal.recorded,i);if(c.complete)setBit(seal.complete,i);}this.resident-=old.cells!.size;this.blocks.set(day,{...old,cells:undefined,seal});return seal.hash;
@@ -103,6 +127,17 @@ export class CvdContributionLedger {
    else{let observed=0;for(let t=lo;t<hi;t+=M){const i=(t-day)/M;if(bit(b.seal!.present,i))knownMinutes++;if(bit(b.seal!.complete,i))coveredMinutes++;if(bit(b.seal!.recorded,i))observed++;}if(observed&&observed!==b.observed)throw new CvdLedgerFailure('restore',day);if(observed){base=cvdAdd(base,b.base);quote=cvdAdd(quote,b.quote);}observedMinutes+=observed;}
   }
   const requestedMinutes=(to-from)/M;return {base,quote,complete:coveredMinutes===requestedMinutes,knownMinutes,coveredMinutes,observedMinutes,requestedMinutes,financialAccepted:false as const};
+ }
+ /** Coverage masks do not require restored quantities. This must not be used
+  * as a substitute for exact sums when a finer projection needs record detail. */
+ coverage(from:number,to:number){
+  range(from,to);let knownMinutes=0,coveredMinutes=0,observedMinutes=0;
+  for(let day=dayAt(from);day<to;day+=DAY){const b=this.blocks.get(day);if(!b)continue;const lo=Math.max(from,day),hi=Math.min(to,day+DAY);
+   if(lo===day&&hi===day+DAY){knownMinutes+=b.known;coveredMinutes+=b.covered;observedMinutes+=b.observed;continue;}
+   for(let t=lo;t<hi;t+=M){if(b.cells){const c=b.cells.get(t);if(c){knownMinutes++;if(c.complete)coveredMinutes++;if(c.record)observedMinutes++;}}
+    else{const i=(t-day)/M;if(bit(b.seal!.present,i))knownMinutes++;if(bit(b.seal!.complete,i))coveredMinutes++;if(bit(b.seal!.recorded,i))observedMinutes++;}}
+  }
+  const requestedMinutes=(to-from)/M;return {knownMinutes,coveredMinutes,observedMinutes,requestedMinutes,complete:coveredMinutes===requestedMinutes,financialAccepted:false as const};
  }
  series(anchor:number,from:number,to:number,stepMs=60000){
   range(anchor,to);range(from,to);if(anchor>from||!Number.isSafeInteger(stepMs)||stepMs<M||stepMs%M||from%stepMs||to%stepMs||(to-from)%stepMs||(to-from)/stepMs>this.limits.points)throw new CvdLedgerFailure('capacity');

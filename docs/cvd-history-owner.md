@@ -48,9 +48,11 @@ Cache-only `sum`/`series`, [resident exact projections](cvd-projection-cache.md)
 and explicit `evict` are available to worker consumers.
 Eviction preserves exact block totals; a missing partial-block projection reports
 the ledger's restore requirement rather than inventing detail. The contribution
-ledger's finite day/cell/provenance limits remain enforced. This increment has
-no automatic compaction, multi-page restoration planner or durable browser
-restart recovery; reaching a limit refuses new work and keeps earlier data.
+ledger's finite day/cell/provenance limits remain enforced. The optional
+[viewport planner](cvd-history-window.md) now compacts completed immutable days
+and stages fragmented restoration. There is no general background compactor or
+durable browser restart recovery; reaching a limit keeps earlier data and
+refuses new work.
 
 ## Restart safety
 
@@ -84,8 +86,8 @@ HTTP data and no real exchange/provider. It does not establish live latency,
 foreground rendering performance, 24-hour/seven-day/30-day loading, sustained
 growth or provider recovery. No p50/p95 improvement is claimed.
 
-Next integration gates are bounded viewport acquisition/restore planning,
-period-aware chart adaptation and
+[Finite viewport acquisition and staged restoration](cvd-history-window.md) are
+now implemented. Next integration gates are period-aware chart adaptation and
 correction/continuity qualification. Existing production charts continue to use
 their incumbent CVD service. Rollback is removal of the opt-in client flag and a
 client reload; there are no server migrations, source deletions or live policy

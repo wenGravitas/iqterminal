@@ -85,6 +85,15 @@ correction winner. An incomplete/mismatched candidate or insufficient resident
 budget leaves the old totals intact. Newly discovered observations still require
 normal admission after restoration.
 
+`beginArchiveRestore(day)` now supports bounded multi-page reconstruction of a
+sealed day. It retains at most 1,440 candidate cells, 32 accepted pages and
+32 MiB cumulative normalized bytes, then verifies the original hash before one
+atomic residency commit. An intervening block replacement invalidates the stage.
+The owner adds expiry and admission controls; see
+[staged restoration and viewport acquisition](cvd-history-window.md).
+`coverage(from, to)` reads retained masks independently of quantities, allowing
+complete windows to be skipped without forcing detail restoration.
+
 A full, complete newer native-owned day may replace a sealed native day using
 its retained old total, without replaying old minute bytes. Partial native
 corrections need the accepted block restored first. Restoration changes

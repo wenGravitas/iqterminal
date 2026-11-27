@@ -20,7 +20,7 @@ function combine(a:Sum,b:Sum):Sum {
  return {base:cvdAdd(a.base,b.base),quote:cvdAdd(a.quote,b.quote),knownMinutes:a.knownMinutes+b.knownMinutes,coveredMinutes,observedMinutes:a.observedMinutes+b.observedMinutes,requestedMinutes,complete:coveredMinutes===requestedMinutes,financialAccepted:false};
 }
 const empty=():Sum=>({base:'0',quote:'0',knownMinutes:0,coveredMinutes:0,observedMinutes:0,requestedMinutes:0,complete:true,financialAccepted:false});
-function checked(r:CvdProjectionRequest):CvdProjectionRequest {
+export function cvdProjectionRequest(r:CvdProjectionRequest):CvdProjectionRequest {
  if(!r||!['binance:spot','binance:perpetual','bybit:perpetual'].includes(r.source)||![r.anchor,r.from,r.to,r.stepMs].every(n=>Number.isSafeInteger(n)&&n>=0&&n%60000===0)||r.stepMs<60000||r.anchor>r.from||r.from>=r.to||r.to-r.anchor>CVD_LEDGER_LIMITS.days*86400000||r.from%r.stepMs||r.to%r.stepMs||(r.to-r.from)/r.stepMs>CVD_LEDGER_LIMITS.points)throw new CvdLedgerFailure('capacity');
  return {source:r.source,anchor:r.anchor,from:r.from,to:r.to,stepMs:r.stepMs};
 }
@@ -69,7 +69,7 @@ export class CvdProjectionCache {
   this.entries.set(key,entry);this.bytes+=entry.bytes;this.count+=pointCount;
  }
  project(value:CvdProjectionRequest):CvdExactProjection {
-  const r=checked(value),key=JSON.stringify(r),ledger=this.ledger(r.source);if(!ledger)throw new CvdLedgerFailure('basis');
+  const r=cvdProjectionRequest(value),key=JSON.stringify(r),ledger=this.ledger(r.source);if(!ledger)throw new CvdLedgerFailure('basis');
   let entry=this.entries.get(key);
   if(entry&&!entry.value.stale){this.entries.delete(key);this.entries.set(key,entry);this.metrics.hits++;return structuredClone(entry.value);}
   try{const built=this.build(r,ledger);this.install(key,built);entry=built;this.metrics.builds++;}

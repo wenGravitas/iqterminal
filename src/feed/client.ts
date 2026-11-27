@@ -21,6 +21,12 @@ export class FeedClient {
   projectCvdHistory(request:import('./cvd-projection-cache').CvdProjectionRequest,signal:AbortSignal):Promise<import('./cvd-projection-cache').CvdExactProjection>{
     return this.cvdHistoryCall(id=>({type:'cvd-history-project',id,request}),event=>event.projection,signal);
   }
+  restoreCvdHistoryPage(request:import('./cvd-history-owner').CvdRestorePage,signal:AbortSignal):Promise<import('./cvd-history-owner').CvdRestoreReceipt>{
+    return this.cvdHistoryCall(id=>({type:'cvd-history-restore',id,request}),event=>event.restoration,signal);
+  }
+  acquireCvdHistoryWindow(request:import('./cvd-history-window').CvdWindowRequest,signal:AbortSignal):Promise<import('./cvd-history-window').CvdWindowResult>{
+    return this.cvdHistoryCall(id=>({type:'cvd-history-window',id,request}),event=>event.window,signal);
+  }
   private cvdHistoryCall<T>(command:(id:string)=>Command,decode:(event:import('./cvd-history-owner').CvdHistoryEvent)=>T|undefined,signal:AbortSignal):Promise<T>{
     if(signal.aborted||this.cvdHistoryDisposed)return Promise.reject(new Error('CVD history cancelled'));
     if(this.cvdHistoryReads.size>=24)return Promise.reject(new Error('CVD history capacity'));
