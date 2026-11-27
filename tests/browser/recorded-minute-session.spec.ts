@@ -17,7 +17,11 @@ test('explicit minute session worker retains accepted exact data through an orig
  await context.route('**/__minute-session-worker.js',route=>{
   const origin=new URL(route.request().url()).origin;
   const source=`import {RecordedMinuteSessionClient} from '${origin}/src/feed/recorded-minute-session.ts';
-   self.onmessage=async({data})=>{const client=new RecordedMinuteSessionClient(true);try{const certificate=await client.open(data),resident=await client.read(data);let failure;try{await client.read(data);}catch(error){failure=error.reason;}const released=await client.close();self.postMessage({certificate,resident,failure,released,diagnostics:client.diagnostics()});}catch(error){self.postMessage({error:String(error),reason:error.reason});}finally{await client.dispose();}};`;
+   import {CvdContributionLedger} from '${origin}/src/feed/cvd-contribution-ledger.ts';
+   self.onmessage=async({data})=>{const client=new RecordedMinuteSessionClient(true);try{const certificate=await client.open(data),resident=await client.read(data),day=Math.floor(data.from/86400000)*86400000,cut=day+86400000;
+    const ledger=new CvdContributionLedger('binance:perpetual','explicit-browser-ledger');
+    ledger.applyNative({version:2,semantics:'native-recorded-execution-minute-observations',source:'binance:perpetual:BTCUSDT',incarnation:'87654321-4321-4abc-8abc-cba987654321',revision:1,revisionScope:'incarnation',replacement:'requested-range',fullProjectionAt:cut+61000,snapshot:true,stepMs:60000,from:cut,to:cut+60000,retainedFrom:cut,watermark:'9007199254740993003',watermarkKind:'aggregate-execution-id',baseUnit:'BTC',quoteUnit:'USDT',buckets:[{time:cut,base:'10',quote:'100',firstId:'9007199254740993003',lastId:'9007199254740993003',records:'1'}],coverage:{from:cut,to:cut+60000,gaps:[]},status:'live',asOf:cut+61000,sparse:true,cumulative:false,financialAccepted:false,currentReconciled:false,retirementAuthorized:false});
+    ledger.applyArchive(resident);const ledgerBefore=ledger.sum(data.from,cut+60000),ledgerVersion=ledger.diagnostics().version,blockHash=ledger.evict(day);let failure;try{await client.read(data);}catch(error){failure=error.reason;}const released=await client.close(),ledgerAfter=ledger.sum(data.from,cut+60000);ledger.restoreArchive(resident);self.postMessage({certificate,resident,failure,released,ledgerBefore,ledgerAfter,ledgerVersion,ledgerVersionAfter:ledger.diagnostics().version,blockHash,diagnostics:client.diagnostics()});}catch(error){self.postMessage({error:String(error),reason:error.reason});}finally{await client.dispose();}};`;
   return route.fulfill({contentType:'text/javascript',body:source});
  });
  await page.goto('/__minute-session-fixture',{waitUntil:'domcontentloaded'});
@@ -26,5 +30,6 @@ test('explicit minute session worker retains accepted exact data through an orig
   try{return await new Promise<any>((resolve,reject)=>{worker.onmessage=event=>resolve(event.data);worker.onerror=event=>reject(Error(event.message));worker.postMessage(scope);});}finally{worker.terminate();}
  },scope);
  expect(result.error).toBeUndefined();expect(result.resident.bars[0].base).toBe('-12.00000001');expect(result.resident.bars[0].firstId).toBe('9007199254740993000');expect(result.resident.observationLease).toEqual(lease);expect(result.failure).toBe('network');expect(result.released).toEqual({released:true});expect(result.diagnostics.active).toBe(false);expect(JSON.stringify(result)).not.toContain(token);
+ expect(result.ledgerBefore).toEqual(result.ledgerAfter);expect(result.ledgerAfter.base).toBe('-14.00000002');expect(result.ledgerAfter.quote).toBe('18014398509482086');expect(result.ledgerVersionAfter).toBe(result.ledgerVersion);expect(result.blockHash).toMatch(/^[a-f0-9]{64}$/);
  expect(calls.map(c=>c.method)).toEqual(['POST','GET','GET','DELETE']);expect(calls.every(c=>!c.url.includes(token))).toBe(true);expect(calls.slice(1).every(c=>c.token===token)).toBe(true);
 });

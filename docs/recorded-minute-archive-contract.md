@@ -49,8 +49,9 @@ contract and a stable native/archive ownership boundary. Earlier accepted
 contributions may legitimately update the suffix once; eviction, cancelled
 requests and native window pruning must not undo accepted contributions. Gaps
 must remain explicit and an incomplete anchor must not be labelled complete.
-The native exact/incarnation contract and contribution ledger remain
-unimplemented; neither this decoder nor the session transport confers them.
+The native exact/incarnation contract and [contribution ledger](cvd-contribution-ledger.md)
+are now implemented separately. Worker/renderer integration and qualified
+incarnation reconciliation remain pending; this decoder alone confers neither.
 
 ## Verification
 

@@ -65,9 +65,9 @@ history or production configuration changed.
 
 ## Remaining integration
 
-Before using these pages in CVD, implement the exact native decimal/incarnation
-contract and a worker-owned contribution ledger with stable anchor and source
-cutover. Native snapshot pruning and request cancellation cannot remove accepted
+The exact native contract and [worker contribution ledger](cvd-contribution-ledger.md)
+now exist as disabled/unwired components, with stable anchor and source cutover.
+Production worker/renderer ownership and incarnation reconciliation remain gates. Native snapshot pruning and request cancellation cannot remove accepted
 historical contributions. Publication IDs cannot select financial correction
 winners. Preserve explicit partial coverage and refuse unsupported anchor or
 correction reconstruction. Chart wiring and production performance validation

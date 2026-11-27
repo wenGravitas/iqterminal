@@ -1,0 +1,5 @@
+/** Bounded signed decimal arithmetic for contributions and accumulated totals. */
+function parts(value:string){if(typeof value!=='string'||value.length>192||! /^-?(0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(value))throw Error('Invalid exact CVD decimal');const negative=value.startsWith('-'),[whole,fraction='']=value.replace(/^-/,'').split('.');return {n:BigInt((negative?'-':'')+whole+fraction),scale:fraction.length};}
+function text(n:bigint,scale:number){if(!n)return '0';while(scale&&n%10n===0n){n/=10n;scale--;}const negative=n<0n,digits=(negative?-n:n).toString().padStart(scale+1,'0'),value=(negative?'-':'')+(scale?digits.slice(0,-scale)+'.'+digits.slice(-scale):digits);if(value.length>192)throw Error('Exact CVD accumulated capacity');return value;}
+export function cvdDecimal(value:string){const p=parts(value);return text(p.n,p.scale);}
+export function cvdAdd(a:string,b:string){const x=parts(a),y=parts(b),scale=Math.max(x.scale,y.scale);return text(x.n*10n**BigInt(scale-x.scale)+y.n*10n**BigInt(scale-y.scale),scale);}
