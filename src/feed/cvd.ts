@@ -1,4 +1,5 @@
 import { instruments, type ConnectionKey } from './protocol';
+import {cvdAdd} from './cvd-exact-decimal';
 export const CVD_ID='native.multi-venue-cvd', CVD_STEP=60000, CVD_MAX_POINTS=10082;
 export const CVD_SOURCES=['binance:spot','binance:perpetual','bybit:perpetual'] as const;
 export type CvdSource=typeof CVD_SOURCES[number];
@@ -31,8 +32,8 @@ export function cvdAnchorAt(time:number,s:Pick<CvdSettings,'anchor'|'origin'|'cu
 export interface CvdBucket {time:number;base:number;quote:number;revision:number}
 export interface CvdCoverage {from:number;to:number;gaps:{from:number;to:number;reason?:string}[]}
 export interface CvdPayload {version:1;source:string;stepMs:number;from:number;to:number;revision:number;snapshot:boolean;watermark:number;baseUnit:'BTC';quoteUnit:'USDT';buckets:CvdBucket[];coverage:CvdCoverage;status:'live'|'stale'|'awaiting'|'unavailable';asOf:number;message?:string}
-export interface CvdPoint {time:number;period:number;base:number;quote:number;observed:boolean;available:boolean;partial:boolean;reset:boolean}
-export interface CvdSeries {source:CvdSource;points:CvdPoint[];snapshot:boolean;removeBefore:number;coverage:CvdCoverage;status:CvdPayload['status'];message:string;asOf:number}
+export interface CvdPoint {time:number;period:number;base:number;quote:number;baseText?:string;quoteText?:string;observed:boolean;available:boolean;partial:boolean;reset:boolean}
+export interface CvdSeries {source:CvdSource;points:CvdPoint[];snapshot:boolean;removeBefore:number;coverage:CvdCoverage;status:CvdPayload['status'];message:string;asOf:number;stepMs?:number}
 export interface CvdRequest {sources:CvdSource[];anchor:CvdAnchor;origin:number;custom:number}
 export type CvdEvent={type:'cvd-batch';ids:string[];generation:number;batchId:number;series:CvdSeries[]};
 export function validateCvdPayload(value:any, source:CvdSource):CvdPayload {
@@ -97,11 +98,11 @@ export class CvdCalculation {
   snapshot(){return this.points;}
 }
 /** Visibility never enters membership; overlapping named groups do not enter the total calculation. */
-export function cvdValues(sources:readonly CvdSource[], values:ReadonlyMap<string,{value:number;observed:boolean;partial:boolean}>, groups:readonly CvdGroup[]){
+export function cvdValues(sources:readonly CvdSource[], values:ReadonlyMap<string,{value:number;text?:string;observed:boolean;partial:boolean}>, groups:readonly CvdGroup[]){
   const included=[...new Set(sources)], sum=(ids:readonly string[])=>{
-    let value=0,available=false,partial=false;
-    for(const id of [...new Set(ids)]){const p=values.get(id);if(p){value+=p.value;available=true;partial||=p.partial||!p.observed;}else partial=true;}
-    return {value:available?value:null,partial};
+    let value=0,text='0',exact=true,available=false,partial=false;
+    for(const id of [...new Set(ids)]){const p=values.get(id);if(p){value+=p.value;if(p.text!==undefined)text=cvdAdd(text,p.text);else exact=false;available=true;partial||=p.partial||!p.observed;}else partial=true;}
+    return {value:available?(exact?Number(text):value):null,partial};
   };
   return {total:sum(included),groups:groups.map(g=>({id:g.id,name:g.name,filtered:g.markets.some(id=>!included.includes(id as CvdSource)),...sum(g.markets.filter(id=>included.includes(id as CvdSource)))}))};
 }

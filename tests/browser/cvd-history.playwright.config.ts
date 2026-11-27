@@ -1,7 +1,7 @@
 import base from '../../playwright.config';
 import {defineConfig} from '@playwright/test';
 /** Isolated headless module server; never reuses or replaces the user's client. */
-export default defineConfig({...base,testDir:'.',testMatch:['cvd-history-owner.spec.ts','cvd-projection-cache.spec.ts'],
+export default defineConfig({...base,testDir:'.',testMatch:['cvd-history-owner.spec.ts','cvd-projection-cache.spec.ts','cvd-tiered-chart.spec.ts'],
  globalSetup:'../../scripts/test-browser-i3-setup.mjs',
  outputDir:'../../artifacts/cvd-history-browser',
  use:{...base.use,baseURL:'http://127.0.0.1:5185',headless:true,launchOptions:{...base.use?.launchOptions,args:[...(base.use?.launchOptions?.args??[]).filter(a=>!a.startsWith('--ozone-platform=')),'--ozone-platform=headless']}},

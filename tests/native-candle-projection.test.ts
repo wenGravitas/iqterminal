@@ -14,6 +14,12 @@ function candles(): Candle[] {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('native candle-aligned output projection', () => {
+  it('sends opt-in CVD history viewports only when the host time grid changes',()=>{
+    const feed={tieredCvdEnabled:()=>true,setCvdViewport:vi.fn(),subscribeCvd:vi.fn(()=>vi.fn())} as any,registry=new ChartNumericOutputRegistry('chart'),data=new CvdDataController('chart','cvd',feed,registry,{},series,()=>base+250000),bars=candles();
+    data.setHostCandles(bars);data.setDataDemand(true);expect(feed.setCvdViewport).toHaveBeenLastCalledWith('cvd:chart:cvd',{from:base,to:base+4*60000,stepMs:60000});const count=feed.setCvdViewport.mock.calls.length;
+    bars.at(-1)!.c+=1;data.setHostCandles(bars);data.setHostVisible(false);expect(feed.setCvdViewport).toHaveBeenCalledTimes(count);
+    data.configure({}, {...series,interval:'5m'});expect(feed.setCvdViewport).toHaveBeenCalledTimes(count);data.setHostCandles(bars.map((c,i)=>({...c,t:base+i*300000})));expect(feed.setCvdViewport).toHaveBeenCalledTimes(count+1);expect(feed.subscribeCvd).toHaveBeenCalledOnce();data.dispose();
+  });
   it('skips full CVD and Open Interest projections for forming OHLC revisions and detects timeline, close, and context changes', () => {
     vi.stubGlobal('document', { hidden: false, addEventListener: vi.fn(), removeEventListener: vi.fn() });
     const registry = new ChartNumericOutputRegistry('chart'), feed = {} as any;

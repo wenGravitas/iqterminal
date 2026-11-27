@@ -27,3 +27,17 @@ it('rejects late pages by monotonic stage expiry even when a fresh lease is stil
  f.fetch.mockImplementation(async(...args)=>{const response=await original(...args);if(String(args[0]).includes('recorded-minutes?'))now=70001;return response;});
  await expect(f.owner.restorePage({source,day,...page},signal())).rejects.toMatchObject({reason:'unavailable'});expect(f.owner.diagnostics().restorations).toEqual([]);expect(f.owner.sum(source,day,day+D)).toEqual(total);expect(f.owner.diagnostics().sources[0]!.sealedDays).toBe(1);await f.owner.dispose();
 });
+it('keeps progressing fragmented restores alive across interleaved turns, then expires idle input',async()=>{
+ vi.useFakeTimers();const began=Date.now(),f=cvdHistoryFixture(day+D,()=>Date.now()-began);
+ try{await f.seed();await f.owner.read({source,kind:'archive',from:day,to:day+D},signal());f.owner.evict(source,day);const total=f.owner.sum(source,day,day+D),page=f.owner.nextRestorePage(source,day)!;
+  await vi.advanceTimersByTimeAsync(40000);await f.owner.restorePage({source,day,...page},signal());await vi.advanceTimersByTimeAsync(50000);expect(f.owner.diagnostics().restorations[0]).toMatchObject({missingRecords:23});expect(f.owner.sum(source,day,day+D)).toEqual(total);
+  await vi.advanceTimersByTimeAsync(10000);expect(f.owner.diagnostics().restorations).toEqual([]);
+ }finally{await f.owner.dispose();vi.useRealTimers();}
+});
+it('bounds total restore lifetime even when valid pages keep arriving',async()=>{
+ vi.useFakeTimers();const began=Date.now(),f=cvdHistoryFixture(day+D,()=>Date.now()-began);
+ try{await f.seed();await f.owner.read({source,kind:'archive',from:day,to:day+D},signal());f.owner.evict(source,day);f.owner.nextRestorePage(source,day);
+  for(let n=0;n<14;n++){await vi.advanceTimersByTimeAsync(40000);await f.owner.restorePage({source,day,...f.owner.nextRestorePage(source,day)!},signal());}
+  expect(f.owner.diagnostics().restorations).toHaveLength(1);await vi.advanceTimersByTimeAsync(40000);expect(f.owner.diagnostics().restorations).toEqual([]);expect(f.owner.diagnostics().sources[0]!.sealedDays).toBe(1);
+ }finally{await f.owner.dispose();vi.useRealTimers();}
+});

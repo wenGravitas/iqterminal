@@ -12,7 +12,7 @@ import {acquireCvdWindow,CvdWindowFailure,CVD_WINDOW_LIMITS,type CvdWindowReques
 export interface CvdHistoryRead {source:CvdSource;kind:'native'|'archive'|'restore';from:number;to:number}
 export type CvdHistoryReason='disabled'|'capacity'|'invalid'|'basis'|'conflict'|'restore'|'mutable'|'unavailable'|'cancelled'|'rejoin-unavailable'|'expired-native-basis';
 export class CvdHistoryFailure extends Error {constructor(readonly reason:CvdHistoryReason){super('CVD historical observation unavailable');}}
-export interface CvdHistoryReceipt {source:CvdSource;from:number;to:number;version:number;changed:boolean;sum:ReturnType<CvdContributionLedger['sum']>;financialAccepted:false;currentReconciled:false}
+export interface CvdHistoryReceipt {source:CvdSource;from:number;to:number;version:number;changed:boolean;sum:ReturnType<CvdContributionLedger['sum']>;native?:{from:number;to:number;status:'live'|'stale'|'awaiting';asOf:number};financialAccepted:false;currentReconciled:false}
 export interface CvdRestorePage {source:CvdSource;day:number;from:number;to:number}
 export interface CvdRestoreReceipt {source:CvdSource;day:number;pages:number;missingRecords:number;complete:boolean;version:number;financialAccepted:false;currentReconciled:false}
 export type CvdHistoryCommand={type:'cvd-history-read';id:string;request:CvdHistoryRead}|{type:'cvd-history-window';id:string;request:CvdWindowRequest}|{type:'cvd-history-restore';id:string;request:CvdRestorePage}|{type:'cvd-history-project';id:string;request:CvdProjectionRequest}|{type:'cvd-history-cancel';id:string};
@@ -21,6 +21,7 @@ interface Waiter {resolve:(v:unknown)=>void;reject:(e:unknown)=>void;signal:Abor
 interface Job {key:string;request:{source:CvdSource;kind:string};waiters:Set<Waiter>;abort:AbortController;run:(signal:AbortSignal)=>Promise<unknown>}
 const SOURCES=['binance:spot','binance:perpetual','bybit:perpetual'],DAY=86400000;
 export const CVD_HISTORY_OWNER_LIMITS=Object.freeze({queued:4,consumers:24,requestMs:12000});
+export const CVD_RESTORE_STAGE_LIMITS=Object.freeze({stages:4,idleMs:60000,lifetimeMs:600000});
 let ownerSequence=0;
 function checked(value:CvdHistoryRead){
  if(!value||!SOURCES.includes(value.source)||!['native','archive','restore'].includes(value.kind))throw new CvdHistoryFailure('invalid');
@@ -37,14 +38,16 @@ export class CvdHistoryOwner {
  private readonly identity=++ownerSequence;
  private readonly ledgers=new Map<CvdSource,CvdContributionLedger>();
  private readonly retainedFrom=new Map<CvdSource,number>();
+ private readonly nativeStatus=new Map<CvdSource,{status:'live'|'stale'|'awaiting';asOf:number}>();
+ private readonly nativeFailures=new Map<CvdSource,CvdHistoryReason>();
  private readonly lifetime=new AbortController();private windowTurns=0;
  private readonly projections=new CvdProjectionCache(source=>this.ledgers.get(source));
  private readonly states=new Map<CvdSource,CvdHistoryReason|'ready'>();
  private readonly jobs=new Map<string,Job>();private active?:Job;private consumers=0;private dead=false;
  private readonly commands=new Map<string,AbortController>();
- private readonly restorations=new Map<string,{source:CvdSource;stage:ReturnType<CvdContributionLedger['beginArchiveRestore']>;deadline:number;timer:ReturnType<typeof setTimeout>}>();
+ private readonly restorations=new Map<string,{source:CvdSource;stage:ReturnType<CvdContributionLedger['beginArchiveRestore']>;deadline:number;expires:number;timer:ReturnType<typeof setTimeout>}>();
  private readonly session:RecordedMinuteSessionClient;
- private draining?:Promise<void>;
+ private draining?:Promise<void>;private activeSignal?:AbortSignal;
  readonly metrics={reads:0,coalesced:0,admitted:0,failed:0,cancelled:0};
  constructor(private readonly enabled=false,private readonly request:typeof fetch=(...args)=>fetch(...args),private readonly scheduler:HistoryScheduler=historyScheduler,private readonly clock:()=>number=()=>performance.now()){
   this.session=new RecordedMinuteSessionClient(enabled,request,clock);
@@ -76,6 +79,7 @@ export class CvdHistoryOwner {
   // this owner's slot until the actual callback (including body cancel) settles.
   let actual:Promise<unknown>|undefined;
   const signal=AbortSignal.any([job.abort.signal,AbortSignal.timeout(CVD_HISTORY_OWNER_LIMITS.requestMs)]);
+  this.activeSignal=signal;
   this.draining=(async()=>{
    let accepted:unknown,failure:CvdHistoryFailure|undefined;
    try{
@@ -83,26 +87,27 @@ export class CvdHistoryOwner {
      actual=Promise.resolve().then(()=>{s.throwIfAborted();return job.run(s);});return actual;
     },job.request.kind==='native'?0:2);
     this.metrics.admitted++;
-   }catch(error){this.metrics.failed++;failure=new CvdHistoryFailure(signal.aborted?'cancelled':reason(error));if(!signal.aborted)this.states.set(job.request.source,failure.reason);}
+   }catch(error){this.metrics.failed++;failure=new CvdHistoryFailure(signal.aborted?'cancelled':reason(error));if(!signal.aborted){this.states.set(job.request.source,failure.reason);if(job.request.kind==='native')this.nativeFailures.set(job.request.source,failure.reason);}}
    finally{
     await actual?.catch(()=>{});
-    this.jobs.delete(job.key);this.active=undefined;
+    this.jobs.delete(job.key);this.active=undefined;this.activeSignal=undefined;
     for(const w of job.waiters){w.signal.removeEventListener('abort',w.cancel);this.consumers--;if(failure)w.reject(failure);else w.resolve(structuredClone(accepted!));}
     job.waiters.clear();this.pump();
    }
   })();
  }
  private async acquire(r:CvdHistoryRead,signal:AbortSignal):Promise<CvdHistoryReceipt>{
-  let ledger=this.ledgers.get(r.source);let result:{changed:boolean;version:number};
+  let ledger=this.ledgers.get(r.source);let result:{changed:boolean;version:number},native:CvdHistoryReceipt['native'];
   if(r.kind==='native'){
    const [venue,market]=r.source.split(':');
    const response=await this.request('/market-data/v2/cvd?'+new URLSearchParams({venue:venue!,market:market!,from:String(r.from),to:String(r.to)}),{signal,cache:'no-store',credentials:'same-origin',redirect:'error'});
    const {payload}=await readNativeExactCvdResponse(response,r.source,signal);signal.throwIfAborted();
+   native={from:payload.from,to:payload.to,status:payload.status,asOf:payload.asOf};
    if(payload.from!==r.from||payload.to!==r.to)throw new CvdHistoryFailure('invalid');
    if(ledger?.diagnostics().incarnation&&ledger.diagnostics().incarnation!==payload.incarnation)throw new CvdHistoryFailure('rejoin-unavailable');
    const candidate=ledger??new CvdContributionLedger(r.source,`worker-cvd:${this.identity}:${r.source}`);
    const captured=this.projections.capture(r.source,r.from,r.to);
-   result=candidate.applyNative(payload);ledger=candidate;this.ledgers.set(r.source,ledger);this.retainedFrom.set(r.source,Math.max(this.retainedFrom.get(r.source)??0,payload.retainedFrom));this.projections.commit(captured);
+   result=candidate.applyNative(payload);ledger=candidate;this.ledgers.set(r.source,ledger);this.nativeFailures.delete(r.source);this.retainedFrom.set(r.source,Math.max(this.retainedFrom.get(r.source)??0,payload.retainedFrom));if(payload.asOf>=(this.nativeStatus.get(r.source)?.asOf??0))this.nativeStatus.set(r.source,{status:payload.status,asOf:payload.asOf});this.projections.commit(captured);
   }else{
    if(!ledger)throw new CvdHistoryFailure('basis');
    if(r.kind==='archive'){
@@ -116,7 +121,7 @@ export class CvdHistoryOwner {
    const captured=r.kind==='restore'?[]:this.projections.capture(r.source,r.from,r.to);
    result=r.kind==='restore'?ledger.restoreArchive(payload):ledger.applyArchive(payload);this.projections.commit(captured);
   }
-  this.states.set(r.source,'ready');return {source:r.source,from:r.from,to:r.to,...result,sum:ledger.sum(r.from,r.to),financialAccepted:false,currentReconciled:false};
+  this.states.set(r.source,'ready');return {source:r.source,from:r.from,to:r.to,...result,sum:ledger.sum(r.from,r.to),...(native?{native}:{}),financialAccepted:false,currentReconciled:false};
  }
  private async archivePage(r:CvdHistoryRead,signal:AbortSignal){
    const [venue,market]=r.source.split(':') as [MinuteHistoryRequest['venue'],MinuteHistoryRequest['market']];
@@ -133,9 +138,9 @@ export class CvdHistoryOwner {
  private restoreStage(source:CvdSource,day:number){
   this.pruneRestores();
   const key=`${source}:${day}`,known=this.restorations.get(key);if(known)return known;
-  if(this.restorations.size>=4)throw new CvdHistoryFailure('capacity');
+  if(this.restorations.size>=CVD_RESTORE_STAGE_LIMITS.stages)throw new CvdHistoryFailure('capacity');
   const ledger=this.ledgers.get(source);if(!ledger)throw new CvdHistoryFailure('basis');
-  const stage=ledger.beginArchiveRestore(day),deadline=this.clock()+60000,timer=setTimeout(()=>{if(this.restorations.get(key)===entry)this.restorations.delete(key);},60000),entry={source,stage,deadline,timer};this.restorations.set(key,entry);return entry;
+  const stage=ledger.beginArchiveRestore(day),deadline=this.clock()+CVD_RESTORE_STAGE_LIMITS.idleMs,expires=this.clock()+CVD_RESTORE_STAGE_LIMITS.lifetimeMs,timer=setTimeout(()=>{if(this.restorations.get(key)===entry&&entry.deadline===deadline)this.restorations.delete(key);},CVD_RESTORE_STAGE_LIMITS.idleMs),entry={source,stage,deadline,expires,timer};this.restorations.set(key,entry);return entry;
  }
  nextRestorePage(source:CvdSource,day:number){if(!this.enabled||this.dead)throw new CvdHistoryFailure('disabled');return this.restoreStage(source,day).stage.next();}
  restorePage(value:CvdRestorePage,signal:AbortSignal):Promise<CvdRestoreReceipt>{
@@ -148,7 +153,7 @@ export class CvdHistoryOwner {
    if(entry.stage.next()){
     const payload=await this.archivePage(r,s);s.throwIfAborted();
     this.pruneRestores();if(this.restorations.get(key)!==entry)throw new CvdHistoryFailure('unavailable');
-    try{entry.stage.append(payload);}catch(error){clearTimeout(entry.timer);this.restorations.delete(key);throw error;}
+    try{const missing=entry.stage.diagnostics().missingRecords,progress=entry.stage.append(payload);if(progress.missingRecords>0&&progress.missingRecords<missing){clearTimeout(entry.timer);const deadline=Math.min(this.clock()+CVD_RESTORE_STAGE_LIMITS.idleMs,entry.expires);entry.deadline=deadline;entry.timer=setTimeout(()=>{if(this.restorations.get(key)===entry&&entry.deadline===deadline)this.restorations.delete(key);},Math.max(0,deadline-this.clock()));}}catch(error){clearTimeout(entry.timer);this.restorations.delete(key);throw error;}
    }
    const complete=!entry.stage.next(),diagnostics=entry.stage.diagnostics();
    if(complete){try{entry.stage.finish();}catch(error){if(!(error instanceof CvdLedgerFailure&&error.reason==='capacity')){clearTimeout(entry.timer);this.restorations.delete(key);}throw error;}clearTimeout(entry.timer);this.restorations.delete(key);}
@@ -156,7 +161,9 @@ export class CvdHistoryOwner {
   });
  }
  /** Cache-only access never acquires a lease or changes accepted observations. */
- basis(source:CvdSource){const d=this.ledgers.get(source)?.diagnostics();return d?{cutover:d.cutover!,retainedFrom:this.retainedFrom.get(source)!}:undefined;}
+ activity(){return {active:!!this.active,cancelling:this.activeSignal?.aborted??false,queued:this.jobs.size-(this.active?1:0),receivedBytes:this.session.stats.receivedBytes};}
+ basis(source:CvdSource){const ledger=this.ledgers.get(source);return ledger?{cutover:ledger.nativeCutover!,retainedFrom:this.retainedFrom.get(source)!}:undefined;}
+ sourceState(source:CvdSource){const native=this.nativeStatus.get(source),failure=this.nativeFailures.get(source);return {status:failure?'stale' as const:native?.status??'awaiting' as const,asOf:native?.asOf??0,reason:failure,version:this.ledgers.get(source)?.dataVersion??0};}
  known(source:CvdSource,from:number,to:number){return this.ledgers.get(source)?.coverage(from,to);}
  sum(source:CvdSource,from:number,to:number){return this.ledgers.get(source)?.sum(from,to);}
  series(source:CvdSource,anchor:number,from:number,to:number,stepMs=60000){return this.ledgers.get(source)?.series(anchor,from,to,stepMs);}

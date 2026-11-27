@@ -4,7 +4,7 @@ import {CvdLedgerFailure} from './cvd-contribution-ledger';
 import {cvdProjectionRequest,type CvdProjectionRequest,type CvdExactProjection} from './cvd-projection-cache';
 import type {CvdHistoryOwner,CvdHistoryReason} from './cvd-history-owner';
 export interface CvdWindowRequest {projection:CvdProjectionRequest;seed?:{from:number;to:number};before?:number}
-export interface CvdWindowResult {version:1;request:CvdProjectionRequest;state:'available'|'loading'|'partial'|'unavailable';projection?:CvdExactProjection;nextBefore?:number;operations:number;scanned:number;failures:Array<{reason:CvdHistoryReason;from:number;to:number;day?:number}>;financialAccepted:false;currentReconciled:false}
+export interface CvdWindowResult {version:1;request:CvdProjectionRequest;state:'available'|'loading'|'partial'|'unavailable';projection?:CvdExactProjection;nextBefore?:number;restoringDay?:number;operations:number;scanned:number;failures:Array<{reason:CvdHistoryReason;from:number;to:number;day?:number}>;financialAccepted:false;currentReconciled:false}
 export class CvdWindowFailure extends Error {constructor(readonly reason:CvdHistoryReason){super('CVD viewport acquisition unavailable');}}
 export const CVD_WINDOW_LIMITS=Object.freeze({operations:4,scanned:512,turnMs:15000,activeTurns:4});
 const H=3600000,D=86400000,M=60000;
@@ -21,7 +21,7 @@ export async function acquireCvdWindow(owner:CvdHistoryOwner,value:CvdWindowRequ
  const fail=(error:unknown,from:number,to:number,day?:number)=>{if(signal.aborted)throw new CvdWindowFailure('cancelled');failures.push({reason:failure(error),from,to,...(day!==undefined?{day}:{})});};
  const project=()=>{try{projection=owner.project(r);pendingRestore=projection.stale?projection.requiresRestore:undefined;if(projection.stale&&pendingRestore===undefined){fail(new CvdWindowFailure(projection.failure??'restore'),r.from,r.to);return false;}return true;}catch(error){if(error instanceof CvdLedgerFailure&&error.reason==='restore'&&error.day!==undefined){pendingRestore=error.day;return true;}fail(error,r.from,r.to);return false;}};
  const complete=()=>!!projection&&!projection.stale&&projection.points.every(p=>!p.partial);
- const result=():CvdWindowResult=>({version:1,request:r,state:complete()?'available':failures.length?(projection?.points.some(p=>p.available)?'partial':'unavailable'):before>r.anchor?'loading':'partial',...(projection?{projection}:{}),...(!complete()&&before>r.anchor?{nextBefore:before}:{}),operations,scanned,failures,financialAccepted:false,currentReconciled:false});
+ const result=():CvdWindowResult=>({version:1,request:r,state:complete()?'available':failures.length?(projection?.points.some(p=>p.available)?'partial':'unavailable'):before>r.anchor?'loading':'partial',...(projection?{projection}:{}),...(!complete()&&before>r.anchor?{nextBefore:before}:{}),...(pendingRestore!==undefined?{restoringDay:pendingRestore}:{}),operations,scanned,failures,financialAccepted:false,currentReconciled:false});
  signal.throwIfAborted();
  if(!owner.basis(r.source)){
   if(!value.seed)throw new CvdWindowFailure('basis');

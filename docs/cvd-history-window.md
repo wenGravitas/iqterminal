@@ -64,8 +64,9 @@ wrong quantities or incomplete candidates cannot replace accepted history.
 Equivalent independently validated publication copies can supply original
 bytes; this is not cross-publication correction or financial reconciliation.
 
-The owner allows at most four disposable day stages. Each has a 60-second
-monotonic lifetime, automatic timer expiry, at most 32 accepted pages and
+The owner allows at most four disposable day stages. Progress now renews a
+60-second monotonic idle expiry within a ten-minute absolute lifetime; duplicate
+or non-progressing pages cannot renew it. Each stage has automatic timer expiry, at most 32 accepted pages and
 32 MiB cumulative normalized response bytes (4 MiB/page). It retains at most
 1,440 candidate cells for its day, rather than whole response bodies. A late
 page is refused even if its new transport lease is still valid. Stages survive
@@ -87,8 +88,9 @@ still returns `rejoin-unavailable`. These gaps need a qualified source continuit
 contract, not an upload-clock comparison or ledger reset.
 
 This planner does not automatically refresh already accepted current/native
-windows. Live polling, forming-minute treatment, daily/weekly resets and numeric
-chart adaptation remain separate integration work. Callers must overlay source
+windows. The [optional chart adapter](cvd-tiered-charts.md) now adds current
+polling, daily/weekly resets and numeric chart adaptation. Older native correction
+repair and forming-minute acceptance remain open. Callers must overlay source
 transport freshness and retain current geometry while acquisition is pending.
 
 ## Verification and rollback
@@ -111,5 +113,5 @@ loading latency or multi-venue production acceptance.
 The default feature remains disabled and undeployed. Remove the opt-in flag and
 reload the client to roll back. No backend runtime, credentials, server retention,
 paid infrastructure or history deletion is changed. Remaining work includes
-period-aware chart integration, native lineage/rejoin, sustained multi-market
+native lineage/rejoin, older correction repair, sustained multi-market
 operation, configured-provider recovery and live/foreground performance gates.

@@ -24,6 +24,8 @@ const rootBytes=(b:Block)=>[...b.pins].reduce((n,s)=>n+new TextEncoder().encode(
 export class CvdContributionLedger {
  private blocks=new Map<number,Block>();private cutover?:number;private incarnation?:string;private nativeRevision=0;private nativeWatermark='0';private nativeAsOf=0;private resident=0;private provenanceBytes=0;private version=0;
  private readonly limits:{days:number;residentCells:number;rootsPerDay:number;provenanceBytes:number;points:number};
+ get dataVersion(){return this.version;}
+ get nativeCutover(){return this.cutover;}
  constructor(readonly source:CvdSource,readonly basisId:string,limits:Partial<Record<keyof typeof CVD_LEDGER_LIMITS,number>>={}){
   if(!['binance:spot','binance:perpetual','bybit:perpetual'].includes(source)||typeof basisId!=='string'||!basisId||basisId.length>160)throw new CvdLedgerFailure('basis');
   this.limits={...CVD_LEDGER_LIMITS,...limits};for(const k of Object.keys(CVD_LEDGER_LIMITS) as Array<keyof typeof CVD_LEDGER_LIMITS>)if(!Number.isSafeInteger(this.limits[k])||this.limits[k]<1||this.limits[k]>CVD_LEDGER_LIMITS[k])throw new CvdLedgerFailure('capacity');

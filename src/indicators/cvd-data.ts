@@ -29,6 +29,7 @@ export class CvdDataController {
   private subscriptionStarts = 0;
   private subscriptionStops = 0;
   private dead = false;
+  private historyViewportKey='';private hostInterval='';
 
   constructor(private readonly chartId: string, private readonly instanceId: string, private readonly feed: FeedClient,
     private readonly registry: ChartNumericOutputRegistry, settings: unknown, series: Series, private readonly now = Date.now) {
@@ -88,7 +89,9 @@ export class CvdDataController {
     this.hostCandles = candles;
     this.hostTimes = nextCandles.map(candle => candle.t);
     this.hostKey = key;
+    this.hostInterval=this.series.interval;
     this.publishOutputs(previousLength !== candles.length || !previousLength || timesChanged || closedChanged);
+    this.syncHistoryViewport();
   }
 
   setDataDemand(demanded: boolean) {
@@ -158,6 +161,7 @@ export class CvdDataController {
     if(this.release)this.subscriptionStops++;
     this.release?.(); this.release = undefined;
     this.requestKey = key; const generation = ++this.generation;
+    this.historyViewportKey='';
     this.model.clear();
     if (!key) {
       this.registry.markUnavailable(this.instanceId, 'CVD data demand is paused.');
@@ -170,6 +174,12 @@ export class CvdDataController {
       if (this.dead || generation !== this.generation || this.requestKey !== key) return;
       this.receive(event);
     });
+    this.syncHistoryViewport();
+  }
+  private syncHistoryViewport(){
+    if(!this.release||!this.hostTimes.length||this.hostInterval!==this.series.interval||!this.feed.tieredCvdEnabled?.())return;
+    const stepMs=duration[this.series.interval],from=Math.floor(this.hostTimes[0]!/stepMs)*stepMs,to=Math.ceil((this.hostTimes.at(-1)!+stepMs)/stepMs)*stepMs,key=JSON.stringify([from,to,stepMs]);
+    if(key===this.historyViewportKey)return;this.historyViewportKey=key;this.feed.setCvdViewport(`cvd:${this.chartId}:${this.instanceId}`,{from,to,stepMs});
   }
 
   private receive(event: CvdEvent) {
@@ -177,7 +187,7 @@ export class CvdDataController {
     for (const series of event.series) {
       const previous = this.model.sources.get(series.source);
       const stateChanged=!previous||previous.status!==series.status||!sameCvdCoverage(previous.coverage,series.coverage)
-        ||previous.removeBefore!==series.removeBefore;
+        ||previous.removeBefore!==series.removeBefore||previous.stepMs!==series.stepMs;
       const pointsChanged=!previous||changedCvdPoints(previous.points,series.points,series.snapshot);
       if(!stateChanged&&!pointsChanged){
         // Keep source diagnostics current without making an as-of-only or
@@ -250,7 +260,7 @@ type CvdPoint=CvdEvent['series'][number]['points'][number];
 type CvdSeries=CvdEvent['series'][number];
 function sameCvdPoint(a:CvdPoint|undefined,b:CvdPoint){
   return !!a&&a.time===b.time&&a.period===b.period&&a.base===b.base&&a.quote===b.quote
-    &&a.observed===b.observed&&a.available===b.available&&a.partial===b.partial&&a.reset===b.reset;
+    &&a.observed===b.observed&&a.available===b.available&&a.partial===b.partial&&a.reset===b.reset&&a.baseText===b.baseText&&a.quoteText===b.quoteText;
 }
 function changedCvdPointStart(previous:readonly CvdPoint[],next:readonly CvdPoint[]){
   let first=Infinity;

@@ -12,6 +12,19 @@ function archive(from:number,to:number,base='1'){
 const view=(from=day,to=day+6*M,anchor=day,stepMs=M):CvdProjectionRequest=>({source,anchor,from,to,stepMs});
 function setup(){const ledger=new CvdContributionLedger(source,'cache-basis');ledger.applyNative(native());const cache=new CvdProjectionCache(s=>s===source?ledger:undefined);return {ledger,cache};}
 describe('exact resident CVD projection cache',()=>{
+ it('resets exact daily totals and coverage at UTC boundaries without carrying an earlier gap',()=>{
+  const ledger=new CvdContributionLedger(source,'daily');ledger.applyNative(native(day,day+D));const second=native(day+D,day+2*D,'2',2);second.retainedFrom=day;ledger.applyNative(second);const cache=new CvdProjectionCache(()=>ledger),r={...view(day,day+2*D,day,D),reset:'daily' as const};const original=cache.project(r);
+  expect(original.points.map(p=>[p.base,p.period,p.reset,p.partial])).toEqual([['1',day,true,false],['2',day+D,true,false]]);
+  const captured=cache.capture(source,day,day+D);ledger.applyNative(native(day,day+D,'3',3));cache.commit(captured);expect(cache.project(r).points.map(p=>p.base)).toEqual(['3','2']);
+ });
+ it('weekly Monday resets do not inherit incomplete coverage from the preceding week',()=>{
+  const ledger=new CvdContributionLedger(source,'weekly');ledger.applyNative(native(day,day+D));const second=native(day+D,day+2*D,'2',2);second.retainedFrom=day;ledger.applyNative(second);const cache=new CvdProjectionCache(()=>ledger),r={...view(day,day+2*D,day-6*D,D),reset:'weekly' as const};
+  const result=cache.project(r);expect(result.points[0]).toMatchObject({base:'1',partial:true,period:day-6*D,reset:false});expect(result.points[1]).toMatchObject({base:'2',partial:false,period:day+D,reset:true});
+ });
+ it('clips a custom anchor inside its first display bucket without reusing an incomplete interval for another anchor',()=>{
+  const {ledger,cache}=setup(),p=native(day+3*M,day+4*M,'2',2);p.retainedFrom=day;ledger.applyNative(p);const clipped={...view(day,day+5*M,day+3*M,5*M)};
+  expect(cache.project(clipped).points[0]).toMatchObject({base:'2',partial:false});expect(cache.project(view(day,day+5*M,day,5*M)).points[0]!.base).toBe('3');
+ });
  it('returns isolated cached points without rereading minute cells',()=>{
   const {ledger,cache}=setup(),r=view(),first=cache.project(r);expect(first.points).toEqual(ledger.series(day,day,r.to));
   const read=vi.spyOn(ledger,'sum').mockImplementation(()=>{throw Error('must not rebuild');});first.points[0]!.base='poison';expect(cache.project(r).points[0]!.base).toBe('1');expect(read).not.toHaveBeenCalled();expect(cache.diagnostics().hits).toBe(1);

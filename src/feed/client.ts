@@ -11,6 +11,9 @@ import type { MonitoredFeedMode, MonitoredFeedStatus } from './observed-status';
 const feedDiagnosticsEnabled = import.meta.env.DEV || import.meta.env.VITE_DIAGNOSTICS === '1';
 type FeedStatusMeta = Pick<MonitoredFeedStatus, 'key' | 'kind' | 'source' | 'label' | 'mode'>;
 export class FeedClient {
+  tieredCvdEnabled(){return !this.fixtureMode&&import.meta.env.VITE_DATA_MODE==='staging'&&import.meta.env.VITE_CVD_TIERED_HISTORY==='1';}
+  setCvdViewport(id:string,viewport:import('./cvd-tiered-service').CvdViewport){const token=this.currentCvd.get(id);if(token&&this.tieredCvdEnabled())this.send({type:'cvd-viewport',id:token,...viewport});}
+  retryCvd(id:string){const token=this.currentCvd.get(id);if(token&&this.tieredCvdEnabled())this.send({type:'cvd-retry',id:token});}
   private cvdHistoryReads=new Map<string,{finish:(event:import('./cvd-history-owner').CvdHistoryEvent)=>void;cancel:()=>void}>();
   private cvdHistoryDisposed=false;
   /** Explicit opt-in acquisition; cancelling a caller never deletes worker history. */

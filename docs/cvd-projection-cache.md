@@ -4,16 +4,19 @@ The optional worker history owner now retains display inputs separately from
 its minute cells and transport sessions. `FeedClient.projectCvdHistory(request,
 signal)` sends a cache-only worker query. It never opens a lease or starts HTTP.
 It remains behind the existing default-off staging `VITE_CVD_TIERED_HISTORY` flag.
-The incumbent chart service is unchanged; this is not yet its chart adapter.
+The incumbent chart service remains the default; the optional chart adapter is
+documented separately.
 
 ## Contract and correction handling
 
 Version 1 `exact-observed-cvd-projection` returns exact decimal strings, a pinned
 worker basis, explicit anchor/range/resolution, ledger version, per-point
 availability/observation/partial flags and false financial/current-reconciliation
-authority. One query uses one explicit anchor. Daily/weekly resets and plot
-aggregation still need chart adaptation; a caller must not treat this as an
-already period-adapted `CvdSeries` or convert individual input deltas to Number.
+authority. One query uses an explicit initial anchor and optional UTC daily or
+weekly resets. Its result is a projection contract, not a `CvdSeries`; callers
+retain exact strings until final plot aggregation and numeric conversion.
+The [optional chart adapter](cvd-tiered-charts.md) now uses explicit daily/weekly
+reset projections and supports an anchor inside the first display bucket.
 
 Before a successful contribution transaction, the owner captures exact sums for
 the affected portion of each cached interval or prefix. After admission it
@@ -98,7 +101,8 @@ remain required.
 
 [Finite viewport acquisition and staged day restoration](cvd-history-window.md)
 now use these cached inputs. Archive fragmentation beyond existing backend
-limits, period-aware chart output and foreground performance remain open. New queries
+limits and foreground performance remain open. Period-aware chart output is now
+implemented in the optional adapter. New queries
 do not silently fill those gaps with fixtures or legacy numeric data. Remove
 the client opt-in flag and reload to disable the feature. No backend runtime,
 source retention, server deployment or history deletion changes are required.

@@ -87,8 +87,9 @@ foreground rendering performance, 24-hour/seven-day/30-day loading, sustained
 growth or provider recovery. No p50/p95 improvement is claimed.
 
 [Finite viewport acquisition and staged restoration](cvd-history-window.md) are
-now implemented. Next integration gates are period-aware chart adaptation and
-correction/continuity qualification. Existing production charts continue to use
+now implemented, together with the [opt-in chart adapter](cvd-tiered-charts.md).
+Next gates are current/provisional quality, older correction/continuity and live
+performance qualification. Existing production charts continue to use
 their incumbent CVD service. Rollback is removal of the opt-in client flag and a
 client reload; there are no server migrations, source deletions or live policy
 changes in this increment.

@@ -10,6 +10,17 @@ const request=(patch:Partial<CvdRequest>={}):CvdRequest=>({sources:['binance:spo
 const payload=(values:number[],patch:Partial<CvdPayload>={}):CvdPayload=>({version:1,source:'binance:spot:BTCUSDT',stepMs:M,from:day,to:day+values.length*M,revision:1,snapshot:true,watermark:100,baseUnit:'BTC',quoteUnit:'USDT',
  buckets:values.map((base,i)=>({time:day+i*M,base,quote:base*(10+i),revision:1})),coverage:{from:day,to:day+values.length*M,gaps:[]},status:'live',asOf:day+values.length*M,...patch});
 afterEach(()=>vi.useRealTimers());
+it('adds tiered venue quantities exactly before final Float64 chart conversion',()=>{
+ const settings=cvdSettings({sources:['binance:spot','binance:perpetual'],groups:[{id:'both',name:'Both',markets:['binance:spot','binance:perpetual'],revision:1}]}),plot=new CvdPlotModel();
+ for(const [source,baseText,quoteText]of [['binance:spot','9007199254740993.00000001','9007199254740993.1'],['binance:perpetual','-9007199254740993','-9007199254740993']] as const)plot.update({source,points:[{time:day+M,period:day,base:Number(baseText),quote:Number(quoteText),baseText,quoteText,observed:true,available:true,partial:false,reset:true}],snapshot:true,removeBefore:day,coverage:{from:day,to:day+M,gaps:[]},status:'live',message:'Recorded history',asOf:day+M,stepMs:M});
+ plot.derive(settings,'btc');expect(plot.value('total')!.value).toBe(0.00000001);
+ const outputs=plot.projectNumericOutputs(settings,[{t:day,o:1,h:1,l:1,c:1,v:1,revision:1,closed:true}],M,day+M);expect(outputs.find(p=>p.plotKey==='cvdTotalBtc')!.values).toEqual([0.00000001]);expect(outputs.find(p=>p.plotKey==='cvdTotalUsdt')!.values).toEqual([0.1]);
+});
+it('keeps exact known-zero intervals complete and uses the declared chart grid',()=>{
+ const plot=new CvdPlotModel(),settings=cvdSettings({sources:[source]}),end=day+5*M;
+ plot.update({source,points:[{time:end,period:day,base:0,quote:0,baseText:'0',quoteText:'0',observed:false,available:true,partial:false,reset:true}],snapshot:true,removeBefore:day,coverage:{from:day,to:end,gaps:[]},status:'live',message:'Recorded history',asOf:end,stepMs:5*M});
+ plot.derive(settings,'btc');expect(plot.value(source)).toMatchObject({value:0,partial:false});expect(plot.lines.get(source)!.stepMs).toBe(5*M);const output=plot.projectNumericOutputs(settings,[{t:day,o:1,h:1,l:1,c:1,v:1,revision:1,closed:true}],5*M,end);expect(output.find(p=>p.plotKey==='cvdTotalBtc')).toMatchObject({values:[0],quality:'complete'});
+});
 describe('executed flow CVD',()=>{
  it('formats compact values without erasing tiny positives or awkward suffix boundaries',()=>{
    expect([999999,999.9,1e-9,-1000000,0].map(compactCvd)).toEqual(['+1M','+1K','+1e-9','−1M','0']);

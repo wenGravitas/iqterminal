@@ -1,7 +1,8 @@
 import { cvdAnchorAt, cvdValues, cvdSourceLabel, CVD_STEP, type CvdPoint,type CvdSeries,type CvdSettings } from '../feed/cvd';
 import type { Candle } from '../feed/protocol';
+import {cvdAdd} from '../feed/cvd-exact-decimal';
 export interface CvdLinePoint {time:number;period:number;value:number|null;partial:boolean}
-export interface CvdLine {id:string;name:string;points:CvdLinePoint[];filtered:boolean}
+export interface CvdLine {id:string;name:string;points:CvdLinePoint[];filtered:boolean;stepMs?:number}
 export interface CvdNumericProjection {
   plotKey:string;title:string;unit:'BTC'|'USDT';sourceScope:string;values:(number|null)[];
   resets:{fromTime:number;reason:string}[];quality:'complete'|'partial'|'stale'|'unavailable';available:boolean;
@@ -36,18 +37,21 @@ export class CvdPlotModel {
     for(const id of this.lines.keys())if(!wanted.includes(id))this.lines.delete(id);
     for(const id of wanted){
       let line=this.lines.get(id);if(!line){line={id,name:id==='total'?'Total':settings.groups.find(g=>g.id===id)?.name??cvdSourceLabel(id),points:[],filtered:false};this.lines.set(id,line);}
+      const members=id==='total'?settings.sources:settings.sources.includes(id as CvdSettings['sources'][number])?[id]:settings.groups.find(g=>g.id===id)?.markets??[];
+      line.stepMs=Math.min(...members.map(source=>this.sources.get(source)?.stepMs??CVD_STEP));if(!Number.isFinite(line.stepMs))line.stepMs=CVD_STEP;
       line.points.splice(cvdLowerBound(line.points,this.first,p=>p.time));
     }
     const start=cvdLowerBound(this.times,this.first,t=>t);
     for(let index=start;index<this.times.length;index++){
       const time=this.times[index]!,period=cvdAnchorAt(time-1,settings);
-      const values=new Map<string,{value:number;observed:boolean;partial:boolean}>();
+      const values=new Map<string,{value:number;text?:string;observed:boolean;partial:boolean}>();
       for(const source of settings.sources){
         const points=this.sources.get(source)?.points??[];let at=cvdLowerBound(points,time,p=>p.time);
         if(points[at]?.time!==time)at--;
         const p=points[at];if(!p||p.period!==period||!p.available)continue;
-        values.set(source,{value:unit==='btc'?p.base:p.quote,observed:p.observed&&p.time===time,partial:p.partial});
-        if(settings.mode==='venues')this.lines.get(source)?.points.push({time,period,value:p.observed&&p.time===time?(unit==='btc'?p.base:p.quote):null,partial:p.partial});
+        const text=unit==='btc'?p.baseText:p.quoteText,observed=(p.observed||text!==undefined&&p.available)&&p.time===time;
+        values.set(source,{value:unit==='btc'?p.base:p.quote,text,observed,partial:p.partial});
+        if(settings.mode==='venues')this.lines.get(source)?.points.push({time,period,value:observed?(unit==='btc'?p.base:p.quote):null,partial:p.partial});
       }
       const result=cvdValues(settings.sources,values,settings.groups);
       const stale=settings.sources.some(id=>{const source=this.sources.get(id);return !source||source.status!=='live'&&time>source.coverage.to;});
@@ -75,7 +79,7 @@ export class CvdPlotModel {
       let previousPeriod:number|undefined,previousPartial=false,partial=false,stale=false,available=false;
       for(let index=0;index<host.length;index++){
         const candle=host[index]!,end=candle.t+intervalMs;
-        const samples=new Map<string,{value:number;period:number;partial:boolean;stale:boolean}>();
+        const samples=new Map<string,{value:number;text?:string;period:number;partial:boolean;stale:boolean}>();
         for(const source of settings.sources){
           const series=this.sources.get(source),sample=series&&projectSourcePoint(series,candle,end,now,settings,unit);
           if(sample)samples.set(source,sample);
@@ -84,11 +88,11 @@ export class CvdPlotModel {
         let value:number|null=null,isPartial=false,period=cvdAnchorAt((candle.closed?end:Math.min(end,now))-1,settings);
         if(line.id==='total'||line.id.startsWith('group:')){
           const ids=line.markets.filter(id=>settings.sources.includes(id as CvdSettings['sources'][number]));
-          let sum=0,hasValue=false;
+          let sum=0,text='0',exact=true,hasValue=false;
           for(const id of ids){const sample=samples.get(id);if(!sample){isPartial=true;continue;}
-            sum+=sample.value;hasValue=true;isPartial||=sample.partial;period=sample.period;stale||=sample.stale;}
+            sum+=sample.value;if(sample.text!==undefined)text=cvdAdd(text,sample.text);else exact=false;hasValue=true;isPartial||=sample.partial;period=sample.period;stale||=sample.stale;}
           if(ids.length!==line.markets.length)isPartial=true;
-          if(hasValue)value=sum;
+          if(hasValue)value=exact?Number(text):sum;
           if(line.id==='total'&&!line.markets.length)isPartial=true;
         }else{
           const sample=samples.get(line.id);
@@ -124,14 +128,14 @@ function projectSourcePoint(series:CvdSeries,candle:Candle,candleEnd:number,now:
   // Its bar endpoint lies in the future, so project it only into the current host candle.
   const next=series.points[upper];
   if(!candle.closed&&next&&next.time<=candleEnd&&next.time>end
-    &&next.time-CVD_STEP<=end&&series.status==='live'&&series.asOf>=next.time-CVD_STEP)point=next;
+    &&next.time-(series.stepMs??CVD_STEP)<=end&&series.status==='live'&&series.asOf>=next.time-(series.stepMs??CVD_STEP))point=next;
   if(!point||!point.available)return undefined;
   const period=cvdAnchorAt(end-1,settings);if(point.period!==period)return undefined;
   const from=point.time<=end?point.time:candle.t;
   const gap=series.coverage.gaps.some(item=>item.from<end&&item.to>from);
   const coverageConfirmed=series.status==='live'?series.asOf>=end:series.coverage.to>=end;
-  const partial=point.partial||!point.observed||gap||!coverageConfirmed;
-  return {value:unit==='BTC'?point.base:point.quote,period,partial,stale:series.status==='stale'};
+  const text=unit==='BTC'?point.baseText:point.quoteText,partial=point.partial||!point.observed&&text===undefined||gap||!coverageConfirmed;
+  return {value:unit==='BTC'?point.base:point.quote,text,period,partial,stale:series.status==='stale'};
 }
 
 function pushReset(resets:{fromTime:number;reason:string}[],fromTime:number,reason:string){

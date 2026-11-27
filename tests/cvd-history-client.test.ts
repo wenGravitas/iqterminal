@@ -3,7 +3,12 @@ import {FeedClient} from '../src/feed/client';
 import type {CvdHistoryRead} from '../src/feed/cvd-history-owner';
 class WorkerMock {static instance:WorkerMock;onmessage:((event:any)=>void)|null=null;messages:any[]=[];constructor(){WorkerMock.instance=this;}postMessage(command:unknown){this.messages.push(command);}terminate(){} }
 const request:CvdHistoryRead={source:'binance:perpetual',kind:'native',from:60000,to:120000};
-afterEach(()=>{vi.useRealTimers();vi.unstubAllGlobals();});
+afterEach(()=>{vi.useRealTimers();vi.unstubAllGlobals();vi.unstubAllEnvs();});
+it('routes opt-in chart viewports to the current subscription and keeps fixture mode separate',()=>{
+ vi.stubEnv('VITE_DATA_MODE','staging');vi.stubEnv('VITE_CVD_TIERED_HISTORY','1');vi.stubGlobal('Worker',WorkerMock);const client=new FeedClient(),worker=WorkerMock.instance,r={sources:['binance:perpetual'],anchor:'daily',origin:60000,custom:60000} as const;
+ client.subscribeCvd('panel',{...r,sources:[...r.sources]},()=>{});const token=worker.messages.at(-1).id;client.setCvdViewport('panel',{from:60000,to:120000,stepMs:60000});expect(worker.messages.at(-1)).toEqual({type:'cvd-viewport',id:token,from:60000,to:120000,stepMs:60000});client.retryCvd('panel');expect(worker.messages.at(-1)).toEqual({type:'cvd-retry',id:token});client.dispose();
+ const fixture=new FeedClient(true),mock=WorkerMock.instance;fixture.subscribeCvd('panel',{...r,sources:[...r.sources]},()=>{});const count=mock.messages.length;fixture.setCvdViewport('panel',{from:60000,to:120000,stepMs:60000});expect(mock.messages).toHaveLength(count);fixture.dispose();
+});
 it('routes finite viewport and staged restore receipts through cancellable worker requests',async()=>{
  vi.stubGlobal('Worker',WorkerMock);const client=new FeedClient(),worker=WorkerMock.instance,s=new AbortController().signal;
  const viewport=client.acquireCvdHistoryWindow({projection:{source:request.source,anchor:0,from:60000,to:120000,stepMs:60000}},s),command=worker.messages.at(-1);expect(command.type).toBe('cvd-history-window');worker.onmessage?.({data:{type:'cvd-history-result',ids:[command.id],window:{state:'loading',nextBefore:60000}}});expect(await viewport).toEqual({state:'loading',nextBefore:60000});

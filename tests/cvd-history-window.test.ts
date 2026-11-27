@@ -27,7 +27,7 @@ describe('finite CVD viewport acquisition',()=>{
  });
  it('finer missing detail restores a sealed day over bounded turns without changing accepted totals',async()=>{
   const f=cvdHistoryFixture();await f.seed();await f.owner.read({source,kind:'archive',from:day,to:day+D},signal());f.owner.project(view());f.owner.evict(source,day);const total=f.owner.sum(source,day,day+D),version=f.owner.diagnostics().sources[0]!.version,projection=view(day+M,day+3*M,day,M);
-  let result=await f.owner.window({projection},signal()),turns=1;expect(result).toMatchObject({state:'loading',operations:4});expect(f.owner.sum(source,day,day+D)).toEqual(total);
+  let result=await f.owner.window({projection},signal()),turns=1;expect(result).toMatchObject({state:'loading',operations:4,restoringDay:day});expect(f.owner.sum(source,day,day+D)).toEqual(total);
   while(result.state!=='available'){result=await f.owner.window({projection,before:result.nextBefore},signal());turns++;expect(turns).toBeLessThanOrEqual(6);}
   expect(turns).toBe(6);expect(result.projection!.points[0]!.base).toBe('1.00000001');expect(f.owner.diagnostics().sources[0]!.version).toBe(version);expect(f.owner.sum(source,day,day+D)).toEqual(total);await f.owner.dispose();
  });

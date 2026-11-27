@@ -42,9 +42,9 @@ class CvdLines implements IPrimitive {
       const start=cvdLowerBound(line.points,range.from,p=>p.time);
       let previous:typeof line.points[number]|undefined;
       for(let index=Math.max(0,start-1);index<line.points.length;index++){
-        const p=line.points[index]!;if(p.time>range.to+CVD_STEP)break;
+        const p=line.points[index]!;if(p.time>range.to+(line.stepMs??CVD_STEP))break;
         if(p.value==null){previous=undefined;continue;}
-        if(previous&&previous.value!=null&&previous.period===p.period&&p.time-previous.time<=CVD_STEP){
+        if(previous&&previous.value!=null&&previous.period===p.period&&p.time-previous.time<=(line.stepMs??CVD_STEP)){
           const x1=rc.timeScale.indexToX(rc.dataLayer.timeToIndexFloat(previous.time/1000)),x2=rc.timeScale.indexToX(rc.dataLayer.timeToIndexFloat(p.time/1000));
           const y1=rc.priceScale.priceToY(previous.value),y2=rc.priceScale.priceToY(p.value);
           if([x1,x2,y1,y2].every(Number.isFinite)){ctx.setLineDash(p.partial||previous.partial?[3,3]:[]);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();this.segments++;}
@@ -271,7 +271,7 @@ export class CvdView implements Drawable {
     for(const start of [insertion-1,insertion]){
       const first=points[start],last=points[start+1];
       if(!first||!last||first.value==null||last.value==null||!Number.isFinite(first.value)||!Number.isFinite(last.value)||first.period!==period||last.period!==period)continue;
-      const span=last.time-first.time;if(span<=0||span>CVD_STEP||time<first.time||time>last.time)continue;
+      const span=last.time-first.time;if(span<=0||span>(line.stepMs??CVD_STEP)||time<first.time||time>last.time)continue;
       const firstX=this.chart.timeScale.indexToX(this.chart.dataLayer.timeToIndexFloat(first.time/1000));
       const lastX=this.chart.timeScale.indexToX(this.chart.dataLayer.timeToIndexFloat(last.time/1000));
       if(!Number.isFinite(firstX+lastX)||lastX<=firstX||x<firstX-1||x>lastX+1)continue;
