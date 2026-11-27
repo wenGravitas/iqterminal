@@ -84,3 +84,9 @@ describe('bounded resident blocks',()=>{
   expect(l.sum(day,end)).toMatchObject({base:'365',quote:'3650',complete:true,requestedMinutes:365*1440});expect(l.diagnostics().residentCells).toBe(3);expect(l.diagnostics().sealedDays).toBe(365);expect(l.sum(day+M,day+2*M)).toMatchObject({base:'0',complete:true});
  },20000);
 });
+it('compacts expired native days with exact totals, unknown masks and version preserved',()=>{
+ const l=new CvdContributionLedger('binance:perpetual','native-expiry');l.applyNative(native(day,day+D));
+ const partial=native(day+D,day+D+M,[{time:day+D,base:'2',quote:'20',firstId:'101',lastId:'101',records:'1'}],2);partial.retainedFrom=day;partial.asOf=partial.fullProjectionAt=day+2*D+M;partial.coverage.gaps=[{from:day+D,to:day+D+M,reason:'Unconfirmed'}];l.applyNative(partial);
+ const sum=l.sum(day,day+D),version=l.dataVersion;l.compactExpiredNative(day);expect(l.diagnostics().sealedDays).toBe(0);
+ l.compactExpiredNative(day+D);expect(l.diagnostics()).toMatchObject({sealedDays:1,residentCells:1});expect(l.sum(day,day+D)).toEqual(sum);const partialSum=l.sum(day+D,day+2*D);l.compactExpiredNative(day+2*D);expect(l.diagnostics()).toMatchObject({sealedDays:2,residentCells:0});expect(l.sum(day+D,day+2*D)).toEqual(partialSum);expect(partialSum.complete).toBe(false);expect(l.dataVersion).toBe(version);
+});

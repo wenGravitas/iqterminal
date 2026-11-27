@@ -115,3 +115,12 @@ reload the client to roll back. No backend runtime, credentials, server retentio
 paid infrastructure or history deletion is changed. Remaining work includes
 native lineage/rejoin, older correction repair, sustained multi-market
 operation, configured-provider recovery and live/foreground performance gates.
+
+Retained native days now stay resident during automatic acquisition so hour-sized
+correction reads can replace their cells without requiring full-day source
+reconstruction. Warm completed days still compact after projection publication.
+The owner separately compacts expired native days when the server's observed
+retained horizon advances across a UTC day. Exact totals, incomplete coverage
+masks and source ownership remain unchanged. See [older native observation
+sweeps](cvd-tiered-charts.md#older-native-observations) for admission and failure
+semantics; no automatic incarnation rejoin or archive correction authority.

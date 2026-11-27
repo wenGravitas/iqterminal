@@ -64,3 +64,25 @@ it('finishes an active sealed-day reconstruction before opening another cold res
  await until(()=>f.owner.diagnostics().sources[0]!.sealedDays===0);const pages=f.calls.slice(count).filter(c=>c.url.includes('recorded-minutes?')).map(c=>Number(new URL(c.url,'http://fixture').searchParams.get('from')));
  expect(pages).toHaveLength(48);expect(pages.slice(0,24).every(t=>t<day+D)).toBe(true);expect(pages.slice(24).every(t=>t>=day+D)).toBe(true);expect(new Set(pages).size).toBe(48);
 });
+it('rechecks older native pages, applies exact corrections once and keeps hot days resident',async()=>{
+ const f=setup(true,day),original=f.fetch.getMockImplementation()!;let revision=0,corrected=false;
+ f.fetch.mockImplementation(async(...args)=>{const response=await original(...args);if(!String(args[0]).includes('/v2/cvd?'))return response;const p=await response.json();p.revision=++revision;if(corrected)for(const row of p.buckets)if(row.time===day){row.base='2.00000002';row.quote='20.0000002';}return new Response(JSON.stringify(p));});
+ await f.seed();await f.owner.read({source,kind:'native',from:day,to:day+D},new AbortController().signal);
+ f.service.viewport('chart',{from:day,to:day+H,stepMs:M});await until(()=>f.model.sources.get(source)?.points.length===60);
+ expect(f.owner.diagnostics().sources[0]).toMatchObject({sealedDays:0,residentCells:1440});
+ const version=f.owner.sourceState(source).version,calls=f.calls.length;corrected=true;
+ await until(()=>f.model.sources.get(source)?.points.at(-1)?.baseText==='2.00000002');
+ expect(f.owner.sourceState(source).version).toBe(version+1);expect(f.owner.sum(source,day,day+D)!.base).toBe('25.00000025');
+ const pages=f.calls.slice(calls).filter(c=>c.url.includes('/v2/cvd?')).map(c=>new URL(c.url,'http://fixture'));
+ expect(pages).toHaveLength(1);expect(f.calls.at(-1)!.init.headers).toEqual({'X-IQ-History-Priority':'background'});expect(Number(pages[0]!.searchParams.get('to'))-Number(pages[0]!.searchParams.get('from'))).toBe(H);
+ await vi.advanceTimersByTimeAsync(5000);expect(f.owner.sourceState(source).version).toBe(version+1);expect(f.calls).toHaveLength(calls+1);
+});
+it('keeps correction-check failure stale through successful current polls and stops bounded retries',async()=>{
+ const f=setup(true,day),original=f.fetch.getMockImplementation()!;let revision=0,failing=false;
+ f.fetch.mockImplementation(async(...args)=>{const u=new URL(String(args[0]),'http://fixture');if(failing&&u.pathname.endsWith('/cvd')&&Number(u.searchParams.get('from'))<day+D-M)return new Response('{}',{status:503});const response=await original(...args);if(!u.pathname.endsWith('/cvd'))return response;const p=await response.json();p.revision=++revision;return new Response(JSON.stringify(p));});
+ await f.seed();await f.owner.read({source,kind:'native',from:day,to:day+D},new AbortController().signal);
+ f.service.viewport('chart',{from:day,to:day+D+2*M,stepMs:M});await until(()=>f.model.sources.get(source)?.points.some(p=>p.time===day+M)??false);const old=f.model.sources.get(source)!.points.find(p=>p.time===day+M)!.baseText;failing=true;
+ await until(()=>f.service.diagnostics().repairs>0&&f.model.sources.get(source)?.status==='stale');
+ await vi.advanceTimersByTimeAsync(1500);expect(f.model.sources.get(source)!.status).toBe('stale');expect(f.model.sources.get(source)!.points.find(p=>p.time===day+M)!.baseText).toBe(old);
+ await vi.advanceTimersByTimeAsync(40000);expect(f.service.diagnostics().repairsBySource[source]).toMatchObject({blocked:true,failures:3,reason:'unavailable'});const count=f.service.diagnostics().repairs;await vi.advanceTimersByTimeAsync(10000);expect(f.service.diagnostics().repairs).toBe(count);
+});

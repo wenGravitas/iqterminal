@@ -9,7 +9,7 @@ import {minuteHistoryRequest,type MinuteHistoryRequest} from './recorded-minute-
 import {CvdProjectionCache,type CvdProjectionRequest,type CvdExactProjection} from './cvd-projection-cache';
 import {acquireCvdWindow,CvdWindowFailure,CVD_WINDOW_LIMITS,type CvdWindowRequest,type CvdWindowResult} from './cvd-history-window';
 
-export interface CvdHistoryRead {source:CvdSource;kind:'native'|'archive'|'restore';from:number;to:number}
+export interface CvdHistoryRead {source:CvdSource;kind:'native'|'archive'|'restore';priority?:'background';from:number;to:number}
 export type CvdHistoryReason='disabled'|'capacity'|'invalid'|'basis'|'conflict'|'restore'|'mutable'|'unavailable'|'cancelled'|'rejoin-unavailable'|'expired-native-basis';
 export class CvdHistoryFailure extends Error {constructor(readonly reason:CvdHistoryReason){super('CVD historical observation unavailable');}}
 export interface CvdHistoryReceipt {source:CvdSource;from:number;to:number;version:number;changed:boolean;sum:ReturnType<CvdContributionLedger['sum']>;native?:{from:number;to:number;status:'live'|'stale'|'awaiting';asOf:number};financialAccepted:false;currentReconciled:false}
@@ -18,16 +18,16 @@ export interface CvdRestoreReceipt {source:CvdSource;day:number;pages:number;mis
 export type CvdHistoryCommand={type:'cvd-history-read';id:string;request:CvdHistoryRead}|{type:'cvd-history-window';id:string;request:CvdWindowRequest}|{type:'cvd-history-restore';id:string;request:CvdRestorePage}|{type:'cvd-history-project';id:string;request:CvdProjectionRequest}|{type:'cvd-history-cancel';id:string};
 export type CvdHistoryEvent={type:'cvd-history-result';ids:string[];receipt?:CvdHistoryReceipt;window?:CvdWindowResult;restoration?:CvdRestoreReceipt;projection?:CvdExactProjection;reason?:CvdHistoryReason};
 interface Waiter {resolve:(v:unknown)=>void;reject:(e:unknown)=>void;signal:AbortSignal;cancel:()=>void}
-interface Job {key:string;request:{source:CvdSource;kind:string};waiters:Set<Waiter>;abort:AbortController;run:(signal:AbortSignal)=>Promise<unknown>}
+interface Job {key:string;request:{source:CvdSource;kind:string;priority?:'background'};waiters:Set<Waiter>;abort:AbortController;run:(signal:AbortSignal)=>Promise<unknown>}
 const SOURCES=['binance:spot','binance:perpetual','bybit:perpetual'],DAY=86400000;
 export const CVD_HISTORY_OWNER_LIMITS=Object.freeze({queued:4,consumers:24,requestMs:12000});
 export const CVD_RESTORE_STAGE_LIMITS=Object.freeze({stages:4,idleMs:60000,lifetimeMs:600000});
 let ownerSequence=0;
 function checked(value:CvdHistoryRead){
- if(!value||!SOURCES.includes(value.source)||!['native','archive','restore'].includes(value.kind))throw new CvdHistoryFailure('invalid');
+ if(!value||!SOURCES.includes(value.source)||!['native','archive','restore'].includes(value.kind)||value.priority!==undefined&&value.priority!=='background')throw new CvdHistoryFailure('invalid');
  const [venue,market]=value.source.split(':') as [MinuteHistoryRequest['venue'],MinuteHistoryRequest['market']];
  try{minuteHistoryRequest({dataset:'cvd',venue,market,from:value.from,to:value.to});}catch{throw new CvdHistoryFailure('invalid');}
- return {source:value.source,kind:value.kind,from:value.from,to:value.to};
+ return {source:value.source,kind:value.kind,...(value.priority?{priority:value.priority}:{}),from:value.from,to:value.to};
 }
 function reason(error:unknown):CvdHistoryReason {
  if(error instanceof CvdHistoryFailure||error instanceof CvdLedgerFailure||error instanceof CvdWindowFailure)return error.reason;
@@ -38,6 +38,7 @@ export class CvdHistoryOwner {
  private readonly identity=++ownerSequence;
  private readonly ledgers=new Map<CvdSource,CvdContributionLedger>();
  private readonly retainedFrom=new Map<CvdSource,number>();
+ private readonly compactedBefore=new Map<CvdSource,number>();
  private readonly nativeStatus=new Map<CvdSource,{status:'live'|'stale'|'awaiting';asOf:number}>();
  private readonly nativeFailures=new Map<CvdSource,CvdHistoryReason>();
  private readonly lifetime=new AbortController();private windowTurns=0;
@@ -58,7 +59,7 @@ export class CvdHistoryOwner {
   let r:CvdHistoryRead;try{r=checked(value);}catch(error){return Promise.reject(error);}
   return this.admit(r,signal,s=>this.acquire(r,s));
  }
- private admit<T>(r:{source:CvdSource;kind:string},signal:AbortSignal,run:(signal:AbortSignal)=>Promise<T>):Promise<T>{
+ private admit<T>(r:{source:CvdSource;kind:string;priority?:'background'},signal:AbortSignal,run:(signal:AbortSignal)=>Promise<T>):Promise<T>{
   const key=JSON.stringify(r);let job=this.jobs.get(key);
   // A draining abandoned read cannot be replaced/coalesced until its body ends.
   if(job?.abort.signal.aborted)return Promise.reject(new CvdHistoryFailure('capacity'));
@@ -85,7 +86,7 @@ export class CvdHistoryOwner {
    try{
     accepted=await this.scheduler.read(`cvd-owner:${this.identity}:${job.key}`,'cvd',signal,s=>{
      actual=Promise.resolve().then(()=>{s.throwIfAborted();return job.run(s);});return actual;
-    },job.request.kind==='native'?0:2);
+    },job.request.kind==='native'&&job.request.priority!=='background'?0:2);
     this.metrics.admitted++;
    }catch(error){this.metrics.failed++;failure=new CvdHistoryFailure(signal.aborted?'cancelled':reason(error));if(!signal.aborted){this.states.set(job.request.source,failure.reason);if(job.request.kind==='native')this.nativeFailures.set(job.request.source,failure.reason);}}
    finally{
@@ -100,7 +101,7 @@ export class CvdHistoryOwner {
   let ledger=this.ledgers.get(r.source);let result:{changed:boolean;version:number},native:CvdHistoryReceipt['native'];
   if(r.kind==='native'){
    const [venue,market]=r.source.split(':');
-   const response=await this.request('/market-data/v2/cvd?'+new URLSearchParams({venue:venue!,market:market!,from:String(r.from),to:String(r.to)}),{signal,cache:'no-store',credentials:'same-origin',redirect:'error'});
+   const response=await this.request('/market-data/v2/cvd?'+new URLSearchParams({venue:venue!,market:market!,from:String(r.from),to:String(r.to)}),{signal,...(r.priority?{headers:{'X-IQ-History-Priority':r.priority}}:{}),cache:'no-store',credentials:'same-origin',redirect:'error'});
    const {payload}=await readNativeExactCvdResponse(response,r.source,signal);signal.throwIfAborted();
    native={from:payload.from,to:payload.to,status:payload.status,asOf:payload.asOf};
    if(payload.from!==r.from||payload.to!==r.to)throw new CvdHistoryFailure('invalid');
@@ -108,6 +109,7 @@ export class CvdHistoryOwner {
    const candidate=ledger??new CvdContributionLedger(r.source,`worker-cvd:${this.identity}:${r.source}`);
    const captured=this.projections.capture(r.source,r.from,r.to);
    result=candidate.applyNative(payload);ledger=candidate;this.ledgers.set(r.source,ledger);this.nativeFailures.delete(r.source);this.retainedFrom.set(r.source,Math.max(this.retainedFrom.get(r.source)??0,payload.retainedFrom));if(payload.asOf>=(this.nativeStatus.get(r.source)?.asOf??0))this.nativeStatus.set(r.source,{status:payload.status,asOf:payload.asOf});this.projections.commit(captured);
+   const horizon=Math.floor(payload.retainedFrom/DAY)*DAY;if(horizon>(this.compactedBefore.get(r.source)??0)){ledger.compactExpiredNative(horizon);this.compactedBefore.set(r.source,horizon);}
   }else{
    if(!ledger)throw new CvdHistoryFailure('basis');
    if(r.kind==='archive'){

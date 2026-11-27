@@ -117,6 +117,9 @@ export class CvdContributionLedger {
    diagnostics:()=>({day,pages,bytes,missingRecords:missing().count,done}),
   };
  }
+ /** Expired native observations may compact; still-retained native minutes stay
+  * resident so bounded page corrections never require whole-day reconstruction. */
+ compactExpiredNative(before:number){range(before,before);for(const [day,b]of this.blocks)if(day+DAY>this.cutover!&&day+DAY<=before&&b.cells)this.evict(day);}
  evict(day:number){if(!Number.isSafeInteger(day)||day<0||day%DAY)throw new CvdLedgerFailure('capacity');const old=this.blocks.get(day);if(!old)return undefined;if(old.seal)return old.seal.hash;if(day+DAY>this.cutover!&&day+DAY>this.nativeAsOf)throw new CvdLedgerFailure('mutable',day);
   const seal:Seal={hash:this.hash(old),present:new Uint8Array(180),recorded:new Uint8Array(180),complete:new Uint8Array(180)};
   for(const [time,c]of old.cells!){const i=(time-day)/M;setBit(seal.present,i);if(c.record)setBit(seal.recorded,i);if(c.complete)setBit(seal.complete,i);}this.resident-=old.cells!.size;this.blocks.set(day,{...old,cells:undefined,seal});return seal.hash;

@@ -91,9 +91,11 @@ live TTL, production deployment or source history changes occur in this incremen
 
 ## Evidence and remaining gates
 
-139 focused source tests passed. Typecheck and both disabled/selected builds
-passed. Three selected headless Pi browser checks passed: production-worker
-admission, the exact-cache component fixture and a full app/chart fixture.
+143 focused source tests passed after the older-native correction increment. Typecheck and both disabled/selected builds
+passed. The preceding chart increment passed three selected headless Pi checks:
+production-worker admission, the exact-cache component and a full app/chart fixture.
+The correction increment additionally passed both warm and native-correction
+variants of the full app/chart fixture.
 The latter renders two days of sparse controlled warm data, verifies nonzero
 segments on 5m and 1h grids, reuses all history through an origin outage and
 timeframe change with no new archive GETs, and retains one chart subscription.
@@ -115,12 +117,49 @@ This is controlled functional evidence, not provider, foreground Pi or live
 ingestion acceptance. It does not establish current/24h/7d/30d real-history load
 percentiles or an improvement over the incumbent chart. Forming buckets retain
 strict partial coverage until confirmed; provisional display/quality policy
-still needs acceptance. Older hot windows are not continuously reconciled by
-the two-minute current poll. Bounded older-native correction discovery/repair,
-native lineage/rejoin and historical correction authority remain open. Large
+still needs acceptance. Older hot windows now have a bounded background observation sweep described
+below. Native lineage/rejoin and archive correction authority remain open. Large
 fragmented catalogues, concurrent restores, maximum group/chart loads and
 real-provider failure/throughput require qualification before enabling this path.
 
 The implementation is disabled and undeployed. It supports the existing three
 CVD BTCUSDT sources (Binance spot/perpetual and Bybit perpetual), not new venue
 collection. The whole storage objective remains incomplete.
+
+## Older native observations
+
+Completed viewport tasks contribute their required native-owned anchor prefixes
+to a shared newest-first sweep. Reads are at most one UTC-aligned hour, with one
+repair active and at least five seconds between starts across all sources. A
+finished source sweep pauses sixty seconds before restarting. It never reads
+below the greater of the fixed native cutover, latest server retained horizon
+and local seven-day bound, nor overlaps the latest two-minute poll. A source
+cursor survives viewport changes so rolling live windows do not continually
+restart the newest hour. Duplicated chart demand shares the source cursor.
+No archive reads are introduced for cached warm windows.
+
+Current polling remains ahead of background admission. Older checks are marked
+`X-IQ-History-Priority: background`; worker scheduling, native HTTP timing and
+guarded SQL transport preserve that demotion. SQL admission lets queued visible
+work proceed first and keeps the current reserve. The header cannot promote
+history to current priority. A background check requires the SQL proxy health
+contract to advertise `historicalReadGuard.backgroundPriority: true`; older
+proxies refuse the check before SQL rather than silently upgrading its priority. SQL row/byte/time guards are unchanged. Five-second
+spacing is an operational bound, not evidence that this cadence is acceptable
+under representative live load; qualification is still required.
+
+Three consecutive failed attempts stop the source sweep until explicit retry.
+A failure keeps loaded frames stale through successful current polls; only a
+successful repair of that cursor clears its repair fault. Conflicts, malformed
+responses, restore requirements or foreign incarnations stop immediately.
+Diagnostics expose source cursor, retry/blocked state and the last successful
+page observation time; none grants current/financial authority.
+
+Automatic acquisition keeps retained native days resident for hourly correction
+replacement. As the observed server horizon crosses UTC days, expired native
+days compact to their original exact totals, presence/coverage masks and hashes,
+including incomplete days. This changes residency only. An expired native basis
+still cannot be silently filled from an archive. A single source's seven-day
+native horizon is about 10,080 minute cells under the existing 32,768 resident
+cell cap; bounded archive restoration shares the same cap. No server data,
+retention or archive ownership changes.

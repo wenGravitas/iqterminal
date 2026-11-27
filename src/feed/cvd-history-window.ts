@@ -48,7 +48,7 @@ export async function acquireCvdWindow(owner:CvdHistoryOwner,value:CvdWindowRequ
    operations++;const receipt=await owner.read({source:r.source,kind,from,to},signal);before=from;
    if(!receipt.sum.complete)fail(new CvdWindowFailure('unavailable'),from,to);
    if(!project())break;
-   if(projection&&!projection.stale){const day=Math.floor(from/D)*D;try{if(owner.sum(r.source,day,day+D)?.complete)owner.evict(r.source,day);}catch(error){if(!(error instanceof CvdLedgerFailure&&error.reason==='mutable')){fail(error,day,day+D);break;}}}
+   if(projection&&!projection.stale){const day=Math.floor(from/D)*D;try{if(day+D<=basis.cutover&&owner.sum(r.source,day,day+D)?.complete)owner.evict(r.source,day);}catch(error){if(!(error instanceof CvdLedgerFailure&&error.reason==='mutable')){fail(error,day,day+D);break;}}}
    if(complete())break;
   }catch(error){fail(error,from,to);break;}
  }

@@ -54,3 +54,8 @@ describe('finite CVD viewport acquisition',()=>{
   const turns=Array.from({length:4},()=>f.owner.window({projection:view()},signal()).catch(e=>e));await expect(f.owner.window({projection:view()},signal())).rejects.toMatchObject({reason:'capacity'});const close=f.owner.dispose();finish();await close;await Promise.all(turns);expect(f.owner.diagnostics().windowTurns).toBe(0);
  });
 });
+it('leaves completed retained native days resident for bounded correction reads',async()=>{
+ const f=cvdHistoryFixture(day);let result=await f.owner.window({projection:view(),seed:{from:day,to:day+M}},signal());
+ for(let n=0;n<10&&result.state!=='available';n++)result=await f.owner.window({projection:view(),before:result.nextBefore},signal());
+ expect(result.state).toBe('available');expect(f.owner.diagnostics().sources[0]).toMatchObject({sealedDays:0,residentCells:1440});await f.owner.dispose();
+});
