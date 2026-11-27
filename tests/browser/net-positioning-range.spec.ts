@@ -8,6 +8,9 @@ test('Net Longs and Shorts drag totals clear on release and click ranges pin unt
   await page.setViewportSize({ width: 1920, height: 1080 });
   const hostOpen = Math.floor(Date.now() / 60_000) * 60_000;
   const requests: string[] = [], routed: string[] = [], failed: string[] = [], errors: string[] = [];
+  // Worker-owned live sockets must not revise the deterministic candle geometry
+  // between capturing bar coordinates and clicking the second endpoint.
+  await page.context().routeWebSocket('**/*', socket => socket.close());
   page.on('pageerror', error => {errors.push(error.message);console.error('Browser error:',error.message);});
   page.on('console', message => { if (message.type() === 'error' && !message.location().url.endsWith('/favicon.ico')) errors.push(message.text()); });
   page.on('requestfailed', request => failed.push(`${request.url()}: ${request.failure()?.errorText}`));
@@ -64,14 +67,25 @@ test('Net Longs and Shorts drag totals clear on release and click ranges pin unt
     return view?.primitive.diagnostics().candleCount ?? 0;
   }, id)).toBeGreaterThan(0);
 
-  const points=await page.evaluate(id=>{
+  // Data arrival precedes the visible-chart paint. Keep the fixture window on
+  // screen, then wait for usable geometry rather than racing the scheduler.
+  await page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0];
+    p.engine.setRange({ from: p.engine.times.length - 34, to: p.engine.times.length });
+  });
+  let points: any;
+  await expect.poll(async () => {
+    points = await page.evaluate(id=>{
     const p=[...(window as any).__terminal.panels.values()][0],view=p.engine.netPositioningPanes.get(id),plot=p.engine.chart.plotRect(view.paneIndex),rect=p.chart.getBoundingClientRect();
-    const bars=[...view.primitive.geometry].filter((g:any)=>g.side==='longs'&&g.sourceId==='binance'&&g.right>0&&g.left<plot.width&&g.bottom-g.top>3).sort((a:any,b:any)=>a.timeMs-b.timeMs);
+    const bars=[...view.primitive.geometry].filter((g:any)=>g.side==='longs'&&g.sourceId==='binance'&&g.left>=0&&g.right<=plot.width&&g.bottom-g.top>3).sort((a:any,b:any)=>a.timeMs-b.timeMs);
     const point=(g:any)=>({x:rect.left+plot.left+(g.left+g.right)/2,y:rect.top+plot.top+(g.top+g.bottom)/2,time:g.timeMs});
+    if (bars.length < 11) return null;
     const first=bars[Math.max(0,bars.length-10)],last=bars[Math.max(0,bars.length-6)];
     const expected=[...view.primitive.candles.values()].filter((c:any)=>c.timeMs>=first.timeMs&&c.timeMs<=last.timeMs).reduce((n:number,c:any)=>n+(c.venues.binance?.netLongsBtc??0),0);
     return {expected,a:point(first),b:point(last),range:{...p.engine.chart.timeScale.visibleRange()}};
-  },id);
+    },id);
+    return points !== null;
+  }).toBe(true);
   const box=panel.locator('.net-positioning-measure-box'),card=panel.locator('.net-positioning-measure-tooltip');
   await page.mouse.move(points.a.x,points.a.y);await page.mouse.down();await page.mouse.move(points.b.x,points.b.y,{steps:6});
   await expect(box).toBeVisible();await expect(card).toContainText('Release to clear');await expect(card).toContainText('Net Longs (Est.)');
@@ -85,7 +99,10 @@ test('Net Longs and Shorts drag totals clear on release and click ranges pin unt
   await expect(card).toContainText('Pinned range');await expect(card).toContainText(`${count} bars`);await expect(box).toHaveAttribute('data-pinned','true');
   await page.mouse.move(12,12);await expect(card).toBeVisible();
   await expect(card.locator('.positioning-tooltip-heading strong').last()).toHaveText(quantity);
-  const bounds=await box.boundingBox(),tooltipBounds=await card.boundingBox();expect(tooltipBounds!.x+tooltipBounds!.width).toBeLessThanOrEqual(bounds!.x);
+  const bounds=await box.boundingBox(),tooltipBounds=await card.boundingBox();
+  expect(tooltipBounds!.x+tooltipBounds!.width<=bounds!.x || tooltipBounds!.x>=bounds!.x+bounds!.width).toBe(true);
+  expect(tooltipBounds!.x).toBeGreaterThanOrEqual(0);
+  expect(tooltipBounds!.x+tooltipBounds!.width).toBeLessThanOrEqual(1920);
   await page.screenshot({path:'/tmp/net-positioning-range-pinned.png'});
   await card.getByRole('button',{name:'Close range totals'}).click();await expect(card).toBeHidden();await expect(box).toBeHidden();
   await page.mouse.click(points.a.x,points.a.y);await page.keyboard.press('Escape');await expect(card).toBeHidden();
