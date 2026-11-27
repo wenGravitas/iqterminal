@@ -225,3 +225,15 @@ test('resident provisional page reopens without another archive download while n
  const history=new NativeCandleHistory(series,{presentation,archiveEnabled:true,archiveRead:async()=>{archives++;return {bars:rows(from,3).map(c=>({timeMs:c.t,open:String(c.o),high:String(c.h),low:String(c.l),close:String(c.c),baseVolume:String(c.v)}))} as import('../src/feed/native-kline-archive').NativeArchivePayload;},request:(async()=>{native++;return new Response('',{status:503});}) as typeof fetch,now:()=>from+40*86400000,version:()=>({stream:1,request:1}),apply:(_id,bars)=>bars.map(c=>c.t),changed:()=>{}});
  try{history.viewport('a',from,from+3*step,[]);await vi.waitFor(()=>expect(history.progress('a')?.state).toBe('failed'));history.release('a');history.viewport('b',from,from+3*step,[]);await vi.waitFor(()=>expect(history.progress('b')?.state).toBe('failed'));expect(archives).toBe(1);expect(native).toBe(2);expect(history.progress('b')?.cachedSlots).toBe(3);}finally{history.dispose();}
 });
+
+for(const partial of [true,false])test(`archive presentation survives ${partial?'partial':'empty'} native revalidation and reopens without a duplicate archive read`,async()=>{
+ const presentation=new NativeCandlePresentationCache(),applied:Array<{id:string;bars:Candle[];version:NativeCandleVersion}>=[];let archives=0,native=0;
+ const corrected={...candle(from+step),c:80002,v:3};
+ const history=new NativeCandleHistory(series,{presentation,archiveEnabled:true,archiveRead:async()=>{archives++;return {bars:rows(from,3).map(c=>({timeMs:c.t,open:String(c.o),high:String(c.h),low:String(c.l),close:String(c.c),baseVolume:String(c.v)}))} as import('../src/feed/native-kline-archive').NativeArchivePayload;},request:(async()=>{native++;return reply(partial?[corrected]:[]);}) as typeof fetch,now:()=>from+40*86400000,version:()=>({stream:1,request:native+1}),apply:(id,bars,version)=>{applied.push({id,bars,version});return bars.map(c=>c.t);},changed:()=>{}});
+ try{
+  history.viewport('a',from,from+3*step,[]);await vi.waitFor(()=>expect(history.progress('a')?.state).toBe('partial'));expect(presentation.diagnostics().rows).toBe(3);history.release('a');
+  history.viewport('b',from,from+3*step,[]);await vi.waitFor(()=>expect(native).toBe(2));await vi.waitFor(()=>expect(history.progress('b')?.state).toBe('partial'));
+  expect(archives).toBe(1);expect(applied.find(v=>v.id==='b'&&v.version.request===0)?.bars.map(c=>c.c)).toEqual([80001,partial?80002:80001,80001]);
+  expect(history.progress('b')).toMatchObject({loadedSlots:partial?1:0,cachedSlots:partial?2:3});expect(presentation.diagnostics().rows).toBe(3);
+ }finally{history.dispose();}
+});

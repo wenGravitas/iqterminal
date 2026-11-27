@@ -130,7 +130,11 @@ export class NativeCandleHistory {
      return {candles:data.candles,version,at} as Page;
     });
     if(this.dead||this.views.get(id)!==v||v.abort.signal.aborted)return;
-    this.options.presentation?.put(this.presentationKey(from,to),page.candles.filter(c=>c.t>=from&&c.t<to&&c.closed));
+    const closed=page.candles.filter(c=>c.t>=from&&c.t<to&&c.closed),key=this.presentationKey(from,to);
+    // A sparse native reply revises only observed slots. Preserve other archive
+    // presentation bytes without acknowledging them or extending their idle TTL.
+    if(this.options.archiveEnabled)this.options.presentation?.seed(key,closed);
+    else this.options.presentation?.put(key,closed);
     const bars=page.candles.filter(c=>c.t>=from&&c.t<to&&c.closed&&!v.known.has(c.t)&&!v.received.has(c.t));
     const applyAt=performance.now(),covered=this.options.apply(id,bars,page.version,page.at);this.metrics.receivedBars+=covered.length;this.metrics.applyMs+=performance.now()-applyAt;
     for(const t of covered)if(t>=v.loadFrom&&t<v.to){v.received.add(t);v.presented.delete(t);}

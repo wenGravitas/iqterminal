@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "feature": "optional native candle archive presentation cache preservation",
+  "before": {
+    "tests": 2,
+    "failed": 2,
+    "expectedCachedBars": 3,
+    "actualAfterPartialNative": 1,
+    "actualAfterEmptyNative": 0
+  },
+  "after": {
+    "sourceTests": 125,
+    "sourceFailures": 0,
+    "files": [
+      "native-kline-archive.test.ts",
+      "native-candle-history.test.ts",
+      "native-candle-presentation-cache.test.ts",
+      "staging-service.test.ts",
+      "native-candle-projection.test.ts",
+      "native-candle-startup-view.test.ts"
+    ],
+    "browserTests": 3,
+    "browserFailures": 0,
+    "scenarios": [
+      "4/4 native reply and reopen",
+      "1/4 native reply and reopen",
+      "0/4 native reply and reopen"
+    ],
+    "archiveRequestsPerScenario": 1,
+    "nativeRequestsPerScenario": 2,
+    "browser": "headless Chromium on local ARM64; actual feed worker with controlled HTTP and explicit WebSocket substitute",
+    "buildAndTypecheck": "passed"
+  },
+  "retentionChanged": false,
+  "providerQualified": false,
+  "livePerformanceClaim": false,
+  "defaultDisabled": true,
+  "rollback": "omit VITE_NATIVE_CANDLE_ARCHIVE or set it to 0 in an authorized frontend build"
+}
