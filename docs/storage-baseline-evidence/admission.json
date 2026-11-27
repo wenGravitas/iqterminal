@@ -1,0 +1,433 @@
+{
+  "kind": "iq-storage-baseline-admission-v1",
+  "capturedAt": "2026-11-27T15:41:32.893Z",
+  "base": "http://127.0.0.1:5173",
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/market-data/v2/history/walls/horizon",
+      "params": {
+        "market": "spot",
+        "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1"
+      },
+      "at": 1,
+      "status": 200,
+      "bytes": 247,
+      "ms": 1391.641128
+    },
+    {
+      "method": "GET",
+      "path": "/market-data/v2/history/walls/source",
+      "params": {
+        "market": "spot",
+        "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+        "from": "1795704060000",
+        "to": "1795790460000"
+      },
+      "at": 2,
+      "status": 200,
+      "bytes": 670,
+      "ms": 541.37463
+    },
+    {
+      "method": "GET",
+      "path": "/market-data/v2/history/walls/horizon",
+      "params": {
+        "market": "perpetual",
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1"
+      },
+      "at": 3,
+      "status": 200,
+      "bytes": 275,
+      "ms": 356.92486899999994
+    },
+    {
+      "method": "GET",
+      "path": "/market-data/v2/history/walls/source",
+      "params": {
+        "market": "perpetual",
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "from": "1795704060000",
+        "to": "1795790460000"
+      },
+      "at": 4,
+      "status": 200,
+      "bytes": 698,
+      "ms": 1328.3429840000003
+    }
+  ],
+  "markets": [
+    {
+      "market": "spot",
+      "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+      "horizon": {
+        "version": 1,
+        "kind": "wall-source-horizon-v1",
+        "market": "spot",
+        "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+        "head": {
+          "cursor": 35558294,
+          "epoch": 1795792506085,
+          "at": 1795794091550
+        },
+        "availableFrom": 1793521565645
+      },
+      "windows": [
+        {
+          "days": 1,
+          "requested": {
+            "from": 1795704060000,
+            "to": 1795790460000
+          },
+          "horizonIntersection": {
+            "from": 1795704060000,
+            "to": 1795790460000
+          },
+          "horizonState": "within-horizon",
+          "missingBefore": null,
+          "nativeMaximumRequestMs": 172800000,
+          "nativeRequests": [
+            {
+              "from": 1795704060000,
+              "to": 1795790460000
+            }
+          ],
+          "requiresComposition": false,
+          "continuityVerified": false,
+          "chartPerformanceVerified": false
+        },
+        {
+          "days": 7,
+          "requested": {
+            "from": 1795185660000,
+            "to": 1795790460000
+          },
+          "horizonIntersection": {
+            "from": 1795185660000,
+            "to": 1795790460000
+          },
+          "horizonState": "within-horizon",
+          "missingBefore": null,
+          "nativeMaximumRequestMs": 172800000,
+          "nativeRequests": [
+            {
+              "from": 1795185660000,
+              "to": 1795358460000
+            },
+            {
+              "from": 1795358460000,
+              "to": 1795531260000
+            },
+            {
+              "from": 1795531260000,
+              "to": 1795704060000
+            },
+            {
+              "from": 1795704060000,
+              "to": 1795790460000
+            }
+          ],
+          "requiresComposition": true,
+          "continuityVerified": false,
+          "chartPerformanceVerified": false
+        },
+        {
+          "days": 30,
+          "requested": {
+            "from": 1793198460000,
+            "to": 1795790460000
+          },
+          "horizonIntersection": {
+            "from": 1793521565645,
+            "to": 1795790460000
+          },
+          "horizonState": "partial",
+          "missingBefore": {
+            "from": 1793198460000,
+            "to": 1793521565645
+          },
+          "nativeMaximumRequestMs": 172800000,
+          "nativeRequests": [
+            {
+              "from": 1793521565645,
+              "to": 1793694365645
+            },
+            {
+              "from": 1793694365645,
+              "to": 1793867165645
+            },
+            {
+              "from": 1793867165645,
+              "to": 1794039965645
+            },
+            {
+              "from": 1794039965645,
+              "to": 1794212765645
+            },
+            {
+              "from": 1794212765645,
+              "to": 1794385565645
+            },
+            {
+              "from": 1794385565645,
+              "to": 1794558365645
+            },
+            {
+              "from": 1794558365645,
+              "to": 1794731165645
+            },
+            {
+              "from": 1794731165645,
+              "to": 1794903965645
+            },
+            {
+              "from": 1794903965645,
+              "to": 1795076765645
+            },
+            {
+              "from": 1795076765645,
+              "to": 1795249565645
+            },
+            {
+              "from": 1795249565645,
+              "to": 1795422365645
+            },
+            {
+              "from": 1795422365645,
+              "to": 1795595165645
+            },
+            {
+              "from": 1795595165645,
+              "to": 1795767965645
+            },
+            {
+              "from": 1795767965645,
+              "to": 1795790460000
+            }
+          ],
+          "requiresComposition": true,
+          "continuityVerified": false,
+          "chartPerformanceVerified": false
+        }
+      ],
+      "selected24hSource": {
+        "state": "eligible",
+        "scope": "requested-day intersection only; continuity and chart readiness not inferred",
+        "proof": {
+          "market": "spot",
+          "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+          "from": 1795704060000,
+          "to": 1795790460000,
+          "version": 1,
+          "kind": "wall-source-sha256-xor-v1",
+          "watermark": 35558312,
+          "head": {
+            "cursor": 35558312,
+            "epoch": 1795792506085,
+            "at": 1795794093349
+          },
+          "availableFrom": 1793521565645,
+          "anchor": {
+            "cursor": 34660216,
+            "epoch": 1795687852064,
+            "at": 1795704055945,
+            "hash": "7547f6bf33d12392eb9ba8000c3d3cbaae52c480b5c38ba73891216248040aed"
+          },
+          "records": 21333,
+          "maxCursor": 35521998,
+          "hash": "71330259785420998162755809505550461283818757680828512450125437645447659830365",
+          "token": "541956d34d99db9cb416f5f457265bf7ebc7f175c9839605061ba62aa986d491",
+          "eligible": true
+        }
+      }
+    },
+    {
+      "market": "perpetual",
+      "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+      "horizon": {
+        "version": 1,
+        "kind": "wall-source-horizon-v1",
+        "market": "perpetual",
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "head": {
+          "cursor": 39231366,
+          "epoch": 1795791742729,
+          "at": 1795794085415
+        },
+        "availableFrom": 1793506604584
+      },
+      "windows": [
+        {
+          "days": 1,
+          "requested": {
+            "from": 1795704060000,
+            "to": 1795790460000
+          },
+          "horizonIntersection": {
+            "from": 1795704060000,
+            "to": 1795790460000
+          },
+          "horizonState": "within-horizon",
+          "missingBefore": null,
+          "nativeMaximumRequestMs": 172800000,
+          "nativeRequests": [
+            {
+              "from": 1795704060000,
+              "to": 1795790460000
+            }
+          ],
+          "requiresComposition": false,
+          "continuityVerified": false,
+          "chartPerformanceVerified": false
+        },
+        {
+          "days": 7,
+          "requested": {
+            "from": 1795185660000,
+            "to": 1795790460000
+          },
+          "horizonIntersection": {
+            "from": 1795185660000,
+            "to": 1795790460000
+          },
+          "horizonState": "within-horizon",
+          "missingBefore": null,
+          "nativeMaximumRequestMs": 172800000,
+          "nativeRequests": [
+            {
+              "from": 1795185660000,
+              "to": 1795358460000
+            },
+            {
+              "from": 1795358460000,
+              "to": 1795531260000
+            },
+            {
+              "from": 1795531260000,
+              "to": 1795704060000
+            },
+            {
+              "from": 1795704060000,
+              "to": 1795790460000
+            }
+          ],
+          "requiresComposition": true,
+          "continuityVerified": false,
+          "chartPerformanceVerified": false
+        },
+        {
+          "days": 30,
+          "requested": {
+            "from": 1793198460000,
+            "to": 1795790460000
+          },
+          "horizonIntersection": {
+            "from": 1793506604584,
+            "to": 1795790460000
+          },
+          "horizonState": "partial",
+          "missingBefore": {
+            "from": 1793198460000,
+            "to": 1793506604584
+          },
+          "nativeMaximumRequestMs": 172800000,
+          "nativeRequests": [
+            {
+              "from": 1793506604584,
+              "to": 1793679404584
+            },
+            {
+              "from": 1793679404584,
+              "to": 1793852204584
+            },
+            {
+              "from": 1793852204584,
+              "to": 1794025004584
+            },
+            {
+              "from": 1794025004584,
+              "to": 1794197804584
+            },
+            {
+              "from": 1794197804584,
+              "to": 1794370604584
+            },
+            {
+              "from": 1794370604584,
+              "to": 1794543404584
+            },
+            {
+              "from": 1794543404584,
+              "to": 1794716204584
+            },
+            {
+              "from": 1794716204584,
+              "to": 1794889004584
+            },
+            {
+              "from": 1794889004584,
+              "to": 1795061804584
+            },
+            {
+              "from": 1795061804584,
+              "to": 1795234604584
+            },
+            {
+              "from": 1795234604584,
+              "to": 1795407404584
+            },
+            {
+              "from": 1795407404584,
+              "to": 1795580204584
+            },
+            {
+              "from": 1795580204584,
+              "to": 1795753004584
+            },
+            {
+              "from": 1795753004584,
+              "to": 1795790460000
+            }
+          ],
+          "requiresComposition": true,
+          "continuityVerified": false,
+          "chartPerformanceVerified": false
+        }
+      ],
+      "selected24hSource": {
+        "state": "eligible",
+        "scope": "requested-day intersection only; continuity and chart readiness not inferred",
+        "proof": {
+          "market": "perpetual",
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "from": 1795704060000,
+          "to": 1795790460000,
+          "version": 1,
+          "kind": "wall-source-sha256-xor-v1",
+          "watermark": 39231366,
+          "head": {
+            "cursor": 39231366,
+            "epoch": 1795791742729,
+            "at": 1795794085415
+          },
+          "availableFrom": 1793506604584,
+          "anchor": {
+            "cursor": 38338794,
+            "epoch": 1795688016434,
+            "at": 1795703320046,
+            "hash": "1216072fe475df97f96450051594e8f8a0014da42b90ba727e649be36c71e317"
+          },
+          "records": 34502,
+          "maxCursor": 39195754,
+          "hash": "98524797185568284443752142178666379870389391528560981170576463146483169384003",
+          "token": "603abe7436be855890514f3493b01e60e458634a32a6c596b82421b07484b1a7",
+          "eligible": true
+        }
+      }
+    }
+  ],
+  "materializationJobsRequested": false,
+  "browserValidation": "not-performed",
+  "performanceAcceptance": false,
+  "executedSha256": "e52fdc8e5b297cae8020027f9bbda84e8a6ef6762ed49dea9c88d5b8fb4c108f"
+}

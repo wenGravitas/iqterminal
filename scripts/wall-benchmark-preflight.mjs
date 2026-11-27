@@ -1,7 +1,9 @@
 /** Read-only benchmark admission; never prepares or queues historical work. */
 const profiles=Object.freeze({spot:'binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1',perpetual:'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1'});
+export const wallBenchmarkProfiles=profiles;
+export const wallBenchmarkMaximumSourceMs=48*3600000;
 export function wallBenchmarkSourceRequest(market,reference){
- if(!Object.hasOwn(profiles,market)||!reference||![reference.from,reference.to,reference.sourceFrom,reference.sourceTo].every(v=>Number.isSafeInteger(v)&&v>0)||reference.sourceFrom>reference.from||reference.sourceTo<reference.to||reference.from>=reference.to||reference.sourceTo-reference.sourceFrom>48*3600000||typeof reference.sourceToken!=='string'||! /^[a-f0-9]{64}$/.test(reference.sourceToken))throw Error('Invalid bounded benchmark source reference');
+ if(!Object.hasOwn(profiles,market)||!reference||![reference.from,reference.to,reference.sourceFrom,reference.sourceTo].every(v=>Number.isSafeInteger(v)&&v>0)||reference.sourceFrom>reference.from||reference.sourceTo<reference.to||reference.from>=reference.to||reference.sourceTo-reference.sourceFrom>wallBenchmarkMaximumSourceMs||typeof reference.sourceToken!=='string'||! /^[a-f0-9]{64}$/.test(reference.sourceToken))throw Error('Invalid bounded benchmark source reference');
  return {market,profile:profiles[market],from:reference.sourceFrom,to:reference.sourceTo};
 }
 export async function wallBenchmarkPreflight(base,market,reference,{fetcher=fetch,signal}={}){

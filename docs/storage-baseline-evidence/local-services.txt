@@ -1,0 +1,13 @@
+MainPID=388450
+WorkingDirectory=/home/daz/workarea/iqterminal
+Nice=10
+Id=iqterminal-staging-client.service
+ActiveState=active
+SubState=running
+
+MainPID=388447
+WorkingDirectory=/home/daz/workarea/iqterminal
+Nice=10
+Id=iqterminal-staging-tunnel.service
+ActiveState=active
+SubState=running

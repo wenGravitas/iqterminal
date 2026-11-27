@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "scope": "Actual read-only staging wall-source admission and local client/tunnel readiness; no foreground benchmark acceptance",
+  "controllerChecks": {
+    "pass": 11,
+    "fail": 0,
+    "durationMs": 348.535052,
+    "files": [
+      "scripts/storage-baseline-preflight.test.mjs",
+      "scripts/wall-benchmark-preflight.test.mjs"
+    ]
+  },
+  "nativeProfileContract": {
+    "pass": 1,
+    "fail": 0,
+    "file": "tests/wall-benchmark-profile.test.ts"
+  },
+  "typecheck": "passed",
+  "isolatedStagingBundleBuild": {
+    "result": "passed",
+    "output": "/tmp/iq-storage-baseline-client-build",
+    "replacedExistingAssets": false,
+    "notes": "Existing chunk-size/plugin-timing warnings retained; this build is validation only, not a served browser benchmark"
+  },
+  "browser": {
+    "source": "cua.getState inventory observed in this goal turn",
+    "apps": 0,
+    "browsers": 0,
+    "error": "The browser access host is unavailable",
+    "headedGuard": "Explicit false-headless guard invocation refused without mapping a browser",
+    "foregroundTimingPerformed": false
+  },
+  "liveMetadata": {
+    "report": "admission.json",
+    "requests": 4,
+    "statuses": [
+      200,
+      200,
+      200,
+      200
+    ],
+    "materializationRequested": false,
+    "sourceEligibilityObservedForDay": true,
+    "sevenDayContinuityVerified": false,
+    "thirtyDayCoverageComplete": false,
+    "performanceAcceptance": false
+  },
+  "servedClient": {
+    "commit": "8a633856fe758ddaedf2e35406bbbb951ad19aac",
+    "dataMode": "staging",
+    "historyTiles": "1",
+    "workingDirectory": "/home/daz/workarea/iqterminal",
+    "branch": "dev",
+    "sourceChanges": "No app/renderer code changed by this increment; new scripts do not refresh startup build marker"
+  },
+  "sourceHashes": {
+    "scripts/storage-baseline-preflight.mjs": "e52fdc8e5b297cae8020027f9bbda84e8a6ef6762ed49dea9c88d5b8fb4c108f",
+    "scripts/storage-baseline-preflight.test.mjs": "c8268f3caed92d131f53c18d984eb6b35cb66bd61cb5014f8fae1024f50d1b25",
+    "scripts/wall-benchmark-preflight.mjs": "5d001775584f9e2743a8edd596a8acd7cab931afb6e6b4c599fc6df4f3989f4b",
+    "scripts/test-browser-i3-setup.mjs": "501b7f5c0c908be76a95ea45cac4e97f6cc43afc30b396ed8928978f59cfb3f9"
+  },
+  "preserved": [
+    "Caller-owned artifacts/storage-baseline/",
+    "Existing pi-wall-reference.json and exact rendering references",
+    "Headed test-browser isolation guard",
+    "Staging services, history/retention and other applications",
+    "Unprovisioned paid-storage decision"
+  ],
+  "remaining": [
+    "Connected normal Chromium/foreground Pi recording",
+    "Current chart plus day/week/available-month loading and navigation measurements",
+    "Exact source/count/coverage/projection reference recalibration before legacy harness use",
+    "Actual provider pilot decision and configured storage",
+    "Concurrent candidate ingestion/API and failure performance acceptance"
+  ]
+}

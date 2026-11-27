@@ -1,0 +1,10 @@
+{
+  "url": "http://127.0.0.1:5173/src/feed/worker.ts",
+  "bytes": 71316,
+  "sha256": "fb8548d4fde03f55ace89d7eea3b395e6aa2694cd9826951c5864a1724db67de",
+  "safeConfigFields": {
+    "VITE_BUILD_COMMIT": "8a633856fe758ddaedf2e35406bbbb951ad19aac",
+    "VITE_DATA_MODE": "staging",
+    "VITE_HISTORY_TILES": "1"
+  }
+}

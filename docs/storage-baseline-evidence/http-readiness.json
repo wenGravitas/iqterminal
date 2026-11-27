@@ -1,0 +1,22 @@
+{
+  "kind": "iq-storage-loopback-readiness-v1",
+  "base": "http://127.0.0.1:5173",
+  "checks": [
+    {
+      "path": "/",
+      "status": 200,
+      "bodyBytes": 13069
+    },
+    {
+      "path": "/market-data/v2/history/health",
+      "status": 200,
+      "bodyBytes": 2251
+    },
+    {
+      "path": "/market-data/v1/health",
+      "status": 200,
+      "bodyBytes": 2194
+    }
+  ],
+  "chartPaintObserved": false
+}

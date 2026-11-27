@@ -1,5 +1,11 @@
 # Historical wall benchmark admission
 
+The newer [storage baseline preflight](storage-baseline-preflight.md) adds fixed
+read-only day/week/month horizon planning and source eligibility for the selected
+day. It does not recalibrate this harness's exact rendering references or bypass
+the foreground browser guard. Longer-window plans and source availability are
+separate from chart-load/performance acceptance.
+
 `pi-warm-wall-route.mjs` remains an explicitly selected headless actual-route diagnostic. It does not override the repository's headed-browser isolation guard or establish normal foreground Pi acceptance.
 
 Initial application startup intentionally discards absolute saved candle viewports and opens at the live edge. Seeding a historical viewport in startup localStorage therefore does not create a historical benchmark. The harness now boots a plain candle panel without wall history, waits for startup readiness, disposes that owned panel, and constructs the historical target through normal Dockview panel creation. Both cold and same-worker warm timing boundaries begin at their respective historical panel construction. Raw `performance.now()` timestamps and each panel's `start` remain available; console durations subtract that start. The initial bootstrap remains visible in request traces as `startup` rather than `cold` work.
