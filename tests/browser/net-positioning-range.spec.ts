@@ -118,6 +118,31 @@ test('Net Longs and Shorts drag totals clear on release and click ranges pin unt
     const p=[...(window as any).__terminal.panels.values()][0],view=p.engine.netPositioningPanes.get(id);
     return {height:Math.round(p.engine.chart.panes()[view.paneIndex].base.mediaHeight),sides:[...new Set(view.primitive.geometry.map((g:any)=>g.side))].sort()};
   },id)).toEqual({height:116,sides:['longs','shorts']});
+  // Capture real canvas scale labels to check their measured bounds and spacing.
+  await page.evaluate(id=>{
+    const p=[...(window as any).__terminal.panels.values()][0],primitive=p.engine.netPositioningPanes.get(id).primitive;
+    const draw=primitive.drawCumulative.bind(primitive);
+    primitive.drawCumulative=(ctx:any,rc:any)=>{
+      const labels:any[]=[],fill=ctx.fillText;
+      ctx.fillText=function(text:string,x:number,y:number,...rest:any[]){
+        if(this.textAlign==='right'&&/^[−+\d.,-]+$/.test(text)){
+          const m=this.measureText(text),d=rc.dpr||1;
+          labels.push({top:(y-Math.max(8*d,m.actualBoundingBoxAscent||0))/d,bottom:(y+Math.max(3*d,m.actualBoundingBoxDescent||0))/d});
+        }
+        return fill.call(this,text,x,y,...rest);
+      };
+      try{draw(ctx,rc);}finally{ctx.fillText=fill;}
+      (window as any).__positioningScaleLabels={labels,bands:primitive.renderedBands};
+    };
+    p.engine.chart.invalidate((mask:any)=>mask.invalidateGlobal(3));
+  },id);
+  await expect.poll(()=>page.evaluate(()=>(window as any).__positioningScaleLabels?.labels.length??0)).toBeGreaterThan(1);
+  const scaleLabels=await page.evaluate(()=>(window as any).__positioningScaleLabels);
+  for(const label of scaleLabels.labels){
+    expect(scaleLabels.bands.some((band:any)=>label.top>=band.top+1&&label.bottom<=band.bottom-1)).toBe(true);
+  }
+  const ordered=[...scaleLabels.labels].sort((a:any,b:any)=>a.top-b.top);
+  for(let index=1;index<ordered.length;index++)expect(ordered[index].top-ordered[index-1].bottom).toBeGreaterThanOrEqual(3);
   await page.screenshot({path:'/tmp/net-positioning-compact-fixed.png'});
 
 });

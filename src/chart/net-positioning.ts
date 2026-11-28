@@ -311,14 +311,21 @@ export class NetPositioningPane implements IPrimitive {
       const color=this.colors[band.side][this.venues[0]??'binance'];
       ctx.fillStyle=rc.theme.axisText;ctx.globalAlpha=.8;ctx.textAlign='left';
       // Each side has its own live visible scale. No additional canvas/context.
-      const ticks=bottom-top>=60?5:bottom-top>=30?3:2;
+      const tickMetrics=ctx.measureText('−0123456789.');
+      const ascent=Math.max(8*d,tickMetrics.actualBoundingBoxAscent||0)/d;
+      const descent=Math.max(3*d,tickMetrics.actualBoundingBoxDescent||0)/d;
+      const labelTop=band.top+2+ascent,labelBottom=band.bottom-2-descent;
+      const ticks=labelBottom<labelTop?0:Math.min(5,Math.floor((labelBottom-labelTop)/16)+1);
+      ctx.save();ctx.beginPath();ctx.rect(0,band.top*d,rc.plotWidth*d,(band.bottom-band.top)*d);ctx.clip();
       for(let tick=0;tick<ticks;tick++){
-        const v=scale.min+(scale.max-scale.min)*tick/(ticks-1),py=y(v);
+        const v=scale.min+(scale.max-scale.min)*(ticks===1?.5:tick/(ticks-1)),py=y(v);
+        const labelY=Math.max(labelTop,Math.min(labelBottom,py+3));
         ctx.globalAlpha=.15;ctx.strokeStyle=rc.theme.axisText;ctx.lineWidth=d;
         ctx.beginPath();ctx.moveTo(0,Math.round(py*d)+.5);ctx.lineTo(rc.plotWidth*d,Math.round(py*d)+.5);ctx.stroke();
         ctx.globalAlpha=.8;ctx.fillStyle=rc.theme.axisText;ctx.textAlign='right';
-        ctx.fillText(v.toLocaleString('en-US',{maximumFractionDigits:Math.abs(v)<10?2:0}),(rc.plotWidth-4)*d,(py+3)*d,Math.max(0,(axisWidth-7)*d));
+        ctx.fillText(v.toLocaleString('en-US',{maximumFractionDigits:Math.abs(v)<10?2:0}),(rc.plotWidth-4)*d,labelY*d,Math.max(0,(axisWidth-7)*d));
       }
+      ctx.restore();
       const barRects:Array<{left:number;right:number;top:number;bottom:number}>=[],labels:Array<{text:string;x:number;y:number;left:number;right:number;top:number;bottom:number}>=[];
       ctx.save();ctx.beginPath();ctx.rect(0,band.top*d,width*d,(band.bottom-band.top)*d);ctx.clip();
       for(let index=from;index<to;index++){
