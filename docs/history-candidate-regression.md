@@ -1,5 +1,9 @@
 # History candidate regression and startup status
 
+Subsequent authorized provisioning and bounded real-data startup are recorded in
+[the separate test-client handoff](history-candidate-live.md). The unconfigured
+startup blocker below describes this earlier regression run, not the later pilot.
+
 Validation began against frontend `7f6c37dfa9619be716b293a653b6142345ae8b20`
 on shared `dev`, and backend `bd310ed1caefe3717fbcc464affa5baceae6f540`
 on `feature/tiered-history-storage`. Experimental environment flags were unset

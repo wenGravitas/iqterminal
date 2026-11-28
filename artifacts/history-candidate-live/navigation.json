@@ -1,0 +1,1034 @@
+{
+  "state": {
+    "fixture": false,
+    "diagnostics": {
+      "id": "chart-history-candidate",
+      "visible": true,
+      "bars": 1121,
+      "right": 119.00234192037465,
+      "range": {
+        "from": -5.684341886080802e-14,
+        "to": 119.00234192037465
+      },
+      "spacing": 10.100641555476837,
+      "rightOffset": -1000.9976580796254,
+      "autoPrice": true,
+      "min": 59532.737499999996,
+      "max": 61916.3625,
+      "renderer": {
+        "draws": 246,
+        "backend": "canvas2d",
+        "scheduler": {
+          "frames": 267,
+          "draws": 291,
+          "budgetYields": 51,
+          "lastMs": 5.200000002980232,
+          "maxMs": 54.79999999701977,
+          "budgetMs": 8,
+          "dirty": 0,
+          "drawing": 0
+        }
+      },
+      "status": {
+        "state": "live",
+        "message": "Staging · Binance native candle stream",
+        "lastUpdate": 1795873599841,
+        "nativeHistory": {
+          "state": "ready",
+          "loadedBars": 1000,
+          "viewport": {
+            "from": 1795780800000,
+            "to": 1795788000000,
+            "requestedSlots": 120,
+            "loadedSlots": 120,
+            "state": "ready",
+            "capacityLimited": false,
+            "retryable": false,
+            "archive": {
+              "state": "observed",
+              "loadedSlots": 120
+            },
+            "unloaded": [],
+            "unloadedTruncated": false
+          }
+        }
+      },
+      "series": {
+        "venue": "binance",
+        "market": "perpetual",
+        "interval": "1m",
+        "type": "candle",
+        "studies": [],
+        "indicators": [
+          {
+            "instanceId": "candidate-cvd",
+            "definitionId": "native.multi-venue-cvd",
+            "settingsVersion": 1,
+            "visible": true,
+            "source": {
+              "kind": "chart"
+            },
+            "placement": "pane",
+            "settings": {
+              "sources": [
+                "binance:perpetual"
+              ],
+              "groups": [],
+              "mode": "venues",
+              "hidden": [],
+              "anchor": "daily",
+              "origin": 1795268760000,
+              "custom": 1795268760000,
+              "units": "btc",
+              "colors": {},
+              "totalWidth": 2,
+              "componentWidth": 1,
+              "paneWeight": 0.28
+            }
+          },
+          {
+            "instanceId": "candidate-oi",
+            "definitionId": "native.raw-open-interest",
+            "settingsVersion": 1,
+            "visible": true,
+            "source": {
+              "kind": "chart"
+            },
+            "placement": "pane",
+            "settings": {
+              "venues": [
+                "binance"
+              ],
+              "hidden": [],
+              "paneWeight": 0.22
+            }
+          }
+        ],
+        "rowPrice": 25,
+        "candleElapsedTimer": true,
+        "tradingOverlay": false,
+        "grid": true,
+        "wheelMode": "tradingview",
+        "drawingMagnet": "weak",
+        "floatingDrawingToolbar": {
+          "visible": false,
+          "tools": [],
+          "x": 0.55,
+          "y": 0.14
+        },
+        "footprintUnits": "btc",
+        "footprint": {
+          "displayMode": "bidask",
+          "cellStyle": "ladder",
+          "statsPosition": "bottom",
+          "opacity": 0.85,
+          "showCandle": true,
+          "showPoc": true,
+          "showValueArea": true,
+          "showDiagonalImbalances": true,
+          "stackedImbalances": false,
+          "imbalanceRatio": 3,
+          "imbalanceThreshold": 0.01
+        },
+        "heatmap": {
+          "enabled": false,
+          "rowPrice": 10,
+          "bucketMs": 500,
+          "mode": "average",
+          "contrast": "enhanced",
+          "opacity": 0.85,
+          "intensity": 100,
+          "minimum": 0.01,
+          "labels": "auto",
+          "bids": true,
+          "asks": true
+        },
+        "indicatorVersion": 1,
+        "composition": {
+          "version": 1,
+          "panes": [],
+          "embeddedBands": [],
+          "plots": [],
+          "scales": [],
+          "opaqueLegacyPanes": [
+            {
+              "id": "native:candidate-cvd",
+              "ownerInstanceId": "candidate-cvd",
+              "order": 0,
+              "stateRef": "indicator:candidate-cvd",
+              "metadata": {}
+            },
+            {
+              "id": "native:candidate-oi",
+              "ownerInstanceId": "candidate-oi",
+              "order": 1,
+              "stateRef": "indicator:candidate-oi",
+              "metadata": {}
+            }
+          ]
+        },
+        "paneOrder": [],
+        "basePriceVisible": true
+      },
+      "last": {
+        "t": 1795873560000,
+        "o": 59024.3,
+        "h": 59058,
+        "l": 59024.3,
+        "c": 59048.2,
+        "v": 85.063
+      },
+      "footprint": {
+        "bars": 0,
+        "paint": null,
+        "latest": null,
+        "status": {
+          "state": "loading",
+          "message": "Waiting for Binance USD-M aggTrade observations",
+          "lastUpdate": 0,
+          "tickSize": null,
+          "rowSize": null,
+          "collectionStartedAt": null,
+          "firstTradeAt": null,
+          "lastTradeAt": null,
+          "eventTime": null,
+          "outages": 0,
+          "lateRecords": 0,
+          "capacityDrops": 0,
+          "unknownSideRecords": 0,
+          "unknownSideVolume": 0,
+          "coverage": "waiting",
+          "retentionStart": null
+        },
+        "needsSync": false,
+        "initialViewSet": false,
+        "primitiveSets": 0,
+        "surfaceMounted": false,
+        "hover": null
+      },
+      "footprintTotals": [],
+      "cvd": {
+        "paneIndex": 1,
+        "settings": {
+          "sources": [
+            "binance:perpetual"
+          ],
+          "groups": [],
+          "mode": "venues",
+          "hidden": [],
+          "anchor": "daily",
+          "origin": 1795268760000,
+          "custom": 1795268760000,
+          "units": "btc",
+          "colors": {},
+          "totalWidth": 2,
+          "componentWidth": 1,
+          "paneWeight": 0.28
+        },
+        "coverage": "Partial history",
+        "sources": [
+          {
+            "source": "binance:perpetual",
+            "points": 1547,
+            "status": "live",
+            "coverage": {
+              "from": 1795780800000,
+              "to": 1795873620000,
+              "gaps": []
+            },
+            "message": "Loading history…",
+            "asOf": 1795873598661,
+            "latest": {
+              "time": 1795873620000,
+              "period": 1795824000000,
+              "base": -3606.373,
+              "quote": -214426649.0472,
+              "baseText": "-3606.373",
+              "quoteText": "-214426649.0472",
+              "observed": true,
+              "available": true,
+              "partial": true,
+              "reset": false
+            }
+          }
+        ],
+        "lines": [
+          {
+            "id": "total",
+            "filtered": false,
+            "latest": {
+              "time": 1795873620000,
+              "period": 1795824000000,
+              "value": -3606.373,
+              "partial": true
+            }
+          },
+          {
+            "id": "binance:perpetual",
+            "filtered": false,
+            "latest": {
+              "time": 1795873620000,
+              "period": 1795824000000,
+              "value": -3606.373,
+              "partial": true
+            }
+          }
+        ],
+        "draws": 74,
+        "segments": 1092
+      },
+      "openInterest": {
+        "paneIndex": 2,
+        "quality": "partial",
+        "lines": [
+          {
+            "id": "binance",
+            "latest": {
+              "time": 1795873560000,
+              "value": 99435.569,
+              "sourceTimeMs": 1795873561506,
+              "observedAtMs": 1795873564973,
+              "ageMs": 33373,
+              "epoch": 1795872280783,
+              "unit": "BTC",
+              "quality": "complete",
+              "reset": false,
+              "source": "binance:fapi/v1/openInterest",
+              "sourceTimeQuality": "exchange-event"
+            }
+          },
+          {
+            "id": "total",
+            "latest": {
+              "time": 1795873560000,
+              "value": 99435.569,
+              "sourceTimeMs": 1795873561506,
+              "observedAtMs": 1795873564973,
+              "ageMs": 33373,
+              "epoch": null,
+              "unit": "BTC",
+              "quality": "complete",
+              "reset": false,
+              "source": "verified perpetual venues",
+              "sourceTimeQuality": "exchange-event"
+            }
+          }
+        ],
+        "draws": 27,
+        "segments": 238
+      },
+      "tpo": {
+        "mounted": false,
+        "settings": {
+          "tickSize": 0.1,
+          "bracketMinutes": 30,
+          "rowTicks": "auto",
+          "valueAreaPercent": 70,
+          "openingRangeMinutes": 30,
+          "openingRangeMidpoint": false,
+          "initialBalanceMinutes": 60,
+          "initialBalanceCompletedOnly": false,
+          "showProfile": true,
+          "profileMode": "adaptive",
+          "profileWidthPercent": 70,
+          "profileOpacity": 55,
+          "shadeValueArea": true,
+          "highlightPoc": true,
+          "theme": "chart",
+          "profileColor": "#8191a1",
+          "pocColor": "#e1bb62",
+          "valueAreaColor": "#86a4c5",
+          "profileLevelsExtend": true,
+          "pocLineVisible": true,
+          "vahLineVisible": true,
+          "valLineVisible": true,
+          "pocLineStyle": "solid",
+          "vahLineStyle": "dashed",
+          "valLineStyle": "dashed",
+          "levelLineThickness": 1,
+          "openingRangeEnabled": true,
+          "openingRangeShade": true,
+          "openingRangeExtend": true,
+          "openingRangeHighVisible": true,
+          "openingRangeLowVisible": true,
+          "openingRangeLineStyle": "solid",
+          "openingRangeColor": "#57a88b",
+          "openingRangeThickness": 1,
+          "openingRangeOpacity": 62,
+          "initialBalanceEnabled": true,
+          "initialBalanceExtend": true,
+          "initialBalanceMidpoint": false,
+          "initialBalanceShade": false,
+          "initialBalanceHighVisible": true,
+          "initialBalanceLowVisible": true,
+          "initialBalanceLineStyle": "dashed",
+          "initialBalanceColor": "#6299c7",
+          "initialBalanceThickness": 1,
+          "initialBalanceOpacity": 62,
+          "projectionHalf": false,
+          "projectionFull": false,
+          "nakedEnabled": true,
+          "nakedDays": 90,
+          "nakedPoc": true,
+          "nakedVah": true,
+          "nakedVal": true,
+          "nakedActiveOnly": false,
+          "testedLevels": "fade",
+          "nakedLabels": "age-price",
+          "nakedPocColor": "#e1bb62",
+          "nakedVahColor": "#57a88b",
+          "nakedValColor": "#d56b76",
+          "nakedPocLineStyle": "dashed",
+          "nakedVahLineStyle": "dotted",
+          "nakedValLineStyle": "dotted",
+          "nakedLineThickness": 1
+        }
+      },
+      "heatmap": {
+        "mounted": false,
+        "settings": {
+          "enabled": false,
+          "rowPrice": 10,
+          "bucketMs": 500,
+          "mode": "average",
+          "contrast": "enhanced",
+          "opacity": 0.85,
+          "intensity": 100,
+          "minimum": 0.01,
+          "labels": "auto",
+          "bids": true,
+          "asks": true
+        }
+      },
+      "netPositioning": {
+        "panes": [],
+        "request": "",
+        "histories": [],
+        "errors": {}
+      },
+      "positioningRange": {
+        "active": false,
+        "range": null
+      },
+      "executionHoverRay": {
+        "active": false,
+        "executionId": null,
+        "geometry": null
+      },
+      "orderWalls": {
+        "mounted": false,
+        "retainedSegments": 0,
+        "archiveSegments": 0,
+        "directSegments": 0,
+        "valueRuns": 0,
+        "archiveValueRuns": 0,
+        "directValueRuns": 0,
+        "valueHistoryLimited": false,
+        "episodeHistoryLimited": false,
+        "settings": {
+          "enabled": false,
+          "mode": "top-levels",
+          "topLevels": 8,
+          "searchRangePercent": 10,
+          "minimumNotionalEnabled": false,
+          "minimumNotionalUsd": 100000,
+          "highContrast": true,
+          "visibleRangeOnly": true,
+          "strengthThickness": true,
+          "historyEpisodes": 2000,
+          "showHistory": true,
+          "showPriceLines": false,
+          "method": "relative",
+          "thresholdUsd": 500000,
+          "relativeFloorUsd": 250000,
+          "relativePercentile": 95,
+          "exitRatio": 0.85,
+          "minDurationMs": 0,
+          "aggregation": "native",
+          "colorMode": "heat",
+          "opacity": 0.85,
+          "thicknessPx": 3
+        }
+      },
+      "studies": {
+        "context": {
+          "symbol": "BTCUSDT",
+          "exchange": "Binance USD-M",
+          "interval": "1m"
+        },
+        "attached": 0,
+        "workers": 0,
+        "compositionWork": {
+          "workerResults": 0,
+          "workerFailures": 0,
+          "dataNotifications": 0,
+          "statusNotifications": 0,
+          "configurationNotifications": 0,
+          "listenerCalls": 0,
+          "dataListenerCalls": 0,
+          "uiListenerCalls": 0,
+          "workers": []
+        },
+        "numericOutputs": {
+          "chartId": "chart-history-candidate",
+          "revision": 174,
+          "outputs": [
+            {
+              "outputId": "output:candidate-cvd:cvdTotalBtc",
+              "instanceId": "candidate-cvd",
+              "revision": 38,
+              "contextRevision": 0,
+              "available": true,
+              "quality": "partial",
+              "changedRange": {
+                "from": 1120,
+                "to": 1121
+              },
+              "values": 1121
+            },
+            {
+              "outputId": "output:candidate-cvd:cvdVenueBinancePerpetualBtc",
+              "instanceId": "candidate-cvd",
+              "revision": 38,
+              "contextRevision": 0,
+              "available": true,
+              "quality": "partial",
+              "changedRange": {
+                "from": 1120,
+                "to": 1121
+              },
+              "values": 1121
+            },
+            {
+              "outputId": "output:candidate-cvd:cvdTotalUsdt",
+              "instanceId": "candidate-cvd",
+              "revision": 38,
+              "contextRevision": 0,
+              "available": true,
+              "quality": "partial",
+              "changedRange": {
+                "from": 1120,
+                "to": 1121
+              },
+              "values": 1121
+            },
+            {
+              "outputId": "output:candidate-cvd:cvdVenueBinancePerpetualUsdt",
+              "instanceId": "candidate-cvd",
+              "revision": 38,
+              "contextRevision": 0,
+              "available": true,
+              "quality": "partial",
+              "changedRange": {
+                "from": 1120,
+                "to": 1121
+              },
+              "values": 1121
+            },
+            {
+              "outputId": "output:candidate-oi:openInterestBinancePerpetualBtc",
+              "instanceId": "candidate-oi",
+              "revision": 11,
+              "contextRevision": 0,
+              "available": true,
+              "quality": "partial",
+              "changedRange": {
+                "from": 1120,
+                "to": 1121
+              },
+              "values": 1121
+            },
+            {
+              "outputId": "output:candidate-oi:openInterestTotalBtc",
+              "instanceId": "candidate-oi",
+              "revision": 11,
+              "contextRevision": 0,
+              "available": true,
+              "quality": "partial",
+              "changedRange": {
+                "from": 1120,
+                "to": 1121
+              },
+              "values": 1121
+            }
+          ],
+          "consumers": []
+        },
+        "depthBands": [],
+        "statuses": []
+      },
+      "compositionWork": {
+        "indicatorReconciles": 1,
+        "activeIndicatorRenders": 9,
+        "objectRefreshes": 1,
+        "scriptObjectProviderSyncs": 1,
+        "dataCallbacks": 0,
+        "visibleRangeScaleUpdates": 0,
+        "autoscaleValuesScanned": 0,
+        "sma": {
+          "fullCalls": 0,
+          "fullInputValues": 0,
+          "tailCalls": 0,
+          "tailInputValues": 0,
+          "tailValuesProcessed": 0,
+          "registryRevisions": 0,
+          "registryFullValuesProcessed": 0,
+          "registryTailValuesProcessed": 0,
+          "derivedPublications": 0
+        }
+      },
+      "managedPaneResolutions": [
+        {
+          "paneId": "composition:candidate-cvd",
+          "exceptInstanceId": "candidate-cvd",
+          "memberIds": [
+            "candidate-cvd"
+          ],
+          "paneIndex": -1,
+          "chartPaneCount": 1
+        },
+        {
+          "paneId": "composition:candidate-oi",
+          "exceptInstanceId": "candidate-oi",
+          "memberIds": [
+            "candidate-oi"
+          ],
+          "paneIndex": -1,
+          "chartPaneCount": 2
+        }
+      ]
+    },
+    "status": {
+      "state": "live",
+      "message": "Staging · Binance native candle stream",
+      "lastUpdate": 1795873599841,
+      "nativeHistory": {
+        "state": "ready",
+        "loadedBars": 1000,
+        "viewport": {
+          "from": 1795780800000,
+          "to": 1795788000000,
+          "requestedSlots": 120,
+          "loadedSlots": 120,
+          "state": "ready",
+          "capacityLimited": false,
+          "retryable": false,
+          "archive": {
+            "state": "observed",
+            "loadedSlots": 120
+          },
+          "unloaded": [],
+          "unloadedTruncated": false
+        }
+      }
+    },
+    "cvd": {
+      "paneIndex": 1,
+      "settings": {
+        "sources": [
+          "binance:perpetual"
+        ],
+        "groups": [],
+        "mode": "venues",
+        "hidden": [],
+        "anchor": "daily",
+        "origin": 1795268760000,
+        "custom": 1795268760000,
+        "units": "btc",
+        "colors": {},
+        "totalWidth": 2,
+        "componentWidth": 1,
+        "paneWeight": 0.28
+      },
+      "coverage": "Partial history",
+      "sources": [
+        {
+          "source": "binance:perpetual",
+          "points": 1547,
+          "status": "live",
+          "coverage": {
+            "from": 1795780800000,
+            "to": 1795873620000,
+            "gaps": []
+          },
+          "message": "Loading history…",
+          "asOf": 1795873598661,
+          "latest": {
+            "time": 1795873620000,
+            "period": 1795824000000,
+            "base": -3606.373,
+            "quote": -214426649.0472,
+            "baseText": "-3606.373",
+            "quoteText": "-214426649.0472",
+            "observed": true,
+            "available": true,
+            "partial": true,
+            "reset": false
+          }
+        }
+      ],
+      "lines": [
+        {
+          "id": "total",
+          "filtered": false,
+          "latest": {
+            "time": 1795873620000,
+            "period": 1795824000000,
+            "value": -3606.373,
+            "partial": true
+          }
+        },
+        {
+          "id": "binance:perpetual",
+          "filtered": false,
+          "latest": {
+            "time": 1795873620000,
+            "period": 1795824000000,
+            "value": -3606.373,
+            "partial": true
+          }
+        }
+      ],
+      "draws": 74,
+      "segments": 1092
+    },
+    "oi": {
+      "paneIndex": 2,
+      "quality": "partial",
+      "lines": [
+        {
+          "id": "binance",
+          "latest": {
+            "time": 1795873560000,
+            "value": 99435.569,
+            "sourceTimeMs": 1795873561506,
+            "observedAtMs": 1795873564973,
+            "ageMs": 33373,
+            "epoch": 1795872280783,
+            "unit": "BTC",
+            "quality": "complete",
+            "reset": false,
+            "source": "binance:fapi/v1/openInterest",
+            "sourceTimeQuality": "exchange-event"
+          }
+        },
+        {
+          "id": "total",
+          "latest": {
+            "time": 1795873560000,
+            "value": 99435.569,
+            "sourceTimeMs": 1795873561506,
+            "observedAtMs": 1795873564973,
+            "ageMs": 33373,
+            "epoch": null,
+            "unit": "BTC",
+            "quality": "complete",
+            "reset": false,
+            "source": "verified perpetual venues",
+            "sourceTimeQuality": "exchange-event"
+          }
+        }
+      ],
+      "draws": 27,
+      "segments": 238
+    },
+    "range": {
+      "from": 1795780800,
+      "to": 1795788000
+    },
+    "first": {
+      "t": 1795780800000,
+      "o": 61629.4,
+      "h": 61661.7,
+      "l": 61608,
+      "c": 61608,
+      "v": 105.551,
+      "quoteVolume": 6506593.6282,
+      "revision": 1795873572089,
+      "closed": true
+    },
+    "last": {
+      "t": 1795873560000,
+      "o": 59024.3,
+      "h": 59058,
+      "l": 59024.3,
+      "c": 59048.2,
+      "v": 85.063,
+      "quoteVolume": 5022727.3395,
+      "closed": false,
+      "revision": 1795873599605
+    },
+    "body": "1\nBTCUSDT\nP\nBinance · BTCUSDT USD-M Perp\n1m\n5m\n15m\n1h\n4h\nIndicators\nUSDT quote · BTC volume · USDT settlement · UTC\nWatch level\nFinancial chart, 1121 bars, latest price 59,048.2\nMulti-Venue CVD\nVenues\nAggregations\nSources\nTotal −3.61K BTC\nBN[P] BTCUSDT −3.61K\nOpen Interest\nOpen Interest\nBTC\nSources\nBinance USD-M Perp 99.44K · 33s\nTotal 99.44K BTC · 33s\nSource and coverage\nBN[P]\n−3.61K BTC*\nTotal\n−3.61K BTC*\nSome data is missing.\nSome exchange data is missing.\nNative prices loaded · 120/120 closed bars · 11-27 12:00–11-27 14:00 UTC\nBASIS\nMain Workspace\n▾\n+ Add ▾\nAccounts\nHL · disconnected\nNotifications\n2 monitored feeds live\n16:46:39\nUTC+03\n2 OPEN"
+  },
+  "errors": [],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:5174/market-data/v1/native-candles?interval=1m",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v1/raw-open-interest?from=1795859154260&to=1795873554260&venues=binance%2Chyperliquid%2Cbybit&market=perpetual",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v1/level-watches",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873440000&to=1795873560000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795870800000&to=1795873500000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795867200000&to=1795870800000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873440000&to=1795873560000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795863600000&to=1795867200000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795860000000&to=1795863600000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873440000&to=1795873560000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795856400000&to=1795860000000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795852800000&to=1795856400000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795849200000&to=1795852800000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795845600000&to=1795849200000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v1/raw-open-interest?from=1795859164260&to=1795873564260&venues=binance%2Chyperliquid%2Cbybit&market=perpetual",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795842000000&to=1795845600000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795838400000&to=1795842000000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795834800000&to=1795838400000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795831200000&to=1795834800000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795827600000&to=1795831200000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/history/native-candles?venue=binance&market=perpetual&symbol=BTCUSDT&interval=1m&from=1795780800000&to=1795788000000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/history/raw-open-interest?from=1795766400000&to=1795780800000&venues=binance%2Chyperliquid%2Cbybit&market=perpetual",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/history/raw-open-interest?from=1795780800000&to=1795795200000&venues=binance%2Chyperliquid%2Cbybit&market=perpetual",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v1/native-candles?interval=1m&from=1795780800000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795824000000&to=1795827600000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795820400000&to=1795824000000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795816800000&to=1795820400000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v1/raw-open-interest?from=1795859174260&to=1795873574260&venues=binance%2Chyperliquid%2Cbybit&market=perpetual",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795813200000&to=1795816800000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795809600000&to=1795813200000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795806000000&to=1795809600000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795802400000&to=1795806000000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795798800000&to=1795802400000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795795200000&to=1795798800000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795791600000&to=1795795200000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795788000000&to=1795791600000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795784400000&to=1795788000000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795780800000&to=1795784400000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795777200000&to=1795780800000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v1/raw-open-interest?from=1795859184260&to=1795873584260&venues=binance%2Chyperliquid%2Cbybit&market=perpetual",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795773600000&to=1795777200000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795770000000&to=1795773600000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795766400000&to=1795770000000",
+      "status": 503
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795766400000&to=1795770000000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v1/raw-open-interest?from=1795859194304&to=1795873594304&venues=binance%2Chyperliquid%2Cbybit&market=perpetual",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795762800000&to=1795766400000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795759200000&to=1795762800000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795755600000&to=1795759200000",
+      "status": 503
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5174/market-data/v2/cvd?venue=binance&market=perpetual&from=1795873500000&to=1795873620000",
+      "status": 200
+    }
+  ]
+}

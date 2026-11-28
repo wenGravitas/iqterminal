@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "error": "page.waitForFunction: Timeout 90000ms exceeded",
+  "cause": "The first diagnostic layout used history-candidate-chart; the repository requires chart- prefixed panel IDs, so the application preserved the invalid layout and opened a recovery chart.",
+  "applicationError": false,
+  "followup": "Corrected chart-history-candidate layout renders; explicit historical navigation verified separately in navigation.json."
+}
