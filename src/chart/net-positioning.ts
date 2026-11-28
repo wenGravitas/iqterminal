@@ -288,14 +288,14 @@ export class NetPositioningPane implements IPrimitive {
   private drawCumulative(ctx:CanvasRenderingContext2D,rc:PrimitiveRenderContext) {
     const range=rc.timeScale.visibleRange(),axis=this.timeAxis??rc.dataLayer,d=rc.dpr||1;
     const from=Math.max(0,Math.floor(range.from)-1),to=Math.min(axis?axis.baseIndex+1:this.hostTimes.length,Math.ceil(range.to)+1);
-    const bands=netPositioningBands(rc.plotHeight,this.showLongs,this.showShorts,this.reverseOrder,PANE_HEADER_HEIGHT+18,3);
+    const bands=netPositioningBands(rc.plotHeight,this.showLongs,this.showShorts,this.reverseOrder,PANE_HEADER_HEIGHT+(this.error?18:3),3);
     this.renderedBands=bands;
     const axisWidth=Math.min(76,rc.plotWidth*.22),width=rc.plotWidth-axisWidth;
     const rows=this.cumulativeRows();
     ctx.save();ctx.font=`${11*d}px ui-monospace, SFMono-Regular, Menlo, monospace`;
     ctx.textBaseline='alphabetic';ctx.textAlign='left';ctx.fillStyle=rc.theme.axisText;ctx.globalAlpha=.7;
-    const health=this.error||this.venues.map(v=>`${venueShort(v)} ${this.feeds[v]?.state??'starting'}${this.feeds[v]?.stale?' · stale':''}`).join(' · ');
-    ctx.fillText(health,6*d,(PANE_HEADER_HEIGHT+11)*d,Math.max(0,width*d-12*d));
+    const health=this.error;
+    if(health)ctx.fillText(health,6*d,(PANE_HEADER_HEIGHT+11)*d,Math.max(0,width*d-12*d));
     if(!bands.length||!this.candles.size||!this.hostTimes.length||!this.venues.length){
       ctx.fillText(!bands.length?'Both sides are hidden in settings':!this.venues.length?'No venues selected':'Waiting for recorded source intervals · no values are filled or interpolated',6*d,(PANE_HEADER_HEIGHT+28)*d,Math.max(0,width*d-12*d));ctx.restore();return;
     }
@@ -303,16 +303,13 @@ export class NetPositioningPane implements IPrimitive {
       if(![...this.visibleHostTimes()].some(time=>rows[band.side].get(time)?.available)){
         ctx.textAlign='left';ctx.fillStyle=rc.theme.axisText;ctx.fillText(`${band.side==='longs'?'LONGS':'SHORTS'} · no recorded values in view`,6*d,(band.top+11)*d,Math.max(0,width*d-12*d));continue;
       }
-      const bandHeight=band.bottom-band.top;
       const scale=this.visibleScale[band.side],span=Math.max(scale.max-scale.min,1),
-        top=band.top+Math.min(32,Math.max(15,bandHeight*.25)),
-        bottom=band.bottom-Math.min(19,Math.max(2,bandHeight*.12));
+        top=band.top+3,
+        bottom=band.bottom-3;
       if(bottom<=top)continue;
       const y=(v:number)=>bottom-(v-scale.min)/span*(bottom-top);
       const color=this.colors[band.side][this.venues[0]??'binance'];
       ctx.fillStyle=rc.theme.axisText;ctx.globalAlpha=.8;ctx.textAlign='left';
-      const first=[...rows[band.side].keys()][0];
-      ctx.fillText(`${band.side==='longs'?'LONGS':'SHORTS'} · Σ recorded change (${this.displayCurrencyLabel})${first===undefined?'':` · from ${new Date(first).toISOString().slice(11,16)} UTC`}`,6*d,(band.top+11)*d,Math.max(0,width*d-12*d));
       // Each side has its own live visible scale. No additional canvas/context.
       const ticks=bottom-top>=60?5:bottom-top>=30?3:2;
       for(let tick=0;tick<ticks;tick++){
@@ -323,7 +320,7 @@ export class NetPositioningPane implements IPrimitive {
         ctx.fillText(v.toLocaleString('en-US',{maximumFractionDigits:Math.abs(v)<10?2:0}),(rc.plotWidth-4)*d,(py+3)*d,Math.max(0,(axisWidth-7)*d));
       }
       const barRects:Array<{left:number;right:number;top:number;bottom:number}>=[],labels:Array<{text:string;x:number;y:number;left:number;right:number;top:number;bottom:number}>=[];
-      ctx.save();ctx.beginPath();ctx.rect(0,(band.top+15)*d,width*d,(band.bottom-band.top-15)*d);ctx.clip();
+      ctx.save();ctx.beginPath();ctx.rect(0,band.top*d,width*d,(band.bottom-band.top)*d);ctx.clip();
       for(let index=from;index<to;index++){
         const time=this.timeAxis?this.timeAxis.indexToTime(index)!*1000:rc.dataLayer?rc.dataLayer.indexToTime(index)!*1000:this.hostTimes[index];
         if(time===undefined||!this.hostClosed.has(time))continue;
@@ -347,7 +344,7 @@ export class NetPositioningPane implements IPrimitive {
       ctx.globalAlpha=1;ctx.fillStyle=netPositioningLabelColor(color,rc.theme.background);ctx.textAlign='center';
       const painted:typeof labels=[];
       for(const label of labels){
-        if(label.top<(band.top+16)*d||label.bottom>(band.bottom-2)*d)continue;
+        if(label.top<(band.top+2)*d||label.bottom>(band.bottom-2)*d)continue;
         if(barRects.some(bar=>label.left<bar.right&&label.right>bar.left&&label.top<bar.bottom&&label.bottom>bar.top))continue;
         if(painted.some(other=>label.left<other.right+d&&label.right>other.left-d&&label.top<other.bottom+d&&label.bottom>other.top-d))continue;
         ctx.fillText(label.text,label.x,label.y);painted.push(label);
@@ -376,7 +373,7 @@ export class NetPositioningPane implements IPrimitive {
     ctx.beginPath(); ctx.rect(0, PANE_HEADER_HEIGHT * dpr, rc.plotWidth * dpr, Math.max(0, rc.plotHeight - PANE_HEADER_HEIGHT) * dpr); ctx.clip();
     ctx.font = `${9 * dpr}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
     ctx.textBaseline = 'top'; ctx.fillStyle = rc.theme?.axisText ?? '#aaa'; ctx.globalAlpha = .8;
-    const health = this.error || this.venues.map(venue => `${venueShort(venue)} ${this.feeds[venue]?.state ?? 'starting'}${this.feeds[venue]?.stale ? ' · stale' : ''}`).join(' · ');
+    const health = this.error;
     if (health && rc.plotHeight > PANE_HEADER_HEIGHT + 10) { ctx.globalAlpha = this.error ? .9 : .55; ctx.fillText(health, 6 * dpr, (PANE_HEADER_HEIGHT + 3) * dpr, Math.max(0, rc.plotWidth * dpr - 12 * dpr)); }
     if (!this.hostTimes.length || !this.candles.size) {
       if (rc.plotHeight > PANE_HEADER_HEIGHT + 22) {
@@ -401,11 +398,7 @@ export class NetPositioningPane implements IPrimitive {
       const y = roundDprBoundary(band.baseline, dpr), center = y + (baselineStrokeWidth % 2 ? .5 : 0);
       ctx.strokeStyle = rc.theme?.axisText ?? '#888'; ctx.globalAlpha = .32; ctx.lineWidth = baselineStrokeWidth;
       ctx.beginPath(); ctx.moveTo(0, center); ctx.lineTo(rc.plotWidth * dpr, center); ctx.stroke();
-      const sourceColor = band.side === 'longs' ? '#75bd7b' : '#d17c7c';
-      const maxText = maxAbs > 0 ? ` ±${formatScaleValue(maxAbs)} ${this.displayCurrencyLabel}` : '';
-      ctx.font = `600 ${9 * dpr}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
-      ctx.textAlign = 'start'; ctx.textBaseline = 'top'; ctx.fillStyle = sourceColor; ctx.globalAlpha = .72;
-      ctx.fillText(`${band.side === 'longs' ? 'LONGS' : 'SHORTS'}${maxText}`, 6 * dpr, (band.top + 2) * dpr, Math.max(0, rc.plotWidth * dpr - 12 * dpr));
+
     }
     if (bands.length > 1) {
       const divider = roundDprBoundary(bands[0]!.bottom, dpr);
