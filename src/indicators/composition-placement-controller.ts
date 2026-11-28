@@ -39,6 +39,7 @@ export interface ManagedMemberRegistration {
   placement: 'overlay' | 'pane';
   paneId?: string;
   bandSourceId?: string;
+  paneWeight?: number;
 }
 
 export interface ManagedCompositionPlacementSubject {
@@ -169,7 +170,7 @@ export class ManagedCompositionPlacementController {
     let next = state;
     if (registration.placement === 'pane' && registration.paneId && registration.paneId !== PRICE_PANE_ID) {
       const allowed = [...this.options.getSubjects().map(subject => subject.instanceId), registration.instanceId];
-      next = addCompositionMember(next, registration.paneId, registration.title, registration.instanceId, allowed);
+      next = addCompositionMember(next, registration.paneId, registration.title, registration.instanceId, allowed, registration.paneWeight);
     }
     if (registration.bandSourceId) next = this.registerBandMember(next, registration);
     return next;

@@ -489,14 +489,14 @@ export function makeCompositionPane(id: string, title: string, memberIds: readon
   return { id, title: title.slice(0, 80) || 'Indicator pane', memberIds: [...new Set(memberIds)].slice(0, MAX_COMPOSITION_MEMBERS), order, weight: Math.max(.05, Math.min(20, weight)), collapsed: false };
 }
 
-export function addCompositionMember(state: unknown, paneId: string, title: string, memberId: string, instanceIds: readonly string[] = []): IndicatorCompositionState {
+export function addCompositionMember(state: unknown, paneId: string, title: string, memberId: string, instanceIds: readonly string[] = [], paneWeight = 1): IndicatorCompositionState {
   const allowed = [...new Set([...instanceIds, memberId])];
   const current = validateComposition(state, allowed);
   const panes = current.panes.map(pane => ({ ...pane, memberIds: [...pane.memberIds] }));
   let pane = panes.find(item => item.id === paneId);
   if (!pane) {
     if (panes.length >= MAX_COMPOSITION_PANES) return current;
-    pane = makeCompositionPane(paneId, title, [], panes.length);
+    pane = makeCompositionPane(paneId, title, [], panes.length, paneWeight);
     panes.push(pane);
   }
   if (!pane.memberIds.includes(memberId) && pane.memberIds.length < MAX_COMPOSITION_MEMBERS) pane.memberIds.push(memberId);

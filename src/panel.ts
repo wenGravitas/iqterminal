@@ -25,7 +25,7 @@ import { CVD_ID, cvdSettings } from './feed/cvd';
 import { CvdView } from './indicators/cvd-view';
 import { CvdDataController } from './indicators/cvd-data';
 import { cvdNumericPlotKey } from './chart/cvd-model';
-import { OpenInterestDataController, OPEN_INTEREST_ID, OPEN_INTEREST_TOTAL_KEY, openInterestSettings } from './indicators/open-interest-data';
+import { OpenInterestDataController, OPEN_INTEREST_ID, OPEN_INTEREST_TOTAL_KEY, openInterestNumericPlotKey, openInterestSettings } from './indicators/open-interest-data';
 import { OpenInterestView } from './indicators/open-interest-view';
 import { OpenInterestControls } from './indicators/open-interest-controls';
 import { OrderFlowPaneView, type OrderFlowPaneState, type OrderFlowRow } from './indicators/order-flow-pane-view';
@@ -3674,7 +3674,7 @@ export class CandlePanel implements IContentRenderer {
       const preservePaneLayout=this.selection.composition.panes.some(pane=>pane.id===paneId);
       this.openInterestView = new OpenInterestView(this.engine.chart, this.scheduler, this.selection,
         settings => this.changeIndicator(instance.instanceId, { settings: { ...settings } }), this.openInterestData,
-        this.openInterestOutputScaleId(instance, OPEN_INTEREST_TOTAL_KEY),paneIndex,preservePaneLayout);
+        id => this.openInterestOutputScaleId(instance, openInterestNumericPlotKey(id)),paneIndex,preservePaneLayout);
       this.bindIndicatorHintRoot(this.openInterestView.controls.dialog, true);
     }
     this.openInterestView.configure(instance.settings, this.selection); this.openInterestView.setHostCandles(this.candles); this.openInterestView.setVisible(this.visible);
@@ -3740,7 +3740,8 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private openInterestOutputScaleId(instance: IndicatorInstance, plotKey: string) {
-    return numericOutputScaleId(compositionPaneId(instance.instanceId), numericOutputId(instance.instanceId, plotKey), 'BTC');
+    const outputId = numericOutputId(instance.instanceId, plotKey);
+    return numericOutputScaleId(compositionPaneId(instance.instanceId), outputId, plotKey === OPEN_INTEREST_TOTAL_KEY ? 'BTC' : null);
   }
 
   private syncOrderFlowPane() {
@@ -4161,7 +4162,8 @@ export class CandlePanel implements IContentRenderer {
       const added = nativeInstance(definitionId, settings, true, paneId ? { paneId } : {});
       const composition = definitionId === OPEN_INTEREST_ID && paneId
         ? this.compositionPlacement.registerMember(this.selection.composition, { instanceId: added.instanceId,
-          title: nativeDefinition(definitionId)?.name ?? 'Open Interest', placement: 'pane', paneId })
+          title: nativeDefinition(definitionId)?.name ?? 'Open Interest', placement: 'pane', paneId,
+          paneWeight: openInterestSettings(settings).paneWeight })
         : this.selection.composition;
       this.selection = config({ ...this.selection, indicators: [...this.selection.indicators, added], composition });
       this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();

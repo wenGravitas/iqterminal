@@ -1,5 +1,5 @@
 import { RAW_OPEN_INTEREST_VENUES, type RawOpenInterestVenue } from '../feed/raw-open-interest';
-import { openInterestSettings, openInterestVenueLabel, type OpenInterestSettings } from './open-interest-data';
+import { openInterestSettings, openInterestVenueLabel, type OpenInterestFrame, type OpenInterestSettings } from './open-interest-data';
 
 export class OpenInterestControls {
   readonly dialog = document.createElement('dialog');
@@ -10,7 +10,7 @@ export class OpenInterestControls {
     for (const type of ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'dblclick', 'wheel', 'keydown'])
       this.dialog.addEventListener(type, event => event.stopPropagation(), { signal });
   }
-  open(raw: unknown) {
+  open(raw: unknown, frame?: OpenInterestFrame) {
     const settings = openInterestSettings(raw); this.form.replaceChildren();
     const header = document.createElement('header'), title = document.createElement('h2'), status = document.createElement('div');
     title.textContent = 'Open Interest sources'; const close = document.createElement('button'); close.type = 'button'; close.textContent = 'Close';
@@ -23,7 +23,17 @@ export class OpenInterestControls {
       label.append(input, text); fieldset.append(label);
     }
     const help = document.createElement('p'); help.textContent = 'Total requires fresh, verified BTC observations from every selected venue. Missing or stale samples leave a gap in Total; individual venue levels remain visible.';
-    fields.append(fieldset, help); status.className = 'dialog-status'; status.setAttribute('role', 'status');
+    const provenance = document.createElement('details'); provenance.className = 'open-interest-source-details';
+    const provenanceSummary = document.createElement('summary'); provenanceSummary.textContent = 'Source and coverage details'; provenance.append(provenanceSummary);
+    const provenanceBody = document.createElement('div');
+    for (const venue of settings.venues) {
+      const feed = frame?.feeds[venue], item = document.createElement('div');
+      item.textContent = `${openInterestVenueLabel(venue)} · ${feed?.source ?? 'source pending'} · ${feed?.unitVerification?.status ?? 'unit unknown'} ${feed?.unitVerification?.units ?? ''} · ${feed?.lastError ?? frame?.history ?? 'No source detail is available.'}`;
+      provenanceBody.append(item);
+    }
+    if (!settings.venues.length) provenanceBody.textContent = 'No venues are selected.';
+    provenance.append(provenanceBody);
+    fields.append(fieldset, help, provenance); status.className = 'dialog-status'; status.setAttribute('role', 'status');
     const footer = document.createElement('footer'), cancel = document.createElement('button'), save = document.createElement('button');
     cancel.type = 'button'; cancel.textContent = 'Cancel'; cancel.addEventListener('click', () => this.dialog.close(), { signal: this.signal });
     save.type = 'submit'; save.textContent = 'Apply'; save.className = 'primary'; footer.append(cancel, save);

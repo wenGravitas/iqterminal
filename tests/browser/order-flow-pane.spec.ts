@@ -57,10 +57,6 @@ test('managed Order Flow combines CVD, raw Open Interest, Volume and default SMA
   if (!panelId) throw new Error('Fixture chart panel ID is missing.');
   const close = panel.locator('.chart-objects-panel').getByRole('button', { name: 'Close Object Tree', exact: true });
   if (await close.isVisible()) await close.click();
-  const priceRangeBefore = await page.evaluate(id => {
-    const current = (window as any).__terminal.panels.get(id), chart = current.engine.chart;
-    return chart.panes()[chart.primaryPaneIndex()].priceScale.priceRange();
-  }, panelId);
 
   await addIndicator(panel, 'Multi-Venue CVD');
   await addIndicator(panel, 'Open Interest');
@@ -283,12 +279,17 @@ test('managed Order Flow combines CVD, raw Open Interest, Volume and default SMA
     const cvdScale = current.cvdView.assignedScaleId, oiScale = current.openInterestView.assignedScaleId;
     const cvdSmaScale = current.compositionApis.get(cvdSma.instanceId).plotPriceScaleId('p0');
     const oiSmaScale = current.compositionApis.get(oiSma.instanceId).plotPriceScaleId('p0');
+    const visible = chart.timeScale.visibleRange(), first = Math.max(0, Math.floor(visible.from)), last = Math.min(current.candles.length - 1, Math.ceil(visible.to));
+    const visibleCandles = current.candles.slice(first, last + 1);
+    const visiblePrices = { min: Math.min(...visibleCandles.map((candle: any) => candle.l)), max: Math.max(...visibleCandles.map((candle: any) => candle.h)) };
+    const oiScales = current.openInterestView.diagnostics().scales.map((scale: any) => ({ id: scale.id, scaleId: scale.scaleId,
+      side: chart.priceAxisPlacement(paneIndex, scale.scaleId)?.side }));
     return { paneIndex, paneCount: chart.panes().length, cvdScale, oiScale, cvdSmaScale, oiSmaScale,
       cvdSide: chart.priceAxisPlacement(paneIndex, cvdScale)?.side, oiSide: chart.priceAxisPlacement(paneIndex, oiScale)?.side,
       volumeScale: volumeScale?.engineScaleId, volumeSide: volumeScale && chart.priceAxisPlacement(paneIndex, volumeScale.engineScaleId)?.side,
       volumePolicy: volumeScale?.policy, band: current.selection.composition.embeddedBands.find((band: any) => band.memberIds.includes(volume.instanceId)),
-      rows: rows.map((row: any) => ({ source: row.source, name: row.name, scale: row.scale })),
-      primaryRange: chart.panes()[chart.primaryPaneIndex()].priceScale.priceRange() };
+      oiScales, rows: rows.map((row: any) => ({ source: row.source, name: row.name, scale: row.scale })),
+      primaryRange: chart.panes()[chart.primaryPaneIndex()].priceScale.priceRange(), visiblePrices };
   }, panelId);
   expect(axisGeometry.cvdScale).not.toBe(axisGeometry.oiScale);
   expect(axisGeometry.cvdSmaScale).toBe(axisGeometry.cvdScale);
@@ -296,8 +297,12 @@ test('managed Order Flow combines CVD, raw Open Interest, Volume and default SMA
   expect(axisGeometry.cvdSide).toBe('left'); expect(axisGeometry.oiSide).toBe('right');
   expect(axisGeometry.volumeSide).toBe('hidden'); expect(axisGeometry.volumePolicy).toBe('zero-based');
   expect(axisGeometry.band).toBeTruthy(); expect(axisGeometry.paneCount).toBe(2);
-  expect(axisGeometry.primaryRange.min).toBeCloseTo(priceRangeBefore.min, 6);
-  expect(axisGeometry.primaryRange.max).toBeCloseTo(priceRangeBefore.max, 6);
+  expect(axisGeometry.oiScales.map((scale: any) => scale.id)).toEqual(expect.arrayContaining(['total', 'binance', 'hyperliquid', 'bybit']));
+  expect(axisGeometry.oiScales.every((scale: any) => scale.side === 'right')).toBe(true);
+  // Independent right-side Open Interest axes narrow the shared plot, so main-pane auto-fit
+  // can legitimately update its range; the visible primary candles must remain fully in range.
+  expect(axisGeometry.primaryRange.min).toBeLessThanOrEqual(axisGeometry.visiblePrices.min);
+  expect(axisGeometry.primaryRange.max).toBeGreaterThanOrEqual(axisGeometry.visiblePrices.max);
   expect(axisGeometry.rows).toEqual(expect.arrayContaining([
     expect.objectContaining({ source: 'cvd', scale: 'L' }), expect.objectContaining({ source: 'open-interest', scale: 'R' }),
     expect.objectContaining({ source: 'volume', scale: 'V' }), expect.objectContaining({ source: 'sma', scale: 'L' }),
@@ -394,6 +399,14 @@ test('managed Order Flow combines CVD, raw Open Interest, Volume and default SMA
   await expect(chrome.locator('.order-flow-header > strong')).toBeVisible();
   await expect(chrome.getByRole('button', { name: 'Multi-Venue CVD settings', exact: true })).toBeVisible();
   await expect(chrome.locator('.order-flow-value').filter({ hasText: 'Volume' })).toBeVisible();
+  await expect.poll(() => page.evaluate(id => {
+    const current = (window as any).__terminal.panels.get(id), view = current.openInterestView, chart = current.engine.chart;
+    return view.diagnostics().scales.map((scale: any) => ({ id: scale.id,
+      side: chart.priceAxisPlacement(view.paneIndex(), scale.scaleId)?.side }));
+  }, panelId)).toEqual(expect.arrayContaining([
+    { id: 'total', side: 'right' }, { id: 'binance', side: 'hidden' },
+    { id: 'hyperliquid', side: 'hidden' }, { id: 'bybit', side: 'hidden' },
+  ]));
   const narrowLegend = await page.evaluate(id => {
     const current = (window as any).__terminal.panels.get(id), chart = current.engine.chart;
     const paneIndex = current.orderFlowPaneIndex, pane = chart.panes()[paneIndex].element, paneRect = pane.getBoundingClientRect();
@@ -409,13 +422,15 @@ test('managed Order Flow combines CVD, raw Open Interest, Volume and default SMA
     });
     return { plotLeft: plot.left - (paneRect.left - stageRect.left), headerLeft: headerRect.left - paneRect.left, width: legend.clientWidth, scrollWidth: legend.scrollWidth,
       height: legend.clientHeight, scrollHeight: legend.scrollHeight, left: legendRect.left, right: legendRect.right,
-      top: legendRect.top, bottom: legendRect.bottom, headerBottom: headerRect.bottom, statusHidden: status.hidden,
+      top: legendRect.top, bottom: legendRect.bottom, overflowX: getComputedStyle(legend).overflowX, headerBottom: headerRect.bottom, statusHidden: status.hidden,
       statusBottom: statusRect.bottom, bandTop: stageTop + plot.top + plot.height * (1 - band.heightPercent / 100), buttons };
   }, panelId);
   expect(narrowLegend.headerLeft).toBeGreaterThanOrEqual(narrowLegend.plotLeft);
-  expect(narrowLegend.scrollWidth).toBeLessThanOrEqual(narrowLegend.width + 1);
-  expect(narrowLegend.buttons.every(rect => rect.left >= narrowLegend.left - 1 && rect.right <= narrowLegend.right + 1
-    && rect.top >= narrowLegend.top - 1 && rect.bottom <= narrowLegend.bottom + 1)).toBe(true);
+  expect(narrowLegend.overflowX).toBe('auto');
+  expect(narrowLegend.scrollWidth).toBeGreaterThan(narrowLegend.width + 1);
+  expect(narrowLegend.scrollHeight).toBeLessThanOrEqual(narrowLegend.height + 1);
+  expect(narrowLegend.buttons.length).toBeGreaterThanOrEqual(7);
+  expect(narrowLegend.buttons.every(rect => rect.top >= narrowLegend.top - 1 && rect.bottom <= narrowLegend.bottom + 1)).toBe(true);
   expect(narrowLegend.bottom).toBeLessThanOrEqual(narrowLegend.bandTop + 1);
   expect(narrowLegend.statusHidden).toBe(false);
   expect(narrowLegend.statusBottom).toBeLessThanOrEqual(narrowLegend.bandTop + 1);
@@ -424,6 +439,15 @@ test('managed Order Flow combines CVD, raw Open Interest, Volume and default SMA
   await expect(panel.locator('.open-interest-tooltip')).toBeHidden();
   await page.mouse.move(5, 5);
   await page.screenshot({ path: 'artifacts/order-flow-r2-720x860.png' });
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await expect.poll(() => page.evaluate(id => {
+    const current = (window as any).__terminal.panels.get(id), view = current.openInterestView, chart = current.engine.chart;
+    return view.diagnostics().scales.map((scale: any) => ({ id: scale.id,
+      side: chart.priceAxisPlacement(view.paneIndex(), scale.scaleId)?.side }));
+  }, panelId)).toEqual(expect.arrayContaining([
+    { id: 'total', side: 'right' }, { id: 'binance', side: 'right' },
+    { id: 'hyperliquid', side: 'right' }, { id: 'bybit', side: 'right' },
+  ]));
 
   // Pane commands remain reachable through the shared header. Add an unrelated
   // native pane so the managed pane can move down and back without swapping the

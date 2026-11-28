@@ -47,7 +47,7 @@ export function openInterestSettings(value: unknown): OpenInterestSettings {
   const raw = value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
   const venues = compatibleRawOpenInterestVenues(raw.venues);
   const hidden = Array.isArray(raw.hidden) ? [...new Set(raw.hidden.filter((value): value is string => typeof value === 'string' && value.length <= 80))].slice(0, 8) : [];
-  const paneWeight = typeof raw.paneWeight === 'number' && Number.isFinite(raw.paneWeight) ? Math.max(.08, Math.min(3, raw.paneWeight)) : .28;
+  const paneWeight = typeof raw.paneWeight === 'number' && Number.isFinite(raw.paneWeight) ? Math.max(.08, Math.min(3, raw.paneWeight)) : .2;
   return { venues: venues.length ? venues : [...RAW_OPEN_INTEREST_VENUES], hidden, paneWeight };
 }
 

@@ -71,6 +71,39 @@ test('explicit raw BTC Open Interest fixture feeds a chart-scoped SMA and surviv
   expect(initial.output.resets.length).toBeGreaterThan(0);
   expect(initial.frame.lines.find((line: any) => line.id === 'total')?.points.at(-1)).toMatchObject({ unit: 'BTC', source: 'verified perpetual venues' });
   expect(initial.frame.lines.find((line: any) => line.id === 'binance')?.points.at(-1)).toMatchObject({ source: 'binance-recorder fixture', sourceTimeQuality: 'collector-sampled' });
+  expect(errors, errors.join('\n')).toEqual([]);
+
+  const scales = await page.evaluate(id => {
+    const current = (window as any).__terminal.panels.get(id), view = current.openInterestView, chart = current.engine.chart;
+    const rows = view.diagnostics().scales;
+    const axes = chart.priceAxisLayout(view.paneIndex()).map((axis: any) => ({ scaleId: axis.scaleId, side: axis.side }));
+    return { rows, axes, paneWeight: chart.paneWeight(view.paneIndex()) };
+  }, panelId);
+  expect(scales.rows.map((scale: any) => scale.id)).toEqual(expect.arrayContaining(['total', 'binance', 'hyperliquid', 'bybit']));
+  expect(new Set(scales.rows.map((scale: any) => scale.scaleId)).size).toBe(4);
+  for (const scale of scales.rows) {
+    expect(scale.range).toBeTruthy();
+    expect(scales.axes).toContainEqual({ scaleId: scale.scaleId, side: 'right' });
+  }
+  expect(new Set(scales.rows.map((scale: any) => JSON.stringify(scale.range))).size).toBe(4);
+  expect(scales.paneWeight).toBeLessThan(.28);
+  const binanceToggle = panel.locator('.open-interest-toolbar .open-interest-legend button[data-line="binance"]');
+  await expect(binanceToggle).toHaveClass(/net-positioning-source/);
+  await expect(binanceToggle).toHaveAttribute('aria-pressed', 'true');
+  await binanceToggle.click();
+  await expect(binanceToggle).toHaveAttribute('aria-pressed', 'false');
+  await expect.poll(() => page.evaluate(id => (window as any).__terminal.panels.get(id).openInterestView.diagnostics().scales.find((scale: any) => scale.id === 'binance').range, panelId)).toBeNull();
+  await expect.poll(() => page.evaluate(id => {
+    const current = (window as any).__terminal.panels.get(id), view = current.openInterestView;
+    return current.engine.chart.priceAxisPlacement(view.paneIndex(), view.diagnostics().scales.find((scale: any) => scale.id === 'binance').scaleId)?.side;
+  }, panelId)).toBe('hidden');
+  await binanceToggle.click();
+  await expect(binanceToggle).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(() => page.evaluate(id => {
+    const current = (window as any).__terminal.panels.get(id), view = current.openInterestView;
+    return current.engine.chart.priceAxisPlacement(view.paneIndex(), view.diagnostics().scales.find((scale: any) => scale.id === 'binance').scaleId)?.side;
+  }, panelId)).toBe('right');
+  await expect.poll(async () => (await read()).output?.available).toBe(true);
 
   await openInterest().getByRole('button', { name: 'Add moving average to Open Interest', exact: true }).click();
   const add = page.getByRole('dialog', { name: 'Add moving average', exact: true });

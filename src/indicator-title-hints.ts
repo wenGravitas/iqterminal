@@ -6,7 +6,7 @@ const INDICATOR_HINT_SCOPE = [
   '.indicator-picker',
   '.indicator-settings:not(.chart-settings):not(.drawing-settings-dialog)',
   '.open-interest-settings',
-  '.cvd-controls', '.cvd-status', '.open-interest-toolbar', '.open-interest-status', '.open-interest-provenance',
+  '.cvd-controls', '.cvd-status', '.open-interest-toolbar', '.open-interest-status',
   '.order-flow-chrome', '.market-conditions-surface', '.liquidation-legend', '.liquidation-pane-status',
   '.trade-bubbles-status', '.effort-status', '[data-cvd]', '[data-open-interest]', '[data-market-conditions]',
 ].join(',');
