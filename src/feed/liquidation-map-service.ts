@@ -95,6 +95,7 @@ export class LiquidationMapService {
         const settings=c.settings;
         const requested = settings.resolution;
         const end = Math.min(c.to, Date.now() + requested), start = Math.max(0, c.from, end - settings.lookback);
+        if(!Number.isFinite(start)||!Number.isFinite(end)||start>=end)throw Error('No recorded Liquidation Map time range in this viewport');
         // Time LOD is an as-of stock snapshot, never a sum through time. Bound
         // the visible window to roughly 64 columns before requesting detail.
         const resolution = Math.min(3600000, Math.max(minimumResolution, requested * Math.max(1, Math.ceil((end - start) / (64 * requested)))));

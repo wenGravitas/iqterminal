@@ -85,3 +85,34 @@ test('journal-generated fixture ends at native crossing and stays ended after re
  await page.reload();const restored=await install('rebound');expect(restored.until).toBe(restored.last+50000);expect(restored.cells).toEqual([1,0,0]);
  await page.waitForTimeout(100);await page.screenshot({path:'/tmp/iq-map-retirement-reload.png'});expect(errors).toEqual([]);
 });
+
+test('map waits for candle times and recovers after a future-only viewport',async({page})=>{
+ await page.goto('/?fixture=1&fixtureTime=now');
+ await page.waitForFunction(()=>(window as any).__terminal?.stats().panels[0]?.bars>0);
+ await page.evaluate(()=>{
+  const terminal=(window as any).__terminal,p=[...terminal.panels.values()][0] as any;
+  p.release?.();p.release=undefined;
+  (window as any).__mapHostCandles=p.candles;
+  p.candles=[];p.engine.setSnapshot([],false);
+  const stats=(window as any).__mapRequests={subscribed:0,updated:0,disposed:0};
+  terminal.feed.subscribeLiquidationMap=()=>{stats.subscribed++;return {update:()=>stats.updated++,dispose:()=>stats.disposed++};};
+ });
+ const panel=page.locator('.candle-panel').first();await addIndicator(panel,'Liquidation Map');
+ const status=panel.locator('.liquidation-map-status');
+ await expect(status).toHaveText('Waiting for chart candles before loading Liquidation Map…');
+ expect(await page.evaluate(()=>(window as any).__mapRequests.subscribed)).toBe(0);
+ await page.evaluate(()=>{
+  const p=[...(window as any).__terminal.panels.values()][0] as any;
+  p.candles=(window as any).__mapHostCandles;p.engine.setSnapshot(p.candles,false);p.engine.resetView();
+ });
+ await expect.poll(()=>page.evaluate(()=>(window as any).__mapRequests.subscribed)).toBe(1);
+ await page.evaluate(()=>{
+  const p=[...(window as any).__terminal.panels.values()][0] as any,now=Date.now();
+  p.engine.restoreHistoryTimeRange({from:now+3*3600000,to:now+4*3600000});
+ });
+ await expect(status).toHaveText('No recorded Liquidation Map history in this viewport');
+ expect(await page.evaluate(()=>(window as any).__mapRequests.disposed)).toBe(1);
+ await page.evaluate(()=>([...(window as any).__terminal.panels.values()][0] as any).engine.resetView());
+ await expect.poll(()=>page.evaluate(()=>(window as any).__mapRequests.subscribed)).toBe(2);
+ await expect(status).not.toContainText('Missing');
+});

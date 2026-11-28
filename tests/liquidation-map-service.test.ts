@@ -88,3 +88,16 @@ test('seven-day lookback stays inside the server range limit after tile alignmen
   }
  }finally{service.dispose();}
 });
+
+
+test('empty, nonfinite and future-only viewports never issue map requests',async()=>{
+ const {service,client,requests}=setup();
+ try{
+  for(const [from,to] of [[0,0],[at+1000,at],[NaN,at],[at,NaN],[at+7200000,at+10800000]]){
+   await expect((service as any).read(client(from,to))).rejects.toThrow('No recorded Liquidation Map time range');
+  }
+  expect(requests).toHaveLength(0);
+  const payload=await(service as any).read(client(at,at+60000));
+  expect(payload.columns.length).toBeGreaterThan(0);expect(requests).toHaveLength(1);
+ }finally{service.dispose();}
+});

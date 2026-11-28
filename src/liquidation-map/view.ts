@@ -20,7 +20,7 @@ export class LiquidationMapView {
     private dead = false;
     private shown = true;
     private payload?: MapPayload;
-    constructor(private host: HTMLElement, private chart: Chart, private feed: FeedClient, series: Series, change: (s: MapSettings) => void, private owner: string) { this.series = series; this.controls = new MapControls(host.closest<HTMLElement>('.candle-panel') ?? host, change); this.status.className = 'liquidation-map-status'; Object.assign(this.status.style, { position: 'absolute', left: '6px', top: '6px', maxWidth: '90%', fontSize: '10px', color: 'var(--muted)', zIndex: '4', background: 'var(--overlay)', padding: '1px 3px', pointerEvents: 'none', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }); this.tooltip.className = 'net-positioning-tooltip positioning-tooltip liquidation-map-tooltip';this.tooltip.setAttribute('role','tooltip'); this.tooltip.hidden = true; this.status.textContent='Loading Liquidation Map…';this.status.setAttribute('role','status');host.append(this.status, this.tooltip); chart.addPrimitive(this.primitive); this.releases.push(chart.on('resize',()=>this.placeStatus()),chart.on('paneResized',()=>this.placeStatus()),chart.on('paneMoved',()=>this.placeStatus()),chart.on('visibleRangeChange', () => this.viewport()), chart.subscribeCrosshairMove(e => { if (!e.point) {
+    constructor(private host: HTMLElement, private chart: Chart, private feed: FeedClient, series: Series, change: (s: MapSettings) => void, private owner: string) { this.series = series; this.controls = new MapControls(host.closest<HTMLElement>('.candle-panel') ?? host, change); this.status.className = 'liquidation-map-status'; Object.assign(this.status.style, { position: 'absolute', left: '6px', top: '6px', maxWidth: '90%', fontSize: '10px', color: 'var(--muted)', zIndex: '4', background: 'var(--overlay)', padding: '1px 3px', pointerEvents: 'none', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }); this.tooltip.className = 'net-positioning-tooltip positioning-tooltip liquidation-map-tooltip';this.tooltip.setAttribute('role','tooltip'); this.tooltip.hidden = true; this.status.textContent='Loading Liquidation Map…';this.status.setAttribute('role','status');host.append(this.status, this.tooltip); chart.addPrimitive(this.primitive); this.releases.push(chart.on('resize',()=>this.placeStatus()),chart.on('paneResized',()=>this.placeStatus()),chart.on('paneMoved',()=>this.placeStatus()),...(['pan','zoom','data:update'] as const).map(event=>chart.on(event,()=>this.viewport())), chart.subscribeCrosshairMove(e => { if (!e.point) {
         this.tooltip.hidden = true;
         return;
     } if (!this.shown) return;
@@ -68,8 +68,9 @@ export class LiquidationMapView {
     private viewport() {
         this.placeStatus();
         this.tooltip.hidden=true;
-        clearTimeout(this.timer);
+        if(this.timer!==undefined)return;
         this.timer = setTimeout(() => {
+            this.timer=undefined;
             if (this.dead || !this.shown)
                 return;
             const info = instrumentOf(this.series);
@@ -77,8 +78,17 @@ export class LiquidationMapView {
                 this.status.textContent = 'Liquidation Map requires BTC perpetuals'; this.status.hidden = !this.shown;
                 return;
             }
-            const range = this.chart.getVisibleLogicalRange(), now = Date.now(), from = range ? this.chart.dataLayer.indexToTimeFloat(range.from) * 1000 : now - this.settings.lookback, to = range ? this.chart.dataLayer.indexToTimeFloat(range.to) * 1000 : now;
-            const end = Number.isFinite(to) ? Math.min(now + this.settings.resolution, to) : now, start = Number.isFinite(from) ? Math.max(0, from) : end - this.settings.lookback;
+            const range=this.chart.getVisibleLogicalRange(),now=Date.now();
+            const from=range?this.chart.dataLayer.indexToTimeFloat(range.from)*1000:NaN;
+            const to=range?this.chart.dataLayer.indexToTimeFloat(range.to)*1000:NaN;
+            const end=Math.min(now+this.settings.resolution,to),start=Math.max(0,from);
+            if(!this.chart.dataLayer.length||!Number.isFinite(start)||!Number.isFinite(end)||start>=end){
+                this.subscription?.dispose();this.subscription=undefined;
+                this.primitive.columns=[];this.primitive.profile=undefined;this.payload=undefined;this.primitive.update();
+                this.status.textContent=this.chart.dataLayer.length?'No recorded Liquidation Map history in this viewport':'Waiting for chart candles before loading Liquidation Map…';
+                this.status.hidden=!this.shown;
+                return;
+            }
             if (!this.subscription){
                 this.status.textContent='Loading Liquidation Map history…'; this.status.hidden = !this.shown;
                 this.subscription = this.feed.subscribeLiquidationMap(this.owner, start, end, this.settings, batch => { if (this.dead)
