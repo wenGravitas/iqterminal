@@ -611,6 +611,10 @@ export class CandlePanel implements IContentRenderer {
     this.toolbarCue.title = 'More chart controls';
     this.chart.className = 'chart-stage';
     this.chartFooter.className = 'chart-footer';
+    this.chartFooter.hidden = true;
+    // Recovery buttons are forwarded from Monitored Feeds; their synthetic
+    // clicks must not look like an outside click that dismisses the popup.
+    this.chartFooter.addEventListener('click',event=>event.stopPropagation(),{signal:this.abort.signal});
     this.depthNotice.className = 'depth-notice';
     this.depthNotice.hidden = true;
     this.depthNotice.setAttribute('role', 'status');
@@ -1205,7 +1209,7 @@ export class CandlePanel implements IContentRenderer {
       () => this.closeDrawingFlyout(), `floating-drawing-toolbar-${params.api.id}`);
     this.chartFooter.append(this.heatmapControls.notice, this.orderWallsControls.notice, this.statusNode);
     this.chartFooterObserver = new MutationObserver(() => this.syncChartFooterVisibility());
-    this.chartFooterObserver.observe(this.chartFooter, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
+    this.chartFooterObserver.observe(this.chartFooter, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden','title','data-state'], characterData:true });
     this.syncChartFooterVisibility();
     this.subscriptions.push(onWorkspaceVisibilityChange(params.api, () => this.visibility()));
     document.addEventListener('visibilitychange', () => this.syncNetPositioning(), { signal: this.abort.signal });
@@ -5962,10 +5966,11 @@ export class CandlePanel implements IContentRenderer {
 
   private updateDepthNotice() {
     const notices = this.studyHost?.depthNotices() ?? [];
-    this.depthNotice.hidden = notices.length === 0;
+    this.depthNotice.hidden = true;
     this.depthNotice.textContent = notices.map(notice => notice.text).join('   ·   ');
     this.depthNotice.title = notices.map(notice => notice.details).join('\n');
     this.depthNotice.dataset.state = notices.some(notice => /^(Depth unavailable|Unavailable:)/.test(notice.text)) ? 'unavailable' : 'available';
+    this.syncChartFooterVisibility();
   }
 
   private updateStatus() {
@@ -6003,19 +6008,28 @@ export class CandlePanel implements IContentRenderer {
       this.statusNode.replaceChildren(this.statusText, ...(showRetry ? [this.retry] : []));
     }
     this.syncPaneLoadingStates();
-    const noData = !this.engine?.barCount;
-    const statusParent = noData ? this.chart : this.chartFooter;
-    if (this.statusNode.parentElement !== statusParent) statusParent.append(this.statusNode);
-    if (this.statusNode.classList.contains('no-data') !== noData) this.statusNode.classList.toggle('no-data', noData);
+    if(this.statusNode.parentElement!==this.chartFooter)this.chartFooter.append(this.statusNode);
     this.statusNode.hidden = !text;
     this.syncChartFooterVisibility();
   }
 
   private syncChartFooterVisibility() {
-    // The connection/history row keeps its space when its text clears. Retry
-    // and recovery are data events, not requests to resize all indicator panes.
-    const hasVisibleRow = [...this.chartFooter.children].some(child => child === this.statusNode || !(child as HTMLElement).hidden);
-    if (this.chartFooter.hidden === hasVisibleRow) this.chartFooter.hidden = !hasVisibleRow;
+    if(!this.chartFooter.hidden)this.chartFooter.hidden=true;
+    const notices=[...this.chartFooter.children].filter(child=>!(child as HTMLElement).hidden);
+    const details=notices.map(child=>{
+      const copy=child.cloneNode(true) as HTMLElement;
+      copy.querySelectorAll('button').forEach(button=>button.remove());
+      return [copy.textContent?.trim(),(child as HTMLElement).title].filter(Boolean).join(' · ');
+    });
+    if(this.depthNotice.textContent)details.push(this.depthNotice.title||this.depthNotice.textContent);
+    const state=this.selection.type==='footprint'?this.footprintStatus:this.status;
+    if(['loading','failed','stale'].includes(state.state)&&state.message)details.unshift(state.message);
+    const actions=notices.flatMap(child=>[...child.querySelectorAll<HTMLButtonElement>('button')].filter(button=>!button.hidden&&!button.disabled).map(button=>({label:button.textContent?.trim()||'Retry',run:()=>button.click()})));
+    const message=[...new Set(details.filter(Boolean))].join('\n');
+    const failure=notices.some(child=>['failed','unavailable'].includes((child as HTMLElement).dataset.state??''))||/incomplete|unavailable|failed|error/i.test(message);
+    this.feed.reportChartStatus(this.params.api.id,`${instrumentKey(this.selection)} · ${this.selection.interval}`,message,
+      failure?'failed':state.state,state.lastUpdate,actions);
+
   }
 
   draw() { this.engine?.draw(); }
@@ -6154,6 +6168,7 @@ export class CandlePanel implements IContentRenderer {
     if(this.historyViewSaveTimer!==undefined)clearTimeout(this.historyViewSaveTimer);
     this.toolbarResizeObserver?.disconnect();
     this.chartFooterObserver?.disconnect();
+    this.feed.clearChartStatus(this.params.api.id);
     this.abort.abort(); this.marketPicker.dispose();
     if (this.paneIndicatorLayoutFrame !== undefined) cancelAnimationFrame(this.paneIndicatorLayoutFrame);
     if (this.picker.open) this.picker.close();

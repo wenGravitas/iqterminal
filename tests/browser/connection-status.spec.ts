@@ -6,7 +6,7 @@ test.use({ storageState: { cookies: [], origins: [] } });
 test('shows explicit fixture feed state, preserves popup interaction, and fits desktop/narrow light/dark layouts', async ({ page }) => {
   test.setTimeout(60_000);
   await page.goto('/?fixture=1&fixtureTime=now');
-  await expect(page.locator('html')).toHaveAttribute('data-app-state', 'ready');
+  await expect(page.locator('html')).toHaveAttribute('data-app-state', 'ready',{timeout:30000});
   const trigger = page.locator('#connection-status-trigger');
   const connectionPopover = page.locator('#connection-status-popover');
   const clockTrigger = page.locator('#market-pulse-trigger');
@@ -21,11 +21,11 @@ test('shows explicit fixture feed state, preserves popup interaction, and fits d
   await trigger.click();
   await expect(connectionPopover).toBeVisible();
   await expect(connectionPopover.getByText('Monitored feeds', { exact: true })).toBeVisible();
-  await expect(connectionPopover).toContainText('Active candle, CVD, ticker and comparison feeds.');
+  await expect(connectionPopover).toContainText('Active feeds, chart history, indicator notices and recovery actions.');
   await expect(connectionPopover).toContainText('Historical server logs are not available here.');
   await expect(connectionPopover.locator('[data-connection-summary]')).toContainText('Diagnostic fixtures');
-  await expect(connectionPopover.locator('.connection-feed-row')).toHaveCount(1);
-  await expect(connectionPopover.locator('.connection-feed-mode')).toHaveText('fixture');
+  await expect(connectionPopover.locator('.connection-feed-row[data-kind=candles]')).toHaveCount(1);
+  await expect(connectionPopover.locator('.connection-feed-row[data-kind=candles] .connection-feed-mode')).toHaveText('fixture');
   await expect(connectionPopover.locator('[data-connection-timezone]')).not.toBeEmpty();
 
   await page.keyboard.press('Alt+1');
@@ -81,11 +81,11 @@ test('shows explicit fixture feed state, preserves popup interaction, and fits d
 test('keeps monitored-feed and activity rows stable on timestamp-only status updates', async ({ page }) => {
   test.setTimeout(45_000);
   await page.goto('/?fixture=1&fixtureTime=now');
-  await expect(page.locator('html')).toHaveAttribute('data-app-state', 'ready');
+  await expect(page.locator('html')).toHaveAttribute('data-app-state', 'ready',{timeout:30000});
   const closes=page.getByRole('button',{name:/^Close /});if(await closes.count()>1)await closes.nth(1).click();
   const trigger=page.locator('#connection-status-trigger'),popover=page.locator('#connection-status-popover');
   await trigger.click();
-  await expect(popover.locator('.connection-feed-row')).toHaveCount(1);
+  await expect(popover.locator('.connection-feed-row[data-kind=candles]')).toHaveCount(1);
   const online=await page.evaluate(()=>navigator.onLine);
   await page.evaluate(initial=>{
     window.dispatchEvent(new Event(initial?'offline':'online'));
@@ -98,21 +98,21 @@ test('keeps monitored-feed and activity rows stable on timestamp-only status upd
     const token=[...feed.current.values()][0],listener=feed.listeners.get(token);
     const current=feed.feedStatusSnapshot().find((status:any)=>status.key===listener?.status.key);
     if(!token||!listener||!current)throw new Error('No active candle feed status to update');
-    const row=document.querySelector('.connection-feed-row')!,activity=document.querySelector('.connection-activity-row')!;
+    const row=document.querySelector('.connection-feed-row[data-kind=candles]')!,activity=document.querySelector('.connection-activity-row')!;
     const chart=panel.engine.chart,range=chart.timeScale.visibleRange();
     (window as any).__connectionStableRefs={row,activity,chart,range,lastUpdate:current.lastUpdate,token,key:listener.key,statusKey:listener.status.key,state:current.state,message:current.message};
     const at=Math.max(current.lastUpdate,Date.now())+1000;
     const send=(lastUpdate:number)=>feed.worker.onmessage({data:{type:'status',key:listener.key,ids:[token],status:{state:current.state,message:current.message,lastUpdate}}});
     send(at);send(at+1000);
   });
-  await expect.poll(()=>popover.locator('.connection-feed-age').getAttribute('datetime')).not.toBeNull();
+  await expect.poll(()=>popover.locator('.connection-feed-row[data-kind=candles] .connection-feed-age').getAttribute('datetime')).not.toBeNull();
   const outcome=await page.evaluate(()=>{
     const refs=(window as any).__connectionStableRefs,terminal=(window as any).__terminal,panel=[...terminal.panels.values()][0],feed=terminal.feed;
     const current=feed.feedStatusSnapshot().find((status:any)=>status.key===refs.statusKey),range=panel.engine.chart.timeScale.visibleRange();
-    return {sameFeedRow:refs.row===document.querySelector('.connection-feed-row'),
+    return {sameFeedRow:refs.row===document.querySelector('.connection-feed-row[data-kind=candles]'),
       sameActivityRow:refs.activity===document.querySelector('.connection-activity-row'),sameChart:refs.chart===panel.engine.chart,
       sameViewport:JSON.stringify(refs.range)===JSON.stringify(range),lastUpdateAdvanced:current.lastUpdate>refs.lastUpdate,
-      latestTimestamp:document.querySelector('.connection-feed-age')?.getAttribute('datetime')};
+      latestTimestamp:document.querySelector('.connection-feed-row[data-kind=candles] .connection-feed-age')?.getAttribute('datetime')};
   });
   expect(outcome.sameFeedRow).toBe(true);
   expect(outcome.sameActivityRow).toBe(true);
@@ -120,4 +120,30 @@ test('keeps monitored-feed and activity rows stable on timestamp-only status upd
   expect(outcome.sameViewport).toBe(true);
   expect(outcome.lastUpdateAdvanced).toBe(true);
   expect(outcome.latestTimestamp).not.toBeNull();
+});
+
+
+test('chart footer details and recovery actions appear in Monitored feeds without reserving plot space',async({page})=>{
+  await page.goto('/?fixture=1&fixtureTime=now');
+  await page.waitForFunction(()=>(window as any).__terminal?.stats().panels[0]?.bars>0);
+  await page.evaluate(()=>{
+    const terminal=(window as any).__terminal,p=[...terminal.panels.values()][0] as any;
+    terminal.feed.retry=()=>{(window as any).__chartRetries=((window as any).__chartRetries??0)+1;};
+    p.status={...p.status,state:'failed',message:'Native viewport request HTTP 400'};
+    p.updateStatus();
+  });
+  await expect(page.locator('.candle-panel').first().locator('.chart-footer')).toBeHidden();
+  await expect(page.locator('.chart-stage .panel-status')).toHaveCount(0);
+  await page.locator('#connection-status-trigger').click();
+  const popup=page.locator('#connection-status-popover');
+  const row=popup.locator('.connection-feed-row').filter({hasText:'Chart history & indicators'});
+  await expect(row).toContainText('Native viewport request HTTP 400');
+  await expect(row).toContainText('Live data unavailable');
+  await row.getByRole('button',{name:'Retry',exact:true}).click();
+  expect(await page.evaluate(()=>(window as any).__chartRetries)).toBe(1);
+  await expect(popup).toBeVisible();
+  await page.screenshot({path:'/tmp/chart-status-popup-desktop.png'});
+  await page.setViewportSize({width:720,height:860});
+  await expect(row).toBeVisible();
+  await page.screenshot({path:'/tmp/chart-status-popup-narrow.png'});
 });

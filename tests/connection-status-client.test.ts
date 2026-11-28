@@ -83,3 +83,15 @@ it('historical native imports and warm presentation cannot freshen a live connec
  worker.emit({type:'patch',key,ids:[id],candles:[],nativeVersion:{stream:1}});expect(feed.feedStatusSnapshot()[0].lastUpdate).toBeGreaterThan(1000);
  release();feed.dispose();
 });
+
+it('chart notices share monitored status, keep recovery actions and clear on disposal',()=>{
+  vi.stubGlobal('Worker',WorkerMock);
+  const feed=new FeedClient(),retry=vi.fn();
+  feed.reportChartStatus('chart-one','binance:perpetual · 1m','History incomplete · HTTP 400','failed',1000,[{label:'Retry',run:retry}]);
+  const status=feed.feedStatusSnapshot().find(row=>row.kind==='chart')!;
+  expect(status).toMatchObject({state:'failed',message:'History incomplete · HTTP 400',actions:[{id:'0',label:'Retry'}]});
+  feed.runStatusAction(status.key,'0');expect(retry).toHaveBeenCalledTimes(1);
+  feed.clearChartStatus('chart-one');expect(feed.feedStatusSnapshot()).toEqual([]);
+  feed.runStatusAction(status.key,'0');expect(retry).toHaveBeenCalledTimes(1);
+  feed.dispose();
+});

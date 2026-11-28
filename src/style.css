@@ -1082,3 +1082,5 @@ dialog.hl-confirm{width:min(380px,calc(100vw - 20px));max-height:80vh;overflow:a
 .positioning-measure-close { position:absolute; top:4px; right:4px; width:18px; height:18px; padding:0; border:1px solid transparent; background:transparent; color:var(--muted); font:14px/16px ui-monospace,monospace; cursor:pointer; }
 .positioning-measure-close:hover { color:var(--text); background:var(--control); }
 .positioning-measure-close:focus-visible { outline:1px solid var(--accent); }
+
+.connection-feed-message{white-space:pre-line}.connection-feed-actions{display:flex;gap:4px;flex-wrap:wrap}.connection-feed-actions:empty{display:none}

@@ -28,7 +28,7 @@ function timeText(at: number, zone: string) {
 
 interface FeedRowView {
   row: HTMLElement; label: HTMLElement; source: HTMLElement; mode: HTMLElement;
-  state: HTMLElement; age: HTMLTimeElement; message: HTMLElement;
+  state: HTMLElement; age: HTMLTimeElement; message: HTMLElement; actions:HTMLElement;
 }
 interface ActivityRowView { row: HTMLElement; time: HTMLTimeElement; heading: HTMLElement; detail: HTMLElement }
 
@@ -205,12 +205,14 @@ export class ConnectionStatusController {
     const state = el<HTMLElement>('span', 'connection-feed-state');
     const age = el<HTMLTimeElement>('time', 'connection-feed-age');
     const message = el<HTMLElement>('span', 'connection-feed-message');
-    detail.append(state, age, message);
+    const actions=el<HTMLDivElement>('div','connection-feed-actions');
+    detail.append(state, age, message,actions);
     row.append(identity, detail);
-    return {row,label,source,mode,state,age,message};
+    return {row,label,source,mode,state,age,message,actions};
   }
 
   private updateFeedRow(view:FeedRowView,status:MonitoredFeedStatus,now=Date.now()){
+    if(view.row.dataset.kind!==status.kind)view.row.dataset.kind=status.kind;
     if(view.row.dataset.state!==status.state)view.row.dataset.state=status.state;
     if(view.label.textContent!==status.label)view.label.textContent=status.label;
     if(view.source.textContent!==status.source)view.source.textContent=status.source;
@@ -223,6 +225,14 @@ export class ConnectionStatusController {
     const iso=status.lastUpdate>0?new Date(status.lastUpdate).toISOString():'';
     if(iso){if(view.age.dateTime!==iso)view.age.dateTime=iso;}else view.age.removeAttribute('datetime');
     const age=ageText(status.lastUpdate,now);if(view.age.textContent!==age)view.age.textContent=age;
+    const actionKey=JSON.stringify(status.actions??[]);
+    if(view.actions.dataset.actions!==actionKey){
+      view.actions.dataset.actions=actionKey;
+      view.actions.replaceChildren(...(status.actions??[]).map(action=>{
+        const button=el<HTMLButtonElement>('button');button.type='button';button.textContent=action.label;
+        button.addEventListener('click',()=>this.feed.runStatusAction(status.key,action.id));return button;
+      }));
+    }
     const message=status.message||'The source has not supplied a status message.';
     if(view.message.textContent!==message)view.message.textContent=message;
   }

@@ -160,6 +160,16 @@ export class FeedClient {
       }
     };
   }
+  private chartStatusActions=new Map<string,Map<string,()=>void>>();
+  reportChartStatus(id:string,source:string,message:string,state:string,lastUpdate:number,actions:Array<{label:string;run:()=>void}>=[]){
+    const key=`chart:${id}`;
+    if(!message){this.clearChartStatus(id);return;}
+    this.chartStatusActions.set(key,new Map(actions.map((action,index)=>[String(index),action.run])));
+    this.setObservedFeed({key,kind:'chart',source,label:'Chart history & indicators',mode:this.feedMode('candles',source),message,state,lastUpdate,observed:true,
+      actions:actions.map((action,index)=>({id:String(index),label:action.label}))});
+  }
+  runStatusAction(key:string,id:string){this.chartStatusActions.get(key)?.get(id)?.();}
+  clearChartStatus(id:string){const key=`chart:${id}`;this.chartStatusActions.delete(key);this.removeObservedFeed(key);}
   feedStatusSnapshot(){return [...this.observedFeedStatuses.values()].map(status=>({...status}));}
   subscribeFeedStatuses(listener:(statuses:readonly MonitoredFeedStatus[])=>void){this.observedFeedStatusListeners.add(listener);listener(this.feedStatusSnapshot());return()=>{this.observedFeedStatusListeners.delete(listener);};}
   private feedMode(kind:MonitoredFeedStatus['kind'],source=''):MonitoredFeedMode{
@@ -175,7 +185,7 @@ export class FeedClient {
     const previous=this.observedFeedStatuses.get(status.key);
     this.observedFeedStatuses.set(status.key,status);
     const contentUnchanged=previous&&previous.kind===status.kind&&previous.source===status.source&&previous.label===status.label&&previous.mode===status.mode
-      &&previous.state===status.state&&previous.message===status.message&&previous.observed===status.observed;
+      &&JSON.stringify(previous.actions)===JSON.stringify(status.actions)&&previous.state===status.state&&previous.message===status.message&&previous.observed===status.observed;
     const lastNotified=this.observedFeedNotifiedAt.get(status.key)??previous?.lastUpdate??0;
     if(previous&&contentUnchanged&&status.lastUpdate-lastNotified<1000)return;
     this.observedFeedNotifiedAt.set(status.key,status.lastUpdate);
@@ -295,7 +305,7 @@ export class FeedClient {
   updateTradeBubbles(id:string,request:import('./trade-bubbles-service').TradeBubbleRequest){const token=this.currentTradeBubbles.get(id),listener=token&&this.tradeBubbleListeners.get(token);if(token&&listener){listener.revision++;this.send({type:'trade-bubbles-update',id:token,configRevision:listener.revision,request});}}
   retryTradeBubbles(){this.send({type:'trade-bubbles-retry',id:'trade-bubbles-retry'});}
   retryFootprint(id?:string){const token=id?this.currentFootprint.get(id):undefined;if(id&&!token)return;this.send({type:'footprint-retry',...(token?{id:token}:{})});}
-  dispose(){this.cvdHistoryDisposed=true;for(const r of this.cvdHistoryReads.values())r.cancel();this.cvdHistoryReads.clear();for(const r of this.effortClaims.values()){clearTimeout(r.timer);r.resolve(false);}this.effortClaims.clear();for(const r of this.effortExports.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.effortExports.clear();this.effortListeners.clear();for(const r of this.watchRequests.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.watchRequests.clear();this.watchListeners.clear();this.worker.onmessage=null;this.mapListeners.clear();this.liquidationListeners.clear();this.liquidationTokens.clear();this.tickerListeners.clear();this.currentTicker.clear();this.tickerStatusMeta.clear();this.tradeBubbleListeners.clear();this.currentTradeBubbles.clear();this.comparisonListeners.clear();this.currentComparison.clear();this.comparisonStatusMeta.clear();this.listeners.clear();this.current.clear();this.observedFeedStatuses.clear();this.observedFeedNotifiedAt.clear();this.observedFeedStatusListeners.clear();this.depthListeners.clear();this.currentDepth.clear();this.footprintListeners.clear();this.currentFootprint.clear();this.heatmapListeners.clear();this.currentHeatmap.clear();this.orderWallListeners.clear();this.currentOrderWalls.clear();this.netPositioningListeners.clear();this.currentNetPositioning.clear();this.depthMatrixListeners.clear();this.currentDepthMatrix.clear();this.cvdListeners.clear();this.currentCvd.clear();this.cvdStatusMeta.clear();this.tpoListeners.clear();this.currentTpo.clear();this.worker.terminate();}
+  dispose(){this.cvdHistoryDisposed=true;for(const r of this.cvdHistoryReads.values())r.cancel();this.cvdHistoryReads.clear();for(const r of this.effortClaims.values()){clearTimeout(r.timer);r.resolve(false);}this.effortClaims.clear();for(const r of this.effortExports.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.effortExports.clear();this.effortListeners.clear();for(const r of this.watchRequests.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.watchRequests.clear();this.watchListeners.clear();this.worker.onmessage=null;this.mapListeners.clear();this.liquidationListeners.clear();this.liquidationTokens.clear();this.tickerListeners.clear();this.currentTicker.clear();this.tickerStatusMeta.clear();this.tradeBubbleListeners.clear();this.currentTradeBubbles.clear();this.comparisonListeners.clear();this.currentComparison.clear();this.comparisonStatusMeta.clear();this.listeners.clear();this.current.clear();this.chartStatusActions.clear();this.observedFeedStatuses.clear();this.observedFeedNotifiedAt.clear();this.observedFeedStatusListeners.clear();this.depthListeners.clear();this.currentDepth.clear();this.footprintListeners.clear();this.currentFootprint.clear();this.heatmapListeners.clear();this.currentHeatmap.clear();this.orderWallListeners.clear();this.currentOrderWalls.clear();this.netPositioningListeners.clear();this.currentNetPositioning.clear();this.depthMatrixListeners.clear();this.currentDepthMatrix.clear();this.cvdListeners.clear();this.currentCvd.clear();this.cvdStatusMeta.clear();this.tpoListeners.clear();this.currentTpo.clear();this.worker.terminate();}
 }
 
 function isFootprintBatch(event:Event):event is Extract<Event,{type:'footprint-status'|'footprint-snapshot'|'footprint-patch'}> {

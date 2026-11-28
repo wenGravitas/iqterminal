@@ -1,7 +1,7 @@
-export type MonitoredFeedKind = 'candles' | 'cvd' | 'ticker' | 'comparison';
+export type MonitoredFeedKind = 'chart' | 'candles' | 'cvd' | 'ticker' | 'comparison';
 export type MonitoredFeedMode = 'direct' | 'recorded' | 'fixture';
 
-/** A worker-reported status tied to an active client subscription. */
+/** A feed or chart status tied to an active client owner. */
 export interface MonitoredFeedStatus {
   key: string;
   kind: MonitoredFeedKind;
@@ -12,4 +12,5 @@ export interface MonitoredFeedStatus {
   message: string;
   lastUpdate: number;
   observed: boolean;
+  actions?: {id:string;label:string}[];
 }
