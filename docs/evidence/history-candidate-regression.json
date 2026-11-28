@@ -1,0 +1,542 @@
+{
+  "kind": "history-candidate-regression-v1",
+  "environment": {
+    "node": "v22.19.0",
+    "pnpm": "10.18.1",
+    "machine": "aarch64"
+  },
+  "provenance": {
+    "frontend": {
+      "path": "/home/daz/workarea/iqterminal",
+      "commit": "7f6c37dfa9619be716b293a653b6142345ae8b20",
+      "branch": "dev"
+    },
+    "backend": {
+      "path": "/home/daz/workarea/iqterminal-server",
+      "commit": "bd310ed1caefe3717fbcc464affa5baceae6f540",
+      "branch": "feature/tiered-history-storage"
+    },
+    "experimentalFlagsInherited": {}
+  },
+  "frontend": {
+    "unit": {
+      "filesPassed": 183,
+      "filesSkipped": 4,
+      "passed": 1767,
+      "expectedFailure": 1,
+      "skipped": 4
+    },
+    "checks": [
+      {
+        "check": "typecheck",
+        "exitCode": 0,
+        "seconds": 21.62,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/frontend-typecheck.log"
+      },
+      {
+        "check": "build-default",
+        "exitCode": 0,
+        "seconds": 10.01,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/frontend-build-default.log"
+      },
+      {
+        "check": "build-selected",
+        "exitCode": 0,
+        "seconds": 6.19,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/frontend-build-selected.log"
+      },
+      {
+        "check": "script-tests",
+        "exitCode": 1,
+        "seconds": 34.05,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/frontend-script-tests.log"
+      },
+      {
+        "check": "python-pi-durable-replay-probe.test.py",
+        "exitCode": 0,
+        "seconds": 0.46,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/frontend-python-pi-durable-replay-probe.test.py.log"
+      },
+      {
+        "check": "python-lighter-signing-worker.test.py",
+        "exitCode": 0,
+        "seconds": 0.46,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/frontend-python-lighter-signing-worker.test.py.log"
+      },
+      {
+        "check": "python-watch-warm-foreground.test.py",
+        "exitCode": 0,
+        "seconds": 0.69,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/frontend-python-watch-warm-foreground.test.py.log"
+      }
+    ],
+    "finalScriptRecheck": {
+      "tests": 109,
+      "pass": 109,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "originalScriptFailures": [
+      "dev footprint proxy latency",
+      "dev reserved-current proxy latency",
+      "stale aggregation type checksum guard"
+    ],
+    "testOnlyCorrections": [
+      "disable repository watching only in HTTP proxy fixtures; original timing assertions retained",
+      "normalize only reviewed aggregation type widening before original financial core hash"
+    ]
+  },
+  "backend": {
+    "command": "NODE_ENV=test pnpm exec tsx --test --test-concurrency=2 tests/*.test.ts",
+    "unit": {
+      "tests": 1891,
+      "pass": 1884,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 7,
+      "todo": 0
+    },
+    "initialUnit": {
+      "tests": 1869,
+      "pass": 1682,
+      "fail": 180,
+      "cancelled": 0,
+      "skipped": 7,
+      "todo": 0
+    },
+    "testModeRecheck": {
+      "tests": 185,
+      "pass": 185,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "testOnlyCorrection": "Explicit NODE_ENV=test in standard backend test entrypoints; production guards and fixtures unchanged",
+    "checks": [
+      {
+        "check": "typecheck",
+        "exitCode": 0,
+        "seconds": 40.56,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/backend-typecheck.log"
+      },
+      {
+        "check": "build",
+        "exitCode": 0,
+        "seconds": 13.72,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/backend-build.log"
+      },
+      {
+        "check": "python-stage-wall-derived-clone.test.py",
+        "exitCode": 0,
+        "seconds": 0.57,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/backend-python-stage-wall-derived-clone.test.py.log"
+      },
+      {
+        "check": "python-storage-cold-restic-lab.test.py",
+        "exitCode": 0,
+        "seconds": 0.45,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/backend-python-storage-cold-restic-lab.test.py.log"
+      },
+      {
+        "check": "python-storage-observe.test.py",
+        "exitCode": 0,
+        "seconds": 1.22,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/backend-python-storage-observe.test.py.log"
+      },
+      {
+        "check": "python-storage-real-sql-runner.test.py",
+        "exitCode": 0,
+        "seconds": 0.52,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/backend-python-storage-real-sql-runner.test.py.log"
+      },
+      {
+        "check": "python-storage-runtime-probe.test.py",
+        "exitCode": 0,
+        "seconds": 0.71,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/backend-python-storage-runtime-probe.test.py.log"
+      },
+      {
+        "check": "python-storage-s3-runner.test.py",
+        "exitCode": 0,
+        "seconds": 0.88,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/backend-python-storage-s3-runner.test.py.log"
+      },
+      {
+        "check": "python-storage-sample-evidence.test.py",
+        "exitCode": 0,
+        "seconds": 1.98,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/backend-python-storage-sample-evidence.test.py.log"
+      },
+      {
+        "check": "python-storage-sample-tick.test.py",
+        "exitCode": 0,
+        "seconds": 4.8,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/backend-python-storage-sample-tick.test.py.log"
+      },
+      {
+        "check": "python-storage-sample.test.py",
+        "exitCode": 0,
+        "seconds": 3.5,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/backend-python-storage-sample.test.py.log"
+      },
+      {
+        "check": "python-wall-derived-snapshot-drill.test.py",
+        "exitCode": 0,
+        "seconds": 0.37,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/backend-python-wall-derived-snapshot-drill.test.py.log"
+      },
+      {
+        "check": "python-watch-warm-cleanup.test.py",
+        "exitCode": 0,
+        "seconds": 0.53,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/backend-python-watch-warm-cleanup.test.py.log"
+      },
+      {
+        "check": "python-watch-warm-cli.test.py",
+        "exitCode": 0,
+        "seconds": 0.5,
+        "log": "/tmp/iq-candidate-acceptance.lqhTlV/backend-python-watch-warm-cli.test.py.log"
+      }
+    ],
+    "testEntrypointCommit": "b94fca9b0226a03c5d802823879a40ddfd85665b"
+  },
+  "browser": [
+    {
+      "suite": "cvd",
+      "stats": {
+        "startTime": "2026-11-28T10:55:35.687Z",
+        "duration": 63461.530999999995,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "transport": "explicit controlled fixture"
+    },
+    {
+      "suite": "native-candles",
+      "stats": {
+        "startTime": "2026-11-28T10:56:43.555Z",
+        "duration": 31430.005,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "transport": "explicit controlled fixture"
+    },
+    {
+      "suite": "walls",
+      "stats": {
+        "startTime": "2026-11-28T10:57:19.990Z",
+        "duration": 43564.93,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "transport": "explicit controlled fixture"
+    },
+    {
+      "suite": "positioning",
+      "stats": {
+        "startTime": "2026-11-28T10:58:09.160Z",
+        "duration": 36030.313,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "transport": "explicit controlled fixture"
+    }
+  ],
+  "actualData": {
+    "nativeKlineCapturedReplay": "passed; offline actual capture, no provider acceptance",
+    "recordedMinuteSmoke": {
+      "passed": false,
+      "error": "Error: Read-only SQL failed: Received exception from server (version 25.8.16):\nCode: 202. DB::Exception: Received from localhost:9000. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES)\n(query: SELECT name,type FROM system.columns WHERE database='iqterminal' AND table='executions' ORDER BY position LIMIT 129 SETTINGS max_threads=1,max_execution_time=5,max_memory_usage=33554432 FORMAT JSONEachRow)\n",
+      "from": 1795859700000,
+      "to": 1795859760000,
+      "localArchiveRemoved": true,
+      "ssh": {
+        "exited": true,
+        "exitCode": 0,
+        "signal": null
+      }
+    },
+    "postProbeHealth": [
+      {
+        "market": "perpetual",
+        "collector": "live",
+        "watermark": {
+          "id": 3555546461,
+          "timeMs": 1795863563443
+        },
+        "diskPaused": false,
+        "depthState": "live"
+      },
+      {
+        "market": "spot",
+        "collector": "live",
+        "watermark": {
+          "id": 4135195964,
+          "timeMs": 1795863562698
+        },
+        "diskPaused": false,
+        "depthState": "live"
+      }
+    ]
+  },
+  "candidate": {
+    "started": false,
+    "readyForActualArchiveTest": false,
+    "reason": "Operator confirmed no configured private HTTPS object/witness archive or inspected snapshot exists",
+    "incumbentRoutes": [
+      {
+        "path": "/v2/cvd",
+        "status": 400
+      },
+      {
+        "path": "/v2/history/native-candles",
+        "status": 404
+      }
+    ],
+    "liveRetentionChanged": false,
+    "collectorsRestarted": false,
+    "paidProvisioning": false
+  },
+  "rawLogDirectory": "/tmp/iq-candidate-acceptance.lqhTlV",
+  "rawFiles": {
+    "actual-recorded-minute.json": {
+      "bytes": 5801,
+      "sha256": "0f9b96447dc1b3e54db1ff08866bdae39dc9843a80bb10732a77fc9d05c4b098"
+    },
+    "actual-recorded-minute.log": {
+      "bytes": 193,
+      "sha256": "3301c4de21ea267294e022e6360c3a6211d75a387fc0931bed940dcf1d44514c"
+    },
+    "backend-build.log": {
+      "bytes": 21713,
+      "sha256": "6ab589cd12b26193cc92ad1bbe7ab7e87aecc5702fd68895e98381822a84558c"
+    },
+    "backend-checks.json": {
+      "bytes": 2657,
+      "sha256": "f8a5ffc668969d0e0fee065f7fcc46690da14ae149f0da1d940099d492673f03"
+    },
+    "backend-confirmation.json": {
+      "bytes": 15,
+      "sha256": "47b8b6b49d4695fe6e036bd916538aff4f46773e212ca0d429db80f3963e2cfe"
+    },
+    "backend-job-checkpoint-recheck.log": {
+      "bytes": 3830,
+      "sha256": "113a1d1c3281fe9573688f90347aac5f00685bc19fd81d4e587e63d2c5c64787"
+    },
+    "backend-python-stage-wall-derived-clone.test.py.log": {
+      "bytes": 109,
+      "sha256": "bc91528583971519aabce74aee528d488c26b3e656d1828a3523fe1d7817d1dc"
+    },
+    "backend-python-storage-cold-restic-lab.test.py.log": {
+      "bytes": 105,
+      "sha256": "880d419a972862dceff1145b03b458e7b9eb2d904723af5cb30bed03157407ce"
+    },
+    "backend-python-storage-observe.test.py.log": {
+      "bytes": 120,
+      "sha256": "27bfbbd4c43fe5c479bec0708927776b46b9d203199e648b0a7e22004ef77121"
+    },
+    "backend-python-storage-real-sql-runner.test.py.log": {
+      "bytes": 103,
+      "sha256": "bd214ec29d35ea46a7c4c920b50e32b53163972f5fe4163ff21650eaa3dd6058"
+    },
+    "backend-python-storage-runtime-probe.test.py.log": {
+      "bytes": 105,
+      "sha256": "9ec9e3c52e7908b746c625587944c7e1eb71f90fc834fbb4527d510523684dd2"
+    },
+    "backend-python-storage-s3-runner.test.py.log": {
+      "bytes": 3118,
+      "sha256": "04c6181e2d4f49d5ed108cb451db2a0516f2f7e79007e8336e04a231deea9525"
+    },
+    "backend-python-storage-sample-evidence.test.py.log": {
+      "bytes": 104,
+      "sha256": "51c09715757066b26258bc6411225155bca64aea012009f1e35716b7c3cc0210"
+    },
+    "backend-python-storage-sample-tick.test.py.log": {
+      "bytes": 125,
+      "sha256": "29c268982659b80fcb3e08061b22fcb684e7ed91c7f14bf0ca0ea627a9f96584"
+    },
+    "backend-python-storage-sample.test.py.log": {
+      "bytes": 116,
+      "sha256": "e3bfaa93b6e8e59dfa9eca1351074bdacd50ddd081d96b5041aa3e0fa7658f32"
+    },
+    "backend-python-wall-derived-snapshot-drill.test.py.log": {
+      "bytes": 1278,
+      "sha256": "fa8e0ea0e913127560e4e61be0afa2f152de4bd723b10a651dbd87795f5f8539"
+    },
+    "backend-python-watch-warm-cleanup.test.py.log": {
+      "bytes": 118,
+      "sha256": "4e70362759f64997e27aef34d83428f6d3a54839fa308384312da38a5e4a0aa0"
+    },
+    "backend-python-watch-warm-cli.test.py.log": {
+      "bytes": 101,
+      "sha256": "5769d5abf8bc0ae87bb5b0b99ad05ecbb887b56238584f4b0c5779d623b7e45f"
+    },
+    "backend-test-mode-recheck.log": {
+      "bytes": 48060,
+      "sha256": "21596a363f5dd8d3253436660a211f176fa353ff07957db975bd374d3d4941cb"
+    },
+    "backend-tests-final.log": {
+      "bytes": 534334,
+      "sha256": "57a929ddaa96f2a3c10e686bca165784db369defd00e6112e550efeb93351d3d"
+    },
+    "backend-tests.log": {
+      "bytes": 673878,
+      "sha256": "1872fbc49e1aba43a9e23cee4c6e7cba45babe441f0298fe4fe6308f4db6dd27"
+    },
+    "backend-typecheck.log": {
+      "bytes": 90,
+      "sha256": "708763a5bc8a7b6a66ec3e70dd0c50778c56fa4087ecbbe2af4106285c909df4"
+    },
+    "browser-checks.json": {
+      "bytes": 512,
+      "sha256": "200991e7056ad113f30e20125471873f3662ed891a4a1858e7c2f7c33a6d9f97"
+    },
+    "browser-cvd.json": {
+      "bytes": 14838,
+      "sha256": "ffb3235222c1862cebe7df630c12088834402769bc71183ea0ec569590c55057"
+    },
+    "browser-cvd.log": {
+      "bytes": 1425,
+      "sha256": "39cbd0e98569f93c367ad505956e4c53d8b20c6a705f9f1b5e1b33e2a2a6e98b"
+    },
+    "browser-native-candles.json": {
+      "bytes": 6945,
+      "sha256": "b04632a5f451d88976571c8023c2f7399fbb230551c0020b28eeb70e106a8d70"
+    },
+    "browser-native-candles.log": {
+      "bytes": 1073,
+      "sha256": "9ac39f0573867a30b4fa8896667d3cb0b44004b48e78624dfdc47954f7a4c853"
+    },
+    "browser-positioning.json": {
+      "bytes": 4725,
+      "sha256": "f968b2f0f81791c2799de1e012cb17e7ba2dbf35795bca5263bc478f654c9451"
+    },
+    "browser-positioning.log": {
+      "bytes": 748,
+      "sha256": "2c6e498eafae8efc870741f1c30e75d8c059a2946dad65104850f0ce159ad5ac"
+    },
+    "browser-walls.json": {
+      "bytes": 35860,
+      "sha256": "9527b6139ffcf0e4f71b2ece3549a25141468ea5fc784243c9b7068f33732985"
+    },
+    "browser-walls.log": {
+      "bytes": 26319,
+      "sha256": "dce604cb02dc3d880620b51cdc0785f2b3f4164721ec4837c65ff9732080e6bc"
+    },
+    "frontend-build-default.log": {
+      "bytes": 2114,
+      "sha256": "485c4d33b3674c230514cb24f6fc537035091b224bcd5b2ee809d9581c3f47ce"
+    },
+    "frontend-build-selected.log": {
+      "bytes": 2121,
+      "sha256": "5bae975c2afea410cd0282f7aef89abae6d1b441f9744d51fcea8f1d8520647d"
+    },
+    "frontend-checks.json": {
+      "bytes": 1226,
+      "sha256": "67043376accd300160f190452223d2dd6c8f842bd4d6c8cf3df5babd1e64d3a0"
+    },
+    "frontend-compatibility-recheck.log": {
+      "bytes": 632,
+      "sha256": "93b549fca74f3c5528d594bcc2380916dffcee2cfb4ee6796f62947fd9363d0f"
+    },
+    "frontend-python-lighter-signing-worker.test.py.log": {
+      "bytes": 101,
+      "sha256": "edaea244b13bb4717b5b983ad9b89832b6e95a6eedf4961aefae3124c6d3892e"
+    },
+    "frontend-python-pi-durable-replay-probe.test.py.log": {
+      "bytes": 102,
+      "sha256": "7ea8432a75507dbc1049c1ef04407e18db263c8c75e5e8386c4ca41e27893000"
+    },
+    "frontend-python-watch-warm-foreground.test.py.log": {
+      "bytes": 110,
+      "sha256": "7ffa5051a25ab5efa4da8f36087a2e0b175c29130bb8afdd7d82f0a7c55c0377"
+    },
+    "frontend-script-final.log": {
+      "bytes": 26811,
+      "sha256": "83a3c672bb97c1c9fa9e9f170e651efd2300a2521e539769d0a42f0ec9cead48"
+    },
+    "frontend-script-recheck.log": {
+      "bytes": 28008,
+      "sha256": "d8c25508f5ed9bf191cdaf653c6e97fd1b36290993e67daa1941de7cc2514cf0"
+    },
+    "frontend-script-tests.log": {
+      "bytes": 29012,
+      "sha256": "88e22ff4cfacce43ea8f7be97e0cf8b6b840fd9713009bb089b513ce15af5b71"
+    },
+    "frontend-tests.log": {
+      "bytes": 446,
+      "sha256": "58f160a47f061fde4ade4c4ce3aef76ef2421ae9c359e962a3b934444749fb3b"
+    },
+    "frontend-typecheck.log": {
+      "bytes": 77,
+      "sha256": "d61b91fb92d70a210db3fd65e574033d0a700e3f5e2452a5c1a9dcb6995b1512"
+    },
+    "incumbent-candidate-route-probes.json": {
+      "bytes": 121,
+      "sha256": "aecfa766ce451965afbb4d12aa8ad10a3694f09e0f0919476921071ab40ba598"
+    },
+    "native-kline-replay.json": {
+      "bytes": 2230,
+      "sha256": "30ea1940bc038f1b5da958a4eac778b7127e1ba1570bfe23aef22e557c58dd5e"
+    },
+    "native-kline-replay.log": {
+      "bytes": 77,
+      "sha256": "c7ca1c24f4a20a7cbd06fb43aa76e568984e78f8494dbda6debafcf51596b3e0"
+    },
+    "provenance.json": {
+      "bytes": 359,
+      "sha256": "7ecfe78c06bb7fbb80861dd06ed40540a553189ea2b8ab809df7099938951326"
+    },
+    "proxy-capacity-final.json": {
+      "bytes": 16371,
+      "sha256": "ceb909aebb29556264d45523817698a1d4bfcfd0236889c3fdec25bfbef8f191"
+    },
+    "proxy-capacity-recheck.json": {
+      "bytes": 8715,
+      "sha256": "4c396d7d22a5f66cf4ad44b948a6ed3c4a61b37de8b43c7eb5ea6243ed72bdc2"
+    },
+    "proxy-cold-diagnostic.log": {
+      "bytes": 2051,
+      "sha256": "a4e009afad09d2463ca40b8f9a1ccbae009e0b75a03f440066526aa7165e0908"
+    },
+    "proxy-diagnostic-receipt.json": {
+      "bytes": 7656,
+      "sha256": "3ef1879c46efc05eb9c9917e67ffc8e53429a630201a755b4b05b91357b8ac8b"
+    },
+    "proxy-no-scan-diagnostic.log": {
+      "bytes": 1069,
+      "sha256": "a30070d2f3799f6fd34b680e59cecc88c42cc3094af776f9a5ac0b07219a0940"
+    },
+    "proxy-no-watch-diagnostic.log": {
+      "bytes": 3154,
+      "sha256": "0e8b8d3922f1068603432dd6c0427c4ed9f07dcbd6b51749ad793081c446ef61"
+    },
+    "proxy-no-watch-original-gates.log": {
+      "bytes": 992,
+      "sha256": "647b8aeac9f161d23b58eca708ce0d999d3db15cb7dc8996ce81faa172e308fd"
+    },
+    "proxy-timing-diagnostic.log": {
+      "bytes": 3162,
+      "sha256": "037e57b3fd8478d37850e1746ce26064a5c81e058fc62fe1a74bb1cd4752bf09"
+    },
+    "shared-core-sync.log": {
+      "bytes": 307,
+      "sha256": "26798cffa1c6a3d68e8740961f7310f2d8cf9fab21692d543d403e3bf466a5c8"
+    },
+    "staging-post-probe-health.json": {
+      "bytes": 379,
+      "sha256": "fe1070154ce7b67300feed4230a725c3dcf789afae7014dfa03376434b89fe60"
+    }
+  }
+}

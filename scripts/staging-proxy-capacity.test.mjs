@@ -33,7 +33,8 @@ for(const mode of ['dev','production-preview'])test(`${mode}: reserved current s
   const loaded=await loadConfigFromFile({command:'serve',mode:'staging'});assert.ok(loaded?.config.server?.proxy);
   const config=loaded.config;proxy=config.server.proxy;const budget=config.plugins.find(plugin=>plugin.name==='staging-loopback-only').api.proxyBudget;
   for(const [route,option] of Object.entries(proxy))if(typeof option==='object')option.target=`http://127.0.0.1:${(route==='/market-data/v1/liquidations'?secondHistory:String(option.target).endsWith(':18781')?current:history).address().port}`;
-  if(mode==='dev'){server=await createServer({...config,configFile:false,mode:'staging',server:{...config.server,host:'127.0.0.1',port:0,strictPort:true,proxy}});await server.listen();}
+  // HTTP-only fixture: repository watcher startup must not enter proxy-lane timings.
+  if(mode==='dev'){server=await createServer({...config,configFile:false,mode:'staging',server:{...config.server,watch:null,host:'127.0.0.1',port:0,strictPort:true,proxy}});await server.listen();}
   else server=await preview({...config,configFile:false,mode:'staging',preview:{host:'127.0.0.1',port:0,strictPort:true,proxy}});
   const base=`http://127.0.0.1:${server.httpServer.address().port}`,samples=[];
   for(let run=1;run<=5;run++){

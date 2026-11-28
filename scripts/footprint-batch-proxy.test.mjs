@@ -21,7 +21,8 @@ for(const mode of ['dev','production-preview'])test(`${mode}: progressive POST b
   const loaded=await loadConfigFromFile({command:'serve',mode:'staging'}),config=loaded.config;proxy=config.server.proxy;
   const budget=config.plugins.find(plugin=>plugin.name==='staging-loopback-only').api.proxyBudget;
   for(const option of Object.values(proxy))if(typeof option==='object')option.target=`http://127.0.0.1:${(String(option.target).endsWith(':18781')?current:history).address().port}`;
-  if(mode==='dev'){server=await createServer({...config,configFile:false,mode:'staging',server:{...config.server,port:0,strictPort:true,proxy}});await server.listen();}
+  // HTTP-only fixture: repository watcher startup must not enter proxy-lane timings.
+  if(mode==='dev'){server=await createServer({...config,configFile:false,mode:'staging',server:{...config.server,watch:null,port:0,strictPort:true,proxy}});await server.listen();}
   else server=await preview({...config,configFile:false,mode:'staging',preview:{host:'127.0.0.1',port:0,strictPort:true,proxy}});
   const base=`http://127.0.0.1:${server.httpServer.address().port}`,body={version:1,requests:Array.from({length:6},(_,index)=>({from:1800000000000+index*14400000,to:1800000000000+(index+1)*14400000,interval:'1h',rowPrice:25,market:'perpetual',known:'',retry:index===0}))};
   const post=()=>{const abort=new AbortController();aborts.push(abort);return {abort,promise:fetch(base+'/market-data/v2/history/footprints-batch',{method:'POST',signal:abort.signal,headers:{'content-type':'application/json'},body:JSON.stringify(body)})};};
