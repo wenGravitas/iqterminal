@@ -4,6 +4,16 @@ class MapCapacity extends Error {}
 const MAX_PAYLOAD_BYTES=8*1024*1024;
 const MAX_RESIDENT_BYTES=16*1024*1024; // one v2 window; total cache stays 32MiB
 const MAX_CELLS=100000;
+// Alignment can expand a seven-day viewport by one tile. Page time ranges
+// within the API limit while retaining both edge tiles.
+function boundedSegments(segments:Array<{from:number;to:number;after:number}>,resolution:number){
+    const span=Math.floor(7*86400000/resolution)*resolution;
+    return segments.flatMap(segment=>{
+        const parts:Array<typeof segment>=[];
+        for(let from=segment.from;from<segment.to;from+=span)parts.push({...segment,from,to:Math.min(segment.to,from+span)});
+        return parts;
+    });
+}
 // V2 keeps mandatory boundaries. Estimate resident objects, not repeated JSON
 // property names; cell strings are explicitly interned below. Conservative V8
 // object/number/array allowance, with column metadata counted in full.
@@ -131,6 +141,7 @@ export class LiquidationMapService {
                 if (to > cached.payload.to) segments.push({from:Math.max(from,cached.payload.to),to,after:0});
                 if (!fresh) segments.push({from:Math.max(from,cached.payload.from),to:Math.min(to,cached.payload.to),after:cached.payload.head});
             }
+            segments=boundedSegments(segments,resolution);
             let head: number | undefined, payload = cached?.payload, reset = false;
             for (let segmentIndex=0; segmentIndex<segments.length; segmentIndex++) {
                 const segment = segments[segmentIndex];
@@ -146,7 +157,7 @@ export class LiquidationMapService {
                     if (response.status===409 && !reset) {
                         columns.clear();sizesByColumn.clear();strings.clear();metadata.clear();cellPool.clear();cellBytes=0;stringBytes=0;retainedBytes=0;cellCount=0; head=undefined;reset=true;
                         generation=++this.generation;this.cache.clear();this.sizes.clear();this.cacheBytes=0;
-                        segments=[{from,to,after:0}];segmentIndex=-1;break;
+                        segments=boundedSegments([{from,to,after:0}],resolution);segmentIndex=-1;break;
                     }
                     if (!response.ok) throw Error(`Liquidation Map HTTP ${response.status}`);
                     const bodyStarted=performance.now(), body=await response.arrayBuffer();

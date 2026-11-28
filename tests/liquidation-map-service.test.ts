@@ -70,3 +70,21 @@ test('mandatory retirement boundaries use bounded local price LOD without restar
  const count=widths.length;const warm=await(service as any).read({...request,settings:{...settings,opacity:.2}});expect(warm.priceWidth).toBe(200);expect(widths).toHaveLength(count);expect((service as any).cacheBytes).toBeLessThanOrEqual(32*1024*1024);
  }finally{service.dispose();}
 });
+
+
+test('seven-day lookback stays inside the server range limit after tile alignment',async()=>{
+ const {service,requests,client}=setup();
+ try{
+  const to=at+3599123,lookback=7*86400000;
+  await(service as any).read({...client(to-lookback,to),settings:mapSettings({lookback})});
+  expect(requests.length).toBeGreaterThan(0);
+  expect(Number(requests[0].searchParams.get('from'))).toBeLessThanOrEqual(to-lookback);
+  expect(Number(requests.at(-1)!.searchParams.get('to'))).toBeGreaterThanOrEqual(to);
+  for(const url of requests){
+   const from=Number(url.searchParams.get('from')),end=Number(url.searchParams.get('to')),resolution=Number(url.searchParams.get('resolution'));
+   expect(end-from).toBeLessThanOrEqual(lookback);
+   expect(from%resolution).toBe(0);expect(end%resolution).toBe(0);
+
+  }
+ }finally{service.dispose();}
+});
