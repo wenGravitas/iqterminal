@@ -1005,7 +1005,9 @@ export class CandlePanel implements IContentRenderer {
     this.chart.addEventListener('pointermove',event=>{this.indicatorHoverPointerType=event.pointerType;if(!this.indicatorPointerDown)this.indicatorTooltipBlockedUntilMove=false;},options);
     this.chart.addEventListener('pointerdown',()=>{this.takeNativeHistoryViewControl();this.indicatorPointerDown=true;this.indicatorTooltipBlockedUntilMove=true;this.cancelIndicatorTooltip();},options);
     this.chart.addEventListener('pointerup',()=>{this.indicatorPointerDown=false;},options);
-    this.chart.addEventListener('wheel',()=>{this.takeNativeHistoryViewControl();this.indicatorTooltipBlockedUntilMove=true;this.cancelIndicatorTooltip();},{...options,passive:true});
+    // Run before the engine's capture handler consumes plot-wheel events, so
+    // pending history restoration cannot overwrite the user's new zoom.
+    this.chart.addEventListener('wheel',()=>{this.takeNativeHistoryViewControl();this.indicatorTooltipBlockedUntilMove=true;this.cancelIndicatorTooltip();},{...options,capture:true,passive:true});
     this.chart.addEventListener('pointerleave',()=>{this.indicatorHoverPointerType=undefined;this.positioningRangeHit=null;this.engine?.setPositioningRange(null);this.hoveredBar=null;this.hoveredFootprint=null;this.cancelIndicatorTooltip();},options);
     document.addEventListener('visibilitychange',()=>{if(document.hidden){this.positioningRangeHit=null;this.engine?.setPositioningRange(null);this.cancelIndicatorTooltip();}},{signal:this.abort.signal});
     this.chart.addEventListener('keydown', event => { if (!(event.target as HTMLElement).closest('.active-indicators')) this.keydown(event); }, options);

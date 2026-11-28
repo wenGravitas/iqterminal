@@ -54,3 +54,30 @@ test('default wheel separates time from price, modifiers and saved legacy mode w
   await expect(panel.getByRole('combobox',{name:'Mouse wheel behavior'})).toHaveValue('both-axes');
   expect(errors).toEqual([]);
 });
+
+test('plot wheel takes control from a pending saved history range',async({page})=>{
+  await page.goto('/?fixture=1');
+  await page.waitForFunction(()=>(window as any).__terminal?.stats().panels.every((p:any)=>p.bars===5000));
+  const stage=page.locator('.candle-panel').first().locator('.chart-stage');
+  const box=(await stage.boundingBox())!;
+  const before=await page.evaluate(()=>{
+    const p=[...(window as any).__terminal.panels.values()][0] as any;
+    const view=p.engine.visibleTimeRange();
+    p.pendingHistoryView={from:view.from*1000,to:view.to*1000};
+    return p.engine.chart.timeScale.barSpacing;
+  });
+  await page.mouse.move(box.x+box.width*.35,box.y+box.height*.4);
+  await page.mouse.wheel(0,-100);
+  await expect.poll(()=>page.evaluate(()=>{
+    const p=[...(window as any).__terminal.panels.values()][0] as any;
+    return p.engine.chart.timeScale.barSpacing;
+  })).toBeCloseTo(before*1.1,6);
+  // A resize or late history response must not reapply the old range.
+  const after=await page.evaluate(()=>{
+    const p=[...(window as any).__terminal.panels.values()][0] as any;
+    p.restorePendingNativeHistoryView();
+    return {pending:Boolean(p.pendingHistoryView),spacing:p.engine.chart.timeScale.barSpacing};
+  });
+  expect(after.pending).toBe(false);
+  expect(after.spacing).toBeCloseTo(before*1.1,6);
+});
