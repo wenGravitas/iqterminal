@@ -303,7 +303,10 @@ export class NetPositioningPane implements IPrimitive {
       if(![...this.visibleHostTimes()].some(time=>rows[band.side].get(time)?.available)){
         ctx.textAlign='left';ctx.fillStyle=rc.theme.axisText;ctx.fillText(`${band.side==='longs'?'LONGS':'SHORTS'} · no recorded values in view`,6*d,(band.top+11)*d,Math.max(0,width*d-12*d));continue;
       }
-      const scale=this.visibleScale[band.side],span=Math.max(scale.max-scale.min,1),top=band.top+32,bottom=band.bottom-19;
+      const bandHeight=band.bottom-band.top;
+      const scale=this.visibleScale[band.side],span=Math.max(scale.max-scale.min,1),
+        top=band.top+Math.min(32,Math.max(15,bandHeight*.25)),
+        bottom=band.bottom-Math.min(19,Math.max(2,bandHeight*.12));
       if(bottom<=top)continue;
       const y=(v:number)=>bottom-(v-scale.min)/span*(bottom-top);
       const color=this.colors[band.side][this.venues[0]??'binance'];
@@ -311,7 +314,7 @@ export class NetPositioningPane implements IPrimitive {
       const first=[...rows[band.side].keys()][0];
       ctx.fillText(`${band.side==='longs'?'LONGS':'SHORTS'} · Σ recorded change (${this.displayCurrencyLabel})${first===undefined?'':` · from ${new Date(first).toISOString().slice(11,16)} UTC`}`,6*d,(band.top+11)*d,Math.max(0,width*d-12*d));
       // Each side has its own live visible scale. No additional canvas/context.
-      const ticks=bottom-top>=60?5:3;
+      const ticks=bottom-top>=60?5:bottom-top>=30?3:2;
       for(let tick=0;tick<ticks;tick++){
         const v=scale.min+(scale.max-scale.min)*tick/(ticks-1),py=y(v);
         ctx.globalAlpha=.15;ctx.strokeStyle=rc.theme.axisText;ctx.lineWidth=d;

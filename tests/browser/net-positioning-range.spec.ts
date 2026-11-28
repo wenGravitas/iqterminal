@@ -106,4 +106,18 @@ test('Net Longs and Shorts drag totals clear on release and click ranges pin unt
   await page.screenshot({path:'/tmp/net-positioning-range-pinned.png'});
   await card.getByRole('button',{name:'Close range totals'}).click();await expect(card).toBeHidden();await expect(box).toBeHidden();
   await page.mouse.click(points.a.x,points.a.y);await page.keyboard.press('Escape');await expect(card).toBeHidden();
+  // Match the compact pane from the live report. Both cumulative plots must
+  // retain painted bars after pane resizing, without replacing their data.
+  await page.evaluate(id=>{
+    const p=[...(window as any).__terminal.panels.values()][0],chart=p.engine.chart,view=p.engine.netPositioningPanes.get(id);
+    const panes=chart.panes(),height=panes.reduce((sum:number,pane:any)=>sum+pane.base.mediaHeight,0);
+    const other=panes.reduce((sum:number,_pane:any,index:number)=>index===view.paneIndex?sum:sum+chart.paneWeight(index),0);
+    chart.setPaneWeight(view.paneIndex,116*other/(height-116));
+  },id);
+  await expect.poll(()=>page.evaluate(id=>{
+    const p=[...(window as any).__terminal.panels.values()][0],view=p.engine.netPositioningPanes.get(id);
+    return {height:Math.round(p.engine.chart.panes()[view.paneIndex].base.mediaHeight),sides:[...new Set(view.primitive.geometry.map((g:any)=>g.side))].sort()};
+  },id)).toEqual({height:116,sides:['longs','shorts']});
+  await page.screenshot({path:'/tmp/net-positioning-compact-fixed.png'});
+
 });

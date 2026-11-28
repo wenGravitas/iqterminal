@@ -5420,11 +5420,19 @@ export class CandlePanel implements IContentRenderer {
       return;
     }
 
-    if (!this.visible || !instance.visible) {
+    if (!this.visible) {
       const hadSource = Boolean(this.orderWallsSubscriptionKey || this.releaseOrderWalls);
       this.releaseOrderWalls?.(); this.releaseOrderWalls = undefined;
       if (hadSource) this.orderWallsGeneration++;
       this.orderWallsSubscriptionKey = ''; this.orderWallsSettingsKey = ''; this.orderWallsViewportKey = '';
+      this.orderWallsControls.setStatus(this.orderWallsStatus);
+      return;
+    }
+
+    // Indicator visibility controls painting. Keep the worker's resident ranges
+    // and current cursor while this chart is active, so showing it again does
+    // not replace retained history with a fresh preparation request.
+    if (!instance.visible) {
       this.orderWallsControls.setStatus(this.orderWallsStatus);
       return;
     }
@@ -5454,7 +5462,7 @@ export class CandlePanel implements IContentRenderer {
   private updateOrderWallsViewport(from?: number, to?: number, low?: number, high?: number, height?: number) {
     if(this.pendingHistoryView){from=this.pendingHistoryView.from;to=this.pendingHistoryView.to;}
     const instance = this.nativeIndicator(ORDER_WALLS_ID);
-    if (!instance || this.selection.venue !== 'binance') return;
+    if (!instance?.visible || !this.visible || this.selection.venue !== 'binance') return;
     const visible = from === undefined || to === undefined ? this.engine?.visibleTimeRange() : null;
     const requestedFrom = from ?? (visible ? visible.from * 1000 : NaN);
     const requestedTo = to ?? (visible ? visible.to * 1000 : NaN);

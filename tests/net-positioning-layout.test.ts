@@ -375,3 +375,16 @@ it('range measurement keeps missing venues, gaps and partial inputs visible as s
  const summary=pane.rangeSummary(0,120000,'longs');expect(summary).toMatchObject({barCount:3,total:6});expect(summary?.sources[0]).toMatchObject({value:6,quality:'partial'});expect(summary?.sources[1]).toMatchObject({value:null,quality:'unavailable'});
  expect(pane.rangeSummary(60000,60000,'longs')?.sources.every(v=>v.value===null)).toBe(true);expect(pane.rangeSummary(0,5000*60000,'longs')).toBeNull();
 });
+
+it.each([100,116,150,230])('paints both cumulative sides in a %ipx pane',height=>{
+ const pane=new NetPositioningPane('compact');
+ pane.setSettings('price-oi',['binance'],300000,'stacked','off',true,true,false,true);
+ pane.setHostSnapshot([{t:0,closed:true}]);
+ pane.setSnapshot([{timeMs:0,venues:{binance:venueValue('binance',10)}}]);
+ pane.setVisibleRange(0,1);
+ const ctx:any={save(){},restore(){},beginPath(){},rect(){},clip(){},moveTo(){},lineTo(){},stroke(){},fillText(){},fillRect(){},measureText:()=>({width:0})};
+ pane.draw(ctx,{dpr:1,plotWidth:400,plotHeight:height,timeScale:{visibleRange:()=>({from:0,to:1}),barSpacing:50,indexToX:()=>100},theme:{axisText:'#aaa',background:'#090909'}} as any);
+ const geometry=(pane as any).geometry;
+ expect(geometry.map((g:any)=>g.side)).toEqual(['longs','shorts']);
+ for(const g of geometry){expect(g.bottom).toBeGreaterThan(g.top);expect(g.top).toBeGreaterThan(30);expect(g.bottom).toBeLessThanOrEqual(height);}
+});
