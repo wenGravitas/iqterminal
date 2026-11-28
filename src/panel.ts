@@ -414,6 +414,7 @@ export class CandlePanel implements IContentRenderer {
   private drawUndo = document.createElement('button');
   private drawRedo = document.createElement('button');
   private drawEraser = document.createElement('button');
+  private drawDelete = document.createElement('button');
   private drawSettings = document.createElement('button');
   private drawTemplates = document.createElement('button');
   private objectsToggle = document.createElement('button');
@@ -822,6 +823,7 @@ export class CandlePanel implements IContentRenderer {
     this.drawUndo = this.sidebarButton('Undo', 'Undo drawing change (Ctrl/⌘+Z)', 'undo', 'drawing-sidebar-action');
     this.drawRedo = this.sidebarButton('Redo', 'Redo drawing change (Ctrl/⌘+Shift+Z)', 'redo', 'drawing-sidebar-action');
     this.drawEraser = this.sidebarButton('Erase', 'Erase drawings', 'eraser', 'drawing-sidebar-action');
+    this.drawDelete = this.sidebarButton('Delete selected drawings', 'Delete selected drawings · Shift-click to select multiple', 'trash', 'drawing-sidebar-action');
     this.floatingDrawingToggle = this.sidebarButton('Toggle floating drawing toolbar', 'Show or hide the floating drawing toolbar', 'floating', 'drawing-sidebar-action');
     this.drawSettings = this.sidebarButton('Style', 'Edit the selected drawing', 'settings', 'drawing-sidebar-action');
     this.drawTemplates = this.sidebarButton('Templates', 'Manage drawing settings templates', 'templates', 'drawing-sidebar-action');
@@ -830,7 +832,7 @@ export class CandlePanel implements IContentRenderer {
     this.drawRedo.setAttribute('aria-keyshortcuts', 'Control+Shift+Z Meta+Shift+Z');
     this.drawEraser.setAttribute('aria-pressed', 'false');
     this.objectsToggle.setAttribute('aria-pressed', 'false');
-    this.drawingSidebarToolbar.append(this.drawUndo, this.drawRedo, this.drawEraser, this.floatingDrawingToggle, this.drawSettings, this.drawTemplates, this.drawPlacementState);
+    this.drawingSidebarToolbar.append(this.drawUndo, this.drawRedo, this.drawEraser, this.drawDelete, this.floatingDrawingToggle, this.drawSettings, this.drawTemplates, this.drawPlacementState);
     this.chartSidebarToolbar.append(this.objectsToggle);
     this.drawingSidebar.append(this.drawingSidebarToolbar);
   }
@@ -940,6 +942,7 @@ export class CandlePanel implements IContentRenderer {
     this.drawUndo.addEventListener('click', () => { this.engine?.drawings.undo(); this.syncDrawingActions(); }, options);
     this.drawRedo.addEventListener('click', () => { this.engine?.drawings.redo(); this.syncDrawingActions(); }, options);
     this.drawEraser.addEventListener('click', () => { const next = !this.engine?.drawings.erasing(); this.engine?.drawings.setEraser(next); this.drawEraser.setAttribute('aria-pressed', String(next)); this.syncDrawingActions(); }, options);
+    this.drawDelete.addEventListener('click',()=>{const draw=this.engine?.drawings;if(draw)draw.removeMany([...draw.selection()]);},options);
     this.drawSettings.addEventListener('click', () => this.openDrawingSettings(), options);
     this.drawTemplates.addEventListener('click', () => this.openDrawingTemplates(), options);
     this.objectsToggle.addEventListener('click', () => this.toggleObjectsPanel(), options);
@@ -1005,7 +1008,18 @@ export class CandlePanel implements IContentRenderer {
     this.drawingDialog.addEventListener('cancel', () => {}, options);
     this.templatesDialog.addEventListener('cancel', () => {}, options);
     this.chart.addEventListener('dblclick', event => { if (!(event.target as HTMLElement).closest('.active-indicators')) this.returnToPresent(); }, options);
-    this.chart.addEventListener('dblclick',event=>{if(this.positioningMeasure?.active){event.preventDefault();event.stopImmediatePropagation();return;}const rect=this.chart.getBoundingClientRect(),hit=this.positioningRangeAt(event.clientX-rect.left,event.clientY-rect.top);if(!hit)return;event.preventDefault();event.stopImmediatePropagation();if(hit.range)this.addPositioningRange(hit.range);},{...options,capture:true});
+    this.chart.addEventListener('dblclick',event=>{
+      if(this.positioningMeasure?.active){event.preventDefault();event.stopImmediatePropagation();return;}
+      if((event.target as Element).closest('button,input,select,textarea,dialog,.active-indicators,.pane-indicator-layer,.drawing-sidebar'))return;
+      const draw=this.engine?.drawings,drawing=draw?.hovered();
+      if(drawing&&!draw?.activeTool()){
+        event.preventDefault();event.stopImmediatePropagation();
+        draw?.select(drawing);this.openDrawingSettings(drawing);return;
+      }
+      const rect=this.chart.getBoundingClientRect(),hit=this.positioningRangeAt(event.clientX-rect.left,event.clientY-rect.top);
+      if(!hit)return;
+      event.preventDefault();event.stopImmediatePropagation();if(hit.range)this.addPositioningRange(hit.range);
+    },{...options,capture:true});
     this.chart.addEventListener('pointermove',event=>{this.indicatorHoverPointerType=event.pointerType;if(!this.indicatorPointerDown)this.indicatorTooltipBlockedUntilMove=false;},options);
     this.chart.addEventListener('pointerdown',()=>{this.takeNativeHistoryViewControl();this.indicatorPointerDown=true;this.indicatorTooltipBlockedUntilMove=true;this.cancelIndicatorTooltip();},options);
     this.chart.addEventListener('pointerup',()=>{this.indicatorPointerDown=false;},options);
@@ -1628,6 +1642,7 @@ export class CandlePanel implements IContentRenderer {
     this.drawUndo.disabled = !draw.canUndo();
     this.drawRedo.disabled = !draw.canRedo();
     this.drawSettings.disabled = draw.selection().length !== 1;
+    this.drawDelete.disabled = draw.selection().length === 0;
     const activeTool = draw.activeTool();
     const erasing = draw.erasing();
     this.chart.toggleAttribute('data-drawing-placement', Boolean(activeTool) && !erasing);

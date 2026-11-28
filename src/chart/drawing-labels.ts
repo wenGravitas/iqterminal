@@ -10,6 +10,15 @@ type WrappedDraw = DrawingTool['draw'] & { [wrappedDraw]?: true };
 const labelTools = ['horizontal-line', 'horizontal-ray'] as const;
 const rendererTools=[...labelTools,'rectangle','fib-retracement','price-range','date-range'] as const;
 const fontStack = 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+interface LabelBounds {left:number;right:number;top:number;bottom:number}
+// Native layers keep the same drawing objects for painting and picking. Weak
+// keys release label geometry when a drawing is replaced, removed or disposed.
+const labelBounds=new WeakMap<Drawing,LabelBounds>();
+function labelDistance(x:number,y:number,drawing:Drawing){
+  const bounds=labelBounds.get(drawing);
+  if(!bounds)return null;
+  return Math.hypot(Math.max(bounds.left-x,0,x-bounds.right),Math.max(bounds.top-y,0,y-bounds.bottom));
+}
 interface AxisPriceLabel { price: number; y: number; color: string; alpha: number }
 
 /** Add IQTerminal object labels through the public native drawing-tool registry. */
@@ -28,6 +37,7 @@ export function registerIQDrawingLabelRenderers() {
         }
       : id === 'rectangle' ? { ...tool.settings, fields: [...(tool.settings?.fields ?? []), { path: 'style.extendRight', label: 'Extend zone right', kind: 'boolean' as const, group: 'line' as const, defaultValue: false }] } : tool.settings;
     const draw: WrappedDraw = context => {
+      labelBounds.delete(context.drawing);
       if (id === 'price-range' || id === 'date-range') { nativeDraw(context); return; }
       if (id === 'fib-retracement') { drawFibRetracement(context, nativeDraw); return; }
       if(id==='rectangle'){
@@ -45,8 +55,12 @@ export function registerIQDrawingLabelRenderers() {
     };
     Object.defineProperty(draw, wrappedDraw, { value: true });
     registerDrawingTool({ ...tool, ...(id === 'fib-retracement' ? { defaultStyle: IQ_FIB_DEFAULT_STYLE } : {}),
-      ...(id === 'rectangle' ? { distance: (x: number, y: number, context: Parameters<DrawingTool['distance']>[2]) => tool.distance(x, y, context.drawing.style?.extendRight === true ? { ...context, pts: extendedRectanglePoints(context.pts, context.rc.plotWidth) } : context) } : {}),
-      ...(id === 'price-range' || id === 'date-range' ? { distance: (x: number, y: number, context: Parameters<typeof measureDrawingDistance>[3]) => measureDrawingDistance(id, x, y, context) } : {}), settings, draw });
+      distance:(x,y,context)=>{
+        const hit=labelDistance(x,y,context.drawing);
+        const native=id==='price-range'||id==='date-range'?measureDrawingDistance(id,x,y,context)
+          :tool.distance(x,y,id==='rectangle'&&context.drawing.style?.extendRight===true?{...context,pts:extendedRectanglePoints(context.pts,context.rc.plotWidth)}:context);
+        return hit===null?native:native===null?hit:Math.min(hit,native);
+      }, settings, draw });
   }
 }
 
@@ -199,9 +213,14 @@ function drawIQLabel(context: DrawContext, toolId: typeof rendererTools[number])
   const height = lines.length * lineHeight;
   const centerY = nativeRayText ? anchor.y : anchor.y - 22 * dpr;
   const top = Math.max(fontPx * .75, Math.min(rc.plotHeight * dpr - height, centerY - height / 2));
+  labelBounds.set(drawing,{left:(x-3*dpr)/dpr,right:(x+width+3*dpr)/dpr,top:(top-2*dpr)/dpr,bottom:(top+height+2*dpr)/dpr});
   ctx.globalAlpha = 0.85;
   ctx.fillStyle = rc.theme.background;
   ctx.fillRect(x - 3 * dpr, top - 2 * dpr, width + 6 * dpr, height + 4 * dpr);
+  if(context.selected){
+    ctx.globalAlpha=1;ctx.strokeStyle=drawing.style.color??rc.theme.lineColor;ctx.lineWidth=dpr;
+    ctx.strokeRect(x-3*dpr,top-2*dpr,width+6*dpr,height+4*dpr);
+  }
   ctx.globalAlpha = 1;
   // OpenAlgo initializes some drawing text with the pane background color. It
   // is still visible for the tool's price tag, whose plate is separately
