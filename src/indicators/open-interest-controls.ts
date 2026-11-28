@@ -22,7 +22,7 @@ export class OpenInterestControls {
       input.type = 'checkbox'; input.name = 'venue'; input.value = venue; input.checked = settings.venues.includes(venue); text.textContent = openInterestVenueLabel(venue);
       label.append(input, text); fieldset.append(label);
     }
-    const help = document.createElement('p'); help.textContent = 'Total adds selected venues with verified BTC units. Missing or stale samples remain partial; the raw level is not estimated.';
+    const help = document.createElement('p'); help.textContent = 'Total requires fresh, verified BTC observations from every selected venue. Missing or stale samples leave a gap in Total; individual venue levels remain visible.';
     fields.append(fieldset, help); status.className = 'dialog-status'; status.setAttribute('role', 'status');
     const footer = document.createElement('footer'), cancel = document.createElement('button'), save = document.createElement('button');
     cancel.type = 'button'; cancel.textContent = 'Cancel'; cancel.addEventListener('click', () => this.dialog.close(), { signal: this.signal });

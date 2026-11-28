@@ -117,13 +117,15 @@ export function projectOpenInterest(history: RawOpenInterestHistory, payload: Ra
     const points = selected.map(venue => perVenue.get(venue)![index]!);
     const used = points.filter(point => point.value !== null && point.unit === 'BTC');
     const missing = used.length !== selected.length;
-    const value = used.length ? used.reduce((sum, point) => sum + point.value!, 0) : null;
+    // A total must keep the same venue membership. Drawing a subtotal when a
+    // source goes stale turns a coverage loss into an apparent market move.
+    const value = !missing && used.length ? used.reduce((sum, point) => sum + point.value!, 0) : null;
     const reset = points.some(point => point.reset);
     const partial = missing || points.some(point => point.quality === 'partial') || Boolean(payload?.truncated || payload?.invalidRows);
     const point: OpenInterestPoint = { time: times[index]!, value, sourceTimeMs: maxNullable(used.map(p => p.sourceTimeMs)),
       observedAtMs: maxNullable(used.map(p => p.observedAtMs)), ageMs: maxNullable(used.map(p => p.ageMs)),
       epoch: null, unit: used.length ? 'BTC' : null,
-      quality: value === null ? points.some(p => p.quality === 'stale') ? 'stale' : 'unavailable' : partial ? 'partial' : 'complete',
+      quality: value === null ? used.length ? 'partial' : points.some(p => p.quality === 'stale') ? 'stale' : 'unavailable' : partial ? 'partial' : 'complete',
       reset, source: used.length ? 'verified perpetual venues' : null,
       sourceTimeQuality: used.some(p => p.sourceTimeQuality === 'collector-sampled') ? 'collector-sampled' : used.length ? 'exchange-event' : null };
     totalPoints.push(point);

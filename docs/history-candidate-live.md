@@ -1,8 +1,42 @@
 # Separate real-history test client
 
+## OI correction after operator testing
+
+The original total summed whichever selected venues were fresh. Hyperliquid
+expiry therefore changed a three-venue total into a two-venue subtotal and drew
+the transition as a market move. Total now requires fresh verified BTC values
+from **every selected venue**, leaving a gap when any one is absent. Individual
+venue series retain their actual observations. The sources dialog explains this
+rule; hiding a line still does not change inclusion in Total.
+
+A fresh actual-service 15m check loaded nine historical windows and retained
+13,211 observations without evictions or pending history requests. All 134
+visible Binance and Bybit points are present; Hyperliquid has 21 unavailable
+points and Total has exactly the same 21 gaps, with zero partial-venue subtotals.
+This check did not reproduce the operator's large all-venue blank spans after
+a fresh load; their original cause is unconfirmed. It does not prove every
+earlier tab recovered without reload.
+
+Separate 36h retained-data reads contain 130 Hyperliquid observation intervals
+longer than the 75s freshness limit, with a maximum 330s interval. Binance and
+Bybit have no such gaps in these reads. Missing historical Hyperliquid values
+remain unavailable; no interpolation or stale substitution was introduced.
+The upstream cause of those source gaps is not established here.
+
+44 focused tests, the typechecked build and both compiled browser regressions
+(historical navigation/cache reuse and an OI-sourced SMA) pass. An initial
+browser-test invocation against the Vite development server failed because its
+fixture targets the compiled worker; the same test passed on the explicit
+compiled staging build. A diagnostic interrupted by source hot reload is saved
+separately in `/tmp/iq-oi-interrupted-diagnostic.*`, not used as a before/after
+comparison. [Measured browser/source summary](../artifacts/history-candidate-live/oi-total-fix-summary.json),
+[real browser capture](../artifacts/history-candidate-live/oi-wide-after.json),
+[screenshot](../artifacts/history-candidate-live/oi-wide-after.png).
+
 The isolated client is available at <http://127.0.0.1:5174/>. It serves the
-shared `dev` checkout with application source `1cd2cc6`; the candidate backend
-is `87260c5`. The existing port 5173 client and incumbent collector services
+shared `dev` checkout, including the OI correction above. Initial pilot startup
+used application source `1cd2cc6`; the candidate backend is `87260c5`.
+The existing port 5173 client and incumbent collector services
 continue to run. No main merge, retention change or source deletion occurred.
 
 ## Test scope

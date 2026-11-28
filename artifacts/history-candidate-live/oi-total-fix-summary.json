@@ -1,0 +1,42 @@
+{
+  "kind": "oi-total-membership-fix-real-data-check-v1",
+  "synthetic": false,
+  "visibleFromMs": 1795752900000,
+  "visibleToMs": 1795872900000,
+  "hostIntervalMs": 900000,
+  "visiblePoints": 134,
+  "missing": {
+    "binance": 0,
+    "hyperliquid": 21,
+    "bybit": 0,
+    "total": 21
+  },
+  "falseSubtotals": 0,
+  "historyWindows": 9,
+  "retainedObservations": 13211,
+  "evictions": 0,
+  "pendingHistory": [],
+  "pageErrors": [],
+  "rawBrowserSha256": "25912c7e1c50aaccdbd6b93ddf42d4d335d8d6a0ae632f25d16cecfed3921610",
+  "focusedTests": 44,
+  "compiledBrowserTests": 2,
+  "buildAndTypecheck": "passed",
+  "rawSourceFiles": "/tmp/oi-investigate-0.json through /tmp/oi-investigate-8.json",
+  "sourceGaps": {
+    "binance": {
+      "observations": 4317,
+      "gapsAbove75Seconds": 0,
+      "maximumGapMs": 0
+    },
+    "hyperliquid": {
+      "observations": 3718,
+      "gapsAbove75Seconds": 130,
+      "maximumGapMs": 330067
+    },
+    "bybit": {
+      "observations": 4325,
+      "gapsAbove75Seconds": 0,
+      "maximumGapMs": 0
+    }
+  }
+}

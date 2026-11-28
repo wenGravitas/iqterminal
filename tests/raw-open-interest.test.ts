@@ -78,16 +78,32 @@ describe('raw Open Interest host-candle projection', () => {
     expect(frame.lines.get('binance')!.points.map(point => point.value)).toEqual([null, 7]);
   });
 
-  it('sums only verified BTC venue levels and marks omitted, invalid or unverified coverage partial', () => {
+  it('requires every selected venue to have a verified BTC level for the total', () => {
     const base = now - 30_000;
     const frame = projected([observation('binance', base + 1_000, 2), observation('hyperliquid', base + 2_000, 3),
       observation('bybit', base + 3_000, 99)], [base], { at: now, venues: [...RAW_OPEN_INTEREST_VENUES],
       verification: { bybit: { status: 'unverified', units: 'BTC', evidence: 'unit evidence pending' } } });
-    expect(frame.lines.get('total')!.points[0]).toMatchObject({ value: 5, quality: 'partial', unit: 'BTC' });
+    expect(frame.lines.get('total')!.points[0]).toMatchObject({ value: null, quality: 'partial', unit: 'BTC' });
+    expect(frame.lines.get('binance')!.points[0]!.value).toBe(2);
+    expect(frame.lines.get('hyperliquid')!.points[0]!.value).toBe(3);
     expect(frame.lines.get('bybit')!.points[0]).toMatchObject({ value: null, quality: 'partial' });
 
     const badUnit = projected([observation('binance', base + 1_000, 99, { units: 'USD' })], [base], { at: now });
     expect(badUnit.lines.get('binance')!.points[0]).toMatchObject({ value: null, quality: 'partial', unit: 'USD' });
+  });
+
+  it('leaves a gap in the total when a venue expires and resumes the full sum on recovery', () => {
+    const base = now - 240_000;
+    const rows = [observation('binance', base + 10_000, 100), observation('hyperliquid', base + 10_000, 30),
+      observation('binance', base + 100_000, 101), observation('binance', base + 160_000, 102),
+      observation('hyperliquid', base + 160_000, 31)];
+    const frame = projected(rows, [base, base + 60_000, base + 120_000],
+      { venues: ['binance', 'hyperliquid'], intervalMs: 60_000 });
+    expect(frame.lines.get('binance')!.points.map(p => p.value)).toEqual([100, 101, 102]);
+    expect(frame.lines.get('total')!.points.map(p => p.value)).toEqual([130, null, 133]);
+    expect(frame.lines.get('total')!.points[1]!.quality).toBe('partial');
+    const selected = projected(rows, [base + 60_000], { venues: ['binance'], intervalMs: 60_000 });
+    expect(selected.lines.get('total')!.points[0]!.value).toBe(101);
   });
 
   it('marks epochs, explicit gaps, long observation gaps and omitted raw rows as reset segments', () => {
