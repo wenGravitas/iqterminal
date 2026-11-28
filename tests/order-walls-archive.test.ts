@@ -1711,23 +1711,43 @@ it.each([false,true])('retains completed prefix across two small forward advance
  }finally{service.dispose();vi.useRealTimers();}
 });
 
-it('readmits a validated capacity-blocked owner after narrowing without another source read',async()=>{
+it.each([false,true])('consolidates full resident slots atomically and retains history on failed validation (failure=%s)',async fail=>{
  vi.useFakeTimers();const events:any[]=[],reads:Array<{from:number;to:number}>=[];
  const wall=candidate({entryId:'capacity-resident',startedAt:from-1000,startCursor:0});
+ let finish!:(response:Response)=>void,held=false;
+ const response=(left:number,right:number,invalid=false)=>Response.json(page({from:left,to:right,
+  ...(invalid?{profile:profile('binance-perp')}:{}),
+  seed:{at:left,cursor:0,epoch:1,midpoint:'74480',bids:[wall],asks:[],bookScope:{bidComplete:true,askComplete:true}},
+  head:{cursor:20,at:right-1,epoch:1},page:{after:0,nextAfter:20,hasMore:false,lastAt:right-1,limit:256,sameMillisecondClosed:true},
+  coverage:coverage({requestedFrom:left,requestedTo:right,confirmedTo:right-1,gaps:[{from:from+200,to:from+300,reason:'source gap'}],partial:true,status:'partial'})}));
  const fetcher:any=(input:unknown)=>{const url=new URL(String(input),'http://localhost'),left=Number(url.searchParams.get('from')),right=Number(url.searchParams.get('to'));reads.push({from:left,to:right});
-  return Promise.resolve(Response.json(page({from:left,to:right,seed:{at:left,cursor:0,epoch:1,midpoint:'74480',bids:[wall],asks:[],bookScope:{bidComplete:true,askComplete:true}},head:{cursor:20,at:right-1,epoch:1},page:{after:0,nextAfter:20,hasMore:false,lastAt:right-1,limit:256,sameMillisecondClosed:true},coverage:coverage({requestedFrom:left,requestedTo:right,confirmedTo:right-1})})));};
- const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to+86400000),flush=async()=>{for(let i=0;i<200;i++)await Promise.resolve();};
+  if(reads.length===10){held=true;return new Promise<Response>(resolve=>{finish=resolve;});}
+  return Promise.resolve(response(left,right));};
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to+86400000),flush=async()=>{for(let i=0;i<250;i++)await Promise.resolve();};
  try{
   service.subscribe('capacity',{...request(),followLive:false});await flush();
   for(let n=0;n<8;n++){service.updateViewport('capacity',from,reads.at(-1)!.to+1000,false);await vi.advanceTimersByTimeAsync(130);await flush();}
-  expect(reads).toHaveLength(9);expect(service.diagnostics().resident[0]?.chunks).toBe(8);expect(events.at(-1).status.archive.reason).toMatch(/capacity/);expect(publishedSegments(events)).toHaveLength(8);
-  service.retry('capacity');await flush();expect(reads).toHaveLength(9);expect(events.at(-1).status.archive.reason).toMatch(/capacity/);
-  const ready=reads.at(-1)!;service.updateViewport('capacity',ready.from,ready.to,false);await vi.advanceTimersByTimeAsync(130);await flush();
-  expect(reads).toHaveLength(9);expect(events.at(-1).status.archive.unloadedRanges).toEqual([]);expect(events.at(-1).status.archive.reason??'').not.toMatch(/capacity/);
-  expect(service.diagnostics().resident[0]?.chunks).toBe(8);expect(publishedSegments(events)).toHaveLength(8);
-  service.retry('capacity');await flush();expect(reads).toHaveLength(10); // normal explicit fresh validation still reads
+  expect(held).toBe(true);expect(reads).toHaveLength(10);expect(service.diagnostics().resident[0]?.chunks).toBe(8);
+  const retained=JSON.stringify(publishedSegments(events));
+  const combined=reads.at(-1)!;expect(combined.from).toBe(from);
+  finish(response(combined.from,combined.to,fail));await flush();
+  if(fail){
+   expect(JSON.stringify(publishedSegments(events))).toBe(retained);expect(service.diagnostics().resident[0]?.chunks).toBe(8);
+   expect(events.at(-1).status.archive.unloadedRanges.length).toBeGreaterThan(0);
+   await vi.advanceTimersByTimeAsync(60000);await flush();expect(reads).toHaveLength(10);
+   service.retry('capacity');await flush();expect(reads).toHaveLength(11);
+  }
+  expect(service.diagnostics().resident[0]?.chunks).toBe(1);expect(events.at(-1).status.archive.unloadedRanges).toEqual([]);
+  expect(events.at(-1).status.archive.gaps).toContainEqual({from:from+200,to:from+300,reason:'source gap'});
+  expect(events.at(-1).status.archive.reason??'').not.toMatch(/capacity/);
+  // Continue well beyond the former eight-extension stop without raising limits.
+  for(let n=0;n<20;n++){service.updateViewport('capacity',from,reads.at(-1)!.to+1000,false);await vi.advanceTimersByTimeAsync(130);await flush();}
+  expect(service.diagnostics().resident[0]!.chunks).toBeLessThanOrEqual(8);
+  expect(events.at(-1).status.archive.unloadedRanges).toEqual([]);
+  expect(events.slice(1).some(event=>event.kind==='snapshot'&&event.segments.length===0)).toBe(false);
  }finally{service.dispose();vi.useRealTimers();}
 });
+
 
 it.each(['boundary','zoom-in'] as const)('coalesces initial partial-history %s gestures without cancelling useful work per input',async mode=>{
  vi.useFakeTimers();const events:any[]=[],reads:Array<{from:number;to:number;after:number;signal:AbortSignal}>=[],currentSignals:AbortSignal[]=[];

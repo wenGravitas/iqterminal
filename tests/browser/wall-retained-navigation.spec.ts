@@ -231,3 +231,26 @@ test('production worker coalesces camera gestures during partial initial deliver
  console.log(JSON.stringify({kind:'actual-worker-partial-navigation-controlled-source',requests:result.requests,generations:[...new Set(result.batches.map((e:any)=>e.generation))],emptyResets:result.after.filter((e:any)=>e.kind==='snapshot'&&e.segments.length===0).length}));
  await page.evaluate(()=>{const p=(window as any).__partialProbe;p.worker.postMessage({type:'order-wall-unsubscribe',id:'partial'});p.worker.terminate();});
 });
+
+test('production worker continues live-follow history beyond eight resident extensions',async({page})=>{
+ test.skip(process.env.VITE_DATA_MODE!=='staging','Requires explicit staging protocol fixture build');test.setTimeout(60000);
+ await page.goto('/tests/browser/fixtures/wall-navigation.html');
+ await page.evaluate(()=>{
+  const worker=(window as any).createProtocolWallWorker(),events:any[]=[],to=Date.now()-3600000,from=to-6*3600000;
+  (window as any).__capacityProbe={worker,events,from,to};worker.onmessage=({data}:any)=>events.push(data);worker.postMessage({type:'fixture-wall-config',from,to});
+ });
+ try{
+  await page.waitForFunction(()=>(window as any).__capacityProbe.events.some((e:any)=>e.type==='fixture-wall-ready'));
+  await page.evaluate(()=>{const p=(window as any).__capacityProbe;p.worker.postMessage({type:'order-wall-subscribe',id:'capacity',request:{market:'binance-perp',from:p.from,to:p.to,followLive:true,settings:{enabled:true,mode:'top-levels',topLevels:8,searchRangePercent:10,aggregation:'native'}}});});
+  await page.waitForFunction(()=>(window as any).__capacityProbe.events.some((e:any)=>e.type==='order-wall-batch'&&e.status.archive?.requestComplete));
+  // Exceed overscan each turn; all earlier intervals stay visible and cannot
+  // simply be evicted to make room for the next interval.
+  for(let step=1;step<=20;step++){
+   await page.evaluate(step=>{const p=(window as any).__capacityProbe;p.target=p.to+step*3600000;p.worker.postMessage({type:'order-wall-viewport',id:'capacity',from:p.from,to:p.target});},step);
+   await page.waitForFunction(()=>{const p=(window as any).__capacityProbe,a=p.events.filter((e:any)=>e.type==='order-wall-batch').at(-1)?.status.archive;return a?.to===p.target&&a.requestComplete&&a.unloadedRanges?.length===0;});
+  }
+  const result=await page.evaluate(()=>{const p=(window as any).__capacityProbe,b=p.events.filter((e:any)=>e.type==='order-wall-batch');return {reads:p.events.filter((e:any)=>e.type==='fixture-wall-request'&&e.path.endsWith('/archive')),final:b.at(-1).status.archive,empty:b.slice(1).some((e:any)=>e.kind==='snapshot'&&!e.segments.length)};});
+  expect(result.final.residentRanges.length).toBeLessThanOrEqual(8);expect(result.empty).toBe(false);
+  expect(result.reads.filter((r:any)=>r.from===result.reads[0].from).length).toBeGreaterThan(1);
+ }finally{await page.evaluate(()=>(window as any).__capacityProbe.worker.terminate());}
+});

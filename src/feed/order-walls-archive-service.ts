@@ -66,6 +66,8 @@ interface Subscription {
   residentTimer?:ReturnType<typeof setTimeout>;
   navigationTimer?:ReturnType<typeof setTimeout>;
   residentCapacity?:string;
+  residentConsolidation?:{from:number;to:number;committed?:boolean};
+  residentConsolidationBlocked?:boolean;
   currentSnapshotIds:Set<string>;
   warmReplay?:WarmReplay;
   tailProjector?: OrderWallsArchiveProjector;
@@ -271,6 +273,11 @@ export class OrderWallsArchiveService {
   retry(id: string) {
     const sub = this.subscriptions.get(id); if (!sub) return;
     const job = sub.historyJob;
+    if(sub.residentConsolidationBlocked&&job?.settled){
+      sub.residentConsolidationBlocked=false;sub.residentConsolidation=undefined;
+      this.consolidateResidentHistory(sub);
+      if(sub.residentConsolidation)return;
+    }
     if(sub.resident&&sub.residentCapacity&&job?.settled&&!job.failure&&job.latest){
       sub.residentCapacity=undefined;this.publishResidentUpdate(sub,job,job.latest);
       if(!sub.residentCapacity)this.startResidentMissing(sub);
@@ -576,7 +583,8 @@ export class OrderWallsArchiveService {
   }
 
   private startResidentMissing(sub:Subscription){
-    if(this.disposed||this.subscriptions.get(sub.id)!==sub||!sub.resident||sub.residentCapacity||sub.historyJob&&!sub.historyJob.settled)return;
+    if(this.disposed||this.subscriptions.get(sub.id)!==sub||!sub.resident||sub.historyJob&&!sub.historyJob.settled)return;
+    if(sub.residentCapacity){this.consolidateResidentHistory(sub);return;}
     const view=sub.viewport;
     // Overscan is bounded to one hour per edge and shares the same record
     // allowance. Never fetch padding when the visible view is already resident.
@@ -592,8 +600,43 @@ export class OrderWallsArchiveService {
     this.startHistory(sub,{...sub.request,...range});
   }
 
+  /** Revalidate one whole range instead of joining independently fenced episodes.
+   * Old ownership remains displayed until the replacement passes normal loading
+   * and the same resident record/byte limits. One failure requires explicit Retry. */
+  private consolidateResidentHistory(sub:Subscription){
+    const resident=sub.resident!;
+    if(sub.residentConsolidation||sub.residentConsolidationBlocked||resident.size<resident.limits.chunks)return;
+    const chunks=resident.chunks.filter(chunk=>chunk.from<sub.viewport.to&&chunk.to>sub.viewport.from);
+    if(chunks.length<2)return;
+    const from=Math.min(sub.viewport.from,chunks[0]!.from),to=Math.max(sub.viewport.to,chunks.at(-1)!.to);
+    if(to-from>48*3600000)return;
+    sub.residentConsolidation={from,to};
+    this.detachHistoryJob(sub);sub.archiveStarted=false;
+    this.startHistory(sub,{...sub.request,from,to});
+  }
+
   private publishResidentUpdate(sub:Subscription,job:SharedHistoryJob,update:OrderWallsArchiveUpdate){
     sub.historyStatus=update.status;const a=update.status.archive;
+    const consolidation=sub.residentConsolidation;
+    if(consolidation&&consolidation.from===job.request.from&&consolidation.to===job.request.to){
+      if(consolidation.committed){this.publish(sub,'patch',[],this.status(sub));return;}
+      if(a?.requestComplete){
+        const to=Math.min(job.request.to,a.eligibleTo??job.request.to);
+        const owned=sub.resident!.chunks.filter(chunk=>chunk.from<sub.viewport.to&&chunk.to>sub.viewport.from);
+        const rows=update.projector?.snapshot()??update.segments??(update.presentation?[...update.presentation.values()]:[]);
+        const presentation=wallHistoryPresentation(rows,update.preparedPresentationComplete?update.presentation:undefined);
+        const replacement=new WallResidentHistory(sub.resident!.limits);
+        const admitted=a.exact&&a.state!=='unavailable'&&!update.status.valueHistoryLimited&&!update.status.episodeHistoryLimited
+          &&owned.every(chunk=>chunk.from>=job.request.from&&chunk.to<=to)&&presentation&&to>job.request.from
+          &&replacement.admit({key:`${job.request.from}:${to}`,from:job.request.from,to,keepIds:true,
+            revision:update.preparedPresentationRevision??`canonical:${update.watermark??0}:${update.head?.epoch??0}`,
+            sourceToken:update.preparedSourceToken,status:a,segments:presentation},sub.viewport).ok;
+        if(admitted){sub.resident=replacement;sub.residentCapacity=undefined;sub.residentAttempts?.clear();consolidation.committed=true;
+          this.publish(sub,'patch',this.diff(sub,this.visibleSegments(sub)),this.status(sub));}
+        else{sub.residentConsolidationBlocked=true;sub.residentCapacity='Resident history capacity; combined-range validation could not retain loaded coverage. Retry or narrow the view.';}
+      }
+      this.publish(sub,'patch',[],this.status(sub));return;
+    }
     if(a?.requestComplete&&a.exact&&a.state!=='unavailable'&&!update.status.valueHistoryLimited&&!update.status.episodeHistoryLimited){
       const to=Math.min(job.request.to,a.eligibleTo??job.request.to);
       if(to>job.request.from){
@@ -617,7 +660,7 @@ export class OrderWallsArchiveService {
     const loading=Boolean(sub.residentTimer||relevantJob&&!relevantJob.settled),gaps=chunks.flatMap(chunk=>chunk.status.gaps).filter(gap=>gap.to>=sub.viewport.from&&gap.from<sub.viewport.to);
     const base=prior.archive??chunks[0]?.status??emptyArchiveStatus(sub.request,'loading');
     const complete=!missing.length&&!gaps.length&&chunks.filter(chunk=>chunk.from<sub.viewport.to&&chunk.to>sub.viewport.from).every(chunk=>chunk.status.rangeComplete===true&&!chunk.status.gapsTruncated);
-    const reason=sub.residentCapacity??relevantJob?.failure?.message??(loading?'Retained walls remain available while missing history loads.':missing.length?'Some requested history is not resident or is beyond the confirmed archive horizon.':gaps.length?'Loaded history includes explicit source gaps.':undefined);
+    const reason=sub.residentConsolidation&&!sub.residentConsolidation.committed&&loading?'Validating combined history; loaded walls remain displayed.':sub.residentCapacity??relevantJob?.failure?.message??(loading?'Retained walls remain available while missing history loads.':missing.length?'Some requested history is not resident or is beyond the confirmed archive horizon.':gaps.length?'Loaded history includes explicit source gaps.':undefined);
     return {...prior,coverage:{from:sub.viewport.from,to:sub.viewport.to,complete,partial:!complete},...(reason?{message:reason}:{}),archive:{...base,
       from:sub.viewport.from,to:sub.viewport.to,state:loading?(base.state==='building'?'building':'loading'):complete?'complete':'partial',requestComplete:!loading&&!relevantJob?.failure&&!sub.residentCapacity,rangeComplete:complete,
       loadedFrom:chunks[0]?.from,loadedThrough:chunks.length?Math.max(...chunks.map(chunk=>chunk.to-1)):undefined,
@@ -681,6 +724,10 @@ export class OrderWallsArchiveService {
       this.rememberHistory(job.request,result);
       for (const subscriber of [...job.subscribers]) this.publishSharedHistoryUpdate(subscriber, job, result);
       this.releasePreparedProjector(job,result);
+      for(const subscriber of job.subscribers){
+        if(subscriber.residentConsolidation?.from===job.request.from&&subscriber.residentConsolidation.to===job.request.to)
+          subscriber.residentConsolidation=undefined;
+      }
       for (const subscriber of [...job.subscribers]) this.tryStartPendingViewportHistory(subscriber);
     }).catch(error => {
       job.settled = true;
@@ -692,6 +739,11 @@ export class OrderWallsArchiveService {
       const retryable=error instanceof PreparedWallPreparationError?error.retryable:true;
       const message = error instanceof Error ? error.message : String(error);
       job.failure={message,retryable};
+      for(const subscriber of job.subscribers){
+        if(subscriber.residentConsolidation?.from===job.request.from&&subscriber.residentConsolidation.to===job.request.to){
+          subscriber.residentConsolidation=undefined;subscriber.residentConsolidationBlocked=true;
+        }
+      }
       if(sourceChanged){
         const confirmedChange=error instanceof PreparedWallSourceChangedError?error.confirmedChange:true;
         if(confirmedChange){

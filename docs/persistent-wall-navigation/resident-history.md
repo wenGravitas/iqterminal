@@ -154,3 +154,32 @@ The independently healthy baseline at11.086s and final sample49.443s showed69add
 **Rendering-mode erratum:** the live captures' `SystemInfo.gpu.auxAttributes` report `(gl=egl-angle,angle=opengles)` and `ANGLE (Broadcom, V3D7.1.7.0, OpenGL ES3.1 Mesa24.2.8-1~bpo12+rpt5)`. Earlier prose/raw scope labels called them SwiftShader/software based on requested command-line flags; that inference was wrong. Host is `pi`,aarch64; Chromium155.0.8059.79. Treat these as **headless Pi/V3D**. The three final component pairs did not record actual GPU metadata, so their renderer remains unverified despite requested SwiftShader flags. Neither dataset certifies foreground frame intervals. Original raw captures remain intact; this correction takes precedence over their human-authored scope strings.
 
 Evidence: `live-execution-usdm-b76828c.json`, screenshot and `live-session-b76828c/` receipts/health/summary. The final compiled candle/footprint overlay and persistent-controls tests passed in dark/light themes (`integrated-b76828c.json`, scoped screenshots). They use explicit synthetic data and do not substitute for live source equality. The manual procedure now selects a separately verified copy of this application via [foreground-acceptance.md](foreground-acceptance.md), preserving the older frozen manual receipt.
+
+## Resident-slot exhaustion during continued viewing
+
+Small independently validated extensions could fill all eight resident slots
+while every owner still intersected the visible range. Subsequent admission
+stopped with `Resident history capacity`, leaving history behind a healthy
+current feed.
+
+On slot exhaustion, the worker now makes one ordinary, independently fenced
+request covering the visible range and its intersecting whole owners, bounded
+by the existing 48-hour request maximum. It keeps the old presentation during
+loading. Only an exact completed result which retains the prior visible coverage
+and passes the unchanged resident segment/run/byte limits replaces those owners
+as one new owner. It does not concatenate old episode statistics or source proofs.
+Offscreen owners may leave at that atomic replacement. New source gaps stay
+explicit; history is never extended using only a current snapshot.
+
+A failed or insufficient replacement retains the old presentation and stops
+automatic consolidation until explicit Retry. A range over 48 hours or a single
+owner that exceeds the record limits still requires a narrower view. The old
+full-range validation and preparation costs remain; this is a recovery from
+metadata slot exhaustion, not a measured latency improvement.
+
+83 focused service/store/warm-cache tests pass, including repeated extensions,
+held replacement, invalid-profile rejection, explicit retry and gap retention.
+A headless browser check with the production worker and controlled canonical
+transport advances through 20 extensions, remains within eight owners and emits
+no empty history reset. This is functional evidence, not real-feed, provider or
+foreground performance acceptance. Typecheck/build also pass.
